@@ -1,15 +1,27 @@
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, FlatList, View } from 'react-native';
 
 export default class App extends React.Component {
+  constructor(props) {
+    super(props);
+
+    this.state = { events: [] };
+  }
+
+  componentDidMount() { 
+    fetch('http://10.0.2.2:8000/events/?format=json')
+      .then((response) => response.json())
+      .then((response) => { this.setState({ events: response }) });
+  }
   render() {
     return (
       <View style={styles.container}>
-        <Text>Open up App.js to start working on your app!</Text>
-        <Text>Changes you make will automatically reload.</Text>
-        <Text>Shake your phone to open the developer menu.</Text>
-        <Text>Does this show up?</Text>
-      </View>
+        <FlatList
+          data={this.state.events}
+          renderItem={({ item }) => <Text style={styles.item}>{item.title}</Text>}
+          keyExtractor={(item, index) => index} 
+        /> 
+      </View> 
     );
   }
 }
@@ -18,7 +30,11 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
+    paddingTop: 22,
+  },
+  item: {
+    padding: 10,
+    fontSize: 18,
+    height: 44,
   },
 });
