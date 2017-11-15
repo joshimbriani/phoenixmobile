@@ -1,36 +1,11 @@
 import React from 'react';
-import { StyleSheet, Text, FlatList, View } from 'react-native';
-import { DrawerNavigator } from 'react-navigation';
+import { StyleSheet, Text, FlatList, ScrollView, View } from 'react-native';
+import { DrawerNavigator, StackNavigator, DrawerItems } from 'react-navigation';
+import { SideDrawer } from './sidedrawer';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import Home from './home';
 
-/*export default class NavContainer extends React.Component {
-    constructor(props) {
-        super(props);
-
-        this.state = { events: [] };
-    }
-
-    componentDidMount() {
-        fetch('http://10.0.2.2:8000/events/?format=json')
-            .then((response) => response.json())
-            .then((response) => { this.setState({ events: response }) });
-    }
-
-    render() {
-        return (
-            <View style={styles.container}>
-                <Text>This is Android</Text>
-                <FlatList
-                    data={this.state.events}
-                    renderItem={({ item }) => <Text style={styles.item}>{item.title}</Text>}
-                    keyExtractor={(item, index) => index}
-                />
-            </View>
-        );
-    }
-}*/
-
-const HomeScreen = () => ( 
+const HomeScreen = () => (
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
         <Text>Home Screen</Text>
     </View>
@@ -42,34 +17,96 @@ const ProfileScreen = () => (
     </View>
 );
 
+const SuggestedScreen = () => (
+    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+        <Text>Suggested Screen</Text>
+    </View>
+);
+
+const Homestack = StackNavigator({
+    Home: {
+        screen: Home,
+        navigationOptions: ({ navigation }) => ({
+            title: 'Phoenix',
+            headerLeft: <Ionicons
+                name="md-menu"
+                size={35}
+                onPress={() => navigation.navigate('DrawerOpen')} />
+        })
+    }
+});
+
+const SuggestedStack = StackNavigator({
+    Suggested: {
+        screen: SuggestedScreen,
+        navigationOptions: ({ navigation }) => ({
+            title: 'Suggested',
+            headerLeft: <Ionicons
+                name="md-menu"
+                size={35}
+                onPress={() => navigation.navigate('DrawerOpen')} />
+        })
+    }
+});
+
+const ProfileStack = StackNavigator({
+    Profile: {
+        screen: ProfileScreen,
+        navigationOptions: ({ navigation }) => ({
+            title: 'Profile',
+            headerLeft: <Ionicons
+                name="md-menu"
+                size={35}
+                onPress={() => navigation.navigate('DrawerOpen')} />
+        })
+    }
+});
+
 const NavContainer = DrawerNavigator({
     Home: {
-        screen: HomeScreen,
+        screen: Homestack,
         navigationOptions: {
             drawerLabel: 'Home',
             drawerIcon: ({ tintColor, focused }) => (
                 <Ionicons
-                    name={focused ? 'ios-home' : 'ios-home-outline'}
+                    name='md-home'
                     size={20}
                     style={{ color: tintColor }}
                 />
             ),
         },
     },
+    Suggested: {
+        screen: SuggestedStack,
+        navigationOptions: {
+            drawerLabel: 'Suggested',
+            drawerIcon: ({ tintColor, focused }) => (
+                <Ionicons
+                    name='md-apps'
+                    size={20}
+                    style={{ color: tintColor }}
+                />
+            ),
+        },  
+    },
     Profile: {
-        screen: ProfileScreen,
+        screen: ProfileStack,
         navigationOptions: {
             drawerLabel: 'Profile',
             drawerIcon: ({ tintColor, focused }) => (
                 <Ionicons
-                    name={focused ? 'ios-person' : 'ios-person-outline'}
+                    name='md-person'
                     size={20}
                     style={{ color: tintColor }}
                 />
             ),
         },
     },
-});
+},
+    {
+        contentComponent: SideDrawer,
+    }
+);
 
 export default NavContainer;
 
