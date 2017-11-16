@@ -17,6 +17,15 @@ const categories = [{ name: 'IDK', hotness: 1.00, icon: 'help', color: 'aquamari
 
 export default class Home extends React.Component {
 
+    static navigationOptions = ({ navigation }) => ({
+        title: 'Phoenix',
+        headerLeft: <Ionicons
+            name="md-menu"
+            style={{paddingLeft: 10}}
+            size={35}
+            onPress={() => navigation.navigate('DrawerOpen')} />
+    });
+
     render() {
         return (
             <Container>
@@ -35,7 +44,7 @@ export default class Home extends React.Component {
                     itemWidth={150}
                     items={categories}
                     renderItem={item => (
-                        <TouchableHighlight onPress={() => { Alert.alert('You touched the button for ' + item.name + '') }}>
+                        <TouchableHighlight onPress={() => { this.props.navigation.navigate('Topic', {topic: item.name, color: item.color}) }}>
                             <View
                                 style={[styles.itemBox, { backgroundColor: item.color }]}
                             >

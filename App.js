@@ -1,13 +1,19 @@
 import React from 'react';
 import { StyleSheet, Text, FlatList, View } from 'react-native';
 import NavContainer from './components/navcontainer'
+import { Constants } from 'expo';
+
 
 export default class App extends React.Component {
 
   state = {
     fontLoaded: false,
+    backgroundColor: "white"
   };
 
+  updateBackgroundColor(color) {
+    this.setState({backgroundColor: color});
+  }
 
   async componentWillMount() {
     await Expo.Font.loadAsync({
@@ -21,10 +27,15 @@ export default class App extends React.Component {
   render() {
     return (
       <View style={styles.container}>
+        <View style={{
+          backgroundColor: this.state.backgroundColor,
+          height: Constants.statusBarHeight,
+          marginTop: -Constants.statusBarHeight
+        }} />
         {
           this.state.fontLoaded ? (
 
-            <NavContainer />
+            <NavContainer changeColor={this.state.updateBackgroundColor} />
 
           ) : null
         }

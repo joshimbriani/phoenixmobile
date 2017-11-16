@@ -4,6 +4,7 @@ import { DrawerNavigator, StackNavigator, DrawerItems } from 'react-navigation';
 import { SideDrawer } from './sidedrawer';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Home from './home';
+import Topic from './topic';
 
 const HomeScreen = () => (
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
@@ -23,16 +24,19 @@ const SuggestedScreen = () => (
     </View>
 );
 
+const TopicScreen = () => (
+    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+        <Text>Topic Screen</Text>
+    </View>
+);
+
 const Homestack = StackNavigator({
     Home: {
         screen: Home,
-        navigationOptions: ({ navigation }) => ({
-            title: 'Phoenix',
-            headerLeft: <Ionicons
-                name="md-menu"
-                size={35}
-                onPress={() => navigation.navigate('DrawerOpen')} />
-        })
+    },
+    Topic: {
+        path: '/topic/:topic',
+        screen: Topic,
     }
 });
 
@@ -43,6 +47,7 @@ const SuggestedStack = StackNavigator({
             title: 'Suggested',
             headerLeft: <Ionicons
                 name="md-menu"
+                style={{paddingLeft: 10}}
                 size={35}
                 onPress={() => navigation.navigate('DrawerOpen')} />
         })
@@ -56,6 +61,7 @@ const ProfileStack = StackNavigator({
             title: 'Profile',
             headerLeft: <Ionicons
                 name="md-menu"
+                style={{paddingLeft: 10}}
                 size={35}
                 onPress={() => navigation.navigate('DrawerOpen')} />
         })
@@ -87,7 +93,7 @@ const NavContainer = DrawerNavigator({
                     style={{ color: tintColor }}
                 />
             ),
-        },  
+        },
     },
     Profile: {
         screen: ProfileStack,
@@ -104,7 +110,7 @@ const NavContainer = DrawerNavigator({
     },
 },
     {
-        contentComponent: SideDrawer,
+        contentComponent: SideDrawer
     }
 );
 
