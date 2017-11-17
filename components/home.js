@@ -3,6 +3,9 @@ import { Container, Header, Item, Input, Icon, Button, Text } from 'native-base'
 import { Alert, StyleSheet, TouchableHighlight,View } from 'react-native';
 import GridView from 'react-native-super-grid';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import { connect } from 'react-redux';
+import {bindActionCreators} from 'redux';
+import * as colorActions from '../redux/actions/backgroundColor'
 
 //TODO: Change this to a server generated list
 //TODO: Change the icon to dynamically switch between md- and ios-
@@ -15,7 +18,10 @@ const categories = [{ name: 'IDK', hotness: 1.00, icon: 'help', color: 'aquamari
 { name: 'Traveling', hotness: 0.45, icon: 'globe', color: 'deeppink' },
 { name: 'Ice Cream', hotness: 0.30, icon: 'ice-cream', color: 'slateblue' }];
 
-export default class Home extends React.Component {
+class Home extends React.Component {
+    componentDidMount() {
+        this.props.colorActions.resetColor(); 
+    }
 
     static navigationOptions = ({ navigation }) => ({
         title: 'Phoenix',
@@ -61,6 +67,23 @@ export default class Home extends React.Component {
         );
     }
 }
+
+function mapStateToProps(state) {
+    return {
+        color: state.backgroundColorReducer.color
+    };
+}
+
+function mapDispatchToProps(dispatch) {
+    return {
+        colorActions: bindActionCreators(colorActions, dispatch)
+    };
+}
+
+export default connect(
+    mapStateToProps,
+    mapDispatchToProps
+)(Home);
 
 const styles = StyleSheet.create({
     gridView: {
