@@ -5,7 +5,8 @@ import GridView from 'react-native-super-grid';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { connect } from 'react-redux';
 import {bindActionCreators} from 'redux';
-import * as colorActions from '../redux/actions/backgroundColor'
+import * as colorActions from '../redux/actions/backgroundColor';
+import randomMC from 'random-material-color';
 
 //TODO: Change this to a server generated list
 //TODO: Change the icon to dynamically switch between md- and ios-
@@ -49,10 +50,12 @@ class Home extends React.Component {
                     style={styles.gridView}
                     itemWidth={150}
                     items={categories}
-                    renderItem={item => (
-                        <TouchableHighlight onPress={() => { this.props.navigation.navigate('Topic', {topic: item.name, color: item.color}) }}>
+                    renderItem={item => {
+                        const itemColor = randomMC.getColor();
+                        return (
+                        <TouchableHighlight onPress={() => { this.props.navigation.navigate('Topic', {topic: item.name, color: itemColor}) }}>
                             <View
-                                style={[styles.itemBox, { backgroundColor: item.color }]}
+                                style={[styles.itemBox, { backgroundColor: itemColor }]}
                             >
                                 <Ionicons
                                     name={"md-" + item.icon}
@@ -62,7 +65,7 @@ class Home extends React.Component {
                                 <Text style={styles.itemText}>{item.name}</Text>
                             </View>
                         </TouchableHighlight>
-                    )} />
+                    )}} />
             </Container>
         );
     }
