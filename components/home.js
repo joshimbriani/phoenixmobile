@@ -1,10 +1,10 @@
 import React from 'react';
-import { Container, Header, Item, Input, Icon, Button, Text } from 'native-base';
-import { Alert, StyleSheet, TouchableHighlight,View } from 'react-native';
+import { Container, Fab, Header, Item, Input, Icon, Button, Text } from 'native-base';
+import { Alert, StyleSheet, TouchableHighlight, View } from 'react-native';
 import GridView from 'react-native-super-grid';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { connect } from 'react-redux';
-import {bindActionCreators} from 'redux';
+import { bindActionCreators } from 'redux';
 import * as colorActions from '../redux/actions/backgroundColor';
 import randomMC from 'random-material-color';
 
@@ -20,15 +20,19 @@ const categories = [{ name: 'IDK', hotness: 1.00, icon: 'help', color: 'aquamari
 { name: 'Ice Cream', hotness: 0.30, icon: 'ice-cream', color: 'slateblue' }];
 
 class Home extends React.Component {
+    state = {
+        active: false,
+    };
+
     componentDidMount() {
-        this.props.colorActions.resetColor(); 
+        this.props.colorActions.resetColor();
     }
 
     static navigationOptions = ({ navigation }) => ({
         title: 'Phoenix',
         headerLeft: <Ionicons
             name="md-menu"
-            style={{paddingLeft: 10}}
+            style={{ paddingLeft: 10 }}
             size={35}
             onPress={() => navigation.navigate('DrawerOpen')} />
     });
@@ -53,19 +57,32 @@ class Home extends React.Component {
                     renderItem={item => {
                         const itemColor = randomMC.getColor();
                         return (
-                        <TouchableHighlight onPress={() => { this.props.navigation.navigate('Topic', {topic: item.name, color: itemColor}) }}>
-                            <View
-                                style={[styles.itemBox, { backgroundColor: itemColor }]}
-                            >
-                                <Ionicons
-                                    name={"md-" + item.icon}
-                                    size={50}
-                                    style={{ color: "white" }}
-                                />
-                                <Text style={styles.itemText}>{item.name}</Text>
-                            </View>
-                        </TouchableHighlight>
-                    )}} />
+                            <TouchableHighlight onPress={() => { this.props.navigation.navigate('Topic', { topic: item.name, color: itemColor }) }}>
+                                <View
+                                    style={[styles.itemBox, { backgroundColor: itemColor }]}
+                                >
+                                    <Ionicons
+                                        name={"md-" + item.icon}
+                                        size={50}
+                                        style={{ color: "white" }}
+                                    />
+                                    <Text style={styles.itemText}>{item.name}</Text>
+                                </View>
+                            </TouchableHighlight>
+                        )
+                    }} />
+                <Fab
+                    active={this.state.active}
+                    containerStyle={{}}
+                    style={{ backgroundColor: '#5067FF' }}
+                    position="bottomRight"
+                    onPress={() => this.props.navigation.navigate('NewEvent', { topic: "" })}>
+                    <Ionicons
+                        name={"md-add"}
+                        size={50}
+                        style={{ color: "white" }}
+                    />
+                </Fab>
             </Container>
         );
     }

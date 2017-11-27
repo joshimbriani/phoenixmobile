@@ -5,6 +5,7 @@ import { SideDrawer } from './sidedrawer';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Home from './home';
 import Topic from './topic';
+import NewEvent from './newevent'
 
 const HomeScreen = () => (
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
@@ -37,6 +38,10 @@ const Homestack = StackNavigator({
     Topic: {
         path: '/topic/:topic',
         screen: Topic,
+    },
+    NewEvent: {
+        path: '/newevent',
+        screen: NewEvent
     }
 });
 
