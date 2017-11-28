@@ -7,19 +7,12 @@ import { bindActionCreators } from 'redux';
 import * as colorActions from '../redux/actions/backgroundColor'
 import ColorScheme from 'color-scheme';
 
-const testData = [
-    { id: 0, title: "Let's Go Skiing 0!", date: Date.now(), capacity: 4, going: 3, color: 'firebrick' },
-    { id: 1, title: "Let's Go Skiing 1!", date: Date.now(), capacity: 4, going: 3, color: 'khaki' },
-    { id: 2, title: "Let's Go Skiing 2!", date: Date.now(), capacity: 4, going: 3, color: 'lawngreen' },
-    { id: 3, title: "Let's Go Skiing 3!", date: Date.now(), capacity: 4, going: 3, color: 'lightcoral' },
-]
-
 class NewEvent extends React.Component {
 
     static navigationOptions = ({ navigation }) => ({
-        title: 'Create a New Event!',
+        title: 'New Event',
         headerLeft: <Ionicons
-            name='ios-close'
+            name='md-close'
             style={{ paddingLeft: 10 }}
             size={35}
             onPress={() => navigation.goBack()} />
