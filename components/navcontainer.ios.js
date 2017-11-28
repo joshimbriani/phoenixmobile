@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleSheet, Text, FlatList, ScrollView, View } from 'react-native';
-import { DrawerNavigator, StackNavigator, DrawerItems } from 'react-navigation';
+import { TabNavigator, StackNavigator, DrawerItems } from 'react-navigation';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Home from './home';
 import Topic from './topic';
@@ -49,11 +49,6 @@ const SuggestedStack = StackNavigator({
         screen: SuggestedScreen,
         navigationOptions: ({ navigation }) => ({
             title: 'Suggested',
-            headerLeft: <Ionicons
-                name="md-menu"
-                style={{paddingLeft: 10}}
-                size={35}
-                onPress={() => navigation.navigate('DrawerOpen')} />
         })
     }
 });
@@ -63,21 +58,16 @@ const ProfileStack = StackNavigator({
         screen: ProfileScreen,
         navigationOptions: ({ navigation }) => ({
             title: 'Profile',
-            headerLeft: <Ionicons
-                name="md-menu"
-                style={{paddingLeft: 10}}
-                size={35}
-                onPress={() => navigation.navigate('DrawerOpen')} />
         })
     }
 });
 
-const NavContainer = DrawerNavigator({
+const NavContainer = TabNavigator({
     Home: {
         screen: Homestack,
         navigationOptions: {
-            drawerLabel: 'Home',
-            drawerIcon: ({ tintColor, focused }) => (
+            tabBarLabel: 'Home',
+            tabBarIcon: ({ tintColor, focused }) => (
                 <Ionicons
                     name='md-home'
                     size={20}
@@ -89,8 +79,8 @@ const NavContainer = DrawerNavigator({
     Suggested: {
         screen: SuggestedStack,
         navigationOptions: {
-            drawerLabel: 'Suggested',
-            drawerIcon: ({ tintColor, focused }) => (
+            tabBarLabel: 'Suggested',
+            tabBarIcon: ({ tintColor, focused }) => (
                 <Ionicons
                     name='md-apps'
                     size={20}
@@ -102,8 +92,8 @@ const NavContainer = DrawerNavigator({
     Profile: {
         screen: ProfileStack,
         navigationOptions: {
-            drawerLabel: 'Profile',
-            drawerIcon: ({ tintColor, focused }) => (
+            tabBarLabel: 'Profile',
+            tabBarIcon: ({ tintColor, focused }) => (
                 <Ionicons
                     name='md-person'
                     size={20}
@@ -121,7 +111,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#fff',
-        paddingTop: 22,
+        marginTop: -22,
     },
     item: {
         padding: 10,

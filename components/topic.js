@@ -53,7 +53,6 @@ class Topic extends React.Component {
     }
 
     render() {
-        StatusBar.setBackgroundColor(this.props.navigation.state.params.color);
         return (
             <Container>
                 <FlatList

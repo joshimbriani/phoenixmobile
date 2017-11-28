@@ -1,6 +1,6 @@
 import React from 'react';
 import { Container, Fab, Header, Item, Input, Icon, Button, Text } from 'native-base';
-import { Alert, StyleSheet, TouchableHighlight, View } from 'react-native';
+import { Alert, Platform, StyleSheet, TouchableHighlight, View } from 'react-native';
 import GridView from 'react-native-super-grid';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { connect } from 'react-redux';
@@ -28,13 +28,16 @@ class Home extends React.Component {
         this.props.colorActions.resetColor();
     }
 
-    static navigationOptions = ({ navigation }) => ({
+    static navigationOptions = (Platform.OS === 'android') ? ({ navigation }) => ({
         title: 'Phoenix',
         headerLeft: <Ionicons
             name="md-menu"
             style={{ paddingLeft: 10 }}
             size={35}
             onPress={() => navigation.navigate('DrawerOpen')} />
+    }) : ({ navigation }) => ({
+        title: 'Phoenix',
+        headerStyle: {paddingTop:-22,}
     });
 
     render() {
