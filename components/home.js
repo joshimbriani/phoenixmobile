@@ -11,9 +11,9 @@ import randomMC from 'random-material-color';
 //TODO: Change this to a server generated list
 //TODO: Change the icon to dynamically switch between md- and ios-
 const categories = [{ name: 'IDK', hotness: 1.00, icon: 'help', color: 'aquamarine' },
-{ name: 'Football', hotness: 0.95, icon: 'football', color: 'blueviolet' },
+{ name: 'baseball', hotness: 0.95, icon: 'football', color: 'blueviolet' },
 { name: 'Rock and Roll', hotness: 0.89, icon: 'microphone', color: 'coral' },
-{ name: 'Taylor Swift', hotness: 0.80, icon: 'musical-note', color: 'crimson' },
+{ name: 'Taylor Swift', hotness: 0.99, icon: 'musical-note', color: 'crimson' },
 { name: 'Pokemon', hotness: 0.70, icon: 'game-controller-a', color: 'darkgoldenrod' },
 { name: 'Programming', hotness: 0.50, icon: 'git-branch', color: 'darkolivegreen' },
 { name: 'Traveling', hotness: 0.45, icon: 'globe', color: 'deeppink' },
