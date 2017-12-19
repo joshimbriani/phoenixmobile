@@ -3,15 +3,15 @@ import { Container, Header, Item, Input, Icon, Button, Text } from 'native-base'
 import { Alert, StatusBar, FlatList, StyleSheet, TouchableHighlight, View } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { connect } from 'react-redux';
-import {bindActionCreators} from 'redux';
+import { bindActionCreators } from 'redux';
 import * as colorActions from '../redux/actions/backgroundColor'
 import ColorScheme from 'color-scheme';
 
 const testData = [
-    {id: 0, title: "Let's Go Skiing 0!", date: Date.now(), capacity: 4, going: 3, color: 'firebrick'},
-    {id: 1, title: "Let's Go Skiing 1!", date: Date.now(), capacity: 4, going: 3, color: 'khaki'},
-    {id: 2, title: "Let's Go Skiing 2!", date: Date.now(), capacity: 4, going: 3, color: 'lawngreen'},
-    {id: 3, title: "Let's Go Skiing 3!", date: Date.now(), capacity: 4, going: 3, color: 'lightcoral'},
+    { id: 0, title: "Let's Go Skiing 0!", date: Date.now(), capacity: 4, going: 3, color: 'firebrick' },
+    { id: 1, title: "Let's Go Skiing 1!", date: Date.now(), capacity: 4, going: 3, color: 'khaki' },
+    { id: 2, title: "Let's Go Skiing 2!", date: Date.now(), capacity: 4, going: 3, color: 'lawngreen' },
+    { id: 3, title: "Let's Go Skiing 3!", date: Date.now(), capacity: 4, going: 3, color: 'lightcoral' },
 ]
 
 class Topic extends React.Component {
@@ -28,21 +28,24 @@ class Topic extends React.Component {
 
     constructor(props) {
         super(props);
-        this.state ={
+        this.state = {
             colors: ["fff"]
         }
     }
 
     componentDidMount() {
         this.props.colorActions.changeColor(this.props.navigation.state.params.color);
+        fetch("http://10.0.2.2:8000/events/?format=json").then(response => response.json())
+            .then(responseObj => {
+                this.setState({ data: responseObj });
+            })
     }
 
     componentWillMount() {
         var mColors;
         if (this.state.colors && this.state.colors.length === 1 && this.state.colors[0] === "fff") {
             mColors = (new ColorScheme()).from_hex(this.props.navigation.state.params.color.substring(1)).scheme('mono');
-            console.log(mColors.colors());
-            this.setState({colors: mColors.colors()});
+            this.setState({ colors: mColors.colors() });
         } else {
             mColors = this.state.colors;
         }
@@ -57,15 +60,16 @@ class Topic extends React.Component {
         return (
             <Container>
                 <FlatList
-                    data={testData}
+                    data={this.state.data}
                     contentContainerStyle={{ paddingTop: 10 }}
                     keyExtractor={(item, index) => index}
                     renderItem={({ item, index }) => {
                         return (
-                        <View key={item.id} style={[styles.listitem, {backgroundColor: "#" + this.state.colors[index % this.state.colors.length]}]}>
-                            <Text style={styles.itemText}>{item.title}</Text>
-                        </View>
-                    )}}
+                            <View key={item.id} style={[styles.listitem, { backgroundColor: "#" + this.state.colors[index % this.state.colors.length] }]}>
+                                <Text style={styles.itemText}>{item.title}</Text>
+                            </View>
+                        )
+                    }}
                 />
             </Container>
         );
