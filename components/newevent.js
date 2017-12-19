@@ -22,7 +22,7 @@ class NewEvent extends React.Component {
         super(props);
         this.state = {
             title: "",
-            description: "",
+            description: ""
         }
     }
 

@@ -11,9 +11,9 @@ import randomMC from 'random-material-color';
 //TODO: Change this to a server generated list
 //TODO: Change the icon to dynamically switch between md- and ios-
 const categories = [{ name: 'IDK', hotness: 1.00, icon: 'help', color: 'aquamarine' },
-{ name: 'Football', hotness: 0.95, icon: 'football', color: 'blueviolet' },
+{ name: 'baseball', hotness: 0.95, icon: 'football', color: 'blueviolet' },
 { name: 'Rock and Roll', hotness: 0.89, icon: 'microphone', color: 'coral' },
-{ name: 'Taylor Swift', hotness: 0.80, icon: 'musical-note', color: 'crimson' },
+{ name: 'Taylor Swift', hotness: 0.99, icon: 'musical-note', color: 'crimson' },
 { name: 'Pokemon', hotness: 0.70, icon: 'game-controller-a', color: 'darkgoldenrod' },
 { name: 'Programming', hotness: 0.50, icon: 'git-branch', color: 'darkolivegreen' },
 { name: 'Traveling', hotness: 0.45, icon: 'globe', color: 'deeppink' },
@@ -22,10 +22,15 @@ const categories = [{ name: 'IDK', hotness: 1.00, icon: 'help', color: 'aquamari
 class Home extends React.Component {
     state = {
         active: false,
+        data: []
     };
 
     componentDidMount() {
         this.props.colorActions.resetColor();
+        fetch("http://10.0.2.2:8000/topics/?format=json").then(response => response.json())
+            .then(responseObj => {
+                this.setState({ data: [{name:"IDK", color: "#0000ff", icon: "help"}].concat(responseObj) });
+            })
     }
 
     static navigationOptions = (Platform.OS === 'android') ? ({ navigation }) => ({
@@ -56,16 +61,16 @@ class Home extends React.Component {
                     contentContainerStyle={{ paddingBottom: 10 }}
                     style={styles.gridView}
                     itemWidth={150}
-                    items={categories}
+                    enableEmptySections
+                    items={this.state.data}
                     renderItem={item => {
-                        const itemColor = randomMC.getColor();
                         return (
-                            <TouchableHighlight onPress={() => { this.props.navigation.navigate('Topic', { topic: item.name, color: itemColor }) }}>
+                            <TouchableHighlight onPress={() => { this.props.navigation.navigate('Topic', { topic: item.name, color: item.color.substring(0) }) }}>
                                 <View
-                                    style={[styles.itemBox, { backgroundColor: itemColor }]}
+                                    style={[styles.itemBox, { backgroundColor: item.color }]}
                                 >
                                     <Ionicons
-                                        name={"md-" + item.icon}
+                                        name={"md-" + (item.icon || 'add')}
                                         size={50}
                                         style={{ color: "white" }}
                                     />
