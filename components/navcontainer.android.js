@@ -5,13 +5,8 @@ import { SideDrawer } from './sidedrawer';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Home from './home';
 import Topic from './topic';
-import NewEvent from './newevent'
-
-const HomeScreen = () => (
-    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-        <Text>Home Screen</Text>
-    </View>
-);
+import Settings from './settings';
+import NewEvent from './newevent';
 
 const ProfileScreen = () => (
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
@@ -22,12 +17,6 @@ const ProfileScreen = () => (
 const SuggestedScreen = () => (
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
         <Text>Suggested Screen</Text>
-    </View>
-);
-
-const TopicScreen = () => (
-    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-        <Text>Topic Screen</Text>
     </View>
 );
 
@@ -42,6 +31,20 @@ const Homestack = StackNavigator({
     NewEvent: {
         path: '/newevent',
         screen: NewEvent
+    }
+});
+
+const Settingsstack = StackNavigator({
+    Settings: {
+        screen: Settings,
+        navigationOptions: ({ navigation }) => ({
+            title: 'Settings',
+            headerLeft: <Ionicons
+                name="md-menu"
+                style={{paddingLeft: 10}}
+                size={35}
+                onPress={() => navigation.navigate('DrawerOpen')} />
+        })
     }
 });
 

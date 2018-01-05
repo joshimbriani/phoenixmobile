@@ -9,6 +9,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import * as colorActions from '../redux/actions/backgroundColor';
 import randomMC from 'random-material-color';
+import SettingsList from 'react-native-settings-list';
 
 class Settings extends React.Component {
     constructor(){
@@ -20,15 +21,16 @@ render() {
   var bgColor = '#DCE3F4';
   return (
     <View style={{backgroundColor:'#EFEFF4',flex:1}}>
-      <View style={{borderBottomWidth:1, backgroundColor:'#f7f7f8',borderColor:'#c8c7cc'}}>
-        <Text style={{alignSelf:'center',marginTop:30,marginBottom:10,fontWeight:'bold',fontSize:16}}>Settings</Text>
-      </View>
       <View style={{backgroundColor:'#EFEFF4',flex:1}}>
         <SettingsList borderColor='#c8c7cc' defaultItemSize={50}>
           <SettingsList.Header headerStyle={{marginTop:15}}/>
           <SettingsList.Item
             icon={
-                <Image style={styles.imageStyle} source={require('./images/airplane.png')}/>
+                <Ionicons
+                    name='md-settings'
+                    size={20}
+                    style={{  }}
+                />
             }
             hasSwitch={true}
             switchState={this.state.switchValue}
@@ -37,26 +39,45 @@ render() {
             title='Airplane Mode'
           />
           <SettingsList.Item
-            icon={<Image style={styles.imageStyle} source={require('./images/wifi.png')}/>}
+            icon={
+                <Ionicons
+                    name='md-settings'
+                    size={20}
+                    style={{ }}
+                />
+            }
             title='Wi-Fi'
             titleInfo='Bill Wi The Science Fi'
             titleInfoStyle={styles.titleInfoStyle}
             onPress={() => Alert.alert('Route to Wifi Page')}
           />
           <SettingsList.Item
-            icon={<Image style={styles.imageStyle} source={require('./images/blutooth.png')}/>}
+            icon={<Ionicons
+                    name='md-settings'
+                    size={20}
+                    style={{ }}
+                />
+            }
             title='Blutooth'
             titleInfo='Off'
             titleInfoStyle={styles.titleInfoStyle}
             onPress={() => Alert.alert('Route to Blutooth Page')}
           />
           <SettingsList.Item
-            icon={<Image style={styles.imageStyle} source={require('./images/cellular.png')}/>}
+            icon={<Ionicons
+                    name='md-settings'
+                    size={20}
+                    style={{ }}
+                />}
             title='Cellular'
             onPress={() => Alert.alert('Route To Cellular Page')}
           />
           <SettingsList.Item
-            icon={<Image style={styles.imageStyle} source={require('./images/hotspot.png')}/>}
+            icon={<Ionicons
+                    name='md-settings'
+                    size={20}
+                    style={{ }}
+                />}
             title='Personal Hotspot'
             titleInfo='Off'
             titleInfoStyle={styles.titleInfoStyle}
@@ -64,28 +85,48 @@ render() {
           />
           <SettingsList.Header headerStyle={{marginTop:15}}/>
           <SettingsList.Item
-            icon={<Image style={styles.imageStyle} source={require('./images/notifications.png')}/>}
+            icon={<Ionicons
+                    name='md-settings'
+                    size={20}
+                    style={{ }}
+                />}
             title='Notifications'
             onPress={() => Alert.alert('Route To Notifications Page')}
           />
           <SettingsList.Item
-            icon={<Image style={styles.imageStyle} source={require('./images/control.png')}/>}
+            icon={<Ionicons
+                    name='md-settings'
+                    size={20}
+                    style={{  }}
+                />}
             title='Control Center'
             onPress={() => Alert.alert('Route To Control Center Page')}
           />
           <SettingsList.Item
-            icon={<Image style={styles.imageStyle} source={require('./images/dnd.png')}/>}
+            icon={<Ionicons
+                    name='md-settings'
+                    size={20}
+                    style={{ }}
+                />}
             title='Do Not Disturb'
             onPress={() => Alert.alert('Route To Do Not Disturb Page')}
           />
           <SettingsList.Header headerStyle={{marginTop:15}}/>
           <SettingsList.Item
-            icon={<Image style={styles.imageStyle} source={require('./images/general.png')}/>}
+            icon={<Ionicons
+                    name='md-settings'
+                    size={20}
+                    style={{ }}
+                />}
             title='General'
             onPress={() => Alert.alert('Route To General Page')}
           />
           <SettingsList.Item
-            icon={<Image style={styles.imageStyle} source={require('./images/display.png')}/>}
+            icon={<Ionicons
+                    name='md-settings'
+                    size={20}
+                    style={{  }}
+                />}
             title='Display & Brightness'
             onPress={() => Alert.alert('Route To Display Page')}
           />

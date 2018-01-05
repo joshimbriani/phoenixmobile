@@ -4,13 +4,8 @@ import { TabNavigator, StackNavigator, DrawerItems } from 'react-navigation';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Home from './home';
 import Topic from './topic';
+import Settings from './settings';
 import NewEvent from './newevent'
-
-const HomeScreen = () => (
-    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-        <Text>Home Screen</Text>
-    </View>
-);
 
 const ProfileScreen = () => (
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
@@ -21,12 +16,6 @@ const ProfileScreen = () => (
 const SuggestedScreen = () => (
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
         <Text>Suggested Screen</Text>
-    </View>
-);
-
-const TopicScreen = () => (
-    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-        <Text>Topic Screen</Text>
     </View>
 );
 
@@ -49,6 +38,15 @@ const SuggestedStack = StackNavigator({
         screen: SuggestedScreen,
         navigationOptions: ({ navigation }) => ({
             title: 'Suggested',
+        })
+    }
+});
+
+const Settingsstack = StackNavigator({
+    Settings: {
+        screen: Settings,
+        navigationOptions: ({ navigation }) => ({
+            title: 'Settings',
         })
     }
 });
