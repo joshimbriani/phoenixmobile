@@ -8,17 +8,6 @@ import { bindActionCreators } from 'redux';
 import * as colorActions from '../redux/actions/backgroundColor';
 import randomMC from 'random-material-color';
 
-//TODO: Change this to a server generated list
-//TODO: Change the icon to dynamically switch between md- and ios-
-const categories = [{ name: 'IDK', hotness: 1.00, icon: 'help', color: 'aquamarine' },
-{ name: 'baseball', hotness: 0.95, icon: 'football', color: 'blueviolet' },
-{ name: 'Rock and Roll', hotness: 0.89, icon: 'microphone', color: 'coral' },
-{ name: 'Taylor Swift', hotness: 0.99, icon: 'musical-note', color: 'crimson' },
-{ name: 'Pokemon', hotness: 0.70, icon: 'game-controller-a', color: 'darkgoldenrod' },
-{ name: 'Programming', hotness: 0.50, icon: 'git-branch', color: 'darkolivegreen' },
-{ name: 'Traveling', hotness: 0.45, icon: 'globe', color: 'deeppink' },
-{ name: 'Ice Cream', hotness: 0.30, icon: 'ice-cream', color: 'slateblue' }];
-
 class Home extends React.Component {
     state = {
         active: false,
@@ -27,7 +16,11 @@ class Home extends React.Component {
 
     componentDidMount() {
         this.props.colorActions.resetColor();
+<<<<<<< HEAD
         fetch("http://10.0.2.2:8000/api/v1/topics/?format=json").then(response => response.json())
+=======
+        fetch("http://127.0.0.1:8000/topics/?format=json").then(response => response.json())
+>>>>>>> e4f8014b5848e762ac952dcc32db727b1aee84d3
             .then(responseObj => {
                 this.setState({ data: [{name:"IDK", color: "#0000ff", icon: "help"}].concat(responseObj) });
             })
@@ -70,7 +63,7 @@ class Home extends React.Component {
                                     style={[styles.itemBox, { backgroundColor: item.color }]}
                                 >
                                     <Ionicons
-                                        name={"md-" + (item.icon || 'add')}
+                                        name={"md-" + (item.icon || 'aperture')}
                                         size={50}
                                         style={{ color: "white" }}
                                     />
