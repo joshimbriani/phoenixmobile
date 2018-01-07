@@ -29,13 +29,14 @@ class Topic extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            colors: ["fff"]
+            colors: ["ffffff"],
+            data: []
         }
     }
 
     componentDidMount() {
         this.props.colorActions.changeColor(this.props.navigation.state.params.color);
-        fetch("http://10.0.2.2:8000/events/?format=json").then(response => response.json())
+        fetch("http://10.0.2.2:8000/api/v1/events/?format=json").then(response => response.json())
             .then(responseObj => {
                 this.setState({ data: responseObj });
             })
@@ -56,22 +57,32 @@ class Topic extends React.Component {
     }
 
     render() {
-        return (
-            <Container>
-                <FlatList
-                    data={this.state.data}
-                    contentContainerStyle={{ paddingTop: 10 }}
-                    keyExtractor={(item, index) => index}
-                    renderItem={({ item, index }) => {
-                        return (
-                            <View key={item.id} style={[styles.listitem, { backgroundColor: "#" + this.state.colors[index % this.state.colors.length] }]}>
-                                <Text style={styles.itemText}>{item.title}</Text>
-                            </View>
-                        )
-                    }}
-                />
-            </Container>
-        );
+        if (this.state.data.length > 0) {
+            return (
+                <Container>
+                    <FlatList
+                        data={this.state.data}
+                        contentContainerStyle={{ paddingTop: 10 }}
+                        keyExtractor={(item, index) => index}
+                        renderItem={({ item, index }) => {
+                            return (
+                                <TouchableHighlight onPress={() => { this.props.navigation.navigate('EventDetail', { topic: item.name, id: item.id, color: item.color.substring(0) }) }}>
+                                    <View key={item.id} style={[styles.listitem, { backgroundColor: "#" + this.state.colors[index % this.state.colors.length] }]}>
+                                        <Text style={styles.itemText}>{item.title}</Text>
+                                    </View>
+                                </TouchableHighlight>
+                            )
+                        }}
+                    />
+                </Container>
+            );
+        } else {
+            return (
+                <Container>
+                    <Text>No Events found for this topic! Blaze the trail and create an event!</Text>
+                </Container>
+            )
+        }
     }
 }
 
