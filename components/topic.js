@@ -7,13 +7,6 @@ import { bindActionCreators } from 'redux';
 import * as colorActions from '../redux/actions/backgroundColor'
 import ColorScheme from 'color-scheme';
 
-const testData = [
-    { id: 0, title: "Let's Go Skiing 0!", date: Date.now(), capacity: 4, going: 3, color: 'firebrick' },
-    { id: 1, title: "Let's Go Skiing 1!", date: Date.now(), capacity: 4, going: 3, color: 'khaki' },
-    { id: 2, title: "Let's Go Skiing 2!", date: Date.now(), capacity: 4, going: 3, color: 'lawngreen' },
-    { id: 3, title: "Let's Go Skiing 3!", date: Date.now(), capacity: 4, going: 3, color: 'lightcoral' },
-]
-
 class Topic extends React.Component {
 
     static navigationOptions = ({ navigation }) => ({
@@ -36,7 +29,7 @@ class Topic extends React.Component {
 
     componentDidMount() {
         this.props.colorActions.changeColor(this.props.navigation.state.params.color);
-        fetch("http://10.0.2.2:8000/api/v1/events/?format=json").then(response => response.json())
+        fetch("http://10.0.2.2:8000/api/v1/events/search?topic=" + this.props.navigation.state.params.id).then(response => response.json())
             .then(responseObj => {
                 this.setState({ data: responseObj });
             })
@@ -66,7 +59,7 @@ class Topic extends React.Component {
                         keyExtractor={(item, index) => index}
                         renderItem={({ item, index }) => {
                             return (
-                                <TouchableHighlight onPress={() => { this.props.navigation.navigate('EventDetail', { topic: item.name, id: item.id, color: item.color.substring(0) }) }}>
+                                <TouchableHighlight onPress={() => { this.props.navigation.navigate('EventDetail', { event: item.title, id: item.id, color: this.props.navigation.state.params.color }) }}>
                                     <View key={item.id} style={[styles.listitem, { backgroundColor: "#" + this.state.colors[index % this.state.colors.length] }]}>
                                         <Text style={styles.itemText}>{item.title}</Text>
                                     </View>

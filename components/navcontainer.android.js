@@ -7,6 +7,7 @@ import Home from './home';
 import Topic from './topic';
 import Settings from './settings';
 import NewEvent from './newevent';
+import EventDetail from './eventdetail'
 
 const ProfileScreen = () => (
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
@@ -31,6 +32,10 @@ const Homestack = StackNavigator({
     NewEvent: {
         path: '/newevent',
         screen: NewEvent
+    },
+    EventDetail: {
+        path: '/event/:event',
+        screen: EventDetail
     }
 });
 
@@ -77,19 +82,7 @@ const ProfileStack = StackNavigator({
 });
 
 const NavContainer = DrawerNavigator({
-    Settings: {
-        screen: Settingsstack,
-        navigationOptions: {
-            tabBarLabel: 'Settings',
-            tabBarIcon: ({ tintColor, focused }) => (
-                <Ionicons
-                    name='md-settings'
-                    size={20}
-                    style={{ color: tintColor }}
-                />
-            ),
-        },
-    },
+    
     Home: {
         screen: Homestack,
         navigationOptions: {
@@ -123,6 +116,19 @@ const NavContainer = DrawerNavigator({
             drawerIcon: ({ tintColor, focused }) => (
                 <Ionicons
                     name='md-person'
+                    size={20}
+                    style={{ color: tintColor }}
+                />
+            ),
+        },
+    },
+    Settings: {
+        screen: Settingsstack,
+        navigationOptions: {
+            drawerLabel: 'Settings',
+            drawerIcon: ({ tintColor, focused }) => (
+                <Ionicons
+                    name='md-settings'
                     size={20}
                     style={{ color: tintColor }}
                 />

@@ -61,19 +61,6 @@ const ProfileStack = StackNavigator({
 });
 
 const NavContainer = TabNavigator({
-    Settings: {
-        screen: Settingsstack,
-        navigationOptions: {
-            tabBarLabel: 'Settings',
-            tabBarIcon: ({ tintColor, focused }) => (
-                <Ionicons
-                    name='md-settings'
-                    size={20}
-                    style={{ color: tintColor }}
-                />
-            ),
-        },
-    },
     Home: {
         screen: Homestack,
         navigationOptions: {
@@ -107,6 +94,19 @@ const NavContainer = TabNavigator({
             tabBarIcon: ({ tintColor, focused }) => (
                 <Ionicons
                     name='md-person'
+                    size={20}
+                    style={{ color: tintColor }}
+                />
+            ),
+        },
+    },
+    Settings: {
+        screen: Settingsstack,
+        navigationOptions: {
+            tabBarLabel: 'Settings',
+            tabBarIcon: ({ tintColor, focused }) => (
+                <Ionicons
+                    name='md-settings'
                     size={20}
                     style={{ color: tintColor }}
                 />
