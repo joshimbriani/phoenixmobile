@@ -18,7 +18,7 @@ class Settings extends React.Component {
   this.state = {switchValue: false};
 }
 render() {
-  var bgColor = '#DCE3F4';
+  var bgColor = '#0000ff'; //why doesn't this do anything? This should be blue now, to debug
   return (
     <View style={{backgroundColor:'#EFEFF4',flex:1}}>
       <View style={{backgroundColor:'#EFEFF4',flex:1}}>
@@ -27,8 +27,21 @@ render() {
           <SettingsList.Item
             icon={
                 <Ionicons
-                    name='md-settings'
-                    size={20}
+                    name='md-contact' // do we want this to be "person"
+                    size={30}
+                    style={{ }}
+                />
+            }
+            title='Profile'
+            titleInfo='User Name' // this will need to be linked to the name of the wifi
+            titleInfoStyle={styles.titleInfoStyle}
+            onPress={() => Alert.alert('Route to Profile Page')} //left this in as an example of the navigation alerts; could use for any (or no) settings
+          />
+          <SettingsList.Item
+            icon={
+                <Ionicons
+                    name='md-notifications'
+                    size={30}
                     style={{  }}
                 />
             }
@@ -36,99 +49,76 @@ render() {
             switchState={this.state.switchValue}
             switchOnValueChange={this.onValueChange}
             hasNavArrow={false}
-            title='Airplane Mode'
+            title='Notifications'
           />
           <SettingsList.Item
             icon={
                 <Ionicons
-                    name='md-settings'
-                    size={20}
-                    style={{ }}
+                    name='md-sunny'
+                    size={30}
+                    style={{  }}
                 />
             }
-            title='Wi-Fi'
-            titleInfo='Bill Wi The Science Fi'
-            titleInfoStyle={styles.titleInfoStyle}
-            onPress={() => Alert.alert('Route to Wifi Page')}
-          />
-          <SettingsList.Item
-            icon={<Ionicons
-                    name='md-settings'
-                    size={20}
-                    style={{ }}
-                />
-            }
-            title='Blutooth'
-            titleInfo='Off'
-            titleInfoStyle={styles.titleInfoStyle}
-            onPress={() => Alert.alert('Route to Blutooth Page')}
-          />
-          <SettingsList.Item
-            icon={<Ionicons
-                    name='md-settings'
-                    size={20}
-                    style={{ }}
-                />}
-            title='Cellular'
-            onPress={() => Alert.alert('Route To Cellular Page')}
-          />
-          <SettingsList.Item
-            icon={<Ionicons
-                    name='md-settings'
-                    size={20}
-                    style={{ }}
-                />}
-            title='Personal Hotspot'
-            titleInfo='Off'
-            titleInfoStyle={styles.titleInfoStyle}
-            onPress={() => Alert.alert('Route To Hotspot Page')}
+            hasSwitch={true}
+            switchState={this.state.switchValue}
+            switchOnValueChange={this.onValueChange}
+            hasNavArrow={false}
+            title='Night Mode'
           />
           <SettingsList.Header headerStyle={{marginTop:15}}/>
           <SettingsList.Item
-            icon={<Ionicons
-                    name='md-settings'
-                    size={20}
+            icon={
+                <Ionicons
+                    name='md-locate'
+                    size={30}
                     style={{ }}
-                />}
-            title='Notifications'
-            onPress={() => Alert.alert('Route To Notifications Page')}
+                />
+            }
+            title='Radius'
+            titleInfo='50 km' // link to the stack beyond it with the distance & unit
+            titleInfoStyle={styles.titleInfoStyle}
           />
           <SettingsList.Item
             icon={<Ionicons
-                    name='md-settings'
-                    size={20}
-                    style={{  }}
-                />}
-            title='Control Center'
-            onPress={() => Alert.alert('Route To Control Center Page')}
-          />
-          <SettingsList.Item
-            icon={<Ionicons
-                    name='md-settings'
-                    size={20}
+                    name='md-pin'
+                    size={30}
                     style={{ }}
                 />}
-            title='Do Not Disturb'
-            onPress={() => Alert.alert('Route To Do Not Disturb Page')}
+            title='Locations'
           />
           <SettingsList.Header headerStyle={{marginTop:15}}/>
+          
           <SettingsList.Item
             icon={<Ionicons
-                    name='md-settings'
-                    size={20}
-                    style={{ }}
+                    name='md-lock'
+                    size={30}
+                    style={{  }}
                 />}
-            title='General'
-            onPress={() => Alert.alert('Route To General Page')}
+            title='Privacy'
           />
           <SettingsList.Item
             icon={<Ionicons
-                    name='md-settings'
-                    size={20}
-                    style={{  }}
+                    name='md-hand'
+                    size={30}
+                    style={{ }}
                 />}
-            title='Display & Brightness'
-            onPress={() => Alert.alert('Route To Display Page')}
+            title='Restricted Mode'
+          />
+          <SettingsList.Item
+            icon={<Ionicons
+                    name='md-help-circle'
+                    size={30}
+                    style={{ }}
+                />}
+            title='Help'
+          />
+          <SettingsList.Item
+            icon={<Ionicons
+                    name='md-folder-open'
+                    size={30}
+                    style={{ }}
+                />}
+            title='Legal'
           />
         </SettingsList>
       </View>
