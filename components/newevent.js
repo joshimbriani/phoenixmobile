@@ -1,7 +1,7 @@
 import React from 'react';
 import { Container, Content, Form, Header, Item, Input, Icon, Label, Button, Text } from 'native-base';
 import { Alert, StatusBar, FlatList, StyleSheet, TouchableHighlight, View } from 'react-native';
-import Ionicons from 'react-native-vector-icons/Ionicons';
+import PlatformIonicon from './utils/platformIonicon';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import * as colorActions from '../redux/actions/backgroundColor'
@@ -14,8 +14,8 @@ class NewEvent extends React.Component {
 
     static navigationOptions = ({ navigation }) => ({
         title: 'New Event',
-        headerLeft: <Ionicons
-            name='md-close'
+        headerLeft: <PlatformIonicon
+            name='close'
             style={{ paddingLeft: 10 }}
             size={35}
             onPress={() => navigation.goBack()} />
@@ -61,7 +61,7 @@ class NewEvent extends React.Component {
 
     render() {
         return (
-            <Swiper style={styles.wrapper} showsButtons={true} loop={false} removeClippedSubviews={false} >
+            <Swiper nextButton={<Text>&gt;</Text>} prevButton={<Text>&lt;</Text>} style={styles.wrapper} showsButtons={true} loop={false} removeClippedSubviews={false} >
                 <View>
                     <View style={[styles.header, { backgroundColor: "red" }]}>
                         <Text style={styles.h1}>What?</Text>

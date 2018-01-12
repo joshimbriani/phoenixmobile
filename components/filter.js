@@ -2,33 +2,21 @@ import React from 'react';
 import { Container, Fab, Header, Item, Input, Icon, Button, Text } from 'native-base';
 import { Alert, Platform, StyleSheet, TouchableHighlight, View } from 'react-native';
 import GridView from 'react-native-super-grid';
+import PlatformIonicon from './utils/platformIonicon';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import * as colorActions from '../redux/actions/backgroundColor';
-import PlatformIonicon from './utils/platformIonicon';
 import randomMC from 'random-material-color';
 
-class Home extends React.Component {
-    state = {
-        active: false,
-        data: []
-    };
-
-    componentDidMount() {
-        this.props.colorActions.resetColor();
-        fetch("http://10.0.2.2:8000/api/v1/topics/?format=json").then(response => response.json())
-            .then(responseObj => {
-                this.setState({ data: [{name:"IDK", color: "#0000ff", icon: "help"}].concat(responseObj) });
-            })
-    }
+class Filter extends React.Component {
 
     static navigationOptions = (Platform.OS === 'android') ? ({ navigation }) => ({
         title: 'Phoenix',
         headerLeft: <PlatformIonicon
-            name="menu"
+            name="close"
             style={{ paddingLeft: 10 }}
             size={35}
-            onPress={() => navigation.navigate('DrawerOpen')} />
+            onPress={() => navigation.goBack()} />
     }) : ({ navigation }) => ({
         title: 'Phoenix',
         headerStyle: {paddingTop:-22,}
@@ -75,7 +63,7 @@ class Home extends React.Component {
                     position="bottomRight"
                     onPress={() => this.props.navigation.navigate('NewEvent', { topic: "" })}>
                     <PlatformIonicon
-                        name={"add"}
+                        name="add"
                         size={50}
                         style={{ color: "white" }}
                     />
@@ -100,7 +88,7 @@ function mapDispatchToProps(dispatch) {
 export default connect(
     mapStateToProps,
     mapDispatchToProps
-)(Home);
+)(Filter);
 
 const styles = StyleSheet.create({
     gridView: {
