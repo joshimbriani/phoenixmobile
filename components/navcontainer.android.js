@@ -7,7 +7,8 @@ import Home from './home';
 import Topic from './topic';
 import Settings from './settings';
 import NewEvent from './newevent';
-import EventDetail from './eventdetail'
+import EventDetail from './eventdetail';
+import Filter from './filter';
 
 const ProfileScreen = () => (
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
@@ -36,10 +37,14 @@ const Homestack = StackNavigator({
     EventDetail: {
         path: '/event/:event',
         screen: EventDetail
+    },
+    Filter: {
+        path: '/filter',
+        screen: Filter
     }
 });
 
-const Settingsstack = StackNavigator({
+const SettingsStack = StackNavigator({
     Settings: {
         screen: Settings,
         navigationOptions: ({ navigation }) => ({
@@ -123,7 +128,7 @@ const NavContainer = DrawerNavigator({
         },
     },
     Settings: {
-        screen: Settingsstack,
+        screen: SettingsStack,
         navigationOptions: {
             drawerLabel: 'Settings',
             drawerIcon: ({ tintColor, focused }) => (

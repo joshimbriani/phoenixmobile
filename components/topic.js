@@ -16,7 +16,7 @@ class Topic extends React.Component {
             name='md-funnel'
             style={{ paddingRight: 10 }}
             size={35}
-            onPress={() => navigation.navigate('DrawerOpen')} />
+            onPress={() => navigation.navigate('Filter')} />
     });
 
     constructor(props) {
