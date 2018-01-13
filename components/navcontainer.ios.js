@@ -4,11 +4,15 @@ import { TabNavigator, StackNavigator, DrawerItems } from 'react-navigation';
 import PlatformIonicon from './utils/platformIonicon';
 import Home from './home';
 import Topic from './topic';
+import NewEvent from './newevent';
 import Settings from './settings';
 import ProfileSettings from './profile-settings';
-import NewEvent from './newevent';
 import LocationsSettings from './locations-settings';
-import ProfileSettings from './profile-settings';
+import PrivacySettings from './privacy-settings';
+import RestrictedModeSettings from './restricted-mode-settings';
+import HelpSettings from './help-settings';
+import LegalSettings from './legal-settings';
+
 
 const ProfileScreen = () => (
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
@@ -62,6 +66,30 @@ const SettingsStack = StackNavigator({
         screen: ProfileSettings,
         navigationOptions: ({ navigation }) => ({
             title: 'Profile Settings',
+        })
+    },
+    PrivacySettings: {
+        screen: PrivacySettings,
+        navigationOptions: ({ navigation }) => ({
+            title: 'Privacy Settings',
+        })
+    },
+    RestrictedModeSettings: {
+        screen: RestrictedModeSettings,
+        navigationOptions: ({ navigation }) => ({
+            title: 'Restricted Mode Settings',
+        })
+    },
+    HelpSettings: {
+        screen: HelpSettings,
+        navigationOptions: ({ navigation }) => ({
+            title: 'Help Settings',
+        })
+    },
+    LegalSettings: {
+        screen: LegalSettings,
+        navigationOptions: ({ navigation }) => ({
+            title: 'Legal Settings',
         })
     }
 });

@@ -97,6 +97,7 @@ render() {
                     style={{paddingTop: 10, paddingLeft: 5}}
                 />}
             title='Privacy'
+            onPress={() => this.props.navigation.navigate("PrivacySettings",{})}
           />
           <SettingsList.Item
             icon={<PlatformIonicon
@@ -105,6 +106,7 @@ render() {
                     style={{paddingTop: 10, paddingLeft: 5}}
                 />}
             title='Restricted Mode'
+            onPress={() => this.props.navigation.navigate("RestrictedModeSettings",{})}
           />
           <SettingsList.Item
             icon={<PlatformIonicon
@@ -113,6 +115,7 @@ render() {
                     style={{paddingTop: 10, paddingLeft: 5}}
                 />}
             title='Help'
+            onPress={() => this.props.navigation.navigate("HelpSettings",{})}
           />
           <SettingsList.Item
             icon={<PlatformIonicon
@@ -121,6 +124,7 @@ render() {
                     style={{paddingTop: 10, paddingLeft: 5}}
                 />}
             title='Legal'
+            onPress={() => this.props.navigation.navigate("LegalSettings",{})}
           />
         </SettingsList>
       </View>
