@@ -5,6 +5,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import Home from './home';
 import Topic from './topic';
 import Settings from './settings';
+import ProfileSettings from './profile-settings';
 import NewEvent from './newevent'
 
 const ProfileScreen = () => (
@@ -47,6 +48,13 @@ const Settingsstack = StackNavigator({
         screen: Settings,
         navigationOptions: ({ navigation }) => ({
             title: 'Settings',
+        })
+    },
+
+    ProfileSettings: {
+        screen: ProfileSettings,
+        navigationOptions: ({ navigation }) => ({
+            title: 'Profile Settings',
         })
     }
 });
