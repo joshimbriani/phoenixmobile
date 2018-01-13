@@ -1,21 +1,13 @@
 import React from 'react';
 import { Container, Header, Item, Input, Icon, Button, Text } from 'native-base';
 import { Alert, StatusBar, FlatList, StyleSheet, TouchableHighlight, View } from 'react-native';
-import Ionicons from 'react-native-vector-icons/Ionicons';
+import PlatformIonicon from './utils/platformIonicon';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import * as colorActions from '../redux/actions/backgroundColor'
 import ColorScheme from 'color-scheme';
 
-class Topic extends React.Component {
-
-    static navigationOptions = ({ navigation }) => ({ //keep this for the android side
-        headerRight: <Ionicons
-            name='md-funnel'
-            style={{ paddingRight: 10 }}
-            size={35}
-            onPress={() => navigation.navigate('DrawerOpen')} />
-    });
+class ProfileSettings extends React.Component {
 
     render() {
             return (
@@ -42,7 +34,7 @@ function mapDispatchToProps(dispatch) {
 export default connect(
     mapStateToProps,
     mapDispatchToProps
-)(Topic);
+)(ProfileSettings);
 
 const styles = StyleSheet.create({
     listitem: {

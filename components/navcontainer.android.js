@@ -9,6 +9,8 @@ import Settings from './settings';
 import NewEvent from './newevent';
 import EventDetail from './eventdetail';
 import Filter from './filter';
+import LocationsSettings from './locations-settings';
+import ProfileSettings from './profile-settings';
 
 const ProfileScreen = () => (
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
@@ -55,7 +57,20 @@ const SettingsStack = StackNavigator({
                 size={35}
                 onPress={() => navigation.navigate('DrawerOpen')} />
         })
+    },
+    LocationsSettings: {
+        screen: LocationsSettings,
+        navigationOptions: ({ navigation }) => ({
+            title: 'Locations Settings',
+        })
+    },
+    ProfileSettings: {
+        screen: ProfileSettings,
+        navigationOptions: ({ navigation }) => ({
+            title: 'Profile Settings',
+        })
     }
+
 });
 
 const SuggestedStack = StackNavigator({

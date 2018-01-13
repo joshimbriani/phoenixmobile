@@ -28,7 +28,7 @@ render() {
           <SettingsList.Item
             icon={
                 <PlatformIonicon
-                    name='contact' // do we want this to be "person"
+                    name='contact' // do we want this to be "person" - yes!
                     size={30}
                     style={{ paddingTop: 10, paddingLeft: 5}}
                 />
