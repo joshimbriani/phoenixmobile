@@ -86,7 +86,7 @@ render() {
                     style={{paddingTop: 10, paddingLeft: 5}}
                 />}
             title='Locations'
-            onPress={() => this.props.navigation.navigate("ProfileSettings",{})}
+            onPress={() => this.props.navigation.navigate("LocationsSettings",{})}
           />
           <SettingsList.Header headerStyle={{marginTop:15}}/>
           

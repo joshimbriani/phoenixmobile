@@ -9,14 +9,6 @@ import ColorScheme from 'color-scheme';
 
 class Topic extends React.Component {
 
-    static navigationOptions = ({ navigation }) => ({ //keep this for the android side
-        headerRight: <Ionicons
-            name='md-funnel'
-            style={{ paddingRight: 10 }}
-            size={35}
-            onPress={() => navigation.navigate('DrawerOpen')} />
-    });
-
     render() {
             return (
                 <Container>

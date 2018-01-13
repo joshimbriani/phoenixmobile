@@ -1,7 +1,7 @@
 import React from 'react';
 import { StyleSheet, Text, FlatList, ScrollView, View } from 'react-native';
 import { TabNavigator, StackNavigator, DrawerItems } from 'react-navigation';
-import PlatformIonicon from './utils/platformIonicon';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 import Home from './home';
 import Topic from './topic';
 import Settings from './settings';
@@ -49,8 +49,14 @@ const Settingsstack = StackNavigator({
         navigationOptions: ({ navigation }) => ({
             title: 'Settings',
         })
+    }
+    LocationsSettings: {
+        screen: LocationsSettings,
+        navigationOptions: ({ navigation }) => ({
+            title: 'Locations Settings',
+        })
+    }
     },
-
     ProfileSettings: {
         screen: ProfileSettings,
         navigationOptions: ({ navigation }) => ({
@@ -74,8 +80,8 @@ const NavContainer = TabNavigator({
         navigationOptions: {
             tabBarLabel: 'Home',
             tabBarIcon: ({ tintColor, focused }) => (
-                <PlatformIonicon
-                    name='home'
+                <Ionicons
+                    name='md-home'
                     size={20}
                     style={{ color: tintColor }}
                 />
@@ -87,8 +93,8 @@ const NavContainer = TabNavigator({
         navigationOptions: {
             tabBarLabel: 'Suggested',
             tabBarIcon: ({ tintColor, focused }) => (
-                <PlatformIonicon
-                    name='apps'
+                <Ionicons
+                    name='md-apps'
                     size={20}
                     style={{ color: tintColor }}
                 />
@@ -100,8 +106,8 @@ const NavContainer = TabNavigator({
         navigationOptions: {
             tabBarLabel: 'Profile',
             tabBarIcon: ({ tintColor, focused }) => (
-                <PlatformIonicon
-                    name='person'
+                <Ionicons
+                    name='md-person'
                     size={20}
                     style={{ color: tintColor }}
                 />
@@ -113,8 +119,8 @@ const NavContainer = TabNavigator({
         navigationOptions: {
             tabBarLabel: 'Settings',
             tabBarIcon: ({ tintColor, focused }) => (
-                <PlatformIonicon
-                    name='settings'
+                <Ionicons
+                    name='md-settings'
                     size={20}
                     style={{ color: tintColor }}
                 />
