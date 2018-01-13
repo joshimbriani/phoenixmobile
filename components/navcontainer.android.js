@@ -2,12 +2,13 @@ import React from 'react';
 import { StyleSheet, Text, FlatList, ScrollView, View } from 'react-native';
 import { DrawerNavigator, StackNavigator, DrawerItems } from 'react-navigation';
 import { SideDrawer } from './sidedrawer';
-import Ionicons from 'react-native-vector-icons/Ionicons';
+import PlatformIonicon from './utils/platformIonicon';
 import Home from './home';
 import Topic from './topic';
 import Settings from './settings';
 import NewEvent from './newevent';
-import EventDetail from './eventdetail'
+import EventDetail from './eventdetail';
+import Filter from './filter';
 
 const ProfileScreen = () => (
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
@@ -36,16 +37,20 @@ const Homestack = StackNavigator({
     EventDetail: {
         path: '/event/:event',
         screen: EventDetail
+    },
+    Filter: {
+        path: '/filter',
+        screen: Filter
     }
 });
 
-const Settingsstack = StackNavigator({
+const SettingsStack = StackNavigator({
     Settings: {
         screen: Settings,
         navigationOptions: ({ navigation }) => ({
             title: 'Settings',
-            headerLeft: <Ionicons
-                name="md-menu"
+            headerLeft: <PlatformIonicon
+                name="menu"
                 style={{paddingLeft: 10}}
                 size={35}
                 onPress={() => navigation.navigate('DrawerOpen')} />
@@ -58,8 +63,8 @@ const SuggestedStack = StackNavigator({
         screen: SuggestedScreen,
         navigationOptions: ({ navigation }) => ({
             title: 'Suggested',
-            headerLeft: <Ionicons
-                name="md-menu"
+            headerLeft: <PlatformIonicon
+                name="menu"
                 style={{paddingLeft: 10}}
                 size={35}
                 onPress={() => navigation.navigate('DrawerOpen')} />
@@ -72,8 +77,8 @@ const ProfileStack = StackNavigator({
         screen: ProfileScreen,
         navigationOptions: ({ navigation }) => ({
             title: 'Profile',
-            headerLeft: <Ionicons
-                name="md-menu"
+            headerLeft: <PlatformIonicon
+                name="menu"
                 style={{paddingLeft: 10}}
                 size={35}
                 onPress={() => navigation.navigate('DrawerOpen')} />
@@ -88,8 +93,8 @@ const NavContainer = DrawerNavigator({
         navigationOptions: {
             drawerLabel: 'Home',
             drawerIcon: ({ tintColor, focused }) => (
-                <Ionicons
-                    name='md-home'
+                <PlatformIonicon
+                    name='home'
                     size={20}
                     style={{ color: tintColor }}
                 />
@@ -101,8 +106,8 @@ const NavContainer = DrawerNavigator({
         navigationOptions: {
             drawerLabel: 'Suggested',
             drawerIcon: ({ tintColor, focused }) => (
-                <Ionicons
-                    name='md-apps'
+                <PlatformIonicon
+                    name='apps'
                     size={20}
                     style={{ color: tintColor }}
                 />
@@ -114,8 +119,8 @@ const NavContainer = DrawerNavigator({
         navigationOptions: {
             drawerLabel: 'Profile',
             drawerIcon: ({ tintColor, focused }) => (
-                <Ionicons
-                    name='md-person'
+                <PlatformIonicon
+                    name='person'
                     size={20}
                     style={{ color: tintColor }}
                 />
@@ -123,12 +128,12 @@ const NavContainer = DrawerNavigator({
         },
     },
     Settings: {
-        screen: Settingsstack,
+        screen: SettingsStack,
         navigationOptions: {
             drawerLabel: 'Settings',
             drawerIcon: ({ tintColor, focused }) => (
-                <Ionicons
-                    name='md-settings'
+                <PlatformIonicon
+                    name='settings'
                     size={20}
                     style={{ color: tintColor }}
                 />

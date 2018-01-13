@@ -4,7 +4,7 @@ import React from 'react';
 import { Container, Fab, Header, Item, Input, Icon, Button, Text } from 'native-base';
 import { Alert, Platform, StyleSheet, TouchableHighlight, View } from 'react-native';
 import GridView from 'react-native-super-grid';
-import Ionicons from 'react-native-vector-icons/Ionicons';
+import PlatformIonicon from './utils/platformIonicon';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import * as colorActions from '../redux/actions/backgroundColor';
@@ -27,8 +27,8 @@ render() {
           <SettingsList.Header headerStyle={{marginTop:15}}/>
           <SettingsList.Item
             icon={
-                <Ionicons
-                    name='md-contact' // do we want this to be "person"
+                <PlatformIonicon
+                    name='contact' // do we want this to be "person"
                     size={30}
                     style={{ paddingTop: 10, paddingLeft: 5}}
                 />
@@ -40,8 +40,8 @@ render() {
           />
           <SettingsList.Item
             icon={
-                <Ionicons
-                    name='md-notifications'
+                <PlatformIonicon
+                    name='notifications'
                     size={30}
                     style={{paddingTop: 10, paddingLeft: 5}}
                 />
@@ -54,8 +54,8 @@ render() {
           />
           <SettingsList.Item
             icon={
-                <Ionicons
-                    name='md-sunny'
+                <PlatformIonicon
+                    name='sunny'
                     size={30}
                     style={{paddingTop: 10, paddingLeft: 5}}
                 />
@@ -69,8 +69,8 @@ render() {
           <SettingsList.Header headerStyle={{marginTop:15}}/>
           <SettingsList.Item
             icon={
-                <Ionicons
-                    name='md-locate'
+                <PlatformIonicon
+                    name='locate'
                     size={30}
                     style={{paddingTop: 10, paddingLeft: 5}}
                 />
@@ -80,8 +80,8 @@ render() {
             titleInfoStyle={styles.titleInfoStyle}
           />
           <SettingsList.Item
-            icon={<Ionicons
-                    name='md-pin'
+            icon={<PlatformIonicon
+                    name='pin'
                     size={30}
                     style={{paddingTop: 10, paddingLeft: 5}}
                 />}
@@ -91,32 +91,32 @@ render() {
           <SettingsList.Header headerStyle={{marginTop:15}}/>
           
           <SettingsList.Item
-            icon={<Ionicons
-                    name='md-lock'
+            icon={<PlatformIonicon
+                    name='lock'
                     size={30}
                     style={{paddingTop: 10, paddingLeft: 5}}
                 />}
             title='Privacy'
           />
           <SettingsList.Item
-            icon={<Ionicons
-                    name='md-hand'
+            icon={<PlatformIonicon
+                    name='hand'
                     size={30}
                     style={{paddingTop: 10, paddingLeft: 5}}
                 />}
             title='Restricted Mode'
           />
           <SettingsList.Item
-            icon={<Ionicons
-                    name='md-help-circle'
+            icon={<PlatformIonicon
+                    name='help-circle'
                     size={30}
                     style={{paddingTop: 10, paddingLeft: 5}}
                 />}
             title='Help'
           />
           <SettingsList.Item
-            icon={<Ionicons
-                    name='md-folder-open'
+            icon={<PlatformIonicon
+                    name='folder-open'
                     size={30}
                     style={{paddingTop: 10, paddingLeft: 5}}
                 />}

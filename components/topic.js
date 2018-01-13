@@ -1,7 +1,7 @@
 import React from 'react';
 import { Container, Header, Item, Input, Icon, Button, Text } from 'native-base';
 import { Alert, StatusBar, FlatList, StyleSheet, TouchableHighlight, View } from 'react-native';
-import Ionicons from 'react-native-vector-icons/Ionicons';
+import PlatformIonicon from './utils/platformIonicon';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import * as colorActions from '../redux/actions/backgroundColor'
@@ -12,11 +12,11 @@ class Topic extends React.Component {
     static navigationOptions = ({ navigation }) => ({
         title: navigation.state.params.topic,
         headerStyle: { backgroundColor: navigation.state.params.color },
-        headerRight: <Ionicons
-            name='md-funnel'
+        headerRight: <PlatformIonicon
+            name='funnel'
             style={{ paddingRight: 10 }}
             size={35}
-            onPress={() => navigation.navigate('DrawerOpen')} />
+            onPress={() => navigation.navigate('Filter')} />
     });
 
     constructor(props) {

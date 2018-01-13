@@ -1,10 +1,10 @@
 import React from 'react';
 import { Container, Header, Item, Input, Icon, Button, Text } from 'native-base';
 import { Alert, StatusBar, FlatList, StyleSheet, TouchableHighlight, View } from 'react-native';
-import Ionicons from 'react-native-vector-icons/Ionicons';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import * as colorActions from '../redux/actions/backgroundColor'
+import PlatformIonicon from './utils/platformIonicon';
 import ColorScheme from 'color-scheme';
 
 class EventDetail extends React.Component {
@@ -12,17 +12,12 @@ class EventDetail extends React.Component {
     static navigationOptions = ({ navigation }) => ({
         title: navigation.state.params.event,
         headerStyle: { backgroundColor: navigation.state.params.color },
-        headerRight: <Ionicons
-            name='md-funnel'
-            style={{ paddingRight: 10 }}
-            size={35}
-            onPress={() => navigation.navigate('DrawerOpen')} />
     });
 
     constructor(props) {
         super(props);
         this.state = {
-            
+            data: {}
         }
     }
 
@@ -35,23 +30,51 @@ class EventDetail extends React.Component {
     }
 
     render() {
-        return (
-            <Text>
-                This is the topic detail view.
-            </Text>
-        );
+        if (Object.keys(this.state.data).length > 0) {
+            const date = new Date(this.state.data.created);
+            return (
+                <Container>
+                    <View>
+                        <Text>
+                        {this.state.data.title}
+                        </Text>
+                    </View>
+                    <View>
+                        <Text>
+                            What: {this.state.data.description}
+                        </Text>
+                        <Text>
+                            Who: {this.state.data.going.length} people
+                        </Text>
+                        <Text>
+                            Where: {this.state.data.place}
+                        </Text>
+                        <Text>
+                            When: {date.toDateString()} @ {date.getHours()}:{date.getMinutes()}
+                        </Text>
+                    </View>
+                </Container>
+            );
+        } else {
+            return (
+                <Container>
+                    <Text>Loading...</Text>
+                </Container>
+            )
+        }
+        
     }
 }
 
 function mapStateToProps(state) {
     return {
-        
+
     };
 }
 
 function mapDispatchToProps(dispatch) {
     return {
-        
+
     };
 }
 
