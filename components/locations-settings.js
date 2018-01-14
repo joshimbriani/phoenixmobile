@@ -11,6 +11,7 @@ class LocationsSettings extends React.Component {
 
     render() {
             return (
+
                 <Container>
                     <Text> settings location page
                     </Text>

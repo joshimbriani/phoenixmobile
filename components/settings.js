@@ -10,6 +10,7 @@ import { bindActionCreators } from 'redux';
 import * as colorActions from '../redux/actions/backgroundColor';
 import randomMC from 'random-material-color';
 import SettingsList from 'react-native-settings-list';
+import { Dropdown } from 'react-native-material-dropdown';
 
 class Settings extends React.Component {
     constructor(){
@@ -19,6 +20,13 @@ class Settings extends React.Component {
   this.state = {switchValue: false, switchValue2: false};
 }
 render() {
+      let data = [{
+      value: '10',
+    }, {
+      value: '25',
+    }, {
+      value: '50',
+    }];
   var bgColor = '#0000ff'; //why doesn't this do anything? This should be blue, to debug
   return (
     <View style={{backgroundColor:'#EFEFF4',flex:1}}>
@@ -28,7 +36,7 @@ render() {
           <SettingsList.Item
             icon={
                 <PlatformIonicon
-                    name='contact' // do we want this to be "person" - yes!
+                    name='person' // do we want this to be "person" - yes!   (or "contact")
                     size={30}
                     style={{ paddingTop: 10, paddingLeft: 5}}
                 />
@@ -75,10 +83,20 @@ render() {
                     style={{paddingTop: 10, paddingLeft: 5}}
                 />
             }
+            hasNavArrow={false}
             title='Radius'
-            titleInfo='50 km' // link to the stack beyond it with the distance & unit
+
+            titleInfo={
+              <Dropdown
+              label='Favorite Fruit'
+              //itemTextSize=10
+              //fontSize=10
+              data={data}
+              />
+            }
             titleInfoStyle={styles.titleInfoStyle}
           />
+
           <SettingsList.Item
             icon={<PlatformIonicon
                     name='pin'
@@ -119,7 +137,7 @@ render() {
           />
           <SettingsList.Item
             icon={<PlatformIonicon
-                    name='folder-open'
+                    name='folder'
                     size={30}
                     style={{paddingTop: 10, paddingLeft: 5}}
                 />}
