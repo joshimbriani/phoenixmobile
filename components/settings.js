@@ -28,6 +28,8 @@ render() {
       value: '50',
     }];
   var bgColor = '#0000ff'; //why doesn't this do anything? This should be blue, to debug
+                            // It doesn't do anything because you're just declaring a variable - you're not acutally setting it anywhere
+                            // If you wanted to use it, you would want to add it to a style, so something like "background": bgColor
   return (
     <View style={{backgroundColor:'#EFEFF4',flex:1}}>
       <View style={{backgroundColor:'#EFEFF4',flex:1}}>
@@ -86,7 +88,7 @@ render() {
             hasNavArrow={false}
             title='Radius'
 
-            titleInfo={
+            arrowIcon={
               <Dropdown
               label='Favorite Fruit'
               //itemTextSize=10
