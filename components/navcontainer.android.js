@@ -7,6 +7,7 @@ import Home from './home';
 import Topic from './topic';
 import Settings from './settings';
 import NewEvent from './newevent';
+import Search from './search';
 import EventDetail from './eventdetail';
 import Filter from './filter';
 import LocationsSettings from './locations-settings';
@@ -24,7 +25,7 @@ const SuggestedScreen = () => (
     </View>
 );
 
-const Homestack = StackNavigator({
+const HomeStack = StackNavigator({
     Home: {
         screen: Home,
     },
@@ -32,17 +33,21 @@ const Homestack = StackNavigator({
         path: '/topic/:topic',
         screen: Topic,
     },
+    Search: {
+        path: '/search?query=:query',
+        screen: Search,
+    },
     NewEvent: {
         path: '/newevent',
-        screen: NewEvent
+        screen: NewEvent,
     },
     EventDetail: {
         path: '/event/:event',
-        screen: EventDetail
+        screen: EventDetail,
     },
     Filter: {
         path: '/filter',
-        screen: Filter
+        screen: Filter,
     }
 });
 
@@ -104,7 +109,7 @@ const ProfileStack = StackNavigator({
 const NavContainer = DrawerNavigator({
     
     Home: {
-        screen: Homestack,
+        screen: HomeStack,
         navigationOptions: {
             drawerLabel: 'Home',
             drawerIcon: ({ tintColor, focused }) => (

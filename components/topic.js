@@ -108,5 +108,4 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         fontFamily: 'Roboto_medium'
     }
-
 });

@@ -24,7 +24,6 @@ class EventDetail extends React.Component {
     componentDidMount() {
         fetch("http://10.0.2.2:8000/api/v1/events/" + this.props.navigation.state.params.id + "?format=json").then(response => response.json())
             .then(responseObj => {
-                console.log(responseObj);
                 this.setState({ data: responseObj });
             })
     }
