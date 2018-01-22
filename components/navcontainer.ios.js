@@ -12,6 +12,10 @@ import PrivacySettings from './privacy-settings';
 import RestrictedModeSettings from './restricted-mode-settings';
 import HelpSettings from './help-settings';
 import LegalSettings from './legal-settings';
+import Search from './search';
+import EventDetail from './eventdetail';
+import Filter from './filter';
+import IDK from './idk';
 
 
 const ProfileScreen = () => (
@@ -26,7 +30,7 @@ const SuggestedScreen = () => (
     </View>
 );
 
-const Homestack = StackNavigator({
+const HomeStack = StackNavigator({
     Home: {
         screen: Home,
     },
@@ -37,6 +41,22 @@ const Homestack = StackNavigator({
     NewEvent: {
         path: '/newevent',
         screen: NewEvent
+    },
+    Search: {
+        path: '/search?query=:query',
+        screen: Search,
+    },
+    EventDetail: {
+        path: '/event/:event',
+        screen: EventDetail,
+    },
+    Filter: {
+        path: '/filter',
+        screen: Filter,
+    },
+    IDK: {
+        path: '/idk',
+        screen: IDK,
     }
 });
 
@@ -105,7 +125,7 @@ const ProfileStack = StackNavigator({
 
 const NavContainer = TabNavigator({
     Home: {
-        screen: Homestack,
+        screen: HomeStack,
         navigationOptions: {
             tabBarLabel: 'Home',
             tabBarIcon: ({ tintColor, focused }) => (

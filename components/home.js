@@ -24,7 +24,7 @@ class Home extends React.Component {
         this.props.colorActions.resetColor();
         fetch("http://10.0.2.2:8000/api/v1/topics/?format=json").then(response => response.json())
             .then(responseObj => {
-                this.setState({ data: [{ name: "IDK", color: "#0000ff", icon: "help" }].concat(responseObj) });
+                this.setState({ data: [{ id: -1, name: "IDK", color: "#0000ff", icon: "help" }].concat(responseObj) });
             })
     }
 
@@ -44,13 +44,21 @@ class Home extends React.Component {
         this.setState({ searchQuery: text });
     }
 
+    routeToTopic(item) {
+        if (item.id === -1) {
+            this.props.navigation.navigate('IDK', {});
+        } else {
+            this.props.navigation.navigate('Topic', { topic: item.name, id: item.id, color: item.color.substring(0) })
+        }
+    }
+
     render() {
         return (
             <Container>
                 <Header searchBar rounded>
                     <Item>
                         <Icon name="ios-search" />
-                        <Input placeholder="What Do You Wanna Do?" onChangeText={(text) => this.changeValue(text)} onSubmitEditing={() => { this.props.navigation.navigate('Search', { query: this.state.searchQuery}) }} />
+                        <Input placeholder="What Do You Wanna Do?" onChangeText={(text) => this.changeValue(text)} onSubmitEditing={() => { this.props.navigation.navigate('Search', { query: this.state.searchQuery }) }} />
                     </Item>
                     <Button transparent>
                         <Text>Search</Text>
@@ -64,7 +72,7 @@ class Home extends React.Component {
                     items={this.state.data}
                     renderItem={item => {
                         return (
-                            <TouchableHighlight onPress={() => { this.props.navigation.navigate('Topic', { topic: item.name, id: item.id, color: item.color.substring(0) }) }}>
+                            <TouchableHighlight onPress={() => { this.routeToTopic(item) }}>
                                 <View
                                     style={[styles.itemBox, { backgroundColor: item.color }]}
                                 >

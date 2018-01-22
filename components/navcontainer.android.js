@@ -12,6 +12,7 @@ import EventDetail from './eventdetail';
 import Filter from './filter';
 import LocationsSettings from './locations-settings';
 import ProfileSettings from './profile-settings';
+import IDK from './idk';
 
 const ProfileScreen = () => (
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
@@ -48,6 +49,10 @@ const HomeStack = StackNavigator({
     Filter: {
         path: '/filter',
         screen: Filter,
+    },
+    IDK: {
+        path: '/idk',
+        screen: IDK,
     }
 });
 
