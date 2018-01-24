@@ -1,5 +1,5 @@
 import React from 'react';
-import { Container, Header, Item, Input, Icon, Button, Text } from 'native-base';
+import { Button, Container, Text } from 'native-base';
 import { Alert, StatusBar, FlatList, StyleSheet, TouchableHighlight, View } from 'react-native';
 import PlatformIonicon from './utils/platformIonicon';
 import { connect } from 'react-redux';
@@ -49,24 +49,38 @@ class Topic extends React.Component {
         this.props.colorActions.resetColor();
     }
 
+    followTopic() {
+        fetch("http://10.0.2.2:8000/api/v1/events/search?topic=" + this.props.navigation.state.params.id).then(response => response.json())
+            .then(responseObj => {
+                this.setState({ data: responseObj });
+            })
+        this.props.navigation.state.params.id
+    }
+
     render() {
         if (this.state.data.length > 0) {
             return (
-                <Container>
-                    <FlatList
-                        data={this.state.data}
-                        contentContainerStyle={{ paddingTop: 10 }}
-                        keyExtractor={(item, index) => index}
-                        renderItem={({ item, index }) => {
-                            return (
-                                <TouchableHighlight onPress={() => { this.props.navigation.navigate('EventDetail', { event: item.title, id: item.id, color: this.props.navigation.state.params.color }) }}>
-                                    <View key={item.id} style={[styles.listitem, { backgroundColor: "#" + this.state.colors[index % this.state.colors.length] }]}>
-                                        <Text style={styles.itemText}>{item.title}</Text>
-                                    </View>
-                                </TouchableHighlight>
-                            )
-                        }}
-                    />
+                <Container style={{ flex: 1}}>
+                    <View style={{ flex: 1, flexDirection: "row", justifyContent: "center" }}>
+                        <Button onPress={this.followTopic} style={{justifyContent: "center"}}><Text>Follow</Text></Button>
+                    </View>
+                    <View style={{ flex:10 }}>
+                        <FlatList
+                            data={this.state.data}
+                            contentContainerStyle={{ paddingTop: 0 }}
+                            keyExtractor={(item, index) => index}
+                            style={styles.listView}
+                            renderItem={({ item, index }) => {
+                                return (
+                                    <TouchableHighlight onPress={() => { this.props.navigation.navigate('EventDetail', { event: item.title, id: item.id, color: this.props.navigation.state.params.color }) }}>
+                                        <View key={item.id} style={[styles.listitem, { backgroundColor: "#" + this.state.colors[index % this.state.colors.length] }]}>
+                                            <Text style={styles.itemText}>{item.title}</Text>
+                                        </View>
+                                    </TouchableHighlight>
+                                )
+                            }}
+                        />
+                    </View>
                 </Container>
             );
         } else {
@@ -107,5 +121,11 @@ const styles = StyleSheet.create({
         paddingTop: 5,
         textAlign: 'center',
         fontFamily: 'Roboto_medium'
+    },
+    followView: {
+        flex: -1
+    },
+    listView: {
+        flex: 5
     }
 });
