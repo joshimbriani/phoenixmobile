@@ -1,5 +1,3 @@
-// this is home with "settings" instead of "home" & the settings list from evetstech pasted in under "class..."
-
 import React from 'react';
 import { Container, Fab, Header, Item, Input, Icon, Button, Text } from 'native-base';
 import { Alert, Platform, StyleSheet, TouchableHighlight, View } from 'react-native';
@@ -21,15 +19,13 @@ class Settings extends React.Component {
 }
 render() {
       let data = [{
-      value: '10',
-    }, {
-      value: '25',
-    }, {
+      value: '10', label: 'False Hope'},
+      {
+      value: '25'},
+      {
       value: '50',
     }];
-  var bgColor = '#0000ff'; //why doesn't this do anything? This should be blue, to debug
-                            // It doesn't do anything because you're just declaring a variable - you're not acutally setting it anywhere
-                            // If you wanted to use it, you would want to add it to a style, so something like "background": bgColor
+
   return (
     <View style={{backgroundColor:'#EFEFF4',flex:1}}>
       <View style={{backgroundColor:'#EFEFF4',flex:1}}>
@@ -90,9 +86,12 @@ render() {
 
             arrowIcon={
               <Dropdown
-              label='Favorite Fruit'
-              //itemTextSize=10
-              //fontSize=10
+              label='Distance'
+              //value='yup'
+              //width={10000}
+              //itemTextSize={100}
+              fontSize={15} //this changes to default size after the dropdown has been used
+              marginLeft={100}
               data={data}
               />
             }

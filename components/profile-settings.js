@@ -12,7 +12,7 @@ class ProfileSettings extends React.Component {
     render() {
             return (
                 <Container>
-                    <Text> settings profile page
+                    <Text> settings profile page: needs 
                     </Text>
                 </Container>
             );
