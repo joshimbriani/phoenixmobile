@@ -7,6 +7,7 @@ import { bindActionCreators } from 'redux';
 import * as colorActions from '../redux/actions/backgroundColor';
 import PlatformIonicon from './utils/platformIonicon';
 import randomMC from 'random-material-color';
+import { getURLForPlatform } from './utils/networkUtils';
 
 class Home extends React.Component {
     constructor(props) {
@@ -22,7 +23,7 @@ class Home extends React.Component {
 
     componentDidMount() {
         this.props.colorActions.resetColor();
-        fetch("http://10.0.2.2:8000/api/v1/topics/?format=json").then(response => response.json())
+        fetch(getURLForPlatform() + "api/v1/topics/?format=json").then(response => response.json())
             .then(responseObj => {
                 this.setState({ data: [{ id: -1, name: "IDK", color: "#0000ff", icon: "help" }].concat(responseObj) });
             })

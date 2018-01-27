@@ -6,6 +6,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import * as colorActions from '../redux/actions/backgroundColor'
 import ColorScheme from 'color-scheme';
+import getURLForPlatform from './utils/networkUtils';
 
 class Topic extends React.Component {
 
@@ -29,7 +30,7 @@ class Topic extends React.Component {
 
     componentDidMount() {
         this.props.colorActions.changeColor(this.props.navigation.state.params.color);
-        fetch("http://10.0.2.2:8000/api/v1/events/search?topic=" + this.props.navigation.state.params.id).then(response => response.json())
+        fetch(getURLForPlatform() + "api/v1/events/search?topic=" + this.props.navigation.state.params.id).then(response => response.json())
             .then(responseObj => {
                 this.setState({ data: responseObj });
             })
@@ -50,7 +51,7 @@ class Topic extends React.Component {
     }
 
     followTopic() {
-        fetch("http://10.0.2.2:8000/api/v1/events/search?topic=" + this.props.navigation.state.params.id).then(response => response.json())
+        fetch(getURLForPlatform() + "api/v1/events/search?topic=" + this.props.navigation.state.params.id).then(response => response.json())
             .then(responseObj => {
                 this.setState({ data: responseObj });
             })

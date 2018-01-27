@@ -6,6 +6,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import * as colorActions from '../redux/actions/backgroundColor';
 import PlatformIonicon from './utils/platformIonicon';
+import getURLForPlatform from './utils/networkUtils';
 
 class Search extends React.Component {
     state = {
@@ -24,7 +25,7 @@ class Search extends React.Component {
 
     componentDidMount() {
         this.props.colorActions.resetColor();
-        fetch("http://10.0.2.2:8000/api/v1/search?query=" + this.props.navigation.state.params.query).then(response => response.json())
+        fetch(getURLForPlatform() + "api/v1/search?query=" + this.props.navigation.state.params.query).then(response => response.json())
             .then(responseObj => {
                 this.setState({ data: responseObj });
             })

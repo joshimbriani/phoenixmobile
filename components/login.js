@@ -6,6 +6,7 @@ import { bindActionCreators } from 'redux';
 import * as colorActions from '../redux/actions/backgroundColor'
 import PlatformIonicon from './utils/platformIonicon';
 import ColorScheme from 'color-scheme';
+import getURLForPlatform from './utils/networkUtils';
 
 class Login extends React.Component {
 
@@ -36,7 +37,7 @@ class Login extends React.Component {
     }
 
     sendLoginRequest() {
-        fetch("http://10.0.2.2:8000/rest-auth/login/", {
+        fetch(getURLForPlatform() + "rest-auth/login/", {
             method: 'POST',
             headers: {
                 'Accept': 'applicatiion/json',
