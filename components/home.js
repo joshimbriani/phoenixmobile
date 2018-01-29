@@ -59,7 +59,7 @@ class Home extends React.Component {
                 <Header searchBar rounded>
                     <Item>
                         <Icon name="ios-search" />
-                        <Input placeholder="What Do You Wanna Do?" onChangeText={(text) => this.changeValue(text)} onSubmitEditing={() => { this.props.navigation.navigate('Search', { query: this.state.searchQuery }) }} />
+                        <Input placeholder="What Do You Wanna Do?" onChangeText={(text) => this.changeValue(text)} onSubmitEditing={() => { console.log("Test"); this.props.navigation.navigate('Search', { query: this.state.searchQuery }) }} />
                     </Item>
                     <Button transparent>
                         <Text>Search</Text>

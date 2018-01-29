@@ -7,7 +7,7 @@ import { NavigationActions } from 'react-navigation';
 import * as tokenActions from '../redux/actions/token'
 import PlatformIonicon from './utils/platformIonicon';
 import ColorScheme from 'color-scheme';
-import getURLForPlatform from './utils/networkUtils';
+import {getURLForPlatform} from './utils/networkUtils';
 
 class Login extends React.Component {
 
@@ -61,16 +61,14 @@ class Login extends React.Component {
                 'username': this.state.username,
                 'password': this.state.password,
             })
-        }).then(response => this.parseLoginResponse(response));
+        }).then(response => {if (response.ok) {return response.json()} else {this.setState({error: "Login failed. Try again!"}); return false}})
+        .then(responseJSON => { if (responseJSON) {this.parseLoginResponse(responseJSON)}});
     }
 
     parseLoginResponse(response) {
-        if (response.ok) {
-            this.props.tokenActions.saveUserToken(response.json()["key"]);
-            this.resetNavigation('Main');
-        } else {
-            this.setState({error: "Login failed. Try again!"});
-        }
+        console.log(response);
+        this.props.tokenActions.saveUserToken(response["key"]);
+        this.resetNavigation('Main');
     }
 
     resetNavigation(targetRoute) {
@@ -93,11 +91,11 @@ class Login extends React.Component {
                 <Form>
                     <Item floatingLabel>
                         <Label>Username</Label>
-                        <Input name="username" onChangeText={(text) => this.onChange("username", text)} />
+                        <Input name="username" autoCapitalize="none" onChangeText={(text) => this.onChange("username", text)} />
                     </Item>
                     <Item floatingLabel last>
                         <Label>Password</Label>
-                        <Input name="password" onChangeText={(text) => this.onChange("password", text)} />
+                        <Input name="password" autoCapitalize="none" onChangeText={(text) => this.onChange("password", text)} />
                     </Item>
                     <Button onPress={this.submitForm}>
                         <Text>Submit</Text>

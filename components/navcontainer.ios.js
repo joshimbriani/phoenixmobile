@@ -16,6 +16,7 @@ import Search from './search';
 import EventDetail from './eventdetail';
 import Filter from './filter';
 import IDK from './idk';
+import Login from './login';
 
 
 const ProfileScreen = () => (
@@ -123,7 +124,7 @@ const ProfileStack = StackNavigator({
     }
 });
 
-const NavContainer = TabNavigator({
+const MainNavContainer = TabNavigator({
     Home: {
         screen: HomeStack,
         navigationOptions: {
@@ -176,10 +177,24 @@ const NavContainer = TabNavigator({
             ),
         },
     },
-}
-);
+});
 
-export default NavContainer;
+const LoginWrapper = StackNavigator({
+    Login: {
+        screen: Login,
+        navigationOptions: ({ navigation }) => ({
+            title: 'Login',
+            header: null
+        })
+    },
+    Main: {
+        screen: MainNavContainer
+    }
+}, {
+        headerMode: 'none'
+    });
+
+export default LoginWrapper;
 
 const styles = StyleSheet.create({
     container: {

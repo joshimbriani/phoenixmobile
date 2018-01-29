@@ -6,7 +6,7 @@ import { bindActionCreators } from 'redux';
 import * as colorActions from '../redux/actions/backgroundColor'
 import PlatformIonicon from './utils/platformIonicon';
 import ColorScheme from 'color-scheme';
-import getURLForPlatform from './utils/networkUtils';
+import {getURLForPlatform} from './utils/networkUtils';
 
 class EventDetail extends React.Component {
 

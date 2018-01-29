@@ -6,7 +6,8 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import * as colorActions from '../redux/actions/backgroundColor';
 import PlatformIonicon from './utils/platformIonicon';
-import getURLForPlatform from './utils/networkUtils';
+import {getURLForPlatform} from './utils/networkUtils';
+
 
 class Search extends React.Component {
     state = {
