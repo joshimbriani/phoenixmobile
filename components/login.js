@@ -66,7 +66,6 @@ class Login extends React.Component {
     }
 
     parseLoginResponse(response) {
-        console.log(response);
         this.props.tokenActions.saveUserToken(response["key"]);
         this.resetNavigation('Main');
     }

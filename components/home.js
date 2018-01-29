@@ -25,7 +25,7 @@ class Home extends React.Component {
         this.props.colorActions.resetColor();
         fetch(getURLForPlatform() + "api/v1/topics/?format=json").then(response => response.json())
             .then(responseObj => {
-                this.setState({ data: [{ id: -1, name: "IDK", color: "#0000ff", icon: "help" }].concat(responseObj) });
+                this.setState({ data: [{ id: -1, name: "IDK", color: "0000ff", icon: "help" }].concat(responseObj) });
             })
     }
 
@@ -75,7 +75,7 @@ class Home extends React.Component {
                         return (
                             <TouchableHighlight onPress={() => { this.routeToTopic(item) }}>
                                 <View
-                                    style={[styles.itemBox, { backgroundColor: item.color }]}
+                                    style={[styles.itemBox, { backgroundColor: '#' + item.color }]}
                                 >
                                     <PlatformIonicon
                                         name={item.icon || 'aperture'}

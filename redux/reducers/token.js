@@ -8,7 +8,7 @@ export default function tokenReducer(state = defaultState, action) {
             return Object.assign({}, state, {
                 token: action.token
             })
-        case  PURGE_USER_TOKEN:
+        case PURGE_USER_TOKEN:
             return defaultState
         default:
             return state

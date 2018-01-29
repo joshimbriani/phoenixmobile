@@ -46,7 +46,7 @@ class Topic extends React.Component {
     componentWillMount() {
         var mColors;
         if (this.state.colors && this.state.colors.length === 1 && this.state.colors[0] === "fff") {
-            mColors = (new ColorScheme()).from_hex(this.props.navigation.state.params.color.substring(1)).scheme('mono');
+            mColors = (new ColorScheme()).from_hex(this.props.navigation.state.params.color).scheme('mono');
             this.setState({ colors: mColors.colors() });
         } else {
             mColors = this.state.colors;
