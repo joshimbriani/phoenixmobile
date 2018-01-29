@@ -23,7 +23,9 @@ class Home extends React.Component {
 
     componentDidMount() {
         this.props.colorActions.resetColor();
-        fetch(getURLForPlatform() + "api/v1/topics/?format=json").then(response => response.json())
+        fetch(getURLForPlatform() + "api/v1/users/topics/?format=json", {
+            Authorization: "Token " + this.props.token
+        }).then(response => response.json())
             .then(responseObj => {
                 this.setState({ data: [{ id: -1, name: "IDK", color: "0000ff", icon: "help" }].concat(responseObj) });
             })
@@ -106,7 +108,8 @@ class Home extends React.Component {
 
 function mapStateToProps(state) {
     return {
-        color: state.backgroundColorReducer.color
+        color: state.backgroundColorReducer.color,
+        token: state.tokenReducer.token
     };
 }
 
