@@ -1,6 +1,6 @@
 import React from 'react';
 import { Container, Fab, Header, Item, Input, Icon, Button, Text } from 'native-base';
-import { Alert, Platform, StyleSheet, TouchableHighlight, View } from 'react-native';
+import { Alert, Platform, RefreshControl,StyleSheet, TouchableHighlight, View } from 'react-native';
 import GridView from 'react-native-super-grid';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -15,7 +15,8 @@ class Home extends React.Component {
         this.state = {
             active: false,
             data: [],
-            searchQuery: ""
+            searchQuery: "",
+            refreshing: false,
         };
 
         this.changeValue = this.changeValue.bind(this);
@@ -23,6 +24,15 @@ class Home extends React.Component {
 
     componentDidMount() {
         this.props.colorActions.resetColor();
+        fetch(getURLForPlatform() + "api/v1/users/topics/?format=json", {
+            Authorization: "Token " + this.props.token
+        }).then(response => response.json())
+            .then(responseObj => {
+                this.setState({ data: [{ id: -1, name: "IDK", color: "0000ff", icon: "help" }].concat(responseObj) });
+            })
+    }
+
+    componentWillReceiveProps() {
         fetch(getURLForPlatform() + "api/v1/users/topics/?format=json", {
             Authorization: "Token " + this.props.token
         }).then(response => response.json())
@@ -55,6 +65,15 @@ class Home extends React.Component {
         }
     }
 
+    _onRefresh() {
+        fetch(getURLForPlatform() + "api/v1/users/topics/?format=json", {
+            Authorization: "Token " + this.props.token
+        }).then(response => response.json())
+            .then(responseObj => {
+                this.setState({ refreshing: false, data: [{ id: -1, name: "IDK", color: "0000ff", icon: "help" }].concat(responseObj) });
+            })
+    }
+
     render() {
         return (
             <Container>
@@ -68,11 +87,17 @@ class Home extends React.Component {
                     </Button>
                 </Header>
                 <GridView
-                    contentContainerStyle={{ paddingBottom: 10 }}
+                    contentContainerStyle={{ paddingBottom: 10, paddingTop: 10 }}
                     style={styles.gridView}
                     itemWidth={150}
                     enableEmptySections
                     items={this.state.data}
+                    refreshControl={
+                        <RefreshControl
+                            refreshing={this.state.refreshing}
+                            onRefresh={this._onRefresh.bind(this)}
+                        />
+                    }
                     renderItem={item => {
                         return (
                             <TouchableHighlight onPress={() => { this.routeToTopic(item) }}>

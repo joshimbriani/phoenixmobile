@@ -12,7 +12,7 @@ class Topic extends React.Component {
 
     static navigationOptions = ({ navigation }) => ({
         title: navigation.state.params.topic,
-        headerStyle: { backgroundColor: navigation.state.params.color },
+        headerStyle: { backgroundColor: '#' + navigation.state.params.color },
         headerRight: <PlatformIonicon
             name='funnel'
             style={{ paddingRight: 10 }}
@@ -36,16 +36,26 @@ class Topic extends React.Component {
         fetch(getURLForPlatform() + "api/v1/events/search?topic=" + this.props.navigation.state.params.id, {
             headers: {
                 Authorization: "Token " + this.props.token
-              },
+            },
         }).then(response => response.json())
             .then(responseObj => {
                 this.setState({ data: responseObj });
+            });
+
+        fetch(getURLForPlatform() + "api/v1/topics/" + this.props.navigation.state.params.id + "/follow/", {
+            method: 'GET',
+            headers: {
+                Authorization: "Token " + this.props.token
+            },
+        }).then(response => response.json())
+            .then(responseJSON => {
+                this.setState({ followed: responseJSON["followedByUser"] });
             })
     }
 
     componentWillMount() {
         var mColors;
-        if (this.state.colors && this.state.colors.length === 1 && this.state.colors[0] === "fff") {
+        if (this.state.colors && this.state.colors.length === 1 && this.state.colors[0] === "ffffff") {
             mColors = (new ColorScheme()).from_hex(this.props.navigation.state.params.color).scheme('mono');
             this.setState({ colors: mColors.colors() });
         } else {
@@ -63,18 +73,18 @@ class Topic extends React.Component {
             method: 'POST',
             headers: {
                 Authorization: "Token " + this.props.token
-              },
+            },
             body: JSON.stringify({
                 topic: this.props.navigation.state.params.id
             }),
         }).then(response => response.json())
-          .then(responseJSON => {
-              if ("followed" in responseJSON) {
-                this.setState({ followed: true });
-              } else {
-                this.setState({ followed: false });
-              }
-          })
+            .then(responseJSON => {
+                if ("followed" in responseJSON) {
+                    this.setState({ followed: true });
+                } else {
+                    this.setState({ followed: false });
+                }
+            })
     }
 
     render() {

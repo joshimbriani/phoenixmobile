@@ -12,7 +12,7 @@ class EventDetail extends React.Component {
 
     static navigationOptions = ({ navigation }) => ({
         title: navigation.state.params.event,
-        headerStyle: { backgroundColor: navigation.state.params.color },
+        headerStyle: { backgroundColor: '#' + navigation.state.params.color },
     });
 
     constructor(props) {

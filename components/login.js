@@ -29,6 +29,12 @@ class Login extends React.Component {
         this.sendLoginRequest = this.sendLoginRequest.bind(this);
     }
 
+    componentDidMount() {
+        if (this.props.token) {
+            this.resetNavigation('Main');
+        }
+    }
+
     formIsValid() {
         console.log(this.state.username);
         if (this.state.username === "" || this.state.password === "") {
@@ -107,7 +113,8 @@ class Login extends React.Component {
 
 function mapStateToProps(state) {
     return {
-        color: state.backgroundColorReducer.color
+        color: state.backgroundColorReducer.color,
+        token: state.tokenReducer.token,
     };
 }
 

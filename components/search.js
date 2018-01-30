@@ -53,7 +53,7 @@ class Search extends React.Component {
                             return (
                                 <TouchableHighlight onPress={() => { this.props.navigation.navigate('Topic', { topic: item.name, id: item.id, color: item.color.substring(0) }) }}>
                                     <View
-                                        style={[styles.itemBox, { backgroundColor: item.color }]}
+                                        style={[styles.itemBox, { backgroundColor: '#' + item.color }]}
                                     >
                                         <PlatformIonicon
                                             name={item.icon || 'aperture'}
