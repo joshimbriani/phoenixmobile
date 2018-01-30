@@ -2,9 +2,9 @@ import React from 'react';
 import { StyleSheet, Text, FlatList, View } from 'react-native';
 import { connect } from 'react-redux';
 import {bindActionCreators} from 'redux';
-import NavContainer from './navcontainer'
+import NavContainer from '../subviews/navcontainer'
 import { Constants } from 'expo';
-import * as colorActions from '../redux/actions/backgroundColor'
+import * as colorActions from '../../redux/actions/backgroundColor'
 
 class Index extends React.Component {
 

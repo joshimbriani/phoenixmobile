@@ -1,7 +1,7 @@
 import React, { PureComponent } from 'react';
 import { Text, View } from 'react-native';
 import { DrawerItems } from 'react-navigation';
-import PlatformIonicon from './utils/platformIonicon';
+import PlatformIonicon from '../utils/platformIonicon';
 
 export const SideDrawer = (props) => (
     <View style={{ elevation: 10 }}>

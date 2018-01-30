@@ -1,23 +1,19 @@
 import React from 'react';
 import { StyleSheet, Text, FlatList, ScrollView, View } from 'react-native';
-import { TabNavigator, StackNavigator, DrawerItems } from 'react-navigation';
-import PlatformIonicon from './utils/platformIonicon';
-import Home from './home';
-import Topic from './topic';
-import NewEvent from './newevent';
-import Settings from './settings';
-import ProfileSettings from './profile-settings';
-import LocationsSettings from './locations-settings';
-import PrivacySettings from './privacy-settings';
-import RestrictedModeSettings from './restricted-mode-settings';
-import HelpSettings from './help-settings';
-import LegalSettings from './legal-settings';
-import Search from './search';
-import EventDetail from './eventdetail';
+import { DrawerNavigator, StackNavigator, DrawerItems } from 'react-navigation';
+import { SideDrawer } from './sidedrawer';
+import PlatformIonicon from '../utils/platformIonicon';
+import Home from '../app/home';
+import Topic from '../app/topic';
+import Settings from '../settings/settings';
+import NewEvent from '../app/newevent';
+import Search from '../app/search';
+import EventDetail from '../app/eventdetail';
 import Filter from './filter';
-import IDK from './idk';
-import Login from './login';
-
+import LocationsSettings from '../settings/locations-settings';
+import ProfileSettings from '../settings/profile-settings';
+import IDK from '../app/idk';
+import Login from '../auth/login';
 
 const ProfileScreen = () => (
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
@@ -39,13 +35,13 @@ const HomeStack = StackNavigator({
         path: '/topic/:topic',
         screen: Topic,
     },
-    NewEvent: {
-        path: '/newevent',
-        screen: NewEvent
-    },
     Search: {
         path: '/search?query=:query',
         screen: Search,
+    },
+    NewEvent: {
+        path: '/newevent',
+        screen: NewEvent,
     },
     EventDetail: {
         path: '/event/:event',
@@ -61,20 +57,16 @@ const HomeStack = StackNavigator({
     }
 });
 
-const SuggestedStack = StackNavigator({
-    Suggested: {
-        screen: SuggestedScreen,
-        navigationOptions: ({ navigation }) => ({
-            title: 'Suggested',
-        })
-    }
-});
-
 const SettingsStack = StackNavigator({
     Settings: {
         screen: Settings,
         navigationOptions: ({ navigation }) => ({
             title: 'Settings',
+            headerLeft: <PlatformIonicon
+                name="menu"
+                style={{paddingLeft: 10}}
+                size={35}
+                onPress={() => navigation.navigate('DrawerOpen')} />
         })
     },
     LocationsSettings: {
@@ -88,29 +80,20 @@ const SettingsStack = StackNavigator({
         navigationOptions: ({ navigation }) => ({
             title: 'Profile Settings',
         })
-    },
-    PrivacySettings: {
-        screen: PrivacySettings,
+    }
+
+});
+
+const SuggestedStack = StackNavigator({
+    Suggested: {
+        screen: SuggestedScreen,
         navigationOptions: ({ navigation }) => ({
-            title: 'Privacy Settings',
-        })
-    },
-    RestrictedModeSettings: {
-        screen: RestrictedModeSettings,
-        navigationOptions: ({ navigation }) => ({
-            title: 'Restricted Mode Settings',
-        })
-    },
-    HelpSettings: {
-        screen: HelpSettings,
-        navigationOptions: ({ navigation }) => ({
-            title: 'Help Settings',
-        })
-    },
-    LegalSettings: {
-        screen: LegalSettings,
-        navigationOptions: ({ navigation }) => ({
-            title: 'Legal Settings',
+            title: 'Suggested',
+            headerLeft: <PlatformIonicon
+                name="menu"
+                style={{paddingLeft: 10}}
+                size={35}
+                onPress={() => navigation.navigate('DrawerOpen')} />
         })
     }
 });
@@ -120,16 +103,22 @@ const ProfileStack = StackNavigator({
         screen: ProfileScreen,
         navigationOptions: ({ navigation }) => ({
             title: 'Profile',
+            headerLeft: <PlatformIonicon
+                name="menu"
+                style={{paddingLeft: 10}}
+                size={35}
+                onPress={() => navigation.navigate('DrawerOpen')} />
         })
     }
 });
 
-const MainNavContainer = TabNavigator({
+const MainNavContainer = DrawerNavigator({
+    
     Home: {
         screen: HomeStack,
         navigationOptions: {
-            tabBarLabel: 'Home',
-            tabBarIcon: ({ tintColor, focused }) => (
+            drawerLabel: 'Home',
+            drawerIcon: ({ tintColor, focused }) => (
                 <PlatformIonicon
                     name='home'
                     size={20}
@@ -141,8 +130,8 @@ const MainNavContainer = TabNavigator({
     Suggested: {
         screen: SuggestedStack,
         navigationOptions: {
-            tabBarLabel: 'Suggested',
-            tabBarIcon: ({ tintColor, focused }) => (
+            drawerLabel: 'Suggested',
+            drawerIcon: ({ tintColor, focused }) => (
                 <PlatformIonicon
                     name='apps'
                     size={20}
@@ -154,8 +143,8 @@ const MainNavContainer = TabNavigator({
     Profile: {
         screen: ProfileStack,
         navigationOptions: {
-            tabBarLabel: 'Profile',
-            tabBarIcon: ({ tintColor, focused }) => (
+            drawerLabel: 'Profile',
+            drawerIcon: ({ tintColor, focused }) => (
                 <PlatformIonicon
                     name='person'
                     size={20}
@@ -167,8 +156,8 @@ const MainNavContainer = TabNavigator({
     Settings: {
         screen: SettingsStack,
         navigationOptions: {
-            tabBarLabel: 'Settings',
-            tabBarIcon: ({ tintColor, focused }) => (
+            drawerLabel: 'Settings',
+            drawerIcon: ({ tintColor, focused }) => (
                 <PlatformIonicon
                     name='settings'
                     size={20}
@@ -177,7 +166,11 @@ const MainNavContainer = TabNavigator({
             ),
         },
     },
-});
+},
+    {
+        contentComponent: SideDrawer
+    }
+);
 
 const LoginWrapper = StackNavigator({
     Login: {
@@ -191,8 +184,8 @@ const LoginWrapper = StackNavigator({
         screen: MainNavContainer
     }
 }, {
-        headerMode: 'none'
-    });
+    headerMode: 'none'
+});
 
 export default LoginWrapper;
 
@@ -200,7 +193,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#fff',
-        marginTop: -22,
+        paddingTop: 22,
     },
     item: {
         padding: 10,

@@ -1,10 +1,10 @@
 import React from 'react';
 import { Container, Content, Form, Header, Item, Input, Icon, Label, Button, Text } from 'native-base';
 import { Alert, StatusBar, FlatList, StyleSheet, TouchableHighlight, View } from 'react-native';
-import PlatformIonicon from './utils/platformIonicon';
+import PlatformIonicon from '../utils/platformIonicon';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import * as colorActions from '../redux/actions/backgroundColor'
+import * as colorActions from '../../redux/actions/backgroundColor'
 import ColorScheme from 'color-scheme';
 import Swiper from 'react-native-swiper';
 
@@ -34,21 +34,19 @@ class NewEvent extends React.Component {
         }
         this.onChange = this.onChange.bind(this);
         this.formIsValid = this.formIsValid.bind(this);
+        this.submitForm = this.submitForm.bind(this);
     }
 
-    onChange(e) {
+    onChange(component, value) {
         var stateRepresentation = {};
-        stateRepresentation[e.target.name] = e.target.value;
+        stateRepresentation[component] = value;
         stateRepresentation["formIsValid"] = this.formIsValid();
         this.setState(stateRepresentation);
     }
 
     formIsValid() {
-        console.log(this.state)
         for (var property in ITEMS_TO_VALIDATE) {
-            console.log(property)
-            // Property is just indices, not names of elements
-            if (this.state[property] === "") {
+            if (this.state[ITEMS_TO_VALIDATE[property]] === "") {
                 return false;
             }
         }
@@ -57,6 +55,7 @@ class NewEvent extends React.Component {
 
     submitForm() {
         console.log("Submit Form");
+        console.log(this.state);
     }
 
     render() {
@@ -70,13 +69,13 @@ class NewEvent extends React.Component {
                     <Form>
                         <Item floatingLabel>
                             <Label>Title</Label>
-                            <Input name="title" onChange={this.onChange} />
+                            <Input name="title" onChangeText={(text) => this.onChange("title", text)} />
                         </Item>
                         <Item floatingLabel last>
                             <Label>Full Description</Label>
                             <Input style={{
                                 width: 200, height: 500
-                            }} name="description" multiline={true} onChange={this.onChange} />
+                            }} name="description" multiline={true} onChangeText={(text) => this.onChange("description", text)} />
                         </Item>
                     </Form>
                 </View>
@@ -97,7 +96,7 @@ class NewEvent extends React.Component {
                     <Form>
                         <Item floatingLabel>
                             <Label>Place</Label>
-                            <Input name="place" onChange={this.onChange} />
+                            <Input name="place" onChangeText={(text) => this.onChange("place", text)} />
                         </Item>
                     </Form>
                 </View>
@@ -109,7 +108,7 @@ class NewEvent extends React.Component {
                     <Form>
                         <Item floatingLabel>
                             <Label>Time</Label>
-                            <Input name="datetime" onChange={this.onChange} />
+                            <Input name="datetime" onChangeText={(text) => this.onChange("datetime", text)} />
                         </Item>
                     </Form>
                 </View>
@@ -121,15 +120,15 @@ class NewEvent extends React.Component {
                     <Form>
                         <Item floatingLabel>
                             <Label>Amount of People</Label>
-                            <Input name="amount" onChange={this.onChange} />
+                            <Input name="amount" onChangeText={(text) => this.onChange("amount", text)} />
                         </Item>
                         <Item floatingLabel>
                             <Label>Restrict to the same gender?</Label>
-                            <Input name="restrictToGender" onChange={this.onChange} />
+                            <Input name="restrictToGender" onChangeText={(text) => this.onChange("restrictToGender", text)} />
                         </Item>
                     </Form>
                     <Button title="Submit" accessibilityLabel="Press this button to submit your information and create a new event." disabled={!this.state.formIsValid} onPress={this.submitForm}>
-                            <Text>Submit</Text>
+                        <Text>Submit</Text>
                     </Button>
                 </View>
             </Swiper>

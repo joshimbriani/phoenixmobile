@@ -1,26 +1,23 @@
 import React from 'react';
-import { Container, Fab, Header, Item, Input, Icon, Button, Text } from 'native-base';
-import { Alert, Platform, StyleSheet, TouchableHighlight, View } from 'react-native';
-import GridView from 'react-native-super-grid';
-import PlatformIonicon from './utils/platformIonicon';
+import { Container, Header, Item, Input, Icon, Button, Text } from 'native-base';
+import { Alert, StatusBar, FlatList, StyleSheet, TouchableHighlight, View } from 'react-native';
+import PlatformIonicon from '../utils/platformIonicon';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import * as colorActions from '../redux/actions/backgroundColor';
-import randomMC from 'random-material-color';
-import SettingsList from 'react-native-settings-list';
+import * as colorActions from '../../redux/actions/backgroundColor'
+import ColorScheme from 'color-scheme';
 
-class PrivacySettings extends React.Component {
+class ProfileSettings extends React.Component {
 
     render() {
             return (
                 <Container>
-                    <Text> settings privacy page: 
+                    <Text> settings profile page: 
                     </Text>
                 </Container>
             );
     }
 }
-
 
 function mapStateToProps(state) {
     return {
@@ -37,7 +34,7 @@ function mapDispatchToProps(dispatch) {
 export default connect(
     mapStateToProps,
     mapDispatchToProps
-)(PrivacySettings);
+)(ProfileSettings);
 
 const styles = StyleSheet.create({
     listitem: {

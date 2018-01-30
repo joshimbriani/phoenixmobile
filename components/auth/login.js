@@ -4,10 +4,10 @@ import { Alert, StatusBar, FlatList, StyleSheet, TouchableHighlight, View } from
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { NavigationActions } from 'react-navigation';
-import * as tokenActions from '../redux/actions/token'
-import PlatformIonicon from './utils/platformIonicon';
+import * as tokenActions from '../../redux/actions/token'
+import PlatformIonicon from '../utils/platformIonicon';
 import ColorScheme from 'color-scheme';
-import {getURLForPlatform} from './utils/networkUtils';
+import {getURLForPlatform} from '../utils/networkUtils';
 
 class Login extends React.Component {
 
@@ -36,7 +36,6 @@ class Login extends React.Component {
     }
 
     formIsValid() {
-        console.log(this.state.username);
         if (this.state.username === "" || this.state.password === "") {
             return false;
         }

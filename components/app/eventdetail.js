@@ -3,10 +3,10 @@ import { Container, Header, Item, Input, Icon, Button, Text } from 'native-base'
 import { Alert, StatusBar, FlatList, StyleSheet, TouchableHighlight, View } from 'react-native';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import * as colorActions from '../redux/actions/backgroundColor'
-import PlatformIonicon from './utils/platformIonicon';
+import * as colorActions from '../../redux/actions/backgroundColor'
+import PlatformIonicon from '../utils/platformIonicon';
 import ColorScheme from 'color-scheme';
-import {getURLForPlatform} from './utils/networkUtils';
+import {getURLForPlatform} from '../utils/networkUtils';
 
 class EventDetail extends React.Component {
 

@@ -4,10 +4,10 @@ import { Alert, Platform, RefreshControl,StyleSheet, TouchableHighlight, View } 
 import GridView from 'react-native-super-grid';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import * as colorActions from '../redux/actions/backgroundColor';
-import PlatformIonicon from './utils/platformIonicon';
+import * as colorActions from '../../redux/actions/backgroundColor';
+import PlatformIonicon from '../utils/platformIonicon';
 import randomMC from 'random-material-color';
-import { getURLForPlatform } from './utils/networkUtils';
+import { getURLForPlatform } from '../utils/networkUtils';
 
 class Home extends React.Component {
     constructor(props) {

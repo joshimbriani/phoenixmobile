@@ -1,12 +1,12 @@
 import React from 'react';
 import { Button, Container, Text } from 'native-base';
 import { Alert, StatusBar, FlatList, StyleSheet, TouchableHighlight, View } from 'react-native';
-import PlatformIonicon from './utils/platformIonicon';
+import PlatformIonicon from '../utils/platformIonicon';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import * as colorActions from '../redux/actions/backgroundColor'
+import * as colorActions from '../../redux/actions/backgroundColor'
 import ColorScheme from 'color-scheme';
-import { getURLForPlatform } from './utils/networkUtils';
+import { getURLForPlatform } from '../utils/networkUtils';
 
 class Topic extends React.Component {
 
