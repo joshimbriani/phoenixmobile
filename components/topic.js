@@ -6,12 +6,13 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import * as colorActions from '../redux/actions/backgroundColor'
 import ColorScheme from 'color-scheme';
+import { getURLForPlatform } from './utils/networkUtils';
 
 class Topic extends React.Component {
 
     static navigationOptions = ({ navigation }) => ({
         title: navigation.state.params.topic,
-        headerStyle: { backgroundColor: navigation.state.params.color },
+        headerStyle: { backgroundColor: '#' + navigation.state.params.color },
         headerRight: <PlatformIonicon
             name='funnel'
             style={{ paddingRight: 10 }}
@@ -23,22 +24,39 @@ class Topic extends React.Component {
         super(props);
         this.state = {
             colors: ["ffffff"],
-            data: []
+            data: [],
+            followed: false,
         }
+
+        this.followTopic = this.followTopic.bind(this);
     }
 
     componentDidMount() {
         this.props.colorActions.changeColor(this.props.navigation.state.params.color);
-        fetch("http://10.0.2.2:8000/api/v1/events/search?topic=" + this.props.navigation.state.params.id).then(response => response.json())
+        fetch(getURLForPlatform() + "api/v1/events/search?topic=" + this.props.navigation.state.params.id, {
+            headers: {
+                Authorization: "Token " + this.props.token
+            },
+        }).then(response => response.json())
             .then(responseObj => {
                 this.setState({ data: responseObj });
+            });
+
+        fetch(getURLForPlatform() + "api/v1/topics/" + this.props.navigation.state.params.id + "/follow/", {
+            method: 'GET',
+            headers: {
+                Authorization: "Token " + this.props.token
+            },
+        }).then(response => response.json())
+            .then(responseJSON => {
+                this.setState({ followed: responseJSON["followedByUser"] });
             })
     }
 
     componentWillMount() {
         var mColors;
-        if (this.state.colors && this.state.colors.length === 1 && this.state.colors[0] === "fff") {
-            mColors = (new ColorScheme()).from_hex(this.props.navigation.state.params.color.substring(1)).scheme('mono');
+        if (this.state.colors && this.state.colors.length === 1 && this.state.colors[0] === "ffffff") {
+            mColors = (new ColorScheme()).from_hex(this.props.navigation.state.params.color).scheme('mono');
             this.setState({ colors: mColors.colors() });
         } else {
             mColors = this.state.colors;
@@ -50,21 +68,33 @@ class Topic extends React.Component {
     }
 
     followTopic() {
-        fetch("http://10.0.2.2:8000/api/v1/events/search?topic=" + this.props.navigation.state.params.id).then(response => response.json())
-            .then(responseObj => {
-                this.setState({ data: responseObj });
+        console.log("Token " + this.props.token);
+        fetch(getURLForPlatform() + "api/v1/topics/" + this.props.navigation.state.params.id + "/follow/", {
+            method: 'POST',
+            headers: {
+                Authorization: "Token " + this.props.token
+            },
+            body: JSON.stringify({
+                topic: this.props.navigation.state.params.id
+            }),
+        }).then(response => response.json())
+            .then(responseJSON => {
+                if ("followed" in responseJSON) {
+                    this.setState({ followed: true });
+                } else {
+                    this.setState({ followed: false });
+                }
             })
-        this.props.navigation.state.params.id
     }
 
     render() {
         if (this.state.data.length > 0) {
             return (
-                <Container style={{ flex: 1}}>
+                <Container style={{ flex: 1 }}>
                     <View style={{ flex: 1, flexDirection: "row", justifyContent: "center" }}>
-                        <Button onPress={this.followTopic} style={{justifyContent: "center"}}><Text>Follow</Text></Button>
+                        <Button onPress={this.followTopic} style={{ justifyContent: "center" }}><Text>{this.state.followed && 'Unfollow'}{!this.state.followed && 'Follow'}</Text></Button>
                     </View>
-                    <View style={{ flex:10 }}>
+                    <View style={{ flex: 10 }}>
                         <FlatList
                             data={this.state.data}
                             contentContainerStyle={{ paddingTop: 0 }}
@@ -95,7 +125,8 @@ class Topic extends React.Component {
 
 function mapStateToProps(state) {
     return {
-        color: state.backgroundColorReducer.color
+        color: state.backgroundColorReducer.color,
+        token: state.tokenReducer.token,
     };
 }
 

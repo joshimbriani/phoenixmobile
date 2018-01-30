@@ -26,7 +26,7 @@ class Index extends React.Component {
         return (
             <View style={styles.container}>
                 <View style={{
-                    backgroundColor: this.props.color,
+                    backgroundColor: '#' + this.props.color,
                     height: Constants.statusBarHeight,
                     marginTop: -Constants.statusBarHeight
                 }} />

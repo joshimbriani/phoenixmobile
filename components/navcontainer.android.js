@@ -13,6 +13,7 @@ import Filter from './filter';
 import LocationsSettings from './locations-settings';
 import ProfileSettings from './profile-settings';
 import IDK from './idk';
+import Login from './login';
 
 const ProfileScreen = () => (
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
@@ -111,7 +112,7 @@ const ProfileStack = StackNavigator({
     }
 });
 
-const NavContainer = DrawerNavigator({
+const MainNavContainer = DrawerNavigator({
     
     Home: {
         screen: HomeStack,
@@ -171,7 +172,22 @@ const NavContainer = DrawerNavigator({
     }
 );
 
-export default NavContainer;
+const LoginWrapper = StackNavigator({
+    Login: {
+        screen: Login,
+        navigationOptions: ({ navigation }) => ({
+            title: 'Login',
+            header: null
+        })
+    },
+    Main: {
+        screen: MainNavContainer
+    }
+}, {
+    headerMode: 'none'
+});
+
+export default LoginWrapper;
 
 const styles = StyleSheet.create({
     container: {

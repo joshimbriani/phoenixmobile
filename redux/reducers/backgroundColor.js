@@ -1,6 +1,6 @@
 import {CHANGE_COLOR, RESET_COLOR } from '../actions/actionTypes';
 
-const defaultState = { color: "white" };
+const defaultState = { color: "ffffff" };
 
 export default function backgroundColorReducer(state = defaultState, action) {
     switch (action.type) {

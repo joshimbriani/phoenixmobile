@@ -6,12 +6,13 @@ import { bindActionCreators } from 'redux';
 import * as colorActions from '../redux/actions/backgroundColor'
 import PlatformIonicon from './utils/platformIonicon';
 import ColorScheme from 'color-scheme';
+import {getURLForPlatform} from './utils/networkUtils';
 
 class EventDetail extends React.Component {
 
     static navigationOptions = ({ navigation }) => ({
         title: navigation.state.params.event,
-        headerStyle: { backgroundColor: navigation.state.params.color },
+        headerStyle: { backgroundColor: '#' + navigation.state.params.color },
     });
 
     constructor(props) {
@@ -22,7 +23,7 @@ class EventDetail extends React.Component {
     }
 
     componentDidMount() {
-        fetch("http://10.0.2.2:8000/api/v1/events/" + this.props.navigation.state.params.id + "?format=json").then(response => response.json())
+        fetch(getURLForPlatform() + "api/v1/events/" + this.props.navigation.state.params.id + "?format=json").then(response => response.json())
             .then(responseObj => {
                 this.setState({ data: responseObj });
             })
