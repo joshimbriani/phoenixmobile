@@ -10,21 +10,32 @@ import randomMC from 'random-material-color';
 import SettingsList from 'react-native-settings-list';
 import { Dropdown } from 'react-native-material-dropdown';
 
+let distUnit = 'km';
+
 class Settings extends React.Component {
     constructor(){
   super();
   this.onValueChange = this.onValueChange.bind(this);
   this.onValueChange2 = this.onValueChange2.bind(this);
-  this.state = {switchValue: false, switchValue2: false};
+  this.onValueChange3 = this.onValueChange3.bind(this);
+  this.state = {switchValue: false, switchValue2: false, switchValue3: false};
 }
+
 render() {
-      let data = [{
-      value: '10', label: 'False Hope'},
-      {
-      value: '25'},
-      {
-      value: '50',
-    }];
+  if (this.state.switchValue3 == false){
+    distUnit = 'mi';
+  }
+  else {
+    distUnit = 'km';
+  };
+
+  let data = [{
+    value: '10', label: '10 ' + distUnit},
+    {
+    value: '25', label: '25 ' + distUnit},
+    {
+    value: '50', label: '50 ' + distUnit}
+    ];
 
   return (
     <View style={{backgroundColor:'#EFEFF4',flex:1}}>
@@ -73,6 +84,20 @@ render() {
             title='Night Mode'
           />
           <SettingsList.Header headerStyle={{marginTop:15}}/>
+                    <SettingsList.Item
+            icon={
+                <PlatformIonicon
+                    name='swap'
+                    size={30}
+                    style={{paddingTop: 10, paddingLeft: 5}}
+                />
+            }
+            hasSwitch={true}
+            switchState={this.state.switchValue3}
+            switchOnValueChange={this.onValueChange3}
+            hasNavArrow={false}
+            title='Standard / Metric'
+          />
           <SettingsList.Item
             icon={
                 <PlatformIonicon
@@ -87,7 +112,7 @@ render() {
             arrowIcon={
               <Dropdown
               label='Distance'
-              //value='yup'
+              value='yup'
               //width={10000}
               //itemTextSize={100}
               fontSize={15} //this changes to default size after the dropdown has been used
@@ -155,6 +180,9 @@ onValueChange(value){
 }
 onValueChange2(value){
   this.setState({switchValue2: value});
+}
+onValueChange3(value){
+  this.setState({switchValue3: value});
 }
 }
 function mapStateToProps(state) {
