@@ -1,7 +1,7 @@
 import React from 'react';
 import { StyleSheet, Text, FlatList, ScrollView, View } from 'react-native';
 import { DrawerNavigator, StackNavigator, DrawerItems } from 'react-navigation';
-import { SideDrawer } from './sidedrawer';
+import SideDrawer from './sidedrawer';
 import PlatformIonicon from '../utils/platformIonicon';
 import Home from '../app/home';
 import Topic from '../app/topic';
@@ -14,6 +14,7 @@ import LocationsSettings from '../settings/locations-settings';
 import ProfileSettings from '../settings/profile-settings';
 import IDK from '../app/idk';
 import Login from '../auth/login';
+import Register from '../auth/register';
 
 const ProfileScreen = () => (
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
@@ -173,6 +174,13 @@ const MainNavContainer = DrawerNavigator({
 );
 
 const LoginWrapper = StackNavigator({
+    Register: {
+        screen: Register,
+        navigationOptions: ({ navigation }) => ({
+            title: 'Register',
+            header: null
+        })
+    },
     Login: {
         screen: Login,
         navigationOptions: ({ navigation }) => ({

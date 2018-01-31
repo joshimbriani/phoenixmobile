@@ -8,24 +8,22 @@ import * as tokenActions from '../../redux/actions/token'
 import PlatformIonicon from '../utils/platformIonicon';
 import { getURLForPlatform } from '../utils/networkUtils';
 
-class Login extends React.Component {
-
-    static navigationOptions = ({ navigation }) => ({
-        title: "Login"
-    });
+class Register extends React.Component {
 
     constructor(props) {
         super(props);
         this.state = {
             username: "",
-            password: "",
+            password1: "",
+            password2: "",
             error: ""
         }
 
         this.onChange = this.onChange.bind(this);
         this.submitForm = this.submitForm.bind(this);
         this.resetNavigation = this.resetNavigation.bind(this);
-        this.sendLoginRequest = this.sendLoginRequest.bind(this);
+        this.register = this.register.bind(this);
+        this.parseRegisterResponse = this.parseRegisterResponse.bind(this);
     }
 
     componentDidMount() {
@@ -35,7 +33,7 @@ class Login extends React.Component {
     }
 
     formIsValid() {
-        if (this.state.username === "" || this.state.password === "") {
+        if (this.state.username === "" || this.state.password1 === "" || this.state.password2 === "" || this.state.email === "") {
             return false;
         }
         return true;
@@ -50,12 +48,12 @@ class Login extends React.Component {
 
     submitForm() {
         if (this.state.formIsValid) {
-            this.sendLoginRequest();
+            this.register();
         }
     }
 
-    sendLoginRequest() {
-        fetch(getURLForPlatform() + "rest-auth/login/", {
+    register() {
+        fetch(getURLForPlatform() + "rest-auth/registration/", {
             method: 'POST',
             headers: {
                 'Accept': 'application/json',
@@ -63,27 +61,29 @@ class Login extends React.Component {
             },
             body: JSON.stringify({
                 'username': this.state.username,
-                'password': this.state.password,
+                'password1': this.state.password1,
+                'password2': this.state.password2,
+                'email': this.state.email,
             })
-        }).then(response => { if (response.ok) { return response.json() } else { this.setState({ error: "Login failed. Try again!" }); return false } })
-            .then(responseJSON => { if (responseJSON) { this.parseLoginResponse(responseJSON) } });
+        }).then(response => {if (response.ok) {return response.json()} else {this.setState({error: "Registration failed. Make sure to fill in all the forms!"}); return false}})
+        .then(responseJSON => { if (responseJSON) {this.parseRegisterResponse(responseJSON)}});
     }
 
-    parseLoginResponse(response) {
+    parseRegisterResponse(response) {
         this.props.tokenActions.saveUserToken(response["key"]);
         this.resetNavigation('Main');
     }
 
     resetNavigation(targetRoute) {
         const resetAction = NavigationActions.reset({
-            index: 0,
-            actions: [
-                NavigationActions.navigate({ routeName: targetRoute }),
-            ],
+          index: 0,
+          actions: [
+            NavigationActions.navigate({ routeName: targetRoute }),
+          ],
         });
         this.props.navigation.dispatch(resetAction);
-    }
-
+      }
+      
 
     render() {
         return (
@@ -96,10 +96,21 @@ class Login extends React.Component {
                         <Label>Username</Label>
                         <Input name="username" autoCapitalize="none" onChangeText={(text) => this.onChange("username", text)} />
                     </Item>
-                    <Item floatingLabel last>
-                        <Label>Password</Label>
-                        <Input name="password" autoCapitalize="none" onChangeText={(text) => this.onChange("password", text)} />
+                    <Item floatingLabel>
+                        <Label>Email</Label>
+                        <Input name="email" autoCapitalize="none" onChangeText={(text) => this.onChange("email", text)} />
                     </Item>
+                    <Item floatingLabel>
+                        <Label>Password</Label>
+                        <Input name="password1" autoCapitalize="none" onChangeText={(text) => this.onChange("password1", text)} />
+                    </Item>
+                    <Item floatingLabel last>
+                        <Label>Password Again</Label>
+                        <Input name="password2" autoCapitalize="none" onChangeText={(text) => this.onChange("password2", text)} />
+                    </Item>
+                    <Button onPress={this.props.navigation.navigate('Login')}>
+                        <Text>Login</Text>
+                    </Button>
                     <Button onPress={this.submitForm}>
                         <Text>Submit</Text>
                     </Button>
@@ -111,7 +122,6 @@ class Login extends React.Component {
 
 function mapStateToProps(state) {
     return {
-        color: state.backgroundColorReducer.color,
         token: state.tokenReducer.token,
     };
 }
@@ -125,7 +135,7 @@ function mapDispatchToProps(dispatch) {
 export default connect(
     mapStateToProps,
     mapDispatchToProps
-)(Login);
+)(Register);
 
 const styles = StyleSheet.create({
     listitem: {

@@ -17,7 +17,7 @@ import EventDetail from '../app/eventdetail';
 import Filter from './filter';
 import IDK from '../app/idk';
 import Login from '../auth/login';
-
+import Register from '../auth/register';
 
 const ProfileScreen = () => (
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
@@ -180,6 +180,13 @@ const MainNavContainer = TabNavigator({
 });
 
 const LoginWrapper = StackNavigator({
+    Register: {
+        screen: Register,
+        navigationOptions: ({ navigation }) => ({
+            title: 'Register',
+            header: null
+        })
+    },
     Login: {
         screen: Login,
         navigationOptions: ({ navigation }) => ({

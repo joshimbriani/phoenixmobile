@@ -5,6 +5,7 @@ import GridView from 'react-native-super-grid';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import * as colorActions from '../../redux/actions/backgroundColor';
+import * as userActions from '../../redux/actions/user';
 import PlatformIonicon from '../utils/platformIonicon';
 import randomMC from 'random-material-color';
 import { getURLForPlatform } from '../utils/networkUtils';
@@ -23,6 +24,7 @@ class Home extends React.Component {
     }
 
     componentDidMount() {
+        this.props.userActions.loadUser();
         this.props.colorActions.resetColor();
         fetch(getURLForPlatform() + "api/v1/users/topics/?format=json", {
             Authorization: "Token " + this.props.token
@@ -140,7 +142,8 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
     return {
-        colorActions: bindActionCreators(colorActions, dispatch)
+        colorActions: bindActionCreators(colorActions, dispatch),
+        userActions: bindActionCreators(userActions, dispatch),
     };
 }
 
