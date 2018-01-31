@@ -1,12 +1,13 @@
 import React from 'react';
 import { Container, Content, Form, Header, Item, Input, Icon, Label, Button, Text } from 'native-base';
-import { Alert, StatusBar, FlatList, StyleSheet, TouchableHighlight, View } from 'react-native';
+import { Alert, StatusBar, FlatList, StyleSheet, TouchableHighlight, TouchableOpacity, View } from 'react-native';
 import PlatformIonicon from '../utils/platformIonicon';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import * as colorActions from '../../redux/actions/backgroundColor'
 import ColorScheme from 'color-scheme';
 import Swiper from 'react-native-swiper';
+import DateTimePicker from 'react-native-modal-datetime-picker';
 
 const ITEMS_TO_VALIDATE = ["title", "description", "place", "datetime"];
 
@@ -31,6 +32,7 @@ class NewEvent extends React.Component {
             place: "",
             datetime: "",
             formIsValid: false,
+            isDateTimePickerVisible: false,
         }
         this.onChange = this.onChange.bind(this);
         this.formIsValid = this.formIsValid.bind(this);
@@ -54,9 +56,34 @@ class NewEvent extends React.Component {
     }
 
     submitForm() {
-        console.log("Submit Form");
         console.log(this.state);
+        fetch(getURLForPlatform() + "api/v1/events", {
+            method: 'POST',
+            Authorization: 'Token ' + this.props.token,
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                'created': Date.now(),
+                'title': this.state.title,
+                'description': this.state.description,
+                'place': this.state.place,
+                'restrictToSameGender': this.state.restrictToGender,
+                'capacity': this.state.capacity,
+            })
+        })
     }
+
+    _showDateTimePicker = () => this.setState({ isDateTimePickerVisible: true });
+
+    _hideDateTimePicker = () => this.setState({ isDateTimePickerVisible: false });
+
+    _handleDatePicked = (date) => {
+        this.setState({ datetime: date });
+        this._hideDateTimePicker();
+    };
+
 
     render() {
         return (
@@ -106,11 +133,16 @@ class NewEvent extends React.Component {
                         <Text style={styles.h2}>When do you wanna have your event?</Text>
                     </View>
                     <Form>
-                        <Item floatingLabel>
-                            <Label>Time</Label>
-                            <Input name="datetime" onChangeText={(text) => this.onChange("datetime", text)} />
-                        </Item>
+                        <Button title="SetDateTime" accessibilityLabel="Press this button to set the date and time of your event!" onPress={this._showDateTimePicker}>
+                            <Text>Pick Date and Time</Text>
+                        </Button>
                     </Form>
+                    <DateTimePicker
+                        isVisible={this.state.isDateTimePickerVisible}
+                        onConfirm={this._handleDatePicked}
+                        onCancel={this._hideDateTimePicker}
+                        mode="datetime"
+                    />
                 </View>
                 <View>
                     <View style={[styles.header, { backgroundColor: "red" }]}>
@@ -126,6 +158,9 @@ class NewEvent extends React.Component {
                             <Label>Restrict to the same gender?</Label>
                             <Input name="restrictToGender" onChangeText={(text) => this.onChange("restrictToGender", text)} />
                         </Item>
+                        <Button title="Invite" accessibilityLabel="Invite friends to your event." onPress={this.inviteFriends}>
+                            <Text>Invite Friends</Text>
+                        </Button>
                     </Form>
                     <Button title="Submit" accessibilityLabel="Press this button to submit your information and create a new event." disabled={!this.state.formIsValid} onPress={this.submitForm}>
                         <Text>Submit</Text>
@@ -138,7 +173,7 @@ class NewEvent extends React.Component {
 
 function mapStateToProps(state) {
     return {
-
+        token: state.tokenReducer.token,
     };
 }
 
