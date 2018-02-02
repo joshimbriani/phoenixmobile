@@ -1,12 +1,12 @@
 import { combineReducers } from 'redux';
 import backgroundColorReducer from './backgroundColor';
 import tokenReducer from './token';
-import userRedcuer from './user';
+import userReducer from './user';
 
 const reducers = combineReducers({
     backgroundColorReducer,
     tokenReducer,
-    userRedcuer
+    userReducer
 });
 
 export default reducers;

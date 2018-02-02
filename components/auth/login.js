@@ -29,6 +29,7 @@ class Login extends React.Component {
     }
 
     componentDidMount() {
+        console.log(this.props.token);
         if (this.props.token) {
             this.resetNavigation('Main');
         }

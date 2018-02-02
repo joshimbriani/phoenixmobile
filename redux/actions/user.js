@@ -1,5 +1,6 @@
 import { SAVE_USER_OBJECT, PURGE_USER_OBJECT } from '../actions/actionTypes';
 import { getURLForPlatform } from '../../components/utils/networkUtils';
+import { purgeUserToken } from './token';
 
 export function saveUserObject(user) {
     return {
@@ -18,6 +19,15 @@ export function loadUser() {
             },
         }).then(response => response.json())
             .then(responseObj => dispatch(saveUserObject(responseObj)));
+    }
+}
+
+export function logout(token) {
+    return function action(dispatch) {
+        return fetch(getURLForPlatform() + "rest-auth/logout", {
+            method: 'POST',
+            Authorization: 'Token ' + token
+        }).then(response => { dispatch(purgeUserObject()); dispatch(purgeUserToken())});
     }
 }
 

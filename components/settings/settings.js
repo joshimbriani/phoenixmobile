@@ -10,6 +10,7 @@ import * as userActions from '../../redux/actions/user';
 import randomMC from 'random-material-color';
 import SettingsList from 'react-native-settings-list';
 import { Dropdown } from 'react-native-material-dropdown';
+import { NavigationActions } from 'react-navigation';
 
 let distUnit = 'km';
 
@@ -55,7 +56,7 @@ class Settings extends React.Component {
                                 />
                             }
                             title='Profile'
-                            titleInfo={this.props.user} // could link this to the user's name
+                            titleInfo={this.props.user["username"]} // could link this to the user's name
                             titleInfoStyle={styles.titleInfoStyle}
                             onPress={() => this.props.navigation.navigate("ProfileSettings", {})}
                         />
@@ -175,21 +176,35 @@ class Settings extends React.Component {
                             onPress={() => this.props.navigation.navigate("LegalSettings", {})}
                         />
                     </SettingsList>
-                    <Button onClick={() => this.props.logout(this.props.token)}>
-                            <Text>Logout</Text>
+                    <Button onPress={() => { this.props.userActions.logout(this.props.token); this.resetNavigation('Login')}}>
+                        <Text>Logout</Text>
                     </Button>
                 </View>
             </View>
         );
     }
+
     onValueChange(value) {
         this.setState({ switchValue: value });
     }
+
     onValueChange2(value) {
         this.setState({ switchValue2: value });
     }
+
     onValueChange3(value) {
         this.setState({ switchValue3: value });
+    }
+
+    resetNavigation(targetRoute) {
+        const resetAction = NavigationActions.reset({
+            index: 0,
+            key: null,
+            actions: [
+                NavigationActions.navigate({ routeName: targetRoute }),
+            ],
+        });
+        this.props.navigation.dispatch(resetAction);
     }
 }
 function mapStateToProps(state) {

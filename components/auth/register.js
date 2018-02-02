@@ -108,7 +108,7 @@ class Register extends React.Component {
                         <Label>Password Again</Label>
                         <Input name="password2" autoCapitalize="none" onChangeText={(text) => this.onChange("password2", text)} />
                     </Item>
-                    <Button onPress={this.props.navigation.navigate('Login')}>
+                    <Button onPress={() => this.props.navigation.navigate('Login')}>
                         <Text>Login</Text>
                     </Button>
                     <Button onPress={this.submitForm}>
