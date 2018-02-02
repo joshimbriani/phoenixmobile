@@ -23,6 +23,12 @@ class Settings extends React.Component {
         this.state = { switchValue: false, switchValue2: false, switchValue3: false };
     }
 
+    componentWillReceiveProps(nextProps) {
+        if (nextProps.token === "") {
+            this.resetNavigation('Register');
+        }
+    }
+
     render() {
         if (this.state.switchValue3 == false) {
             distUnit = 'mi';
@@ -176,7 +182,7 @@ class Settings extends React.Component {
                             onPress={() => this.props.navigation.navigate("LegalSettings", {})}
                         />
                     </SettingsList>
-                    <Button onPress={() => { this.props.userActions.logout(this.props.token); this.resetNavigation('Login')}}>
+                    <Button onPress={() => { this.props.userActions.logout(this.props.token)}}>
                         <Text>Logout</Text>
                     </Button>
                 </View>

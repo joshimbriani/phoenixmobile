@@ -3,6 +3,8 @@ import { Text, View } from 'react-native';
 import { DrawerItems } from 'react-navigation';
 import PlatformIonicon from '../utils/platformIonicon';
 import * as userActions from '../../redux/actions/user';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 
 class SideDrawer extends React.Component {
     render() {
@@ -28,7 +30,7 @@ class SideDrawer extends React.Component {
 
 function mapStateToProps(state) {
     return {
-        user: state.tokenReducer.token,
+        user: state.userReducer.user,
     };
 }
 
