@@ -32,22 +32,31 @@ class Register extends React.Component {
         }
     }
 
-    formIsValid() {
+    registrationIsValid() {
         if (this.state.username === "" || this.state.password1 === "" || this.state.password2 === "" || this.state.email === "") {
+            this.setState({error: "Make sure you fill in all of the fields!"});
             return false;
         }
-        return true;
+        if (this.state.password1 !== this.state.password2) {
+            this.setState({error: "Make sure your passwords match!"});
+            return false;
+        }
+        if (this.state.password1.length < 6) {
+            this.setState({error: "Make sure your paswords are at least 6 chatracters long!"});
+            return false;
+        }
+        const emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+        return emailRegex.test(this.state.email.toLowerCase());
     }
 
     onChange(component, value) {
         var stateRepresentation = {};
         stateRepresentation[component] = value;
-        stateRepresentation["formIsValid"] = this.formIsValid();
         this.setState(stateRepresentation);
     }
 
     submitForm() {
-        if (this.state.formIsValid) {
+        if (this.registrationIsValid()) {
             this.register();
         }
     }
@@ -65,7 +74,7 @@ class Register extends React.Component {
                 'password2': this.state.password2,
                 'email': this.state.email,
             })
-        }).then(response => {if (response.ok) {return response.json()} else {this.setState({error: "Registration failed. Make sure to fill in all the forms!"}); return false}})
+        }).then(response => {if (response.ok) {return response.json()} else {this.setState({error: "Registration failed. Give it another shot!"}); return false}})
         .then(responseJSON => { if (responseJSON) {this.parseRegisterResponse(responseJSON)}});
     }
 
@@ -98,15 +107,15 @@ class Register extends React.Component {
                     </Item>
                     <Item floatingLabel>
                         <Label>Email</Label>
-                        <Input name="email" autoCapitalize="none" onChangeText={(text) => this.onChange("email", text)} />
+                        <Input name="email" keyboard-type="email-address" autoCapitalize="none" onChangeText={(text) => this.onChange("email", text)} />
                     </Item>
                     <Item floatingLabel>
                         <Label>Password</Label>
-                        <Input name="password1" autoCapitalize="none" onChangeText={(text) => this.onChange("password1", text)} />
+                        <Input name="password1" secureTextEntry={true} autoCapitalize="none" onChangeText={(text) => this.onChange("password1", text)} />
                     </Item>
                     <Item floatingLabel last>
                         <Label>Password Again</Label>
-                        <Input name="password2" autoCapitalize="none" onChangeText={(text) => this.onChange("password2", text)} />
+                        <Input name="password2" secureTextEntry={true} autoCapitalize="none" onChangeText={(text) => this.onChange("password2", text)} />
                     </Item>
                     <Button onPress={() => this.props.navigation.navigate('Login')}>
                         <Text>Login</Text>

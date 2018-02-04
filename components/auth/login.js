@@ -1,6 +1,6 @@
 import React from 'react';
-import { Container, Header, Item, Input, Icon, Form, Label, Button, Text } from 'native-base';
-import { Alert, StatusBar, FlatList, StyleSheet, TouchableHighlight, View } from 'react-native';
+import { Container, Header, Item, Input, Icon, Form, Label, Button, Text, Content } from 'native-base';
+import { Alert, StatusBar, FlatList, StyleSheet, View, Image, TouchableOpacity } from 'react-native';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { NavigationActions } from 'react-navigation';
@@ -29,7 +29,6 @@ class Login extends React.Component {
     }
 
     componentDidMount() {
-        console.log(this.props.token);
         if (this.props.token) {
             this.resetNavigation('Main');
         }
@@ -88,24 +87,64 @@ class Login extends React.Component {
 
     render() {
         return (
-            <Container>
+            <View style={{ flex: 1 }} >
                 {this.state.error !== "" && <View>
                     <Text>{this.state.error}</Text>
                 </View>}
-                <Form>
-                    <Item floatingLabel>
-                        <Label>Username</Label>
-                        <Input name="username" autoCapitalize="none" onChangeText={(text) => this.onChange("username", text)} />
-                    </Item>
-                    <Item floatingLabel last>
-                        <Label>Password</Label>
-                        <Input name="password" autoCapitalize="none" onChangeText={(text) => this.onChange("password", text)} />
-                    </Item>
-                    <Button onPress={this.submitForm}>
-                        <Text>Submit</Text>
+                <View style={{ flex: 3, alignItems: "center", backgroundColor: '#66b2b2' }}>
+                    <View style={{ marginTop: 10, flex: 3 }}>
+                        <Image
+                            source={require('../../assets/images/logologin.png')}
+                            style={{ width: 200, flex: 1 }}
+                            resizeMethod="resize"
+                            resizeMode="contain"
+                        />
+                    </View>
+                    <View style={{ flex: 1 }}>
+                        <Text style={{ fontFamily: "Roboto_thin", color: "white", fontSize: 25 }}>Curing Loneliness</Text>
+                    </View>
+                </View>
+                <View style={{ flex: 5 }}>
+                    <Content style={{ paddingTop: 20, paddingRight: 10, paddingLeft: 10, paddingBottom: 20 }}>
+                        <Item stackedLabel>
+                            <Label>Username</Label>
+                            <Input name="username" autoCapitalize="none" onChangeText={(text) => this.onChange("username", text)} />
+                        </Item>
+                        <Item style={{ marginTop: 10 }} stackedLabel last>
+                            <Label>Password</Label>
+                            <Input name="password" secureTextEntry={true} autoCapitalize="none" onChangeText={(text) => this.onChange("password", text)} />
+                        </Item>
+                    </Content>
+                </View>
+                <View style={{ flex: 1, flexDirection: 'row', marginLeft: 10 }}>
+                    <Button onPress={this.submitForm} style={{ marginTop: 3, flex: 7 }}>
+                        <View style={{ flex: 1, flexDirection: 'row' }}>
+                            <Text style={{ textAlign: "center", flex: 1 }}>Log In</Text>
+                        </View>
                     </Button>
-                </Form>
-            </Container>
+                    <View style={{ flexDirection: 'column', alignItems: 'center', flex: 3, marginLeft: 25, marginRight: 25 }}>
+                        <Text style={{ fontFamily: "Roboto_thin" }}>Or Log</Text>
+                        <Text style={{ fontFamily: "Roboto_thin" }}>In With</Text>
+                    </View>
+                    <TouchableOpacity onPress={this.submitForm} style={{flex: 3}}>
+                        <Image
+                            source={require('../../assets/images/icons/facebookicon.png')}
+                            style={{ width: 50, height: 50, marginRight: 5 }}
+                            resizeMethod="resize"
+                            resizeMode="contain"
+                        />
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={this.submitForm} style={{flex: 3}}>
+                        <Image
+                            source={require('../../assets/images/icons/googleicon.png')}
+                            style={{ width: 50, height: 50, marginRight: 5 }}
+                            resizeMethod="resize"
+                            resizeMode="contain"
+                        />
+                    </TouchableOpacity>
+                </View>
+
+            </View>
         )
     }
 }
