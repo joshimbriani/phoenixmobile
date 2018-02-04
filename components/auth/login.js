@@ -1,6 +1,6 @@
 import React from 'react';
 import { Container, Header, Item, Input, Icon, Form, Label, Button, Text, Content } from 'native-base';
-import { Alert, StatusBar, FlatList, StyleSheet, View, Image, TouchableOpacity } from 'react-native';
+import { Alert, StatusBar, FlatList, StyleSheet, View, Image, TouchableOpacity, KeyboardAvoidingView } from 'react-native';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { NavigationActions } from 'react-navigation';
@@ -10,46 +10,68 @@ import { getURLForPlatform } from '../utils/networkUtils';
 
 class Login extends React.Component {
 
-    static navigationOptions = ({ navigation }) => ({
-        title: "Login"
-    });
-
     constructor(props) {
         super(props);
         this.state = {
             username: "",
             password: "",
-            error: ""
+            error: {
+                main: "",
+                username: "",
+                password: ""
+            }
         }
 
         this.onChange = this.onChange.bind(this);
         this.submitForm = this.submitForm.bind(this);
-        this.resetNavigation = this.resetNavigation.bind(this);
+        this.goToScreenAndErasePreviousScreens = this.goToScreenAndErasePreviousScreens.bind(this);
         this.sendLoginRequest = this.sendLoginRequest.bind(this);
     }
 
     componentDidMount() {
         if (this.props.token) {
-            this.resetNavigation('Main');
+            this.goToScreenAndErasePreviousScreens('Main');
         }
     }
 
     formIsValid() {
+        this.setErrorUIState();
         if (this.state.username === "" || this.state.password === "") {
             return false;
         }
         return true;
     }
 
+    setErrorUIState() {
+        var errorState = { main: "", username: "", password: "" }
+        if (this.state.username === "") {
+            errorState["username"] = "Enter your username!";
+        }
+        if (this.state.password === "") {
+            errorState["password"] = "Enter your password!";
+        }
+        this.setState({ error: errorState });
+    }
+
+    resetErrorsBasedOnComponent(component) {
+        var errorState = { main: "", username: this.state.error.username, password: this.state.error.password };
+        if (component === "username") {
+            errorState["username"] = "";
+        } else if (component === "password") {
+            errorState["password"] = "";
+        }
+        return errorState;
+    }
+
     onChange(component, value) {
         var stateRepresentation = {};
         stateRepresentation[component] = value;
-        stateRepresentation["formIsValid"] = this.formIsValid();
+        stateRepresentation["error"] = this.resetErrorsBasedOnComponent(component);
         this.setState(stateRepresentation);
     }
 
     submitForm() {
-        if (this.state.formIsValid) {
+        if (this.formIsValid()) {
             this.sendLoginRequest();
         }
     }
@@ -65,16 +87,23 @@ class Login extends React.Component {
                 'username': this.state.username,
                 'password': this.state.password,
             })
-        }).then(response => { if (response.ok) { return response.json() } else { this.setState({ error: "Login failed. Try again!" }); return false } })
-            .then(responseJSON => { if (responseJSON) { this.parseLoginResponse(responseJSON) } });
+        }).then(response => { if (response.ok) { 
+            this.handleLoginSuccess(response.json()) 
+        } else { 
+            this.handleLoginFailure();
+        } });
     }
 
-    parseLoginResponse(response) {
+    handleLoginSuccess(response) {
         this.props.tokenActions.saveUserToken(response["key"]);
-        this.resetNavigation('Main');
+        this.goToScreenAndErasePreviousScreens('Main');
     }
 
-    resetNavigation(targetRoute) {
+    handleLoginFailure() {
+        this.setState({ error: { main: "Login failed. Try again!", username: "", password: "" } }); 
+    }
+
+    goToScreenAndErasePreviousScreens(targetRoute) {
         const resetAction = NavigationActions.reset({
             index: 0,
             actions: [
@@ -87,71 +116,76 @@ class Login extends React.Component {
 
     render() {
         return (
-            <View style={{ flex: 1 }} >
-                {this.state.error !== "" && <View>
-                    <Text>{this.state.error}</Text>
+            <KeyboardAvoidingView style={styles.container} behavior="padding" >
+                {this.state.error.main !== "" && <View style={styles.errorBackground}>
+                    <Text style={styles.errorText}>{this.state.error.main}</Text>
                 </View>}
-                <View style={{ flex: 3, alignItems: "center", backgroundColor: '#66b2b2' }}>
-                    <View style={{ marginTop: 10, flex: 3 }}>
+                <View style={styles.loginHeader}>
+                    <View style={styles.imageContainer}>
                         <Image
                             source={require('../../assets/images/logologin.png')}
-                            style={{ width: 200, flex: 1 }}
+                            style={styles.image}
                             resizeMethod="resize"
                             resizeMode="contain"
                         />
                     </View>
-                    <View style={{ flex: 1 }}>
-                        <Text style={{ fontFamily: "Roboto_thin", color: "white", fontSize: 25 }}>Curing Loneliness</Text>
+                    <View style={styles.sloganContainer}>
+                        <Text style={styles.slogan}>Curing Loneliness</Text>
                     </View>
                 </View>
-                <View style={{ flex: 5 }}>
-                    <Content style={{ paddingTop: 20, paddingRight: 10, paddingLeft: 10, paddingBottom: 20 }}>
+                <View style={styles.inputContainer}>
+                    <Content style={styles.inputWrapper}>
+                        {this.state.error.username !== "" && <View style={styles.inputErrorContainer}>
+                            <Text style={styles.inputErrorText}>{this.state.error.username}</Text>
+                        </View>}
                         <Item stackedLabel>
                             <Label>Username</Label>
                             <Input name="username" autoCapitalize="none" onChangeText={(text) => this.onChange("username", text)} />
                         </Item>
-                        <Item style={{ marginTop: 10 }} stackedLabel last>
+                        {this.state.error.password !== "" && <View style={styles.inputErrorContainer}>
+                            <Text style={styles.inputErrorText}>{this.state.error.password}</Text>
+                        </View>}
+                        <Item style={styles.separatingMargin} stackedLabel last>
                             <Label>Password</Label>
                             <Input name="password" secureTextEntry={true} autoCapitalize="none" onChangeText={(text) => this.onChange("password", text)} />
                         </Item>
                     </Content>
                 </View>
-                <View style={{ flex: 1, flexDirection: 'row', marginLeft: 10 }}>
-                    <Button onPress={this.submitForm} style={{ marginTop: 3, flex: 7 }}>
-                        <View style={{ flex: 1, flexDirection: 'row' }}>
-                            <Text style={{ textAlign: "center", flex: 1 }}>Log In</Text>
+                <View style={styles.loginButtonContainer}>
+                    <Button onPress={this.submitForm} style={styles.mainLoginButton}>
+                        <View style={styles.mainLoginTextContainer}>
+                            <Text style={styles.mainLoginText}>Log In</Text>
                         </View>
                     </Button>
-                    <View style={{ flexDirection: 'column', alignItems: 'center', flex: 3, marginLeft: 25, marginRight: 25 }}>
-                        <Text style={{ fontFamily: "Roboto_thin" }}>Or Log</Text>
-                        <Text style={{ fontFamily: "Roboto_thin" }}>In With</Text>
+                    <View style={styles.socialLoginButtonSeparator}>
+                        <Text style={styles.robotoThin}>Or Log</Text>
+                        <Text style={styles.robotoThin}>In With</Text>
                     </View>
-                    <TouchableOpacity onPress={this.submitForm} style={{flex: 3}}>
+                    <TouchableOpacity onPress={this.submitForm} style={styles.socialLoginButtonOverlay}>
                         <Image
                             source={require('../../assets/images/icons/facebookicon.png')}
-                            style={{ width: 50, height: 50, marginRight: 5 }}
+                            style={styles.socialIcons}
                             resizeMethod="resize"
                             resizeMode="contain"
                         />
                     </TouchableOpacity>
-                    <TouchableOpacity onPress={this.submitForm} style={{flex: 3}}>
+                    <TouchableOpacity onPress={this.submitForm} style={styles.socialLoginButtonOverlay}>
                         <Image
                             source={require('../../assets/images/icons/googleicon.png')}
-                            style={{ width: 50, height: 50, marginRight: 5 }}
+                            style={styles.socialIcons}
                             resizeMethod="resize"
                             resizeMode="contain"
                         />
                     </TouchableOpacity>
                 </View>
 
-            </View>
+            </KeyboardAvoidingView>
         )
     }
 }
 
 function mapStateToProps(state) {
     return {
-        color: state.backgroundColorReducer.color,
         token: state.tokenReducer.token,
     };
 }
@@ -168,16 +202,98 @@ export default connect(
 )(Login);
 
 const styles = StyleSheet.create({
-    listitem: {
-        alignSelf: 'stretch',
-        height: 200,
+    container: {
+        flex: 1,
     },
-    itemText: {
-        color: 'white',
-        fontSize: 40,
-        paddingTop: 5,
-        textAlign: 'center',
-        fontFamily: 'Roboto_medium'
+    errorBackground: {
+        backgroundColor: "red"
+    },
+    errorText: {
+        paddingTop: 1, 
+        paddingLeft: 5, 
+        paddingBottom: 1, 
+        color: "white", 
+        fontFamily: "Roboto"
+    },
+    loginHeader: { 
+        flex: 3, 
+        alignItems: "center", 
+        backgroundColor: '#66b2b2' 
+    },
+    imageContainer: { 
+        marginTop: 10, 
+        flex: 3 
+    },
+    image: { 
+        width: 200, 
+        flex: 1 
+    },
+    sloganContainer: { 
+        flex: 1, 
+        marginBottom: 10 
+    },
+    slogan: { 
+        fontFamily: "Roboto_thin", 
+        color: "white", 
+        fontSize: 25 
+    },
+    inputContainer: { 
+        flex: 5 
+    },
+    inputWrapper: { 
+        paddingTop: 20, 
+        paddingRight: 10, 
+        paddingLeft: 10, 
+        paddingBottom: 20 
+    },
+    inputErrorContainer: { 
+        backgroundColor: "red", 
+        marginTop: 10 
+    },
+    inputErrorText: { 
+        paddingTop: 1, 
+        paddingLeft: 5, 
+        paddingBottom: 1, 
+        color: "white", 
+        fontFamily: "Roboto" 
+    },
+    separatingMargin: { 
+        marginTop: 10 
+    },
+    loginButtonContainer: { 
+        flex: 1, 
+        flexDirection: 'row', 
+        marginLeft: 10 
+    },
+    mainLoginButton: { 
+        marginTop: 3, 
+        flex: 7 
+    },
+    mainLoginTextContainer: { 
+        flex: 1, 
+        flexDirection: 'row' 
+    },
+    mainLoginText: { 
+        textAlign: "center", 
+        flex: 1 
+    },
+    socialLoginButtonSeparator: { 
+        flexDirection: 'column', 
+        alignItems: 'center', 
+        flex: 3, 
+        marginLeft: 25, 
+        marginRight: 25 
+    },
+    robotoThin: { 
+        fontFamily: "Roboto_thin" 
+    },
+    socialLoginButtonOverlay: { 
+        flex: 3 
+    },
+    socialIcons: {
+        width: 50,
+        height: 50,
+        marginRight: 5
     }
 
 });
