@@ -9,6 +9,7 @@ import { bindActionCreators } from 'redux';
 import { getURLForPlatform } from '../utils/networkUtils';
 import PlatformIonicon from '../utils/platformIonicon';
 import * as tokenActions from '../../redux/actions/token';
+import fontBasedOnPlatform from '../utils/fontBasedOnPlatform';
 
 class Register extends React.Component {
 
@@ -122,58 +123,50 @@ class Register extends React.Component {
     render() {
         return (
             <KeyboardAvoidingView style={styles.container} behavior="padding">
-                {this.state.error.main !== "" && <View style={styles.errorBackground}>
-                    <Text style={styles.errorText}>{this.state.error.main}</Text>
-                </View>}
-                <View style={styles.registerHeader}>
-                    <View style={styles.imageContainer}>
-                        <Image
-                            source={require('../../assets/images/logologin.png')}
-                            style={styles.image}
-                            resizeMethod="resize"
-                            resizeMode="contain"
-                        />
-                    </View>
-                    <View style={styles.sloganContainer}>
-                        <Text style={styles.slogan}>Register</Text>
-                    </View>
+                <View style={styles.imageHeader}>
+                    <Image
+                        source={require('../../assets/images/logologin.png')}
+                        style={styles.image}
+                        resizeMethod="resize"
+                        resizeMode="contain"
+                    />
                 </View>
-                <View style={styles.inputContainer}>
+                <View style={styles.formBody}>
                     <Content style={styles.inputWrapper}>
                         {this.state.error.username !== "" && <View style={styles.inputErrorContainer}>
                             <Text style={styles.inputErrorText}>{this.state.error.username}</Text>
                         </View>}
                         <Item stackedLabel>
                             <Label>Username</Label>
-                            <Input style={{height: 33}} name="username" autoCapitalize="none" onChangeText={(text) => this.onChange("username", text)} />
+                            <Input name="username" autoCapitalize="none" onChangeText={(text) => this.onChange("username", text)} />
                         </Item>
                         {this.state.error.email !== "" && <View style={styles.inputErrorContainer}>
                             <Text style={styles.inputErrorText}>{this.state.error.email}</Text>
                         </View>}
                         <Item stackedLabel>
-                            <Label>Email Address</Label>
-                            <Input style={{height: 33}} name="email" autoCapitalize="none" onChangeText={(text) => this.onChange("email", text)} />
+                            <Label>Email</Label>
+                            <Input name="email" autoCapitalize="none" onChangeText={(text) => this.onChange("email", text)} />
                         </Item>
                         {this.state.error.password !== "" && <View style={styles.inputErrorContainer}>
                             <Text style={styles.inputErrorText}>{this.state.error.password}</Text>
                         </View>}
                         <Item style={styles.separatingMargin} stackedLabel last>
                             <Label>Password</Label>
-                            <Input style={{height: 33}} name="password" secureTextEntry={true} autoCapitalize="none" onChangeText={(text) => this.onChange("password", text)} />
+                            <Input name="password" secureTextEntry={true} autoCapitalize="none" onChangeText={(text) => this.onChange("password", text)} />
                         </Item>
                     </Content>
                 </View>
-                <View style={styles.loginButtonContainer}>
-                    <Button onPress={this.submitForm} style={styles.mainLoginButton}>
-                        <View style={styles.mainLoginTextContainer}>
-                            <Text style={styles.mainLoginText}>Log In</Text>
+                <View style={styles.registerButtons}>
+                    <Button onPress={this.submitForm} style={styles.registerButton}>
+                        <View style={styles.registerButtonContainer}>
+                            <Text style={styles.registerButtonText}>Register</Text>
                         </View>
                     </Button>
-                    <View style={styles.socialLoginButtonSeparator}>
-                        <Text style={styles.robotoThin}>Or Log</Text>
-                        <Text style={styles.robotoThin}>In With</Text>
+                    <View style={styles.empty}>
+                        <Text style={styles.empty}>Or Register</Text>
+                        <Text style={styles.empty}>With</Text>
                     </View>
-                    <TouchableOpacity onPress={this.submitForm} style={styles.socialLoginButtonOverlay}>
+                    <TouchableOpacity onPress={this.submitForm} style={styles.socialIconOverlay}>
                         <Image
                             source={require('../../assets/images/icons/facebookicon.png')}
                             style={styles.socialIcons}
@@ -181,7 +174,7 @@ class Register extends React.Component {
                             resizeMode="contain"
                         />
                     </TouchableOpacity>
-                    <TouchableOpacity onPress={this.submitForm} style={styles.socialLoginButtonOverlay}>
+                    <TouchableOpacity onPress={this.submitForm} style={styles.socialIconOverlay}>
                         <Image
                             source={require('../../assets/images/icons/googleicon.png')}
                             style={styles.socialIcons}
@@ -189,6 +182,10 @@ class Register extends React.Component {
                             resizeMode="contain"
                         />
                     </TouchableOpacity>
+                </View>
+                <View style={styles.loginLinks}>
+                    <Text style={styles.platformFont}>Already have an account?</Text>
+                    <Text style={[styles.loginLink, styles.platformFont]} onPress={() => this.props.navigation.navigate('Login', {})}>Login</Text>
                 </View>
             </KeyboardAvoidingView>
         )
@@ -224,87 +221,55 @@ const styles = StyleSheet.create({
         paddingLeft: 5,
         paddingBottom: 1,
         color: "white",
-        fontFamily: "Roboto"
+        fontFamily: fontBasedOnPlatform(),
     },
-    registerHeader: {
-        flex: 2.5,
-        alignItems: "center",
-        backgroundColor: '#66b2b2'
-    },
-    imageContainer: {
-        marginTop: 5,
-        flex: 3
+    imageHeader: {
+        flex: 2,
+        backgroundColor: "purple"
     },
     image: {
-        width: 200,
+        width: 100,
         flex: 1
     },
-    sloganContainer: {
-        flex: 1,
-        marginBottom: 10
+    formBody: {
+        flex: 12,
     },
-    slogan: {
-        fontFamily: "Roboto_thin",
-        color: "white",
-        fontSize: 25
+    registerButtons: {
+        flex: 2,
+        backgroundColor: "green",
+        flexDirection: 'row'
     },
-    inputContainer: {
-        flex: 5
-    },
-    inputWrapper: {
-        paddingTop: 10,
-        paddingRight: 10,
-        paddingLeft: 10,
-        paddingBottom: 20
-    },
-    inputErrorContainer: {
-        backgroundColor: "red",
-        marginTop: 10
-    },
-    inputErrorText: {
-        paddingTop: 1,
-        paddingLeft: 5,
-        paddingBottom: 1,
-        color: "white",
-        fontFamily: "Roboto"
-    },
-    separatingMargin: {
-        marginTop: 10
-    },
-    loginButtonContainer: {
-        flex: 1,
-        flexDirection: 'row',
-        marginLeft: 10
-    },
-    mainLoginButton: {
-        marginTop: 3,
+    registerButton: {
         flex: 7
     },
-    mainLoginTextContainer: {
+    registerButtonContainer: {
         flex: 1,
         flexDirection: 'row'
     },
-    mainLoginText: {
-        textAlign: "center",
-        flex: 1
+    loginLinks: {
+        flexDirection: 'row',
+        backgroundColor: 'white'
     },
-    socialLoginButtonSeparator: {
-        flexDirection: 'column',
-        alignItems: 'center',
-        flex: 3,
-        marginLeft: 25,
-        marginRight: 25
+    loginLink: {
+        marginLeft: 140,
     },
-    robotoThin: {
-        fontFamily: "Roboto_thin"
+    platformFont: {
+        fontFamily: fontBasedOnPlatform(),
     },
-    socialLoginButtonOverlay: {
-        flex: 3
+    empty: {
+
     },
     socialIcons: {
         width: 50,
         height: 50,
         marginRight: 5
+    },
+    socialIconOverlay: {
+        flex: 3
+    },
+    registerButtonText: {
+        textAlign: "center",
+        flex: 1
     }
 
 });
