@@ -1,12 +1,14 @@
 import React from 'react';
-import { Container, Header, Item, Input, Icon, Form, Label, Button, Text } from 'native-base';
-import { Alert, StatusBar, FlatList, StyleSheet, TouchableHighlight, View } from 'react-native';
+import { Image, KeyboardAvoidingView, StyleSheet, TouchableOpacity, View } from 'react-native';
+
+import { Button, Content, Form, Input, Item, Label, Text } from 'native-base';
+import { NavigationActions } from 'react-navigation';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { NavigationActions } from 'react-navigation';
-import * as tokenActions from '../../redux/actions/token'
-import PlatformIonicon from '../utils/platformIonicon';
+
 import { getURLForPlatform } from '../utils/networkUtils';
+import PlatformIonicon from '../utils/platformIonicon';
+import * as tokenActions from '../../redux/actions/token';
 
 class Register extends React.Component {
 
@@ -14,44 +16,67 @@ class Register extends React.Component {
         super(props);
         this.state = {
             username: "",
-            password1: "",
-            password2: "",
-            error: ""
+            password: "",
+            error: {
+                main: "",
+                username: "",
+                email: "",
+                password: ""
+            }
         }
 
         this.onChange = this.onChange.bind(this);
         this.submitForm = this.submitForm.bind(this);
-        this.resetNavigation = this.resetNavigation.bind(this);
+        this.goToScreenAndErasePreviousScreens = this.goToScreenAndErasePreviousScreens.bind(this);
         this.register = this.register.bind(this);
         this.parseRegisterResponse = this.parseRegisterResponse.bind(this);
     }
 
     componentDidMount() {
         if (this.props.token) {
-            this.resetNavigation('Main');
+            this.goToScreenAndErasePreviousScreens('Main');
         }
     }
 
+    setErrorUIState() {
+        var errorState = { main: "", username: "", email: "", password: "" }
+        if (this.state.username === "") {
+            errorState["username"] = "Enter your username!";
+        }
+        if (this.state.password === "") {
+            errorState["password"] = "Enter your password!";
+        }
+        this.setState({ error: errorState });
+    }
+
     registrationIsValid() {
-        if (this.state.username === "" || this.state.password1 === "" || this.state.password2 === "" || this.state.email === "") {
-            this.setState({error: "Make sure you fill in all of the fields!"});
+        this.setErrorUIState();
+        if (this.state.username === "" || this.state.password === "" || this.state.email === "") {
+            this.setState({ error: "Make sure you fill in all of the fields!" });
             return false;
         }
-        if (this.state.password1 !== this.state.password2) {
-            this.setState({error: "Make sure your passwords match!"});
-            return false;
-        }
-        if (this.state.password1.length < 6) {
-            this.setState({error: "Make sure your paswords are at least 6 chatracters long!"});
+        if (this.state.password.length < 6) {
+            this.setState({ error: "Make sure your paswords are at least 6 chatracters long!" });
             return false;
         }
         const emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
         return emailRegex.test(this.state.email.toLowerCase());
     }
 
+    resetErrorsBasedOnComponent(component) {
+        var errorState = { main: "", username: this.state.error.username, password: this.state.error.password };
+        if (component === "username") {
+            errorState["username"] = "";
+        } else if (component === "password") {
+            errorState["password"] = "";
+        }
+        return errorState;
+    }
+
     onChange(component, value) {
         var stateRepresentation = {};
         stateRepresentation[component] = value;
+        stateRepresentation["error"] = this.resetErrorsBasedOnComponent(component);
         this.setState(stateRepresentation);
     }
 
@@ -70,12 +95,12 @@ class Register extends React.Component {
             },
             body: JSON.stringify({
                 'username': this.state.username,
-                'password1': this.state.password1,
-                'password2': this.state.password2,
+                'password1': this.state.password,
+                'password2': this.state.password,
                 'email': this.state.email,
             })
-        }).then(response => {if (response.ok) {return response.json()} else {this.setState({error: "Registration failed. Give it another shot!"}); return false}})
-        .then(responseJSON => { if (responseJSON) {this.parseRegisterResponse(responseJSON)}});
+        }).then(response => { if (response.ok) { return response.json() } else { this.setState({ error: "Registration failed. Give it another shot!" }); return false } })
+            .then(responseJSON => { if (responseJSON) { this.parseRegisterResponse(responseJSON) } });
     }
 
     parseRegisterResponse(response) {
@@ -83,48 +108,89 @@ class Register extends React.Component {
         this.resetNavigation('Main');
     }
 
-    resetNavigation(targetRoute) {
+    goToScreenAndErasePreviousScreens(targetRoute) {
         const resetAction = NavigationActions.reset({
-          index: 0,
-          actions: [
-            NavigationActions.navigate({ routeName: targetRoute }),
-          ],
+            index: 0,
+            actions: [
+                NavigationActions.navigate({ routeName: targetRoute }),
+            ],
         });
         this.props.navigation.dispatch(resetAction);
-      }
-      
+    }
+
 
     render() {
         return (
-            <Container>
-                {this.state.error !== "" && <View>
-                    <Text>{this.state.error}</Text>
+            <KeyboardAvoidingView style={styles.container} behavior="padding">
+                {this.state.error.main !== "" && <View style={styles.errorBackground}>
+                    <Text style={styles.errorText}>{this.state.error.main}</Text>
                 </View>}
-                <Form>
-                    <Item floatingLabel>
-                        <Label>Username</Label>
-                        <Input name="username" autoCapitalize="none" onChangeText={(text) => this.onChange("username", text)} />
-                    </Item>
-                    <Item floatingLabel>
-                        <Label>Email</Label>
-                        <Input name="email" keyboard-type="email-address" autoCapitalize="none" onChangeText={(text) => this.onChange("email", text)} />
-                    </Item>
-                    <Item floatingLabel>
-                        <Label>Password</Label>
-                        <Input name="password1" secureTextEntry={true} autoCapitalize="none" onChangeText={(text) => this.onChange("password1", text)} />
-                    </Item>
-                    <Item floatingLabel last>
-                        <Label>Password Again</Label>
-                        <Input name="password2" secureTextEntry={true} autoCapitalize="none" onChangeText={(text) => this.onChange("password2", text)} />
-                    </Item>
-                    <Button onPress={() => this.props.navigation.navigate('Login')}>
-                        <Text>Login</Text>
+                <View style={styles.registerHeader}>
+                    <View style={styles.imageContainer}>
+                        <Image
+                            source={require('../../assets/images/logologin.png')}
+                            style={styles.image}
+                            resizeMethod="resize"
+                            resizeMode="contain"
+                        />
+                    </View>
+                    <View style={styles.sloganContainer}>
+                        <Text style={styles.slogan}>Register</Text>
+                    </View>
+                </View>
+                <View style={styles.inputContainer}>
+                    <Content style={styles.inputWrapper}>
+                        {this.state.error.username !== "" && <View style={styles.inputErrorContainer}>
+                            <Text style={styles.inputErrorText}>{this.state.error.username}</Text>
+                        </View>}
+                        <Item stackedLabel>
+                            <Label>Username</Label>
+                            <Input style={{height: 33}} name="username" autoCapitalize="none" onChangeText={(text) => this.onChange("username", text)} />
+                        </Item>
+                        {this.state.error.email !== "" && <View style={styles.inputErrorContainer}>
+                            <Text style={styles.inputErrorText}>{this.state.error.email}</Text>
+                        </View>}
+                        <Item stackedLabel>
+                            <Label>Email Address</Label>
+                            <Input style={{height: 33}} name="email" autoCapitalize="none" onChangeText={(text) => this.onChange("email", text)} />
+                        </Item>
+                        {this.state.error.password !== "" && <View style={styles.inputErrorContainer}>
+                            <Text style={styles.inputErrorText}>{this.state.error.password}</Text>
+                        </View>}
+                        <Item style={styles.separatingMargin} stackedLabel last>
+                            <Label>Password</Label>
+                            <Input style={{height: 33}} name="password" secureTextEntry={true} autoCapitalize="none" onChangeText={(text) => this.onChange("password", text)} />
+                        </Item>
+                    </Content>
+                </View>
+                <View style={styles.loginButtonContainer}>
+                    <Button onPress={this.submitForm} style={styles.mainLoginButton}>
+                        <View style={styles.mainLoginTextContainer}>
+                            <Text style={styles.mainLoginText}>Log In</Text>
+                        </View>
                     </Button>
-                    <Button onPress={this.submitForm}>
-                        <Text>Submit</Text>
-                    </Button>
-                </Form>
-            </Container>
+                    <View style={styles.socialLoginButtonSeparator}>
+                        <Text style={styles.robotoThin}>Or Log</Text>
+                        <Text style={styles.robotoThin}>In With</Text>
+                    </View>
+                    <TouchableOpacity onPress={this.submitForm} style={styles.socialLoginButtonOverlay}>
+                        <Image
+                            source={require('../../assets/images/icons/facebookicon.png')}
+                            style={styles.socialIcons}
+                            resizeMethod="resize"
+                            resizeMode="contain"
+                        />
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={this.submitForm} style={styles.socialLoginButtonOverlay}>
+                        <Image
+                            source={require('../../assets/images/icons/googleicon.png')}
+                            style={styles.socialIcons}
+                            resizeMethod="resize"
+                            resizeMode="contain"
+                        />
+                    </TouchableOpacity>
+                </View>
+            </KeyboardAvoidingView>
         )
     }
 }
@@ -147,16 +213,98 @@ export default connect(
 )(Register);
 
 const styles = StyleSheet.create({
-    listitem: {
-        alignSelf: 'stretch',
-        height: 200,
+    container: {
+        flex: 1,
     },
-    itemText: {
-        color: 'white',
-        fontSize: 40,
-        paddingTop: 5,
-        textAlign: 'center',
-        fontFamily: 'Roboto_medium'
+    errorBackground: {
+        backgroundColor: "red"
+    },
+    errorText: {
+        paddingTop: 1,
+        paddingLeft: 5,
+        paddingBottom: 1,
+        color: "white",
+        fontFamily: "Roboto"
+    },
+    registerHeader: {
+        flex: 2.5,
+        alignItems: "center",
+        backgroundColor: '#66b2b2'
+    },
+    imageContainer: {
+        marginTop: 5,
+        flex: 3
+    },
+    image: {
+        width: 200,
+        flex: 1
+    },
+    sloganContainer: {
+        flex: 1,
+        marginBottom: 10
+    },
+    slogan: {
+        fontFamily: "Roboto_thin",
+        color: "white",
+        fontSize: 25
+    },
+    inputContainer: {
+        flex: 5
+    },
+    inputWrapper: {
+        paddingTop: 10,
+        paddingRight: 10,
+        paddingLeft: 10,
+        paddingBottom: 20
+    },
+    inputErrorContainer: {
+        backgroundColor: "red",
+        marginTop: 10
+    },
+    inputErrorText: {
+        paddingTop: 1,
+        paddingLeft: 5,
+        paddingBottom: 1,
+        color: "white",
+        fontFamily: "Roboto"
+    },
+    separatingMargin: {
+        marginTop: 10
+    },
+    loginButtonContainer: {
+        flex: 1,
+        flexDirection: 'row',
+        marginLeft: 10
+    },
+    mainLoginButton: {
+        marginTop: 3,
+        flex: 7
+    },
+    mainLoginTextContainer: {
+        flex: 1,
+        flexDirection: 'row'
+    },
+    mainLoginText: {
+        textAlign: "center",
+        flex: 1
+    },
+    socialLoginButtonSeparator: {
+        flexDirection: 'column',
+        alignItems: 'center',
+        flex: 3,
+        marginLeft: 25,
+        marginRight: 25
+    },
+    robotoThin: {
+        fontFamily: "Roboto_thin"
+    },
+    socialLoginButtonOverlay: {
+        flex: 3
+    },
+    socialIcons: {
+        width: 50,
+        height: 50,
+        marginRight: 5
     }
 
 });

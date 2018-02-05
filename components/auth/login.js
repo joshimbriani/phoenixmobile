@@ -1,12 +1,14 @@
 import React from 'react';
-import { Container, Header, Item, Input, Icon, Form, Label, Button, Text, Content } from 'native-base';
-import { Alert, StatusBar, FlatList, StyleSheet, View, Image, TouchableOpacity, KeyboardAvoidingView } from 'react-native';
+import { Image, KeyboardAvoidingView, StyleSheet, TouchableOpacity, View } from 'react-native';
+
+import { Button, Content, Form, Input, Item, Label, Text } from 'native-base';
+import { NavigationActions } from 'react-navigation';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { NavigationActions } from 'react-navigation';
-import * as tokenActions from '../../redux/actions/token'
-import PlatformIonicon from '../utils/platformIonicon';
+
 import { getURLForPlatform } from '../utils/networkUtils';
+import PlatformIonicon from '../utils/platformIonicon';
+import * as tokenActions from '../../redux/actions/token';
 
 class Login extends React.Component {
 
@@ -87,11 +89,13 @@ class Login extends React.Component {
                 'username': this.state.username,
                 'password': this.state.password,
             })
-        }).then(response => { if (response.ok) { 
-            this.handleLoginSuccess(response.json()) 
-        } else { 
-            this.handleLoginFailure();
-        } });
+        }).then(response => {
+            if (response.ok) {
+                this.handleLoginSuccess(response.json())
+            } else {
+                this.handleLoginFailure();
+            }
+        });
     }
 
     handleLoginSuccess(response) {
@@ -100,7 +104,7 @@ class Login extends React.Component {
     }
 
     handleLoginFailure() {
-        this.setState({ error: { main: "Login failed. Try again!", username: "", password: "" } }); 
+        this.setState({ error: { main: "Login failed. Try again!", username: "", password: "" } });
     }
 
     goToScreenAndErasePreviousScreens(targetRoute) {
@@ -116,7 +120,7 @@ class Login extends React.Component {
 
     render() {
         return (
-            <KeyboardAvoidingView style={styles.container} behavior="padding" >
+            <KeyboardAvoidingView style={styles.container} behavior="padding">
                 {this.state.error.main !== "" && <View style={styles.errorBackground}>
                     <Text style={styles.errorText}>{this.state.error.main}</Text>
                 </View>}
@@ -178,7 +182,6 @@ class Login extends React.Component {
                         />
                     </TouchableOpacity>
                 </View>
-
             </KeyboardAvoidingView>
         )
     }
@@ -209,91 +212,90 @@ const styles = StyleSheet.create({
         backgroundColor: "red"
     },
     errorText: {
-        paddingTop: 1, 
-        paddingLeft: 5, 
-        paddingBottom: 1, 
-        color: "white", 
+        paddingTop: 1,
+        paddingLeft: 5,
+        paddingBottom: 1,
+        color: "white",
         fontFamily: "Roboto"
     },
-    loginHeader: { 
-        flex: 3, 
-        alignItems: "center", 
-        backgroundColor: '#66b2b2' 
+    loginHeader: {
+        flex: 3,
+        alignItems: "center",
+        backgroundColor: '#66b2b2'
     },
-    imageContainer: { 
-        marginTop: 10, 
-        flex: 3 
+    imageContainer: {
+        marginTop: 10,
+        flex: 3
     },
-    image: { 
-        width: 200, 
-        flex: 1 
+    image: {
+        width: 200,
+        flex: 1
     },
-    sloganContainer: { 
-        flex: 1, 
-        marginBottom: 10 
+    sloganContainer: {
+        flex: 1,
+        marginBottom: 10
     },
-    slogan: { 
-        fontFamily: "Roboto_thin", 
-        color: "white", 
-        fontSize: 25 
+    slogan: {
+        fontFamily: "Roboto_thin",
+        color: "white",
+        fontSize: 25
     },
-    inputContainer: { 
-        flex: 5 
+    inputContainer: {
+        flex: 5
     },
-    inputWrapper: { 
-        paddingTop: 20, 
-        paddingRight: 10, 
-        paddingLeft: 10, 
-        paddingBottom: 20 
+    inputWrapper: {
+        paddingTop: 20,
+        paddingRight: 10,
+        paddingLeft: 10,
+        paddingBottom: 20
     },
-    inputErrorContainer: { 
-        backgroundColor: "red", 
-        marginTop: 10 
+    inputErrorContainer: {
+        backgroundColor: "red",
+        marginTop: 10
     },
-    inputErrorText: { 
-        paddingTop: 1, 
-        paddingLeft: 5, 
-        paddingBottom: 1, 
-        color: "white", 
-        fontFamily: "Roboto" 
+    inputErrorText: {
+        paddingTop: 1,
+        paddingLeft: 5,
+        paddingBottom: 1,
+        color: "white",
+        fontFamily: "Roboto"
     },
-    separatingMargin: { 
-        marginTop: 10 
+    separatingMargin: {
+        marginTop: 10
     },
-    loginButtonContainer: { 
-        flex: 1, 
-        flexDirection: 'row', 
-        marginLeft: 10 
+    loginButtonContainer: {
+        flex: 1,
+        flexDirection: 'row',
+        marginLeft: 10
     },
-    mainLoginButton: { 
-        marginTop: 3, 
-        flex: 7 
+    mainLoginButton: {
+        marginTop: 3,
+        flex: 7
     },
-    mainLoginTextContainer: { 
-        flex: 1, 
-        flexDirection: 'row' 
+    mainLoginTextContainer: {
+        flex: 1,
+        flexDirection: 'row'
     },
-    mainLoginText: { 
-        textAlign: "center", 
-        flex: 1 
+    mainLoginText: {
+        textAlign: "center",
+        flex: 1
     },
-    socialLoginButtonSeparator: { 
-        flexDirection: 'column', 
-        alignItems: 'center', 
-        flex: 3, 
-        marginLeft: 25, 
-        marginRight: 25 
+    socialLoginButtonSeparator: {
+        flexDirection: 'column',
+        alignItems: 'center',
+        flex: 3,
+        marginLeft: 25,
+        marginRight: 25
     },
-    robotoThin: { 
-        fontFamily: "Roboto_thin" 
+    robotoThin: {
+        fontFamily: "Roboto_thin"
     },
-    socialLoginButtonOverlay: { 
-        flex: 3 
+    socialLoginButtonOverlay: {
+        flex: 3
     },
     socialIcons: {
         width: 50,
         height: 50,
         marginRight: 5
     }
-
 });
