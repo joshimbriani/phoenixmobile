@@ -18,6 +18,7 @@ class Register extends React.Component {
         this.state = {
             username: "",
             password: "",
+            email: "",
             error: {
                 main: "",
                 username: "",
@@ -30,7 +31,7 @@ class Register extends React.Component {
         this.submitForm = this.submitForm.bind(this);
         this.goToScreenAndErasePreviousScreens = this.goToScreenAndErasePreviousScreens.bind(this);
         this.register = this.register.bind(this);
-        this.parseRegisterResponse = this.parseRegisterResponse.bind(this);
+        this.parseRegisterSuccess = this.parseRegisterSuccess.bind(this);
     }
 
     componentDidMount() {
@@ -46,18 +47,30 @@ class Register extends React.Component {
         }
         if (this.state.password === "") {
             errorState["password"] = "Enter your password!";
+        } else {
+            if (this.state.password.length < 6) {
+                errorState["password"] = "Your password needs to at least have 6 characters in it!";
+            }
         }
+        if (this.state.email === "") {
+            errorState["email"] = "Enter your email!";
+        } else {
+            const emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+            if (!emailRegex.test(this.state.email.toLowerCase())) {
+                errorState["email"] = "That's not a valid email!";
+            }
+        }
+        // Eventually we might want to enforce password difficulty
+        // We'd do that here
         this.setState({ error: errorState });
     }
 
     registrationIsValid() {
         this.setErrorUIState();
         if (this.state.username === "" || this.state.password === "" || this.state.email === "") {
-            this.setState({ error: "Make sure you fill in all of the fields!" });
             return false;
         }
         if (this.state.password.length < 6) {
-            this.setState({ error: "Make sure your paswords are at least 6 chatracters long!" });
             return false;
         }
         const emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
@@ -70,6 +83,8 @@ class Register extends React.Component {
             errorState["username"] = "";
         } else if (component === "password") {
             errorState["password"] = "";
+        } else if (component === "email") {
+            errorState["email"] = "";
         }
         return errorState;
     }
@@ -100,13 +115,27 @@ class Register extends React.Component {
                 'password2': this.state.password,
                 'email': this.state.email,
             })
-        }).then(response => { if (response.ok) { return response.json() } else { this.setState({ error: "Registration failed. Give it another shot!" }); return false } })
-            .then(responseJSON => { if (responseJSON) { this.parseRegisterResponse(responseJSON) } });
+        }).then(response => { if (response.ok) { this.parseRegisterSuccess(response.json()) } else { this.parseRegisterError(response.json()) } })
     }
 
-    parseRegisterResponse(response) {
+    parseRegisterSuccess(response) {
         this.props.tokenActions.saveUserToken(response["key"]);
         this.resetNavigation('Main');
+    }
+
+    parseRegisterError(response) {
+        var errObject = {};
+        if (response["username"]) {
+            errorObject["username"] = response["username"];
+        }
+        if (response["password"]) {
+            errorObject["password"] = response["password"];
+        }
+        if (response["email"]) {
+            errorObject["email"] = response["email"];
+        }
+        // Need to handle general register error
+        this.setState(errorObject);
     }
 
     goToScreenAndErasePreviousScreens(targetRoute) {
@@ -123,6 +152,9 @@ class Register extends React.Component {
     render() {
         return (
             <KeyboardAvoidingView style={styles.container} behavior="padding">
+                {this.state.error.main !== "" && <View style={styles.errorBackground}>
+                    <Text style={styles.errorText}>{this.state.error.main}</Text>
+                </View>}
                 <View style={styles.imageHeader}>
                     <Image
                         source={require('../../assets/images/logologin.png')}
@@ -162,7 +194,7 @@ class Register extends React.Component {
                             <Text style={styles.registerButtonText}>Register</Text>
                         </View>
                     </Button>
-                    <View style={styles.empty}>
+                    <View style={styles.socialSeparator}>
                         <Text style={styles.empty}>Or Register</Text>
                         <Text style={styles.empty}>With</Text>
                     </View>
@@ -225,7 +257,8 @@ const styles = StyleSheet.create({
     },
     imageHeader: {
         flex: 2,
-        backgroundColor: "purple"
+        alignItems: 'center',
+        backgroundColor: '#66b2b2',
     },
     image: {
         width: 100,
@@ -236,11 +269,12 @@ const styles = StyleSheet.create({
     },
     registerButtons: {
         flex: 2,
-        backgroundColor: "green",
         flexDirection: 'row'
     },
     registerButton: {
-        flex: 7
+        flex: 7,
+        marginTop: 10,
+        marginLeft: 15
     },
     registerButtonContainer: {
         flex: 1,
@@ -265,11 +299,29 @@ const styles = StyleSheet.create({
         marginRight: 5
     },
     socialIconOverlay: {
-        flex: 3
+        flex: 3,
+        marginTop: 10
     },
     registerButtonText: {
         textAlign: "center",
         flex: 1
+    },
+    inputErrorContainer: {
+        backgroundColor: "red",
+        marginTop: 10
+    },
+    inputErrorText: {
+        paddingTop: 1,
+        paddingLeft: 5,
+        paddingBottom: 1,
+        color: "white",
+        fontFamily: fontBasedOnPlatform(),
+    },
+    socialSeparator: {
+        marginTop: 10,
+        alignItems: 'center',
+        marginLeft: 15,
+        marginRight: 15
     }
 
 });
