@@ -78,7 +78,7 @@ class Register extends React.Component {
     }
 
     resetErrorsBasedOnComponent(component) {
-        var errorState = { main: "", username: this.state.error.username, password: this.state.error.password };
+        var errorState = { main: "", username: this.state.error.username, password: this.state.error.password, email: this.state.error.email };
         if (component === "username") {
             errorState["username"] = "";
         } else if (component === "password") {
@@ -115,26 +115,33 @@ class Register extends React.Component {
                 'password2': this.state.password,
                 'email': this.state.email,
             })
-        }).then(response => { if (response.ok) { this.parseRegisterSuccess(response.json()) } else { this.parseRegisterError(response.json()) } })
+        }).then(response => response.json())
+        .then(response => { 
+            if (response.key) { 
+                this.parseRegisterSuccess(response);
+            } else { 
+                this.parseRegisterError(response);
+            } 
+        });
     }
 
     parseRegisterSuccess(response) {
         this.props.tokenActions.saveUserToken(response["key"]);
-        this.resetNavigation('Main');
+        this.goToScreenAndErasePreviousScreens('Main');
     }
 
     parseRegisterError(response) {
-        var errObject = {};
+        var errorObject = {"error": { main: "", username: this.state.error.username, password: this.state.error.password, email: this.state.error.email }};
         if (response["username"]) {
-            errorObject["username"] = response["username"];
+            errorObject["error"]["username"] = response["username"][0];
         }
-        if (response["password"]) {
-            errorObject["password"] = response["password"];
+        if (response["password1"]) {
+            errorObject["error"]["password"] = response["password1"][0];
         }
         if (response["email"]) {
-            errorObject["email"] = response["email"];
+            errorObject["error"]["email"] = response["email"][0];
         }
-        // Need to handle general register error
+        errorObject["error"]["main"] = "Registration failed, please try again!";
         this.setState(errorObject);
     }
 
@@ -216,7 +223,7 @@ class Register extends React.Component {
                     </TouchableOpacity>
                 </View>
                 <View style={styles.loginLinks}>
-                    <Text style={styles.platformFont}>Already have an account?</Text>
+                    <Text style={[styles.platformFont, styles.alreadyText]}>Already have an account?</Text>
                     <Text style={[styles.loginLink, styles.platformFont]} onPress={() => this.props.navigation.navigate('Login', {})}>Login</Text>
                 </View>
             </KeyboardAvoidingView>
@@ -286,12 +293,15 @@ const styles = StyleSheet.create({
     },
     loginLink: {
         marginLeft: 140,
+        paddingBottom: 2,
+        paddingRight: 2
+    },
+    alreadyText: {
+        paddingBottom: 2,
+        paddingLeft: 2
     },
     platformFont: {
         fontFamily: fontBasedOnPlatform(),
-    },
-    empty: {
-
     },
     socialIcons: {
         width: 50,
