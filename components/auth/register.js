@@ -289,12 +289,12 @@ const styles = StyleSheet.create({
     },
     loginLinks: {
         flexDirection: 'row',
-        backgroundColor: 'white'
     },
     loginLink: {
         marginLeft: 140,
         paddingBottom: 2,
-        paddingRight: 2
+        paddingRight: 2,
+        textDecorationLine: 'underline'
     },
     alreadyText: {
         paddingBottom: 2,
