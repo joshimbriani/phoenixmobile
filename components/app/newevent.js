@@ -9,6 +9,7 @@ import ColorScheme from 'color-scheme';
 import Swiper from 'react-native-swiper';
 import DateTimePicker from 'react-native-modal-datetime-picker';
 import fontBasedOnPlatform from '../utils/fontBasedOnPlatform';
+import { getURLForPlatform } from '../utils/networkUtils';
 
 const ITEMS_TO_VALIDATE = ["title", "description", "place", "datetime"];
 
@@ -34,6 +35,7 @@ class NewEvent extends React.Component {
             datetime: "",
             formIsValid: false,
             isDateTimePickerVisible: false,
+            topics: []
         }
         this.onChange = this.onChange.bind(this);
         this.formIsValid = this.formIsValid.bind(this);
@@ -45,6 +47,22 @@ class NewEvent extends React.Component {
         stateRepresentation[component] = value;
         stateRepresentation["formIsValid"] = this.formIsValid();
         this.setState(stateRepresentation);
+    }
+
+    fetchTopicsFromDescription() {
+        fetch(getURLForPlatform() + "api/v1/events/topicByDescription/", {
+            method: 'POST',
+            Authorization: 'Token ' + this.props.token,
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                'description': this.state.description,
+                'title': this.state.title
+            })
+        }).then(response => response.json())
+        .then(responseJSON => this.setState({topics: responseJSON["topics"]}))
     }
 
     formIsValid() {
@@ -73,7 +91,11 @@ class NewEvent extends React.Component {
                 'restrictToSameGender': this.state.restrictToGender,
                 'capacity': this.state.capacity,
             })
-        })
+        }).then(response => {
+            if (this.response.ok) {
+                this.props.navigation.goBack();
+            }
+        });
     }
 
     _showDateTimePicker = () => this.setState({ isDateTimePickerVisible: true });
@@ -102,11 +124,21 @@ class NewEvent extends React.Component {
                             <Form>
                                 <Item stackedLabel>
                                     <Label>Title</Label>
-                                    <Input name="title" onChangeText={(text) => this.onChange("title", text)} />
+                                    <Input 
+                                        name="title" 
+                                        onEndEditing={() => this.fetchTopicsFromDescription()} 
+                                        onChangeText={(text) => this.onChange("title", text)} 
+                                    />
                                 </Item>
                                 <Item stackedLabel last>
                                     <Label>Full Description</Label>
-                                    <Input style={{ height: 330, width: 300 }} name="description" multiline={true} onChangeText={(text) => this.onChange("description", text)} />
+                                    <Input 
+                                        style={{ height: 330, width: 300 }} 
+                                        name="description" 
+                                        onEndEditing={() => this.fetchTopicsFromDescription()} 
+                                        multiline={true} 
+                                        onChangeText={(text) => this.onChange("description", text)} 
+                                    />
                                 </Item>
                             </Form>
                         </Content>
@@ -159,7 +191,26 @@ class NewEvent extends React.Component {
                         mode="datetime"
                     />
                 </View>
-                <View>
+                <View style={styles.flex1}>
+                    <View style={styles.header}>
+                        <Text style={styles.questionHeader}>Topics?</Text>
+                        <View style={styles.tagline}>
+                            <Text style={styles.taglineText}>Which topics does</Text>
+                            <Text style={styles.taglineText}>your event fit?</Text>
+                        </View>
+                    </View>
+                    <View style={styles.formContainer}>
+                        <Content style={styles.flex1}>
+                            <Form>
+                                {/*<Item stackedLabel last>
+                                    <Label>Add Topic</Label>
+                                    <Input name="topic" onChangeText={(text) => this.onChange("title", text)} />
+                                </Item>*/}
+                            </Form>
+                        </Content>
+                    </View>
+                </View>
+                <View style={styles.flex1}>
                     <View style={styles.header}>
                         <Text style={styles.questionHeader}>Who?</Text>
                         <View style={styles.tagline}>
