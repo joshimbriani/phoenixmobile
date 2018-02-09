@@ -151,9 +151,7 @@ const MainNavContainer = TabNavigator({
 });
 
 const LoginWrapper = StackNavigator({
-    Main: {
-        screen: MainNavContainer
-    },
+    
     Register: {
         screen: Register,
         navigationOptions: ({ navigation }) => ({
@@ -168,7 +166,9 @@ const LoginWrapper = StackNavigator({
             header: null
         })
     },
-    
+    Main: {
+        screen: MainNavContainer
+    },
 }, {
         headerMode: 'none'
     });
