@@ -15,18 +15,7 @@ import ProfileSettings from '../settings/profile-settings';
 import IDK from '../app/idk';
 import Login from '../auth/login';
 import Register from '../auth/register';
-
-const ProfileScreen = () => (
-    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-        <Text>Profile Screen</Text>
-    </View>
-);
-
-const SuggestedScreen = () => (
-    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-        <Text>Suggested Screen</Text>
-    </View>
-);
+import Suggested from '../app/suggested';
 
 const HomeStack = StackNavigator({
     Home: {
@@ -87,7 +76,7 @@ const SettingsStack = StackNavigator({
 
 const SuggestedStack = StackNavigator({
     Suggested: {
-        screen: SuggestedScreen,
+        screen: Suggested,
         navigationOptions: ({ navigation }) => ({
             title: 'Suggested',
             headerLeft: <PlatformIonicon
@@ -96,21 +85,11 @@ const SuggestedStack = StackNavigator({
                 size={35}
                 onPress={() => navigation.navigate('DrawerOpen')} />
         })
-    }
-});
-
-const ProfileStack = StackNavigator({
-    Profile: {
-        screen: ProfileScreen,
-        navigationOptions: ({ navigation }) => ({
-            title: 'Profile',
-            headerLeft: <PlatformIonicon
-                name="menu"
-                style={{paddingLeft: 10}}
-                size={35}
-                onPress={() => navigation.navigate('DrawerOpen')} />
-        })
-    }
+    },
+    SuggestedEventDetail: {
+        path: '/event/:event',
+        screen: EventDetail,
+    },
 });
 
 const MainNavContainer = DrawerNavigator({
@@ -135,19 +114,6 @@ const MainNavContainer = DrawerNavigator({
             drawerIcon: ({ tintColor, focused }) => (
                 <PlatformIonicon
                     name='apps'
-                    size={20}
-                    style={{ color: tintColor }}
-                />
-            ),
-        },
-    },
-    Profile: {
-        screen: ProfileStack,
-        navigationOptions: {
-            drawerLabel: 'Profile',
-            drawerIcon: ({ tintColor, focused }) => (
-                <PlatformIonicon
-                    name='person'
                     size={20}
                     style={{ color: tintColor }}
                 />

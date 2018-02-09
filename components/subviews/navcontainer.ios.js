@@ -18,18 +18,7 @@ import Filter from './filter';
 import IDK from '../app/idk';
 import Login from '../auth/login';
 import Register from '../auth/register';
-
-const ProfileScreen = () => (
-    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-        <Text>Profile Screen</Text>
-    </View>
-);
-
-const SuggestedScreen = () => (
-    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-        <Text>Suggested Screen</Text>
-    </View>
-);
+import Suggested from '../app/suggested';
 
 const HomeStack = StackNavigator({
     Home: {
@@ -63,11 +52,15 @@ const HomeStack = StackNavigator({
 
 const SuggestedStack = StackNavigator({
     Suggested: {
-        screen: SuggestedScreen,
+        screen: Suggested,
         navigationOptions: ({ navigation }) => ({
             title: 'Suggested',
         })
-    }
+    },
+    SuggestedEventDetail: {
+        path: '/event/:event',
+        screen: EventDetail,
+    },
 });
 
 const SettingsStack = StackNavigator({
@@ -115,15 +108,6 @@ const SettingsStack = StackNavigator({
     }
 });
 
-const ProfileStack = StackNavigator({
-    Profile: {
-        screen: ProfileScreen,
-        navigationOptions: ({ navigation }) => ({
-            title: 'Profile',
-        })
-    }
-});
-
 const MainNavContainer = TabNavigator({
     Home: {
         screen: HomeStack,
@@ -151,19 +135,6 @@ const MainNavContainer = TabNavigator({
             ),
         },
     },
-    Profile: {
-        screen: ProfileStack,
-        navigationOptions: {
-            tabBarLabel: 'Profile',
-            tabBarIcon: ({ tintColor, focused }) => (
-                <PlatformIonicon
-                    name='person'
-                    size={20}
-                    style={{ color: tintColor }}
-                />
-            ),
-        },
-    },
     Settings: {
         screen: SettingsStack,
         navigationOptions: {
@@ -180,6 +151,9 @@ const MainNavContainer = TabNavigator({
 });
 
 const LoginWrapper = StackNavigator({
+    Main: {
+        screen: MainNavContainer
+    },
     Register: {
         screen: Register,
         navigationOptions: ({ navigation }) => ({
@@ -194,9 +168,7 @@ const LoginWrapper = StackNavigator({
             header: null
         })
     },
-    Main: {
-        screen: MainNavContainer
-    }
+    
 }, {
         headerMode: 'none'
     });

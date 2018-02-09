@@ -45,14 +45,14 @@ class Home extends React.Component {
     }
 
     static navigationOptions = (Platform.OS === 'android') ? ({ navigation }) => ({
-        title: 'Phoenix',
+        title: 'Home',
         headerLeft: <PlatformIonicon
             name="menu"
             style={{ paddingLeft: 10 }}
             size={35}
             onPress={() => navigation.navigate('DrawerOpen')} />
     }) : ({ navigation }) => ({
-        title: 'Phoenix',
+        title: 'Home',
         headerStyle: { paddingTop: -22, }
     });
 
