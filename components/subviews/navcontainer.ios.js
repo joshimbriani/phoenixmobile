@@ -19,6 +19,7 @@ import IDK from '../app/idk';
 import Login from '../auth/login';
 import Register from '../auth/register';
 import Suggested from '../app/suggested';
+import Profile from '../app/profile';
 
 const HomeStack = StackNavigator({
     Home: {
@@ -62,6 +63,13 @@ const SuggestedStack = StackNavigator({
         screen: EventDetail,
     },
 });
+
+const ProfileStack = StackNavigator({
+    Profile: {
+        screen: Profile,
+        path: '/profile'
+    }
+})
 
 const SettingsStack = StackNavigator({
     Settings: {
@@ -135,6 +143,19 @@ const MainNavContainer = TabNavigator({
             ),
         },
     },
+    Profile: {
+        screen: ProfileStack,
+        navigationOptions: {
+            tabBarLabel: 'Profile',
+            tabBarIcon: ({ tintColor, focused }) => (
+                <PlatformIonicon
+                    name='person'
+                    size={20}
+                    style={{ color: tintColor }}
+                />
+            ),
+        }
+    },
     Settings: {
         screen: SettingsStack,
         navigationOptions: {
@@ -151,7 +172,6 @@ const MainNavContainer = TabNavigator({
 });
 
 const LoginWrapper = StackNavigator({
-    
     Register: {
         screen: Register,
         navigationOptions: ({ navigation }) => ({

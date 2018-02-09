@@ -7,6 +7,7 @@ import { bindActionCreators } from 'redux';
 import * as colorActions from '../../redux/actions/backgroundColor'
 import ColorScheme from 'color-scheme';
 import { getURLForPlatform } from '../utils/networkUtils';
+import { KootaListView } from '../utils/listView';
 
 class Topic extends React.Component {
 
@@ -68,7 +69,6 @@ class Topic extends React.Component {
     }
 
     followTopic() {
-        console.log("Token " + this.props.token);
         fetch(getURLForPlatform() + "api/v1/topics/" + this.props.navigation.state.params.id + "/follow/", {
             method: 'POST',
             headers: {
@@ -95,21 +95,7 @@ class Topic extends React.Component {
                         <Button onPress={this.followTopic} style={{ justifyContent: "center" }}><Text>{this.state.followed && 'Unfollow'}{!this.state.followed && 'Follow'}</Text></Button>
                     </View>
                     <View style={{ flex: 10 }}>
-                        <FlatList
-                            data={this.state.data}
-                            contentContainerStyle={{ paddingTop: 0 }}
-                            keyExtractor={(item, index) => index}
-                            style={styles.listView}
-                            renderItem={({ item, index }) => {
-                                return (
-                                    <TouchableHighlight onPress={() => { this.props.navigation.navigate('EventDetail', { event: item.title, id: item.id, color: this.props.navigation.state.params.color }) }}>
-                                        <View key={item.id} style={[styles.listitem, { backgroundColor: "#" + this.state.colors[index % this.state.colors.length] }]}>
-                                            <Text style={styles.itemText}>{item.title}</Text>
-                                        </View>
-                                    </TouchableHighlight>
-                                )
-                            }}
-                        />
+                        <KootaListView data={this.state.data} pressCallback={(item) => this.props.navigation.navigate('EventDetail', { event: item.title, id: item.id })} />
                     </View>
                 </Container>
             );

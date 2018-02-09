@@ -92,6 +92,13 @@ const SuggestedStack = StackNavigator({
     },
 });
 
+const ProfileStack = StackNavigator({
+    Profile: {
+        screen: Profile,
+        path: '/profile'
+    }
+});
+
 const MainNavContainer = DrawerNavigator({
     
     Home: {
@@ -119,6 +126,19 @@ const MainNavContainer = DrawerNavigator({
                 />
             ),
         },
+    },
+    Profile: {
+        screen: ProfileStack,
+        navigationOptions: {
+            tabBarLabel: 'Profile',
+            tabBarIcon: ({ tintColor, focused }) => (
+                <PlatformIonicon
+                    name='person'
+                    size={20}
+                    style={{ color: tintColor }}
+                />
+            ),
+        }
     },
     Settings: {
         screen: SettingsStack,

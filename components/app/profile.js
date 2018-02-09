@@ -7,16 +7,12 @@ import { bindActionCreators } from 'redux';
 import * as colorActions from '../../redux/actions/backgroundColor'
 import ColorScheme from 'color-scheme';
 import { getURLForPlatform } from '../utils/networkUtils';
-import {KootaListView} from '../utils/listView';
+import { KootaListView } from '../utils/listView';
 
-class Suggested extends React.Component {
+class Profile extends React.Component {
 
     static navigationOptions = ({ navigation }) => ({
-        headerRight: <PlatformIonicon
-            name='funnel'
-            style={{ paddingRight: 10 }}
-            size={35}
-            onPress={() => navigation.navigate('Filter')} />
+        title: 'Profile',
     });
 
     constructor(props) {
@@ -28,7 +24,8 @@ class Suggested extends React.Component {
     }
 
     componentDidMount() {
-        fetch(getURLForPlatform() + "api/v1/events/suggested", {
+        /*
+        fetch(getURLForPlatform() + "api/v1/users/me", {
             headers: {
                 Authorization: "Token " + this.props.token
             },
@@ -36,22 +33,15 @@ class Suggested extends React.Component {
             .then(responseObj => {
                 this.setState({ data: responseObj });
             });
+            */
     }
 
     render() {
-        if (this.state.data.length > 0) {
-            return (
-                <Container style={{ flex: 1 }}>
-                    <KootaListView data={this.state.data} pressCallback={(item) => this.props.navigation.navigate('SuggestedEventDetail', { event: item.title, id: item.id })} />
-                </Container>
-            );
-        } else {
-            return (
-                <Container>
-                    <Text>No Events found for this topic! Blaze the trail and create an event!</Text>
-                </Container>
-            )
-        }
+        return (
+            <Container style={{ flex: 1 }}>
+                <Text>Profile View</Text>
+            </Container>
+        );
     }
 }
 
@@ -69,7 +59,7 @@ function mapDispatchToProps(dispatch) {
 export default connect(
     mapStateToProps,
     mapDispatchToProps
-)(Suggested);
+)(Profile);
 
 const styles = StyleSheet.create({
     listitem: {
