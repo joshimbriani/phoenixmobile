@@ -38,10 +38,10 @@ const MainNavContainer = DrawerNavigator({
     Profile: {
         screen: ProfileStack,
         navigationOptions: {
-            tabBarLabel: 'Profile',
-            tabBarIcon: ({ tintColor, focused }) => (
+            drawerLabel: 'Profile',
+            drawerIcon: ({ tintColor, focused }) => (
                 <PlatformIonicon
-                    name='person-add'
+                    name='person'
                     size={20}
                     style={{ color: tintColor }}
                 />

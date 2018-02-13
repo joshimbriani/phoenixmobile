@@ -108,7 +108,7 @@ export const SettingsStack = StackNavigator({
 });
 
 export const MyEventsStack = StackNavigator({
-    YourEvents: {
+    MyEvents: {
         screen: MyEvents,
         navigationOptions: ({ navigation }) => ({
             title: 'My Events'

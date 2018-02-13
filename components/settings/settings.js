@@ -15,6 +15,19 @@ import { NavigationActions } from 'react-navigation';
 let distUnit = 'km';
 
 class Settings extends React.Component {
+
+    static navigationOptions = (Platform.OS === 'android') ? ({ navigation }) => ({
+        title: 'Settings',
+        headerLeft: <PlatformIonicon
+            name="menu"
+            style={{ paddingLeft: 10 }}
+            size={35}
+            onPress={() => navigation.navigate('DrawerOpen')} />
+    }) : ({ navigation }) => ({
+        title: 'Settings',
+        headerStyle: { paddingTop: -22, }
+    });
+
     constructor() {
         super();
         this.onValueChange = this.onValueChange.bind(this);
@@ -182,7 +195,7 @@ class Settings extends React.Component {
                             onPress={() => this.props.navigation.navigate("LegalSettings", {})}
                         />
                     </SettingsList>
-                    <Button onPress={() => { this.props.userActions.logout(this.props.token)}}>
+                    <Button onPress={() => { this.props.userActions.logout(this.props.token) }}>
                         <Text>Logout</Text>
                     </Button>
                 </View>
