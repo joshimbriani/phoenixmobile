@@ -22,8 +22,8 @@ const MainNavContainer = TabNavigator({
     MyEvents: {
         screen: MyEventsStack,
         navigationOptions: {
-            drawerLabel: 'My Events',
-            drawerIcon: ({ tintColor, focused }) => (
+            tabBarLabel: 'My Events',
+            tabBarIcon: ({ tintColor, focused }) => (
                 <PlatformIonicon
                     name='calendar'
                     size={20}
@@ -83,16 +83,3 @@ const LoginWrapper = StackNavigator({
     });
 
 export default LoginWrapper;
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: '#fff',
-        marginTop: -22,
-    },
-    item: {
-        padding: 10,
-        fontSize: 18,
-        height: 44,
-    },
-});

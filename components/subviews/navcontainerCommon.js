@@ -4,8 +4,8 @@ import { StackNavigator } from 'react-navigation';
 
 import PlatformIonicon from '../utils/platformIonicon';
 import Suggested from '../app/suggested';
-import Profile from '../profile/profile';
-import MyEvents from '../myevents/myevents';
+import ProfileTabContainer from '../profile/profileTabContainer';
+import MyEventsTabContainer from '../myevents/myEventsTabContainer';
 import Home from '../app/home';
 import Topic from '../app/topic';
 import Settings from '../settings/settings';
@@ -108,8 +108,8 @@ export const SettingsStack = StackNavigator({
 });
 
 export const MyEventsStack = StackNavigator({
-    MyEvents: {
-        screen: MyEvents,
+    MyEventsTabContainer: {
+        screen: MyEventsTabContainer,
         navigationOptions: ({ navigation }) => ({
             title: 'My Events'
         })
@@ -117,8 +117,8 @@ export const MyEventsStack = StackNavigator({
 });
 
 export const ProfileStack = StackNavigator({
-    Profile: {
-        screen: Profile,
+    ProfileTabContainer: {
+        screen: ProfileTabContainer,
         path: '/profile',
         navigationOptions: ({ navigation }) => ({
             title: 'Profile'

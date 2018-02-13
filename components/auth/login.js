@@ -109,7 +109,6 @@ class Login extends React.Component {
     }
 
     handleLoginSuccess(response) {
-        console.log("in handle login " + JSON.stringify(response));
         this.props.tokenActions.saveUserToken(response["key"]);
         this.goToScreenAndErasePreviousScreens('Main');
     }

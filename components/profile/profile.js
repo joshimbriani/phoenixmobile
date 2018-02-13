@@ -11,18 +11,6 @@ import { KootaListView } from '../utils/listView';
 
 class Profile extends React.Component {
 
-    static navigationOptions = (Platform.OS === 'android') ? ({ navigation }) => ({
-        title: 'Profile',
-        headerLeft: <PlatformIonicon
-            name="menu"
-            style={{ paddingLeft: 10 }}
-            size={35}
-            onPress={() => navigation.navigate('DrawerOpen')} />
-    }) : ({ navigation }) => ({
-        title: 'Profile',
-        headerStyle: { paddingTop: -22, }
-    });
-
     constructor(props) {
         super(props);
         this.state = {
