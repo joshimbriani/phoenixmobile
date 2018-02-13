@@ -18,5 +18,5 @@ export default function configureStore() {
         applyMiddleware(thunk)
     );
     let persistor = persistStore(store);
-    return {store, persistor}
+    return {store, persistor};
 };

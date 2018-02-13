@@ -78,6 +78,9 @@ class Login extends React.Component {
         }
     }
 
+    /*
+        Response.json returns a promise. We need to have it in a then.
+    */
     sendLoginRequest() {
         fetch(getURLForPlatform() + "rest-auth/login/", {
             method: 'POST',
@@ -91,7 +94,14 @@ class Login extends React.Component {
             })
         }).then(response => {
             if (response.ok) {
-                this.handleLoginSuccess(response.json())
+                return response.json();
+            } else {
+                return false;
+            }
+        })
+        .then(response => {
+            if (response) {
+                this.handleLoginSuccess(response)
             } else {
                 this.handleLoginFailure();
             }
@@ -99,6 +109,7 @@ class Login extends React.Component {
     }
 
     handleLoginSuccess(response) {
+        console.log("in handle login " + JSON.stringify(response));
         this.props.tokenActions.saveUserToken(response["key"]);
         this.goToScreenAndErasePreviousScreens('Main');
     }

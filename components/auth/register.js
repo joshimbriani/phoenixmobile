@@ -291,9 +291,9 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
     },
     loginLink: {
-        marginLeft: 140,
+        marginLeft: 130,
         paddingBottom: 2,
-        paddingRight: 2,
+        marginRight: 2,
         textDecorationLine: 'underline'
     },
     alreadyText: {

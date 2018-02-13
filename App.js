@@ -14,7 +14,7 @@ export default class App extends React.Component {
   render() {
     return (
       <Provider store={store}>
-        <PersistGate persistor={persistor}>
+        <PersistGate loading={null} persistor={persistor}>
           <Index />
         </PersistGate>
       </Provider>
