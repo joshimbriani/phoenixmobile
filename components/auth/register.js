@@ -224,6 +224,7 @@ class Register extends React.Component {
                 </View>
                 <View style={styles.loginLinks}>
                     <Text style={[styles.platformFont, styles.alreadyText]}>Already have an account?</Text>
+                    <View style={{flex: 1}} />
                     <Text style={[styles.loginLink, styles.platformFont]} onPress={() => this.props.navigation.navigate('Login', {})}>Login</Text>
                 </View>
             </KeyboardAvoidingView>
@@ -291,7 +292,6 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
     },
     loginLink: {
-        marginLeft: 130,
         paddingBottom: 2,
         marginRight: 2,
         textDecorationLine: 'underline'
