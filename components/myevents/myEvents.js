@@ -1,18 +1,69 @@
 import React from 'react';
-import { Container, Fab, Header, Item, Input, Icon, Button, Text } from 'native-base';
-import { Alert, Platform, StyleSheet, TouchableHighlight, View } from 'react-native';
+import { Container, Fab, Header, ListItem, Item, Input, Icon, Button, Text } from 'native-base';
+import { Platform, SectionList, StyleSheet, TouchableHighlight, View } from 'react-native';
 import PlatformIonicon from '../utils/platformIonicon';
+import MyEventDetailWrapper from './myEventDetailWrapper';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import * as colorActions from '../../redux/actions/backgroundColor';
-import randomMC from 'random-material-color';
+import { getURLForPlatform } from '../utils/networkUtils';
+
 
 class MyEvents extends React.Component {
+    state = {
+        data: [],
+    }
+
+    static navigationOptions = (Platform.OS === 'android') ? ({ navigation }) => ({
+        title: 'My Events',
+        headerLeft: <PlatformIonicon
+            name="menu"
+            style={{ paddingLeft: 10 }}
+            size={35}
+            onPress={() => navigation.navigate('DrawerOpen')} />
+    }) : ({ navigation }) => ({
+        title: 'My Events',
+        headerStyle: { paddingTop: -22, }
+    });
+
+    componentDidMount() {
+        fetch(getURLForPlatform() + "api/v1/events/my", {
+            method: 'GET',
+            Authorization: "Token " + this.props.token
+        })
+            .then(response => response.json())
+            .then(responseObj => {
+                this.setState({ data: responseObj });
+            })
+    }
+
+    renderEmptySections(section) {
+        if (section.data.length > 0) {
+            return <ListItem itemDivider><Text>{section.title}</Text></ListItem>
+        } else {
+            return (<View>
+                <ListItem itemDivider><Text>{section.title}</Text></ListItem>
+                <ListItem><Text>No Results</Text></ListItem>
+            </View>
+            )
+        }
+    }
 
     render() {
         return (
             <Container>
-                <Text>My Events View</Text>
+                <SectionList
+                    renderItem={({ item, section }) => {
+                        return (
+                            <TouchableHighlight onPress={() => { this.props.navigation.navigate('MyEventsDetail', { title: item.title, id: item.id }) }}>
+                                <View key={item.id} style={[styles.listitem]}>
+                                    <Text style={styles.itemText}>{item.title}</Text>
+                                </View>
+                            </TouchableHighlight>
+                        )
+                    }}
+                    renderSectionHeader={({ section }) => this.renderEmptySections(section)}
+                    sections={this.state.data}
+                    keyExtractor={(item, index) => index} />
             </Container>
         );
     }
@@ -46,8 +97,16 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
     },
+    listitem: {
+        alignSelf: 'stretch',
+        height: 200,
+    },
     itemText: {
         color: 'white',
+        fontSize: 40,
+        paddingTop: 5,
+        textAlign: 'center',
+        fontFamily: 'Roboto_medium'
     }
 
 });

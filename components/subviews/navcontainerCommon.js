@@ -5,7 +5,7 @@ import { StackNavigator } from 'react-navigation';
 import PlatformIonicon from '../utils/platformIonicon';
 import Suggested from '../app/suggested';
 import ProfileTabContainer from '../profile/profileTabContainer';
-import MyEventsTabContainer from '../myevents/myEventsTabContainer';
+import MyEvents from '../myevents/myEvents';
 import Home from '../app/home';
 import Topic from '../app/topic';
 import Settings from '../settings/settings';
@@ -20,6 +20,7 @@ import Search from '../app/search';
 import EventDetail from '../app/eventdetail';
 import Filter from './filter';
 import IDK from '../app/idk';
+import myEventDetailWrapper from '../myevents/myEventDetailWrapper';
 
 export const HomeStack = StackNavigator({
     Home: {
@@ -108,11 +109,14 @@ export const SettingsStack = StackNavigator({
 });
 
 export const MyEventsStack = StackNavigator({
-    MyEventsTabContainer: {
-        screen: MyEventsTabContainer,
+    MyEvents: {
+        screen: MyEvents,
         navigationOptions: ({ navigation }) => ({
             title: 'My Events'
         })
+    },
+    MyEventsDetail: {
+        screen: myEventDetailWrapper,
     }
 });
 

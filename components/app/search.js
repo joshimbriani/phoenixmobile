@@ -78,18 +78,6 @@ class Search extends React.Component {
                     renderSectionHeader={({section}) => this.renderEmptySections(section)}
                     sections={this.state.data}
                     keyExtractor={(item, index) => index} />
-                <Fab
-                    active={this.state.active}
-                    containerStyle={{}}
-                    style={{ backgroundColor: '#5067FF' }}
-                    position="bottomRight"
-                    onPress={() => this.props.navigation.navigate('NewEvent', { topic: "" })}>
-                    <PlatformIonicon
-                        name={"add"}
-                        size={50}
-                        style={{ color: "white" }}
-                    />
-                </Fab>
             </Container>
         );
     }
