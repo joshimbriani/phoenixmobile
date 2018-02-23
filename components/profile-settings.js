@@ -1,18 +1,18 @@
 import React from 'react';
 import { Container, Header, Item, Input, Icon, Button, Text } from 'native-base';
 import { Alert, StatusBar, FlatList, StyleSheet, TouchableHighlight, View } from 'react-native';
-import PlatformIonicon from '../utils/platformIonicon';
+import PlatformIonicon from './utils/platformIonicon';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import * as colorActions from '../../redux/actions/backgroundColor'
+import * as colorActions from '../redux/actions/backgroundColor'
 import ColorScheme from 'color-scheme';
 
-class LegalSettings extends React.Component {
+class ProfileSettings extends React.Component {
 
     render() {
             return (
                 <Container>
-                    <Text> Lots of legal text that says this is all copyrighted & you cannot steal it, sue us for it, etc...
+                    <Text> settings profile page: 
                     </Text>
                 </Container>
             );
@@ -34,7 +34,7 @@ function mapDispatchToProps(dispatch) {
 export default connect(
     mapStateToProps,
     mapDispatchToProps
-)(LegalSettings);
+)(ProfileSettings);
 
 const styles = StyleSheet.create({
     listitem: {

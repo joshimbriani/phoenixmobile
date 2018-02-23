@@ -30,7 +30,7 @@ class Home extends React.Component {
             Authorization: "Token " + this.props.token
         }).then(response => response.json())
             .then(responseObj => {
-                this.setState({ data: [{ id: -1, name: "IDK", color: "0000ff", icon: "help" }].concat(responseObj) });
+                this.setState({ data: [{ id: -1, name: "IDK", color: "0097e6", icon: "help" }].concat(responseObj) });
             })
     }
 
@@ -73,7 +73,7 @@ class Home extends React.Component {
             Authorization: "Token " + this.props.token
         }).then(response => response.json())
             .then(responseObj => {
-                this.setState({ refreshing: false, data: [{ id: -1, name: "IDK", color: "0000ff", icon: "help" }].concat(responseObj) });
+                this.setState({ refreshing: false, data: [{ id: -1, name: "IDK", color: "#0097e6", icon: "help" }].concat(responseObj) });
             })
     }
 
@@ -120,12 +120,12 @@ class Home extends React.Component {
                 <Fab
                     active={this.state.active}
                     containerStyle={{}}
-                    style={{ backgroundColor: '#5067FF' }}
+                    style={{ backgroundColor: '#e84118' }}
                     position="bottomRight"
                     onPress={() => this.props.navigation.navigate('NewEvent', { topic: "" })}>
                     <PlatformIonicon
                         name={"add"}
-                        size={50}
+                        size={50} //this doesn't adjust the size...?
                         style={{ color: "white" }}
                     />
                 </Fab>

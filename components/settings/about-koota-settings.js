@@ -7,12 +7,12 @@ import { bindActionCreators } from 'redux';
 import * as colorActions from '../../redux/actions/backgroundColor'
 import ColorScheme from 'color-scheme';
 
-class LegalSettings extends React.Component {
+class AboutKootaSettings extends React.Component {
 
     render() {
-            return (
+            return ( // include a write-up of our mission?
                 <Container>
-                    <Text> Lots of legal text that says this is all copyrighted & you cannot steal it, sue us for it, etc...
+                    <Text> settings about koota page
                     </Text>
                 </Container>
             );
@@ -34,7 +34,7 @@ function mapDispatchToProps(dispatch) {
 export default connect(
     mapStateToProps,
     mapDispatchToProps
-)(LegalSettings);
+)(LocationsSettings);
 
 const styles = StyleSheet.create({
     listitem: {

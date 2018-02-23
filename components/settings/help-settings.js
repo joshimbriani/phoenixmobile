@@ -12,7 +12,7 @@ class HelpSettings extends React.Component {
     render() {
             return (
                 <Container>
-                    <Text> settings page
+                    <Text> "Good help is hard to find"      why gps (1. events near me, 2. validate attendance, 3. send offers to phone when at location with other attendees)
                     </Text>
                 </Container>
             );

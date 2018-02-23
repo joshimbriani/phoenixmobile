@@ -69,13 +69,13 @@ class Settings extends React.Component {
                         <SettingsList.Item
                             icon={
                                 <PlatformIonicon
-                                    name='person' // do we want this to be "person" - yes!   (or "contact")
+                                    name='person'
                                     size={30}
                                     style={{ paddingTop: 10, paddingLeft: 5 }}
                                 />
                             }
                             title='Profile'
-                            titleInfo={this.props.user["username"]} // could link this to the user's name
+                            titleInfo={this.props.user["username"]}
                             titleInfoStyle={styles.titleInfoStyle}
                             onPress={() => this.props.navigation.navigate("ProfileSettings", {})}
                         />
@@ -173,7 +173,7 @@ class Settings extends React.Component {
                                 size={30}
                                 style={{ paddingTop: 10, paddingLeft: 5 }}
                             />}
-                            title='Restricted Mode'
+                            title='Restrictions & Alerts'
                             onPress={() => this.props.navigation.navigate("RestrictedModeSettings", {})}
                         />
                         <SettingsList.Item
@@ -185,6 +185,7 @@ class Settings extends React.Component {
                             title='Help'
                             onPress={() => this.props.navigation.navigate("HelpSettings", {})}
                         />
+                        
                         <SettingsList.Item
                             icon={<PlatformIonicon
                                 name='folder'
@@ -194,10 +195,16 @@ class Settings extends React.Component {
                             title='Legal'
                             onPress={() => this.props.navigation.navigate("LegalSettings", {})}
                         />
+                        <SettingsList.Item
+                            icon={<PlatformIonicon
+                                name='text'
+                                size={30}
+                                style={{ paddingTop: 10, paddingLeft: 5 }}
+                            />}
+                            title='About Koota' //include a write-up of our mission?
+                            onPress={() => this.props.navigation.navigate("AboutKootaSettings", {})} //why doesn't this work?
+                        />
                     </SettingsList>
-                    <Button onPress={() => { this.props.userActions.logout(this.props.token) }}>
-                        <Text>Logout</Text>
-                    </Button>
                 </View>
             </View>
         );
@@ -206,11 +213,9 @@ class Settings extends React.Component {
     onValueChange(value) {
         this.setState({ switchValue: value });
     }
-
     onValueChange2(value) {
         this.setState({ switchValue2: value });
     }
-
     onValueChange3(value) {
         this.setState({ switchValue3: value });
     }
