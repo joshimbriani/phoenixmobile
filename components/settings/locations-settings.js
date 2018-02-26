@@ -39,7 +39,7 @@ function mapDispatchToProps(dispatch) {
 export default connect(
     mapStateToProps,
     mapDispatchToProps
-)(HelpSettings);
+)(LocationsSettings);
 
 const styles = StyleSheet.create({
     listitem: {
