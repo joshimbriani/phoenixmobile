@@ -41,20 +41,36 @@ class MyEvents extends React.Component {
             return <ListItem itemDivider><Text>{section.title}</Text></ListItem>
         } else {
             return (<View>
-                <ListItem itemDivider><Text>{section.title}</Text></ListItem>
-                <ListItem><Text>No Results</Text></ListItem>
             </View>
             )
         }
     }
 
+    noEventsInMyEvents() {
+        var eventNum = 0;
+        if (this.state.data.length > 0) {
+            eventNum += this.state.data[0]["data"].length
+            eventNum += this.state.data[1]["data"].length
+            eventNum += this.state.data[2]["data"].length
+            eventNum += this.state.data[3]["data"].length
+        }
+        return eventNum;
+    }
+
     render() {
+        if (this.noEventsInMyEvents() === 0) {
+            return (
+                <View>
+                    <Text>You aren't associated with any events! Create or sign up for some!</Text>
+                </View>
+            )
+        }
         return (
             <Container>
                 <SectionList
                     renderItem={({ item, section }) => {
                         return (
-                            <TouchableHighlight onPress={() => { this.props.navigation.navigate('MyEventsDetail', { title: item.title, id: item.id }) }}>
+                            <TouchableHighlight onPress={() => { this.props.navigation.navigate('MyEventsDetail', { title: item.title, id: item.id }); }}>
                                 <View key={item.id} style={[styles.listitem]}>
                                     <Text style={styles.itemText}>{item.title}</Text>
                                 </View>
@@ -77,7 +93,6 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
     return {
-
     };
 }
 

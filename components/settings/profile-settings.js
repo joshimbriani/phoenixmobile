@@ -177,7 +177,8 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
     return {
-        colorActions: bindActionCreators(colorActions, dispatch)
+        colorActions: bindActionCreators(colorActions, dispatch),
+        userActions: bindActionCreators(userActions, dispatch),
     };
 }
 

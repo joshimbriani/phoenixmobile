@@ -9,6 +9,8 @@ import myEventDetailMessages from './myEventDetailMessages';
 import myEventDetailPhotos from './myEventDetailPhotos';
 
 import { getURLForPlatform } from '../utils/networkUtils';
+import { bindActionCreators } from 'redux';
+import * as eventActions from '../../redux/actions/events';
 
 const initialLayout = {
     height: 0,
@@ -56,7 +58,8 @@ class MyEventDetailWrapper extends React.Component {
         })
             .then(response => response.json())
             .then(responseObj => {
-                this.setState({ data: responseObj });
+                console.log(responseObj);
+                eventActions.saveCurrentEvent(responseObj);
             })
         
     }
@@ -83,7 +86,7 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
     return {
-
+        eventActions: bindActionCreators(eventActions, dispatch),
     };
 }
 

@@ -4,9 +4,10 @@ import { Text, View } from 'react-native';
 
 class MyEventDetailView extends React.Component {
     render() {
+        console.log(this.props.selectedEvent);
         return (
             <View>
-                <Text>Detail View</Text>
+                <Text>{this.props.selectedEvent.name}</Text>
             </View>
         )
     }
@@ -14,7 +15,7 @@ class MyEventDetailView extends React.Component {
 
 function mapStateToProps(state) {
     return {
-        token: state.tokenReducer.token
+        selectedEvent: state.eventReducer.selectedEvent,
     };
 }
 
