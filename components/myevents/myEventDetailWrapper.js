@@ -58,8 +58,7 @@ class MyEventDetailWrapper extends React.Component {
         })
             .then(response => response.json())
             .then(responseObj => {
-                console.log(responseObj);
-                eventActions.saveCurrentEvent(responseObj);
+                this.props.eventActions.saveCurrentEvent(responseObj);
             })
         
     }

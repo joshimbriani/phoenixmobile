@@ -1,12 +1,14 @@
 import { connect } from 'react-redux';
 import React from 'react';
-import { Text, View } from 'react-native';
+import { FlatList, Text, View } from 'react-native';
 
 class MyEventDetailMessages extends React.Component {
     render() {
         return (
             <View>
-                <Text>Messages View</Text>
+                <FlatList
+                    data={[{messageFrom: "Josh Imbriani", messageTo: "Fake Fake", messages: [{content: "Test", date: "12"}]}]}
+                    renderItem={({item}) => <Text>Test</Text>} />
             </View>
         )
     }

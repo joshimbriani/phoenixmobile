@@ -5,7 +5,6 @@ const defaultState = { selectedEvent: {} };
 export default function eventReducer(state = defaultState, action) {
     switch (action.type) {
         case SAVE_CURRENT_EVENT:
-            console.log("Save");
             return Object.assign({}, state, {
                 selectedEvent: action.event
             })

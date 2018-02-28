@@ -1,14 +1,33 @@
 import { connect } from 'react-redux';
 import React from 'react';
-import { Text, View } from 'react-native';
+import { View } from 'react-native';
+import { Container, Header, Item, Input, Icon, Button, Text } from 'native-base';
 
 class MyEventDetailView extends React.Component {
     render() {
-        console.log(this.props.selectedEvent);
+        const date = new Date(this.props.selectedEvent.datetime);
         return (
-            <View>
-                <Text>{this.props.selectedEvent.name}</Text>
-            </View>
+            <Container>
+                <View>
+                    <Text>
+                        {this.props.selectedEvent.title}
+                    </Text>
+                </View>
+                <View>
+                    <Text>
+                        What: {this.props.selectedEvent.description}
+                    </Text>
+                    <Text>
+                        Who: {this.props.selectedEvent.going.length} people
+                    </Text>
+                    <Text>
+                        Where: {this.props.selectedEvent.place}
+                    </Text>
+                    <Text>
+                        When: {date.toDateString()} @ {date.getHours()}:{date.getMinutes()}
+                    </Text>
+                </View>
+            </Container>
         )
     }
 }
