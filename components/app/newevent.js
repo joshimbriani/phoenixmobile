@@ -76,7 +76,7 @@ class NewEvent extends React.Component {
 
     submitForm() {
         console.log(this.state);
-        fetch(getURLForPlatform() + "api/v1/events", {
+        fetch(getURLForPlatform() + "api/v1/events/", {
             method: 'POST',
             Authorization: 'Token ' + this.props.token,
             headers: {

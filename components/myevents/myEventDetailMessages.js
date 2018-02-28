@@ -8,7 +8,9 @@ class MyEventDetailMessages extends React.Component {
             <View>
                 <FlatList
                     data={[{messageFrom: "Josh Imbriani", messageTo: "Fake Fake", messages: [{content: "Test", date: "12"}]}]}
-                    renderItem={({item}) => <Text>Test</Text>} />
+                    renderItem={({item}) => <View>
+                            <Text>{item.title}</Text>
+                        </View>} />
             </View>
         )
     }
