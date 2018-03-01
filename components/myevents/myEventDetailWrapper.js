@@ -59,8 +59,16 @@ class MyEventDetailWrapper extends React.Component {
             .then(response => response.json())
             .then(responseObj => {
                 this.props.eventActions.saveCurrentEvent(responseObj);
-            })
+            });
         
+        fetch(getURLForPlatform() + "api/v1/threads/byevent/?eventID=" + this.props.navigation.state.params.id, {
+            method: 'GET',
+            Authorization: "Token " + this.props.token
+        })
+        .then(response => response.json())
+        .then(responseObj => {
+            this.props.eventActions.saveCurrentEventMessages(responseObj);
+        })
     }
 
     render() {

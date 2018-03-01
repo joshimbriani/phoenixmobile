@@ -7,9 +7,9 @@ class MyEventDetailMessages extends React.Component {
         return (
             <View>
                 <FlatList
-                    data={[{messageFrom: "Josh Imbriani", messageTo: "Fake Fake", messages: [{content: "Test", date: "12"}]}]}
+                    data={this.props.messages}
                     renderItem={({item}) => <View>
-                            <Text>{item.title}</Text>
+                            <Text>{item.messageContent}</Text>
                         </View>} />
             </View>
         )
@@ -18,7 +18,7 @@ class MyEventDetailMessages extends React.Component {
 
 function mapStateToProps(state) {
     return {
-        token: state.tokenReducer.token
+        messages: state.eventReducer.selectedEventMessages,
     };
 }
 
