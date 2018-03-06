@@ -20,6 +20,7 @@ class Profile extends React.Component {
     }
 
     componentDidMount() {
+        console.log("Test");
         /*
         fetch(getURLForPlatform() + "api/v1/users/me", {
             headers: {

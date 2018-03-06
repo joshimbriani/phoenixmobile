@@ -9,7 +9,7 @@ export function saveUserObject(user) {
     }
 }
 
-export function loadUser() {
+export function loadUser(token) {
     return function action(dispatch) {
         return fetch(getURLForPlatform() + "api/v1/users/current/", {
             method: 'GET',
@@ -17,6 +17,7 @@ export function loadUser() {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json',
             },
+            Authorization: 'Token ' + token
         }).then(response => response.json())
             .then(responseObj => dispatch(saveUserObject(responseObj)));
     }

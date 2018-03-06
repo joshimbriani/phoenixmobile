@@ -24,7 +24,7 @@ class Home extends React.Component {
     }
 
     componentDidMount() {
-        this.props.userActions.loadUser();
+        this.props.userActions.loadUser(this.props.token);
         this.props.colorActions.resetColor();
         fetch(getURLForPlatform() + "api/v1/users/topics/?format=json", {
             Authorization: "Token " + this.props.token
