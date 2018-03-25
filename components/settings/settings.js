@@ -201,8 +201,8 @@ class Settings extends React.Component {
                                 size={30}
                                 style={{ paddingTop: 10, paddingLeft: 5 }}
                             />}
-                            title='About Koota' //include a write-up of our mission?
-                            onPress={() => this.props.navigation.navigate("AboutKootaSettings", {})} //why doesn't this work?
+                            title='About Koota'
+                            onPress={() => this.props.navigation.navigate("AboutKootaSettings", {})}
                         />
                     </SettingsList>
                 </View>
@@ -231,6 +231,7 @@ class Settings extends React.Component {
         this.props.navigation.dispatch(resetAction);
     }
 }
+
 function mapStateToProps(state) {
     return {
         color: state.backgroundColorReducer.color,

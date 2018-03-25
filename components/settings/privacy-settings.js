@@ -79,7 +79,7 @@ class PrivacySettings extends React.Component { // add a stack for each setting 
                             switchState={this.state.switchValue}
                             switchOnValueChange={this.onValueChange}
                             hasNavArrow={false}
-                            title='GPS Location'// example: why GPS: 1. events near me 2. validate attendance 3. send QR codes to you & group when everyone arrives
+                            title='GPS Location'// example: why GPS: 1. events near me 2. validate attendance 3. send QR codes to you & group when everyone arrives 4. safety
                         />
                         <SettingsList.Item
                             icon={<PlatformIonicon

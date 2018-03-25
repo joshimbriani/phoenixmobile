@@ -10,9 +10,9 @@ import ColorScheme from 'color-scheme';
 class AboutKootaSettings extends React.Component {
 
     render() {
-            return ( // include a write-up of our mission?
+            return (
                 <Container>
-                    <Text> settings about koota page
+                    <Text> "Josh & I are total badasses who are changing the world, 1 lonely person at a time."
                     </Text>
                 </Container>
             );
@@ -34,7 +34,7 @@ function mapDispatchToProps(dispatch) {
 export default connect(
     mapStateToProps,
     mapDispatchToProps
-)(LocationsSettings);
+)(AboutKootaSettings);
 
 const styles = StyleSheet.create({
     listitem: {
