@@ -24,7 +24,7 @@ class locationPoint {
         this._longitude = longitude;
         this._radius = radius;
     };
-    /*set title(aTitle) {
+    set title(aTitle) {
         if(typeof aTitle === 'string'){
             this._title = aTitle
         }
@@ -43,14 +43,19 @@ class locationPoint {
         if(typeof radius === 'number'){
             this._radius = radius;
         }
-    };*/
+    };
 
 };
 //why aren't my setters working?????
 // make class for locationPoints, allow user to create new ones, & to edit existing ones, use same drop-down for radius???
 
 const firstLocation = new locationPoint('Norman', 35.2226, 97.4395, 50);
-
+const secondLocation = new locationPoint();
+secondLocation.title = "Orlando";
+secondLocation.title = 1;
+secondLocation.latitude = 12;
+secondLocation.longitude = 12;
+secondLocation.radius = 12;
 
 class LocationsSettings extends React.Component {
     render() {
@@ -76,7 +81,7 @@ class LocationsSettings extends React.Component {
                         size={30}
                         style={{ paddingTop: 10, paddingLeft: 5 }}
                     />}
-                    title= {'Title: ' + firstLocation._title}
+                    title= {'Title: ' + secondLocation._title}
                 />
                 <SettingsList.Item
                     icon={<PlatformIonicon
@@ -84,7 +89,7 @@ class LocationsSettings extends React.Component {
                         size={30}
                         style={{ paddingTop: 10, paddingLeft: 5 }}
                     />}
-                    title= {'Latitude: ' + firstLocation._latitude}
+                    title= {'Latitude: ' + secondLocation._latitude}
                 />
                 <SettingsList.Item
                     icon={<PlatformIonicon
@@ -92,7 +97,7 @@ class LocationsSettings extends React.Component {
                         size={30}
                         style={{ paddingTop: 10, paddingLeft: 5 }}
                     />}
-                    title= {'Longitude: ' + firstLocation._longitude}
+                    title= {'Longitude: ' + secondLocation._longitude}
                 />
                 <SettingsList.Item
                     icon={<PlatformIonicon
@@ -100,7 +105,7 @@ class LocationsSettings extends React.Component {
                         size={30}
                         style={{ paddingTop: 10, paddingLeft: 5 }}
                     />}
-                    title= {'Radius: ' + firstLocation._radius}
+                    title= {'Radius: ' + secondLocation._radius}
                 />
                 <SettingsList.Header headerStyle={{ marginTop: 15 }} />
 
