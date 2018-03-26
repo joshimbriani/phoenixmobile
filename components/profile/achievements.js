@@ -21,7 +21,7 @@ class Achievements extends React.Component {
 
     componentDidMount() {
         /*
-        fetch(getURLForPlatform() + "api/v1/users/me", {
+        fetch(getURLForPlatform("phoenix") + "api/v1/users/me", {
             headers: {
                 Authorization: "Token " + this.props.token
             },

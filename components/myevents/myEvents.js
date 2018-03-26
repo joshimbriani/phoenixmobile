@@ -26,7 +26,7 @@ class MyEvents extends React.Component {
     });
 
     componentDidMount() {
-        fetch(getURLForPlatform() + "api/v1/events/my", {
+        fetch(getURLForPlatform("phoenix") + "api/v1/events/my", {
             method: 'GET',
             Authorization: "Token " + this.props.token
         })

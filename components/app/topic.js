@@ -34,7 +34,7 @@ class Topic extends React.Component {
 
     componentDidMount() {
         this.props.colorActions.changeColor(this.props.navigation.state.params.color);
-        fetch(getURLForPlatform() + "api/v1/events/search?topic=" + this.props.navigation.state.params.id, {
+        fetch(getURLForPlatform("phoenix") + "api/v1/events/search?topic=" + this.props.navigation.state.params.id, {
             headers: {
                 Authorization: "Token " + this.props.token
             },
@@ -43,7 +43,7 @@ class Topic extends React.Component {
                 this.setState({ data: responseObj });
             });
 
-        fetch(getURLForPlatform() + "api/v1/topics/" + this.props.navigation.state.params.id + "/follow/", {
+        fetch(getURLForPlatform("phoenix") + "api/v1/topics/" + this.props.navigation.state.params.id + "/follow/", {
             method: 'GET',
             headers: {
                 Authorization: "Token " + this.props.token
@@ -69,7 +69,7 @@ class Topic extends React.Component {
     }
 
     followTopic() {
-        fetch(getURLForPlatform() + "api/v1/topics/" + this.props.navigation.state.params.id + "/follow/", {
+        fetch(getURLForPlatform("phoenix") + "api/v1/topics/" + this.props.navigation.state.params.id + "/follow/", {
             method: 'POST',
             headers: {
                 Authorization: "Token " + this.props.token

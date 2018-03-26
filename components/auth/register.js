@@ -103,7 +103,7 @@ class Register extends React.Component {
     }
 
     register() {
-        fetch(getURLForPlatform() + "rest-auth/registration/", {
+        fetch(getURLForPlatform("phoenix") + "rest-auth/registration/", {
             method: 'POST',
             headers: {
                 'Accept': 'application/json',

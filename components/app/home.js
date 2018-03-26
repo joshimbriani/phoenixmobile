@@ -26,7 +26,7 @@ class Home extends React.Component {
     componentDidMount() {
         this.props.userActions.loadUser(this.props.token);
         this.props.colorActions.resetColor();
-        fetch(getURLForPlatform() + "api/v1/users/topics/?format=json", {
+        fetch(getURLForPlatform("phoenix") + "api/v1/users/topics/?format=json", {
             Authorization: "Token " + this.props.token
         }).then(response => response.json())
             .then(responseObj => {
@@ -36,7 +36,7 @@ class Home extends React.Component {
 
     componentWillReceiveProps() {
         // Not sure why I have this. Do I want it to be auto refreshed?
-        /*fetch(getURLForPlatform() + "api/v1/users/topics/?format=json", {
+        /*fetch(getURLForPlatform("phoenix") + "api/v1/users/topics/?format=json", {
             Authorization: "Token " + this.props.token
         }).then(response => response.json())
             .then(responseObj => {
@@ -69,7 +69,7 @@ class Home extends React.Component {
     }
 
     _onRefresh() {
-        fetch(getURLForPlatform() + "api/v1/users/topics/?format=json", {
+        fetch(getURLForPlatform("phoenix") + "api/v1/users/topics/?format=json", {
             Authorization: "Token " + this.props.token
         }).then(response => response.json())
             .then(responseObj => {

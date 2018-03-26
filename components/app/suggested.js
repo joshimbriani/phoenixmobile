@@ -28,7 +28,7 @@ class Suggested extends React.Component {
     }
 
     componentDidMount() {
-        fetch(getURLForPlatform() + "api/v1/events/suggested", {
+        fetch(getURLForPlatform("phoenix") + "api/v1/events/suggested", {
             headers: {
                 Authorization: "Token " + this.props.token
             },

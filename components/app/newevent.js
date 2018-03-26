@@ -50,9 +50,8 @@ class NewEvent extends React.Component {
     }
 
     fetchTopicsFromDescription() {
-        fetch(getURLForPlatform() + "api/v1/events/topicByDescription/", {
+        fetch(getURLForPlatform("banksy") + "tags", {
             method: 'POST',
-            Authorization: 'Token ' + this.props.token,
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json',
@@ -76,7 +75,7 @@ class NewEvent extends React.Component {
 
     submitForm() {
         console.log(this.state);
-        fetch(getURLForPlatform() + "api/v1/events/", {
+        fetch(getURLForPlatform("phoenix") + "api/v1/events/", {
             method: 'POST',
             Authorization: 'Token ' + this.props.token,
             headers: {
@@ -109,6 +108,7 @@ class NewEvent extends React.Component {
 
 
     render() {
+        console.log(this.state.topics);
         return (
             <Swiper nextButton={<Text>&gt;</Text>} prevButton={<Text>&lt;</Text>} style={styles.wrapper} showsButtons={true} loop={false} removeClippedSubviews={false} >
                 <View style={styles.flex1}>
@@ -201,6 +201,11 @@ class NewEvent extends React.Component {
                     </View>
                     <View style={styles.formContainer}>
                         <Content style={styles.flex1}>
+                        {this.state.topics && this.state.topics.map(topic => 
+                            <View>
+                                <Text>{topic.title}</Text>
+                            </View>
+                        )}
                             <Form>
                                 {/*<Item stackedLabel last>
                                     <Label>Add Topic</Label>
