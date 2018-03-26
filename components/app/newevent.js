@@ -1,6 +1,6 @@
 import React from 'react';
 import { Container, Content, Form, Header, Item, Input, Icon, Label, Button, Text } from 'native-base';
-import { Alert, StatusBar, FlatList, StyleSheet, TouchableHighlight, TouchableOpacity, View } from 'react-native';
+import { Alert, StatusBar, FlatList, ScrollView, StyleSheet, TouchableHighlight, TouchableOpacity, View } from 'react-native';
 import PlatformIonicon from '../utils/platformIonicon';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -201,11 +201,16 @@ class NewEvent extends React.Component {
                     </View>
                     <View style={styles.formContainer}>
                         <Content style={styles.flex1}>
-                        {this.state.topics && this.state.topics.map(topic => 
-                            <View>
-                                <Text>{topic.title}</Text>
-                            </View>
-                        )}
+                        {this.state.topics && this.state.topics.length > 0 && 
+                            <ScrollView horizontal={true} style={styles.topicContainer}>
+                                {this.state.topics && this.state.topics.length > 0 && this.state.topics.map((topic, index) => 
+                                    <View key={index} style={styles.topicBubble}>
+                                        <Text>{topic.title}</Text>
+                                    </View>
+                                )}
+                            </ScrollView>
+                        }
+                        
                             <Form>
                                 {/*<Item stackedLabel last>
                                     <Label>Add Topic</Label>
@@ -311,6 +316,12 @@ const styles = StyleSheet.create({
     },
     formContainer: {
         flex: 1,
+    },
+    topicContainer: {
+        alignSelf: "stretch",
+        height: 100
+    },
+    topicBubble: {
+        width: 200
     }
-
 });
