@@ -13,6 +13,12 @@ import { getURLForPlatform } from '../utils/networkUtils';
 
 const ITEMS_TO_VALIDATE = ["title", "description", "place", "datetime"];
 
+// Temp list of topics
+const topics = [{id: 1, title: "Test"}, {id: 2, title: "Test1"}, {id: 3, title: "Test2"}, 
+                {id: 4, title: "Test3"}, {id: 5, title: "Test4"}, {id: 6, title: "Test5"},
+                {id: 7, title: "Test6"}, {id: 8, title: "Test7"}, {id: 9, title: "Test8"},
+                {id: 7, title: "Test6"}, {id: 8, title: "Test7"}, {id: 9, title: "Test8"}]
+
 class NewEvent extends React.Component {
 
     static navigationOptions = ({ navigation }) => ({
@@ -201,16 +207,13 @@ class NewEvent extends React.Component {
                     </View>
                     <View style={styles.formContainer}>
                         <Content style={styles.flex1}>
-                        {this.state.topics && this.state.topics.length > 0 && 
-                            <ScrollView horizontal={true} style={styles.topicContainer}>
-                                {this.state.topics && this.state.topics.length > 0 && this.state.topics.map((topic, index) => 
+                            <View style={styles.topicContainer}>
+                                {topics && topics.length > 0 && topics.map((topic, index) => 
                                     <View key={index} style={styles.topicBubble}>
                                         <Text>{topic.title}</Text>
                                     </View>
                                 )}
-                            </ScrollView>
-                        }
-                        
+                            </View>
                             <Form>
                                 {/*<Item stackedLabel last>
                                     <Label>Add Topic</Label>
@@ -319,9 +322,11 @@ const styles = StyleSheet.create({
     },
     topicContainer: {
         alignSelf: "stretch",
-        height: 100
+        flexDirection: "row",
+        flexWrap: "wrap",
+        backgroundColor: "red",
     },
     topicBubble: {
-        width: 200
+        backgroundColor: "green"
     }
 });

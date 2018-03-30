@@ -13,11 +13,11 @@ import { Dropdown } from 'react-native-material-dropdown';
 import { NavigationActions } from 'react-navigation';
 
 class locationPoint {
-    constructor(title, latitude, longitude, radius){
-        if(typeof title === 'string'){
+    constructor(title, latitude, longitude, radius) {
+        if (typeof title === 'string') {
             this._title = title;
         }
-        else{
+        else {
             this._title = "Name this pin!"
         };
         this._latitude = latitude;
@@ -25,22 +25,22 @@ class locationPoint {
         this._radius = radius;
     };
     set title(aTitle) {
-        if(typeof aTitle === 'string'){
+        if (typeof aTitle === 'string') {
             this._title = aTitle
         }
     }
     set latitude(latitude) {
-        if(typeof latitude === 'number'){
+        if (typeof latitude === 'number') {
             this._latitude = latitude;
         }
     }
     set longitude(longitude) {
-        if(typeof longitude === 'number'){
+        if (typeof longitude === 'number') {
             this._longitude = longitude;
         }
     }
     set radius(radius) {
-        if(typeof radius === 'number'){
+        if (typeof radius === 'number') {
             this._radius = radius;
         }
     };
@@ -94,59 +94,73 @@ class LocationsSettings extends React.Component {
                     </Button>
                 </Header>
 
+                <SettingsList borderColor='#c8c7cc' defaultItemSize={50}>
+
+                    {locationList.map((item, index) => <SettingsList.Item
+                        icon={
+                            <PlatformIonicon
+                                name='pin'
+                                size={30}
+                                style={{ paddingTop: 10, paddingLeft: 5 }}
+                            />
+                        }
+                        title={item._title}
+                        key={index}
+                        titleInfoStyle={styles.titleInfoStyle}
+                    />
+                    )}
+
+                    {/*
                 <FlatList
-                data={locationList}
-                contentContainerStyle={{ paddingTop: 0 }}
-                keyExtractor={(item, index) => index}
-                style={styles.listView}
-                renderItem={({ item, index }) => {
-                    return (
-                        <View>
-                        icon={<PlatformIonicon
-                        name='pin'
-                        size={30}
-                        style={{ paddingTop: 10, paddingLeft: 5 }}
-                    />}
-                         <Text>
-                         Location:
-                         {item._title}
-                         </Text>
-                         <Text>
-                         Longitude: 
-                         {item._longitude}
-                         </Text>
-                         <Text>
-                         Latitude: 
-                         {item._latitude}
-                         </Text>
-                         <Text>
-                         Radius: 
-                         {item._radius}
-                         </Text>
-
-                         icon={<PlatformIonicon
-                        name='close'
-                        size={30}
-                        style={{ paddingTop: 10, paddingLeft: 5 }}
-                        /*onPress={() => DELETE THIS LOCATION...}>*/
-                        />}
-                </View>
-                    )
-                }}
-            /> 
-
-            <Fab
-                //active={this.state.active}
-                containerStyle={{}}
-                style={{ backgroundColor: '#e84118' }}
-                position="bottomRight"
-                onPress={() => this.props.navigation.navigate('LocationsSettings')}>
-                <PlatformIonicon
-                    name={"add"}
-                    size={50} //this doesn't adjust the size...?
-                    style={{ color: "white" }}
+                    data={locationList}
+                    contentContainerStyle={{ paddingTop: 0 }}
+                    keyExtractor={(item, index) => index}
+                    style={styles.listView}
+                    renderItem={({ item, index }) => {
+                        return (
+                            <TouchableHighlight>
+                                <View key={item.id} style={[styles.listitem, {}]}>
+                                    <PlatformIonicon
+                                        name='pin'
+                                        size={30}
+                                        style={{ paddingTop: 10, paddingLeft: 5 }}
+                                    />
+                                    <Text style={styles.titleText}>{item._title}</Text>
+                                    <View style={styles.settingsGroup}>
+                                        <Text style={styles.titleText}>Longitude: {item._longitude}</Text>
+                                    </View>
+                                    <View style={styles.settingsGroup}>
+                                        <Text style={styles.titleText}>Latitude: {item._latitude}</Text>
+                                    </View>
+                                    <View style={styles.settingsGroup}>
+                                        <Text style={styles.titleText}>Radius: {item._raidus}</Text>
+                                    </View>
+                                    <PlatformIonicon
+                                        name='close'
+                                        size={30}
+                                        style={{ paddingTop: 10, paddingLeft: 5 }}
+                                    />
+                                </View>
+                            </TouchableHighlight>
+                        )
+                    }}
                 />
-            </Fab>
+                    */}
+
+                </SettingsList>
+
+                <Fab
+                    //active={this.state.active}
+                    containerStyle={{}}
+                    style={{ backgroundColor: '#e84118' }}
+                    position="bottomRight"
+                    onPress={() => this.props.navigation.navigate('LocationsSettings')}>
+                    <PlatformIonicon
+                        name={"add"}
+                        size={50} //this doesn't adjust the size...? -- not in a Fab
+                        style={{ color: "white" }}
+                    />
+                </Fab>
             </Container>
         );
     }
@@ -154,13 +168,13 @@ class LocationsSettings extends React.Component {
 
 function mapStateToProps(state) {
     return {
-        color: state.backgroundColorReducer.color
+        
     };
 }
 
 function mapDispatchToProps(dispatch) {
     return {
-        colorActions: bindActionCreators(colorActions, dispatch)
+        
     };
 }
 
@@ -171,15 +185,10 @@ export default connect(
 
 const styles = StyleSheet.create({
     listitem: {
-        alignSelf: 'stretch',
-        height: 200,
     },
     itemText: {
-        color: 'white',
-        fontSize: 40,
-        paddingTop: 5,
-        textAlign: 'center',
-        fontFamily: 'Roboto_medium'
-    }
+    },
+    settingsGroup: {
 
+    }
 });
