@@ -1,6 +1,6 @@
 import React from 'react';
 import { Container, Fab, Header, Item, Input, Icon, Button, Text } from 'native-base';
-import { Alert, Platform, RefreshControl, StyleSheet, TouchableHighlight, View } from 'react-native';
+import { Alert, Platform, RefreshControl, StyleSheet, TouchableHighlight, View, FlatList, ListItem } from 'react-native';
 import GridView from 'react-native-super-grid';
 import PlatformIonicon from '../utils/platformIonicon';
 import { connect } from 'react-redux';
@@ -49,6 +49,10 @@ class locationPoint {
 //why aren't my setters working?????
 // make class for locationPoints, allow user to create new ones, & to edit existing ones, use same drop-down for radius???
 
+
+//Format to look like settings list, with the 4 parameters; allow users to edit, add, and delete pins; integerate search function
+
+
 const firstLocation = new locationPoint('Norman', 35.2226, 97.4395, 50);
 const secondLocation = new locationPoint();
 secondLocation.title = "Orlando";
@@ -57,60 +61,79 @@ secondLocation.latitude = 12;
 secondLocation.longitude = 12;
 secondLocation.radius = 12;
 
+const locationList = [firstLocation, secondLocation];
+
 class LocationsSettings extends React.Component {
     render() {
+        /*if (settings.state.switchValue3 == false) {
+            distUnit = 'mi';
+        }
+        else {
+            distUnit = 'km';
+        };
+
+        let data = [{
+            value: '10', label: '10 ' + distUnit
+        },
+        {
+            value: '25', label: '25 ' + distUnit
+        },
+        {
+            value: '50', label: '50 ' + distUnit
+        }
+        ];*/
         return (
             <Container>
                 <Header searchBar rounded>
                     <Item>
                         <Icon name="ios-search" />
-                        <Input placeholder="Where do you want a pin?" /*onChangeText={(text) => this.changeValue(text)} onSubmitEditing={() => { this.props.navigation.navigate('Search', { query: this.state.searchQuery }) }}*/ />
+                        <Input placeholder="Pin where?" /*onChangeText={(text) => this.changeValue(text)} onSubmitEditing={() => { this.props.navigation.navigate('Search', { query: this.state.searchQuery }) }}*/ />
                     </Item>
                     <Button transparent>
                         <Text>Search</Text>
                     </Button>
                 </Header>
 
-                <SettingsList borderColor='#c8c7cc' defaultItemSize={50}>
-                <SettingsList.Header headerStyle={{ marginTop: 15 }} />
-
-
-                <SettingsList.Item
-                    icon={<PlatformIonicon
+                <FlatList
+                data={locationList}
+                contentContainerStyle={{ paddingTop: 0 }}
+                keyExtractor={(item, index) => index}
+                style={styles.listView}
+                renderItem={({ item, index }) => {
+                    return (
+                        <View>
+                        icon={<PlatformIonicon
                         name='pin'
                         size={30}
                         style={{ paddingTop: 10, paddingLeft: 5 }}
                     />}
-                    title= {'Title: ' + secondLocation._title}
-                />
-                <SettingsList.Item
-                    icon={<PlatformIonicon
-                        name='locate'
-                        size={30}
-                        style={{ paddingTop: 10, paddingLeft: 5 }}
-                    />}
-                    title= {'Latitude: ' + secondLocation._latitude}
-                />
-                <SettingsList.Item
-                    icon={<PlatformIonicon
-                        name='locate'
-                        size={30}
-                        style={{ paddingTop: 10, paddingLeft: 5 }}
-                    />}
-                    title= {'Longitude: ' + secondLocation._longitude}
-                />
-                <SettingsList.Item
-                    icon={<PlatformIonicon
-                        name='locate'
-                        size={30}
-                        style={{ paddingTop: 10, paddingLeft: 5 }}
-                    />}
-                    title= {'Radius: ' + secondLocation._radius}
-                />
-                <SettingsList.Header headerStyle={{ marginTop: 15 }} />
+                         <Text>
+                         Location:
+                         {item._title}
+                         </Text>
+                         <Text>
+                         Longitude: 
+                         {item._longitude}
+                         </Text>
+                         <Text>
+                         Latitude: 
+                         {item._latitude}
+                         </Text>
+                         <Text>
+                         Radius: 
+                         {item._radius}
+                         </Text>
 
-
-                </SettingsList>
+                         icon={<PlatformIonicon
+                        name='close'
+                        size={30}
+                        style={{ paddingTop: 10, paddingLeft: 5 }}
+                        /*onPress={() => DELETE THIS LOCATION...}>*/
+                        />}
+                </View>
+                    )
+                }}
+            /> 
 
             <Fab
                 //active={this.state.active}

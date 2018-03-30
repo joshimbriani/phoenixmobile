@@ -54,7 +54,7 @@ class RestrictedModeSettings extends React.Component {
                             switchState={this.state.switchValue}
                             switchOnValueChange={this.onValueChange}
                             hasNavArrow={false}
-                            title='Show Alerts Beside Events'
+                            title='Show Warnings Tags'
                         />
                         <SettingsList.Item
                             icon={<PlatformIonicon
@@ -91,7 +91,7 @@ class RestrictedModeSettings extends React.Component {
                             switchState={this.state.switchValue4}
                             switchOnValueChange={this.onValueChange4}
                             hasNavArrow={false}
-                            title='Restrict Violence'
+                            title='Restrict Violent Content'
                         />
                         <SettingsList.Item
                             icon={<PlatformIonicon
