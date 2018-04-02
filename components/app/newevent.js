@@ -1,6 +1,6 @@
 import React from 'react';
 import { Container, Content, Form, Header, Item, Input, Icon, Label, Button, Text } from 'native-base';
-import { Alert, StatusBar, FlatList, ScrollView, StyleSheet, TouchableHighlight, TouchableOpacity, View } from 'react-native';
+import { Alert, StatusBar, FlatList, ScrollView, StyleSheet, TextInput, TouchableHighlight, TouchableOpacity, View } from 'react-native';
 import PlatformIonicon from '../utils/platformIonicon';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -41,11 +41,28 @@ class NewEvent extends React.Component {
             datetime: "",
             formIsValid: false,
             isDateTimePickerVisible: false,
-            topics: []
+            topics: [],
+            offers: []
         }
         this.onChange = this.onChange.bind(this);
         this.formIsValid = this.formIsValid.bind(this);
         this.submitForm = this.submitForm.bind(this);
+        this.createTopicList = this.createTopicList.bind(this);
+        this.fetchOffersFromTopics = this.fetchOffersFromTopics.bind(this);
+    }
+
+    // Todo: Need to decide what to do with objects thst don't exist on the DB. Right now
+    // They're returned without an id tag which prevents us from 
+    // this.state.topics.map(t => t.id).join(",");
+    createTopicList() {
+        var returnTopics = "";
+        for (var i = 0; i < this.state.topics.length; i++) {
+            if (this.state.topics[i].id) {
+                returnTopics += this.state.topics[i].id;
+            }
+        }
+
+        return returnTopics
     }
 
     onChange(component, value) {
@@ -53,6 +70,23 @@ class NewEvent extends React.Component {
         stateRepresentation[component] = value;
         stateRepresentation["formIsValid"] = this.formIsValid();
         this.setState(stateRepresentation);
+    }
+
+    componentDidUpdate(nextProps, nextState) {
+        if (nextState.topics !== this.state.topics) {
+            this.fetchOffersFromTopics();
+        }
+    }
+
+    fetchOffersFromTopics() {
+        fetch(getURLForPlatform("phoenix") + "api/v1/offers/bytopic/?topicIDs=" + this.createTopicList(), {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+            },
+        }).then(response => response.json())
+        .then(responseJSON => this.setState({offers: responseJSON["offers"]}))
     }
 
     fetchTopicsFromDescription() {
@@ -114,9 +148,8 @@ class NewEvent extends React.Component {
 
 
     render() {
-        console.log(this.state.topics);
         return (
-            <Swiper nextButton={<Text>&gt;</Text>} prevButton={<Text>&lt;</Text>} style={styles.wrapper} showsButtons={true} loop={false} removeClippedSubviews={false} >
+            <Swiper nextButton={<Text>&gt;</Text>} buttonWrapperStyle={{alignItems: 'flex-end'}} prevButton={<Text>&lt;</Text>} style={styles.wrapper} showsButtons={true} loop={false} removeClippedSubviews={false} >
                 <View style={styles.flex1}>
                     <View style={styles.header}>
                         <Text style={styles.questionHeader}>What?</Text>
@@ -138,11 +171,11 @@ class NewEvent extends React.Component {
                                 </Item>
                                 <Item stackedLabel last>
                                     <Label>Full Description</Label>
-                                    <Input 
-                                        style={{ height: 330, width: 300 }} 
+                                    <Input
                                         name="description" 
                                         onEndEditing={() => this.fetchTopicsFromDescription()} 
                                         multiline={true} 
+                                        numberOfLines={5}
                                         onChangeText={(text) => this.onChange("description", text)} 
                                     />
                                 </Item>
@@ -159,7 +192,13 @@ class NewEvent extends React.Component {
                         </View>
                     </View>
                     <View>
-                        <Text>Sub List for standing offers</Text>
+                        {this.state.offers && this.state.offers.map((offer, index) => {
+                            return (
+                                <View key={index}>
+                                    <Text>{offer.name}</Text>
+                                </View>
+                            )
+                        })}
                     </View>
                 </View>
                 <View style={styles.flex1}>
