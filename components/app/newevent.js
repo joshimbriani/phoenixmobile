@@ -191,14 +191,19 @@ class NewEvent extends React.Component {
                             <Text style={styles.taglineText}>offers apply to your event?</Text>
                         </View>
                     </View>
-                    <View>
-                        {this.state.offers && this.state.offers.map((offer, index) => {
-                            return (
-                                <View key={index}>
-                                    <Text>{offer.name}</Text>
-                                </View>
-                            )
-                        })}
+                    <View style={{flex: 1, flexDirection: "row", flexWrap: "wrap", alignSelf: "stretch"}}>
+                        {this.state.offers && this.state.offers.length > 0 && <ScrollView style={styles.offerScrollContainer}>
+                            {this.state.offers.map((offer, index) => {
+                                return (
+                                    <View key={index} style={styles.offerItemContainer}>
+                                        <Text>{offer.name}</Text>
+                                    </View>
+                                )
+                            })}
+                            </ScrollView>
+                        }
+
+                        {this.state.offers && this.state.offers.length < 1 && <Text style={{ margin: 5 }}>There are no offers for your event so far! Add some more detail and see if you can find some!</Text>}
                     </View>
                 </View>
                 <View style={styles.flex1}>
@@ -367,5 +372,16 @@ const styles = StyleSheet.create({
     },
     topicBubble: {
         backgroundColor: "green"
+    },
+    offerScrollContainer: {
+        alignSelf: "stretch",
+        flexDirection: "row",
+        flexWrap: "wrap",
+        backgroundColor: "red",
+    },
+    offerItemContainer: {
+        width: 120,
+        backgroundColor: "blue",
+        alignSelf: 'flex-end'
     }
 });
