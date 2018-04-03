@@ -20,6 +20,7 @@ class locationPoint {
         else {
             this._title = "Name this pin!"
         };
+        this._title = title;
         this._latitude = latitude;
         this._longitude = longitude;
         this._radius = radius;
@@ -27,6 +28,9 @@ class locationPoint {
     set title(aTitle) {
         if (typeof aTitle === 'string') {
             this._title = aTitle
+        }
+        else{
+            this._title = "Name this pin!"
         }
     }
     set latitude(latitude) {
@@ -56,12 +60,33 @@ class locationPoint {
 const firstLocation = new locationPoint('Norman', 35.2226, 97.4395, 50);
 const secondLocation = new locationPoint();
 secondLocation.title = "Orlando";
-secondLocation.title = 1;
 secondLocation.latitude = 12;
 secondLocation.longitude = 12;
 secondLocation.radius = 12;
 
-const locationList = [firstLocation, secondLocation];
+const thirdLocation = new locationPoint();
+thirdLocation.title = "Dubai";
+thirdLocation.latitude = 0;
+thirdLocation.longitude = 100;
+thirdLocation.radius = 1000;
+
+const locationList = [firstLocation, secondLocation, thirdLocation];
+
+const stylesAlso = StyleSheet.create({
+  titleStyle: {
+    backgroundColor: 'white',
+    color: 'black',
+    fontWeight: 'bold',
+    fontSize: 20,
+    paddingLeft: 10,
+  },
+  bodyStyle: {
+    backgroundColor: 'white',
+    color: 'grey',
+    fontSize: 15,
+    paddingLeft: 30,
+  },
+});
 
 class LocationsSettings extends React.Component {
     render() {
@@ -87,67 +112,40 @@ class LocationsSettings extends React.Component {
                 <Header searchBar rounded>
                     <Item>
                         <Icon name="ios-search" />
-                        <Input placeholder="Pin where?" /*onChangeText={(text) => this.changeValue(text)} onSubmitEditing={() => { this.props.navigation.navigate('Search', { query: this.state.searchQuery }) }}*/ />
+                        <Input placeholder="Pin where?"
+                        /*onChangeText={(text) => this.changeValue(text)} onSubmitEditing={() => { this.props.navigation.navigate('Search', { query: this.state.searchQuery }) }}*/ />
                     </Item>
                     <Button transparent>
                         <Text>Search</Text>
                     </Button>
                 </Header>
 
-                <SettingsList borderColor='#c8c7cc' defaultItemSize={50}>
-
-                    {locationList.map((item, index) => <SettingsList.Item
-                        icon={
-                            <PlatformIonicon
-                                name='pin'
-                                size={30}
-                                style={{ paddingTop: 10, paddingLeft: 5 }}
-                            />
-                        }
-                        title={item._title}
-                        key={index}
-                        titleInfoStyle={styles.titleInfoStyle}
-                    />
-                    )}
-
-                    {/*
                 <FlatList
                     data={locationList}
                     contentContainerStyle={{ paddingTop: 0 }}
                     keyExtractor={(item, index) => index}
                     style={styles.listView}
                     renderItem={({ item, index }) => {
-                        return (
-                            <TouchableHighlight>
-                                <View key={item.id} style={[styles.listitem, {}]}>
-                                    <PlatformIonicon
-                                        name='pin'
-                                        size={30}
-                                        style={{ paddingTop: 10, paddingLeft: 5 }}
-                                    />
-                                    <Text style={styles.titleText}>{item._title}</Text>
-                                    <View style={styles.settingsGroup}>
-                                        <Text style={styles.titleText}>Longitude: {item._longitude}</Text>
-                                    </View>
-                                    <View style={styles.settingsGroup}>
-                                        <Text style={styles.titleText}>Latitude: {item._latitude}</Text>
-                                    </View>
-                                    <View style={styles.settingsGroup}>
-                                        <Text style={styles.titleText}>Radius: {item._raidus}</Text>
-                                    </View>
-                                    <PlatformIonicon
-                                        name='close'
-                                        size={30}
-                                        style={{ paddingTop: 10, paddingLeft: 5 }}
-                                    />
-                                </View>
-                            </TouchableHighlight>
-                        )
+                        return(
+                            <View>
+                                <Text style = {stylesAlso.titleStyle}>
+                                    {item._title}
+                                </Text>
+                                <Text style = {stylesAlso.bodyStyle}>
+                                    Radius: {item._radius}
+                                </Text>
+                                <Text style = {stylesAlso.bodyStyle}>
+                                    Latitude: {item._latitude}
+                                </Text>
+                                <Text style = {stylesAlso.bodyStyle}>
+                                    Longitude: {item._longitude}
+                                </Text>
+                                <Text>
+                                </Text>
+                            </View>
+                            )
                     }}
                 />
-                    */}
-
-                </SettingsList>
 
                 <Fab
                     //active={this.state.active}
