@@ -107,7 +107,7 @@ export const SettingsStack = StackNavigator({
             title: 'Legal Settings',
         })
     },
-        AboutKootaSettings: {
+    AboutKootaSettings: {
         screen: AboutKootaSettings,
         navigationOptions: ({ navigation }) => ({
             title: 'About Koota Settings',
