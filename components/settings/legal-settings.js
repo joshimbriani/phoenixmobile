@@ -6,13 +6,15 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import * as colorActions from '../../redux/actions/backgroundColor'
 import ColorScheme from 'color-scheme';
+import { stylesAlso } from '../../assets/styles'
 
 class LegalSettings extends React.Component {
 
     render() {
             return (
                 <Container>
-                    <Text> Lots of legal text that says this is all copyrighted & you cannot steal it, sue us for it, etc...
+                    <Text style = {stylesAlso.bodyStyle}>
+                    Lots of legal text that says this is all copyrighted & you cannot steal it, sue us for it, etc...
                     </Text>
                 </Container>
             );
