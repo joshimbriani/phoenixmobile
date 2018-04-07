@@ -9,6 +9,8 @@ import { bindActionCreators } from 'redux';
 import { getURLForPlatform } from '../utils/networkUtils';
 import PlatformIonicon from '../utils/platformIonicon';
 import * as tokenActions from '../../redux/actions/token';
+import { styles } from '../../assets/styles';
+import fontBasedOnPlatform from '../utils/fontBasedOnPlatform';
 
 class Login extends React.Component {
 
@@ -214,98 +216,3 @@ export default connect(
     mapDispatchToProps
 )(Login);
 
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-    },
-    errorBackground: {
-        backgroundColor: "red"
-    },
-    errorText: {
-        paddingTop: 1,
-        paddingLeft: 5,
-        paddingBottom: 1,
-        color: "white",
-        fontFamily: "Roboto"
-    },
-    loginHeader: {
-        flex: 3,
-        alignItems: "center",
-        backgroundColor: '#66b2b2'
-    },
-    imageContainer: {
-        marginTop: 10,
-        flex: 3
-    },
-    image: {
-        width: 200,
-        flex: 1
-    },
-    sloganContainer: {
-        flex: 1,
-        marginBottom: 10
-    },
-    slogan: {
-        fontFamily: "Roboto_thin",
-        color: "white",
-        fontSize: 25
-    },
-    inputContainer: {
-        flex: 5
-    },
-    inputWrapper: {
-        paddingTop: 20,
-        paddingRight: 10,
-        paddingLeft: 10,
-        paddingBottom: 20
-    },
-    inputErrorContainer: {
-        backgroundColor: "red",
-        marginTop: 10
-    },
-    inputErrorText: {
-        paddingTop: 1,
-        paddingLeft: 5,
-        paddingBottom: 1,
-        color: "white",
-        fontFamily: "Roboto"
-    },
-    separatingMargin: {
-        marginTop: 10
-    },
-    loginButtonContainer: {
-        flex: 1,
-        flexDirection: 'row',
-        marginLeft: 10
-    },
-    mainLoginButton: {
-        marginTop: 3,
-        flex: 7
-    },
-    mainLoginTextContainer: {
-        flex: 1,
-        flexDirection: 'row'
-    },
-    mainLoginText: {
-        textAlign: "center",
-        flex: 1
-    },
-    socialLoginButtonSeparator: {
-        flexDirection: 'column',
-        alignItems: 'center',
-        flex: 3,
-        marginLeft: 25,
-        marginRight: 25
-    },
-    robotoThin: {
-        fontFamily: "Roboto_thin"
-    },
-    socialLoginButtonOverlay: {
-        flex: 3
-    },
-    socialIcons: {
-        width: 50,
-        height: 50,
-        marginRight: 5
-    }
-});

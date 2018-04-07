@@ -10,6 +10,7 @@ import Swiper from 'react-native-swiper';
 import DateTimePicker from 'react-native-modal-datetime-picker';
 import fontBasedOnPlatform from '../utils/fontBasedOnPlatform';
 import { getURLForPlatform } from '../utils/networkUtils';
+import { styles } from '../../assets/styles';
 
 const ITEMS_TO_VALIDATE = ["title", "description", "place", "datetime"];
 
@@ -314,74 +315,3 @@ export default connect(
     mapDispatchToProps
 )(NewEvent);
 
-const styles = StyleSheet.create({
-    listitem: {
-        alignSelf: 'stretch',
-        height: 200,
-    },
-    flex1: {
-        flex: 1,
-    },
-    slide2: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: '#97CAE5',
-    },
-    slide3: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: '#92BBD9',
-    },
-    itemText: {
-        color: 'white',
-        fontSize: 40,
-        paddingTop: 5,
-        textAlign: 'center',
-        fontFamily: 'Roboto_medium'
-    },
-    header: {
-        flexDirection: 'row'
-    },
-    questionHeader: {
-        fontFamily: fontBasedOnPlatform(),
-        fontSize: 40,
-        marginTop: 10,
-        marginLeft: 10
-    },
-    tagline: {
-        justifyContent: 'center',
-        alignItems: 'flex-end',
-        flex: 1,
-        marginTop: 15,
-        marginRight: 20
-    },
-    taglineText: {
-        fontSize: 10,
-        fontWeight: '300'
-    },
-    formContainer: {
-        flex: 1,
-    },
-    topicContainer: {
-        alignSelf: "stretch",
-        flexDirection: "row",
-        flexWrap: "wrap",
-        backgroundColor: "red",
-    },
-    topicBubble: {
-        backgroundColor: "green"
-    },
-    offerScrollContainer: {
-        alignSelf: "stretch",
-        flexDirection: "row",
-        flexWrap: "wrap",
-        backgroundColor: "red",
-    },
-    offerItemContainer: {
-        width: 120,
-        backgroundColor: "blue",
-        alignSelf: 'flex-end'
-    }
-});
