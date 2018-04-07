@@ -7,6 +7,7 @@ import * as colorActions from '../../redux/actions/backgroundColor'
 import PlatformIonicon from '../utils/platformIonicon';
 import ColorScheme from 'color-scheme';
 import {getURLForPlatform} from '../utils/networkUtils';
+import { styles } from '../../assets/styles';
 
 class EventDetail extends React.Component {
 
@@ -83,17 +84,3 @@ export default connect(
     mapDispatchToProps
 )(EventDetail);
 
-const styles = StyleSheet.create({
-    listitem: {
-        alignSelf: 'stretch',
-        height: 200,
-    },
-    itemText: {
-        color: 'white',
-        fontSize: 40,
-        paddingTop: 5,
-        textAlign: 'center',
-        fontFamily: 'Roboto_medium'
-    }
-
-});

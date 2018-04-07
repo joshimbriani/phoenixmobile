@@ -4,6 +4,7 @@ import PlatformIonicon from '../utils/platformIonicon';
 import {HomeStack, MyEventsStack, ProfileStack, SettingsStack} from './navcontainerCommon';
 import Login from '../auth/login';
 import Register from '../auth/register';
+import { styles } from '../../assets/styles';
 
 const MainNavContainer = TabNavigator({
     Home: {

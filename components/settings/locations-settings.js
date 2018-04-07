@@ -11,6 +11,7 @@ import randomMC from 'random-material-color';
 import SettingsList from 'react-native-settings-list';
 import { Dropdown } from 'react-native-material-dropdown';
 import { NavigationActions } from 'react-navigation';
+import { styles } from '../../assets/styles'
 
 class locationPoint {
     constructor(title, latitude, longitude, radius) {
@@ -72,22 +73,6 @@ thirdLocation.radius = 1000;
 
 const locationList = [firstLocation, secondLocation, thirdLocation];
 
-const stylesAlso = StyleSheet.create({
-  titleStyle: {
-    backgroundColor: 'white',
-    color: 'black',
-    fontWeight: 'bold',
-    fontSize: 20,
-    paddingLeft: 10,
-  },
-  bodyStyle: {
-    backgroundColor: 'white',
-    color: 'grey',
-    fontSize: 15,
-    paddingLeft: 30,
-  },
-});
-
 class LocationsSettings extends React.Component {
     render() {
         /*if (settings.state.switchValue3 == false) {
@@ -128,16 +113,16 @@ class LocationsSettings extends React.Component {
                     renderItem={({ item, index }) => {
                         return(
                             <View>
-                                <Text style = {stylesAlso.titleStyle}>
+                                <Text style = {styles.titleStyle}>
                                     {item._title}
                                 </Text>
-                                <Text style = {stylesAlso.bodyStyle}>
+                                <Text style = {styles.bodyStyle}>
                                     Radius: {item._radius}
                                 </Text>
-                                <Text style = {stylesAlso.bodyStyle}>
+                                <Text style = {styles.bodyStyle}>
                                     Latitude: {item._latitude}
                                 </Text>
-                                <Text style = {stylesAlso.bodyStyle}>
+                                <Text style = {styles.bodyStyle}>
                                     Longitude: {item._longitude}
                                 </Text>
                                 <Text>
@@ -180,13 +165,3 @@ export default connect(
     mapStateToProps,
     mapDispatchToProps
 )(LocationsSettings);
-
-const styles = StyleSheet.create({
-    listitem: {
-    },
-    itemText: {
-    },
-    settingsGroup: {
-
-    }
-});

@@ -7,6 +7,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import * as colorActions from '../../redux/actions/backgroundColor';
 import randomMC from 'random-material-color';
+import { styles } from '../../assets/styles';
 
 class IDK extends React.Component {
 
@@ -39,20 +40,3 @@ export default connect(
     mapStateToProps,
     mapDispatchToProps
 )(IDK);
-
-const styles = StyleSheet.create({
-    gridView: {
-        flex: 1,
-    },
-    itemBox: {
-        height: 150,
-        backgroundColor: '#1abc9c',
-        borderRadius: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    itemText: {
-        color: 'white',
-    }
-
-});

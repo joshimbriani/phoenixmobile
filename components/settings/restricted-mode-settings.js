@@ -11,6 +11,7 @@ import randomMC from 'random-material-color';
 import SettingsList from 'react-native-settings-list';
 import { Dropdown } from 'react-native-material-dropdown';
 import { NavigationActions } from 'react-navigation';
+import { styles } from '../../assets/styles';
 
 class RestrictedModeSettings extends React.Component {
 
@@ -160,18 +161,3 @@ export default connect(
     mapStateToProps,
     mapDispatchToProps
 )(RestrictedModeSettings);
-
-const styles = StyleSheet.create({
-    listitem: {
-        alignSelf: 'stretch',
-        height: 200,
-    },
-    itemText: {
-        color: 'white',
-        fontSize: 40,
-        paddingTop: 5,
-        textAlign: 'center',
-        fontFamily: 'Roboto_medium'
-    }
-
-});

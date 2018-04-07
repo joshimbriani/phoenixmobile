@@ -7,6 +7,7 @@ import { bindActionCreators } from 'redux';
 import * as colorActions from '../../redux/actions/backgroundColor';
 import PlatformIonicon from '../utils/platformIonicon';
 import {getURLForPlatform} from '../utils/networkUtils';
+import { styles } from '../../assets/styles';
 
 
 class Search extends React.Component {
@@ -100,27 +101,3 @@ export default connect(
     mapDispatchToProps
 )(Search);
 
-const styles = StyleSheet.create({
-    gridView: {
-        flex: 1,
-    },
-    itemBox: {
-        height: 150,
-        backgroundColor: '#1abc9c',
-        borderRadius: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    listitem: {
-        alignSelf: 'stretch',
-        height: 200,
-    },
-    itemText: {
-        color: 'white',
-        fontSize: 40,
-        paddingTop: 5,
-        textAlign: 'center',
-        fontFamily: 'Roboto_medium'
-    }
-
-});

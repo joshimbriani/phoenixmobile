@@ -8,6 +8,7 @@ import * as colorActions from '../../redux/actions/backgroundColor'
 import ColorScheme from 'color-scheme';
 import { getURLForPlatform } from '../utils/networkUtils';
 import { KootaListView } from '../utils/listView';
+import { styles } from '../../assets/styles';
 
 class Topic extends React.Component {
 
@@ -127,22 +128,3 @@ export default connect(
     mapDispatchToProps
 )(Topic);
 
-const styles = StyleSheet.create({
-    listitem: {
-        alignSelf: 'stretch',
-        height: 200,
-    },
-    itemText: {
-        color: 'white',
-        fontSize: 40,
-        paddingTop: 5,
-        textAlign: 'center',
-        fontFamily: 'Roboto_medium'
-    },
-    followView: {
-        flex: -1
-    },
-    listView: {
-        flex: 5
-    }
-});

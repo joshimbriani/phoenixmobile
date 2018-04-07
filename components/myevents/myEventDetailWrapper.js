@@ -11,6 +11,7 @@ import myEventDetailPhotos from './myEventDetailPhotos';
 import { getURLForPlatform } from '../utils/networkUtils';
 import { bindActionCreators } from 'redux';
 import * as eventActions from '../../redux/actions/events';
+import { styles } from '../../assets/styles';
 
 const initialLayout = {
     height: 0,
@@ -101,9 +102,3 @@ export default connect(
     mapStateToProps,
     mapDispatchToProps
 )(MyEventDetailWrapper);
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-    },
-});

@@ -12,7 +12,7 @@ import SettingsList from 'react-native-settings-list';
 import { Dropdown } from 'react-native-material-dropdown';
 import { NavigationActions } from 'react-navigation';
 
-export const stylesAlso = StyleSheet.create({
+export const styles = StyleSheet.create({
   titleStyle: {
     backgroundColor: 'white',
     color: 'black',
@@ -26,4 +26,46 @@ export const stylesAlso = StyleSheet.create({
     fontSize: 15,
     paddingLeft: 30,
   },
+  listitem: {
+    alignSelf: 'stretch',
+    height: 200,
+  },
+  itemText: {
+    color: 'white',
+    fontSize: 40,
+    paddingTop: 5,
+    textAlign: 'center',
+    fontFamily: 'Roboto_medium'
+  },
+  listView: {
+  	flex: 5
+  },
+  gridView: {
+    flex: 1,
+  },
+  itemBox: {
+    height: 150,
+    backgroundColor: '#1abc9c',
+    borderRadius: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+      container: {
+        flex: 1,
+        backgroundColor: '#fff',
+        paddingTop: 22,
+    },
+    item: {
+        padding: 10,
+        fontSize: 18,
+        height: 44,
+    },
+    followView: {
+        flex: -1
+    },
 });
+
+//import { styles } from '../../assets/styles';
+
+
+

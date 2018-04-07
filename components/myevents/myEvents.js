@@ -6,6 +6,7 @@ import MyEventDetailWrapper from './myEventDetailWrapper';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { getURLForPlatform } from '../utils/networkUtils';
+import { styles } from '../../assets/styles';
 
 
 class MyEvents extends React.Component {
@@ -61,7 +62,9 @@ class MyEvents extends React.Component {
         if (this.noEventsInMyEvents() === 0) {
             return (
                 <View>
-                    <Text>You aren't associated with any events! Create or sign up for some!</Text>
+                    <Text style = {styles.bodyStyle}>
+                    You aren't associated with any events! Create or sign up for some!
+                    </Text>
                 </View>
             )
         }
@@ -100,28 +103,3 @@ export default connect(
     mapStateToProps,
     mapDispatchToProps
 )(MyEvents);
-
-const styles = StyleSheet.create({
-    gridView: {
-        flex: 1,
-    },
-    itemBox: {
-        height: 150,
-        backgroundColor: '#1abc9c',
-        borderRadius: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    listitem: {
-        alignSelf: 'stretch',
-        height: 200,
-    },
-    itemText: {
-        color: 'white',
-        fontSize: 40,
-        paddingTop: 5,
-        textAlign: 'center',
-        fontFamily: 'Roboto_medium'
-    }
-
-});

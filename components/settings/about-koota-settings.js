@@ -6,13 +6,15 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import * as colorActions from '../../redux/actions/backgroundColor'
 import ColorScheme from 'color-scheme';
+import { styles } from '../../assets/styles';
 
 class AboutKootaSettings extends React.Component {
 
     render() {
             return (
                 <Container>
-                    <Text> "Josh & I are total badasses who are changing the world, 1 lonely person at a time."
+                    <Text style = {styles.titleStyle}>
+                    "Josh & I are total badasses who are changing the world, 1 lonely person at a time."
                     </Text>
                 </Container>
             );
@@ -35,18 +37,3 @@ export default connect(
     mapStateToProps,
     mapDispatchToProps
 )(AboutKootaSettings);
-
-const styles = StyleSheet.create({
-    listitem: {
-        alignSelf: 'stretch',
-        height: 200,
-    },
-    itemText: {
-        color: 'white',
-        fontSize: 40,
-        paddingTop: 5,
-        textAlign: 'center',
-        fontFamily: 'Roboto_medium'
-    }
-
-});

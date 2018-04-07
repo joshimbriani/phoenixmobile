@@ -9,6 +9,7 @@ import * as userActions from '../../redux/actions/user';
 import PlatformIonicon from '../utils/platformIonicon';
 import randomMC from 'random-material-color';
 import { getURLForPlatform } from '../utils/networkUtils';
+import { styles } from '../../assets/styles';
 
 class Home extends React.Component {
     constructor(props) {
@@ -153,19 +154,3 @@ export default connect(
     mapDispatchToProps
 )(Home);
 
-const styles = StyleSheet.create({
-    gridView: {
-        flex: 1,
-    },
-    itemBox: {
-        height: 150,
-        backgroundColor: '#1abc9c',
-        borderRadius: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    itemText: {
-        color: 'white',
-    }
-
-});

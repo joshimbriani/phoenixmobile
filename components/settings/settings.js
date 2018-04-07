@@ -11,6 +11,7 @@ import randomMC from 'random-material-color';
 import SettingsList from 'react-native-settings-list';
 import { Dropdown } from 'react-native-material-dropdown';
 import { NavigationActions } from 'react-navigation';
+import { styles } from '../../assets/styles';
 
 let distUnit = 'km';
 
@@ -251,20 +252,3 @@ export default connect(
     mapStateToProps,
     mapDispatchToProps
 )(Settings);
-
-const styles = StyleSheet.create({
-    gridView: {
-        flex: 1,
-    },
-    itemBox: {
-        height: 150,
-        backgroundColor: '#1abc9c',
-        borderRadius: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    itemText: {
-        color: 'white',
-    }
-
-});

@@ -6,13 +6,15 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import * as colorActions from '../../redux/actions/backgroundColor'
 import ColorScheme from 'color-scheme';
+import { styles } from '../../assets/styles';
 
 class HelpSettings extends React.Component {
 
     render() {
             return (
                 <Container>
-                    <Text> "Good help is hard to find"      why gps (1. events near me, 2. validate attendance, 3. send offers to phone when at location with other attendees)
+                    <Text style = {styles.itemText}>
+                    "Good help is hard to find"      why gps (1. events near me, 2. validate attendance, 3. send offers to phone when at location with other attendees)
                     </Text>
                 </Container>
             );
@@ -35,18 +37,3 @@ export default connect(
     mapStateToProps,
     mapDispatchToProps
 )(HelpSettings);
-
-const styles = StyleSheet.create({
-    listitem: {
-        alignSelf: 'stretch',
-        height: 200,
-    },
-    itemText: {
-        color: 'white',
-        fontSize: 40,
-        paddingTop: 5,
-        textAlign: 'center',
-        fontFamily: 'Roboto_medium'
-    }
-
-});

@@ -6,6 +6,7 @@ import PlatformIonicon from '../utils/platformIonicon';
 import { HomeStack, ProfileStack, SettingsStack, MyEventsStack } from './navcontainerCommon';
 import Login from '../auth/login';
 import Register from '../auth/register';
+import { styles } from '../../assets/styles';
 
 const MainNavContainer = DrawerNavigator({
     
@@ -90,16 +91,3 @@ const LoginWrapper = StackNavigator({
 });
 
 export default LoginWrapper;
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: '#fff',
-        paddingTop: 22,
-    },
-    item: {
-        padding: 10,
-        fontSize: 18,
-        height: 44,
-    },
-});

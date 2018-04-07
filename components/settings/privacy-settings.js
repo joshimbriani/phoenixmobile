@@ -11,6 +11,7 @@ import randomMC from 'random-material-color';
 import SettingsList from 'react-native-settings-list';
 import { Dropdown } from 'react-native-material-dropdown';
 import { NavigationActions } from 'react-navigation';
+import { styles } from '../../assets/styles';
 
 class PrivacySettings extends React.Component { // add a stack for each setting explaining why it turns on/off, why it is helpful, & any reasons not to use it...?
 
@@ -161,18 +162,3 @@ export default connect(
     mapStateToProps,
     mapDispatchToProps
 )(PrivacySettings);
-
-const styles = StyleSheet.create({
-    listitem: {
-        alignSelf: 'stretch',
-        height: 200,
-    },
-    itemText: {
-        color: 'white',
-        fontSize: 40,
-        paddingTop: 5,
-        textAlign: 'center',
-        fontFamily: 'Roboto_medium'
-    }
-
-});

@@ -5,6 +5,7 @@ import PlatformIonicon from '../utils/platformIonicon';
 import * as userActions from '../../redux/actions/user';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import { styles } from '../../assets/styles';
 
 class SideDrawer extends React.Component {
     render() {

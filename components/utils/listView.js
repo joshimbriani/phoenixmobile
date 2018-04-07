@@ -1,6 +1,7 @@
 import React from 'react';
 import { FlatList, StyleSheet, Text, TouchableHighlight, View } from 'react-native';
 import PropTypes from 'prop-types';
+import { styles } from '../../assets/styles';
 
 export class KootaListView extends React.Component {
 
@@ -29,21 +30,3 @@ KootaListView.PropTypes = {
     data: PropTypes.array,
     pressCallback: PropTypes.func
 }
-
-const styles = StyleSheet.create({
-    listitem: {
-        alignSelf: 'stretch',
-        height: 200,
-    },
-    itemText: {
-        color: 'white',
-        fontSize: 40,
-        paddingTop: 5,
-        textAlign: 'center',
-        fontFamily: 'Roboto_medium'
-    },
-    listView: {
-        flex: 5
-    }
-
-});

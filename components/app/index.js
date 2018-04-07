@@ -4,7 +4,8 @@ import { connect } from 'react-redux';
 import {bindActionCreators} from 'redux';
 import NavContainer from '../subviews/navcontainer'
 import { Constants } from 'expo';
-import * as colorActions from '../../redux/actions/backgroundColor'
+import * as colorActions from '../../redux/actions/backgroundColor';
+import { styles } from '../../assets/styles';
 
 class Index extends React.Component {
 
@@ -60,18 +61,3 @@ export default connect(
     mapStateToProps,
     mapDispatchToProps
 )(Index);
-
-
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: '#fff',
-        paddingTop: 22,
-    },
-    item: {
-        padding: 10,
-        fontSize: 18,
-        height: 44,
-    },
-});

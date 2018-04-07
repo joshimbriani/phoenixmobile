@@ -22,6 +22,7 @@ import EventDetail from '../app/eventdetail';
 import Filter from './filter';
 import IDK from '../app/idk';
 import myEventDetailWrapper from '../myevents/myEventDetailWrapper';
+import { styles } from '../../assets/styles';
 
 export const HomeStack = StackNavigator({
     Home: {

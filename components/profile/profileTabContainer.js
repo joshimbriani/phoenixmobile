@@ -9,6 +9,7 @@ import Profile from './profile';
 import Achievements from './achievements';
 import * as achievementActions from '../../redux/actions/achievements';
 import * as userActions from '../../redux/actions/user';
+import { styles } from '../../assets/styles';
 
 const initialLayout = {
     height: 0,
@@ -89,8 +90,3 @@ export default connect(
     mapDispatchToProps
 )(ProfileTabContainer);
 
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-    },
-});
