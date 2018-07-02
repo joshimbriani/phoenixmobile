@@ -27,7 +27,8 @@ class Search extends React.Component {
 
     componentDidMount() {
         this.props.colorActions.resetColor();
-        fetch(getURLForPlatform("phoenix") + "api/v1/search?query=" + this.props.navigation.state.params.query).then(response => response.json())
+        // ToDo: Probably want to add a search endpoint to Jericho
+        fetch(getURLForPlatform() + "api/v1/search?query=" + this.props.navigation.state.params.query).then(response => response.json())
             .then(responseObj => {
                 this.setState({ data: responseObj });
             })

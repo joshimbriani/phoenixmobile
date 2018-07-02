@@ -27,7 +27,8 @@ class Home extends React.Component {
     componentDidMount() {
         this.props.userActions.loadUser(this.props.token);
         this.props.colorActions.resetColor();
-        fetch(getURLForPlatform("phoenix") + "api/v1/users/topics/?format=json", {
+        // ToDo: Switch this to using our existing /user/:id endpoint
+        fetch(getURLForPlatform() + "api/v1/users/topics/?format=json", {
             Authorization: "Token " + this.props.token
         }).then(response => response.json())
             .then(responseObj => {
@@ -70,7 +71,8 @@ class Home extends React.Component {
     }
 
     _onRefresh() {
-        fetch(getURLForPlatform("phoenix") + "api/v1/users/topics/?format=json", {
+        // ToDo: Same as earlier in the file
+        fetch(getURLForPlatform() + "api/v1/users/topics/?format=json", {
             Authorization: "Token " + this.props.token
         }).then(response => response.json())
             .then(responseObj => {

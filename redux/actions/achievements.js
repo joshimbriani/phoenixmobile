@@ -17,7 +17,7 @@ export function purgeAchievements() {
 
 export function fetchAchievements(token) {
     return function action(dispatch) {
-        return fetch(getURLForPlatform("phoenix") + "api/v1/achievements/", {
+        return fetch(getURLForPlatform() + "api/v1/achievements/", {
             method: 'GET',
             headers: {
                 'Accept': 'application/json',

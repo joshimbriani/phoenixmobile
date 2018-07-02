@@ -35,7 +35,7 @@ class Topic extends React.Component {
 
     componentDidMount() {
         this.props.colorActions.changeColor(this.props.navigation.state.params.color);
-        fetch(getURLForPlatform("phoenix") + "api/v1/events/search?topic=" + this.props.navigation.state.params.id, {
+        fetch(getURLForPlatform() + "api/v1/events/search?topic=" + this.props.navigation.state.params.id, {
             headers: {
                 Authorization: "Token " + this.props.token
             },
@@ -44,7 +44,8 @@ class Topic extends React.Component {
                 this.setState({ data: responseObj });
             });
 
-        fetch(getURLForPlatform("phoenix") + "api/v1/topics/" + this.props.navigation.state.params.id + "/follow/", {
+        // ToDo: Probably want to add in an endpoint for this as well. Or some way to follow topics
+        fetch(getURLForPlatform() + "api/v1/topics/" + this.props.navigation.state.params.id + "/follow/", {
             method: 'GET',
             headers: {
                 Authorization: "Token " + this.props.token
@@ -70,7 +71,8 @@ class Topic extends React.Component {
     }
 
     followTopic() {
-        fetch(getURLForPlatform("phoenix") + "api/v1/topics/" + this.props.navigation.state.params.id + "/follow/", {
+        // ToDo: Same here, need to figure out an API to follow a topic
+        fetch(getURLForPlatform() + "api/v1/topics/" + this.props.navigation.state.params.id + "/follow/", {
             method: 'POST',
             headers: {
                 Authorization: "Token " + this.props.token
