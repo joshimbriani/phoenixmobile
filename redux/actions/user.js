@@ -25,7 +25,7 @@ export function loadUser(token) {
 
 export function logout(token) {
     return function action(dispatch) {
-        return fetch(getURLForPlatform() + "rest-auth/logout/", {
+        return fetch(getURLForPlatform() + "rest_auth/logout/", {
             method: 'POST',
             Authorization: 'Token ' + token
         }).then(response => { dispatch(purgeUserObject()); dispatch(purgeUserToken())});
