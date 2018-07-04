@@ -30,7 +30,7 @@ class Suggested extends React.Component {
 
     componentDidMount() {
         // ToDo: Definitely want to add in a Wumbo endpoint here into Jericho
-        fetch(getURLForPlatform() + "api/v1/events/suggested", {
+        fetch(getURLForPlatform() + "api/v1/recommendations?user=", {
             headers: {
                 Authorization: "Token " + this.props.token
             },

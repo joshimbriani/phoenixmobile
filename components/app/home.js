@@ -27,12 +27,13 @@ class Home extends React.Component {
     componentDidMount() {
         this.props.userActions.loadUser(this.props.token);
         this.props.colorActions.resetColor();
-        // ToDo: Switch this to using our existing /user/:id endpoint
-        fetch(getURLForPlatform() + "api/v1/users/topics/?format=json", {
-            Authorization: "Token " + this.props.token
+        fetch(getURLForPlatform() + "api/v1/user/", {
+            headers: {
+                Authorization: "Token " + this.props.token
+            }
         }).then(response => response.json())
             .then(responseObj => {
-                this.setState({ data: [{ id: -1, name: "IDK", color: "0097e6", icon: "help" }].concat(responseObj) });
+                this.setState({ data: [{ id: -1, name: "IDK", color: "0097e6", icon: "help" }].concat('followingTopics' in responseObj ? responseObj['followingTopics'] : []) });
             })
     }
 
@@ -71,12 +72,13 @@ class Home extends React.Component {
     }
 
     _onRefresh() {
-        // ToDo: Same as earlier in the file
-        fetch(getURLForPlatform() + "api/v1/users/topics/?format=json", {
-            Authorization: "Token " + this.props.token
+        fetch(getURLForPlatform() + "api/v1/user/", {
+            headers: {
+                Authorization: "Token " + this.props.token
+            }
         }).then(response => response.json())
             .then(responseObj => {
-                this.setState({ refreshing: false, data: [{ id: -1, name: "IDK", color: "#0097e6", icon: "help" }].concat(responseObj) });
+                this.setState({ data: [{ id: -1, name: "IDK", color: "0097e6", icon: "help" }].concat('followingTopics' in responseObj ? responseObj['followingTopics'] : []) });
             })
     }
 
