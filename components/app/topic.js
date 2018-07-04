@@ -5,6 +5,7 @@ import PlatformIonicon from '../utils/platformIonicon';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import * as colorActions from '../../redux/actions/backgroundColor'
+import * as userActions from '../../redux/actions/user';
 import ColorScheme from 'color-scheme';
 import { getURLForPlatform } from '../utils/networkUtils';
 import { KootaListView } from '../utils/listView';
@@ -27,7 +28,6 @@ class Topic extends React.Component {
         this.state = {
             colors: ["ffffff"],
             data: [],
-            followed: false,
         }
 
         this.followTopic = this.followTopic.bind(this);
@@ -43,17 +43,6 @@ class Topic extends React.Component {
             .then(responseObj => {
                 this.setState({ data: responseObj });
             });
-
-        // ToDo: Probably want to add in an endpoint for this as well. Or some way to follow topics
-        fetch(getURLForPlatform() + "api/v1/topics/" + this.props.navigation.state.params.id + "/follow/", {
-            method: 'GET',
-            headers: {
-                Authorization: "Token " + this.props.token
-            },
-        }).then(response => response.json())
-            .then(responseJSON => {
-                this.setState({ followed: responseJSON["followedByUser"] });
-            })
     }
 
     componentWillMount() {
@@ -71,22 +60,21 @@ class Topic extends React.Component {
     }
 
     followTopic() {
-        // ToDo: Same here, need to figure out an API to follow a topic
-        fetch(getURLForPlatform() + "api/v1/topics/" + this.props.navigation.state.params.id + "/follow/", {
-            method: 'POST',
+        if (isTopicFollowed(this.props.user.followingTopics, this.props.navigation.state.params.id)) {
+            return
+        }
+        var user = Object.assign({}, this.props.user);
+        user["followingTopics"].push(this.props.navigation.state.params.id)
+        // ToDo: Test this out
+        fetch(getURLForPlatform() + "api/v1/user/" + this.props.user.id, {
+            method: 'PUT',
             headers: {
                 Authorization: "Token " + this.props.token
             },
-            body: JSON.stringify({
-                topic: this.props.navigation.state.params.id
-            }),
+            body: JSON.stringify(user),
         }).then(response => response.json())
             .then(responseJSON => {
-                if ("followed" in responseJSON) {
-                    this.setState({ followed: true });
-                } else {
-                    this.setState({ followed: false });
-                }
+                this.props.userActions.loadUser(this.props.token)
             })
     }
 
@@ -95,7 +83,7 @@ class Topic extends React.Component {
             return (
                 <Container style={{ flex: 1 }}>
                     <View style={{ flex: 1, flexDirection: "row", justifyContent: "center" }}>
-                        <Button onPress={this.followTopic} style={{ justifyContent: "center" }}><Text>{this.state.followed && 'Unfollow'}{!this.state.followed && 'Follow'}</Text></Button>
+                        <Button onPress={this.followTopic} style={{ justifyContent: "center" }}><Text>{isTopicFollowed(this.props.user.followingTopics, this.props.navigation.state.params.id) && 'Unfollow'}{!isTopicFollowed(this.props.user.followingTopics, this.props.navigation.state.params.id) && 'Follow'}</Text></Button>
                     </View>
                     <View style={{ flex: 10 }}>
                         <KootaListView data={this.state.data} pressCallback={(item) => this.props.navigation.navigate('EventDetail', { event: item.title, id: item.id })} />
@@ -116,12 +104,14 @@ function mapStateToProps(state) {
     return {
         color: state.backgroundColorReducer.color,
         token: state.tokenReducer.token,
+        user: state.userReducer.user,
     };
 }
 
 function mapDispatchToProps(dispatch) {
     return {
-        colorActions: bindActionCreators(colorActions, dispatch)
+        colorActions: bindActionCreators(colorActions, dispatch),
+        userActions: bindActionCreators(userActions, dispatch)
     };
 }
 
@@ -130,3 +120,12 @@ export default connect(
     mapDispatchToProps
 )(Topic);
 
+function isTopicFollowed (topicList, topic) {
+    for (var i = 0; i < topicList.length; i++) {
+        if (topic === topicList[i].id) {
+            return true;
+        }
+    }
+
+    return false;
+}

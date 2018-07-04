@@ -63,6 +63,7 @@ class Home extends React.Component {
         this.setState({ searchQuery: text });
     }
 
+    // TODO: Does IDK need to route to a special IDK page or just to the suggested page?
     routeToTopic(item) {
         if (item.id === -1) {
             this.props.navigation.navigate('IDK', {});

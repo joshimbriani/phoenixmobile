@@ -6,6 +6,7 @@ import MyEventDetailWrapper from './myEventDetailWrapper';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { getURLForPlatform } from '../utils/networkUtils';
+import * as userActions from '../../redux/actions/user';
 import { styles } from '../../assets/styles';
 
 
@@ -27,20 +28,12 @@ class MyEvents extends React.Component {
     });
 
     componentDidMount() {
-        // ToDo: Needs to be changed now that the users events are included on the user object
-        fetch(getURLForPlatform() + "api/v1/events/my", {
-            method: 'GET',
-            Authorization: "Token " + this.props.token
-        })
-            .then(response => response.json())
-            .then(responseObj => {
-                this.setState({ data: responseObj });
-            })
+            this.props.userActions.loadUser(this.props.token);
     }
 
     renderEmptySections(section) {
         if (section.data.length > 0) {
-            return <ListItem itemDivider><Text>{section.title}</Text></ListItem>
+            return <ListItem itemDivider><Text>{section.name}</Text></ListItem>
         } else {
             return (<View>
             </View>
@@ -49,14 +42,11 @@ class MyEvents extends React.Component {
     }
 
     noEventsInMyEvents() {
-        var eventNum = 0;
-        if (this.state.data.length > 0) {
-            eventNum += this.state.data[0]["data"].length
-            eventNum += this.state.data[1]["data"].length
-            eventNum += this.state.data[2]["data"].length
-            eventNum += this.state.data[3]["data"].length
+        if (Object.keys(this.props.user).length > 0) {
+            return this.props.user.eventsCreated.length + this.props.user.goingTo.length + this.props.user.invitedTo.length + this.props.user.interestedIn.length;
         }
-        return eventNum;
+
+        return 0
     }
 
     render() {
@@ -82,7 +72,12 @@ class MyEvents extends React.Component {
                         )
                     }}
                     renderSectionHeader={({ section }) => this.renderEmptySections(section)}
-                    sections={this.state.data}
+                    sections={[
+                        {name: 'Created', data: this.props.user.eventsCreated},
+                        {name: 'Going To', data: this.props.user.goingTo},
+                        {name: 'Invited To', data: this.props.user.invitedTo},
+                        {name: 'Interested In', data: this.props.user.interestedIn}
+                    ]}
                     keyExtractor={(item, index) => index} />
             </Container>
         );
@@ -91,12 +86,14 @@ class MyEvents extends React.Component {
 
 function mapStateToProps(state) {
     return {
-        token: state.tokenReducer.token
+        token: state.tokenReducer.token,
+        user: state.userReducer.user
     };
 }
 
 function mapDispatchToProps(dispatch) {
     return {
+        userActions: bindActionCreators(userActions, dispatch)
     };
 }
 
