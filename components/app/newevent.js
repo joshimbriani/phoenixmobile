@@ -57,6 +57,9 @@ class NewEvent extends React.Component {
     // this.state.topics.map(t => t.id).join(",");
     createTopicList() {
         var returnTopics = "";
+        if (!this.state.topics) {
+            return returnTopics;
+        }
         for (var i = 0; i < this.state.topics.length; i++) {
             if (this.state.topics[i].id) {
                 returnTopics += this.state.topics[i].id;
@@ -80,7 +83,9 @@ class NewEvent extends React.Component {
     }
 
     fetchOffersFromTopics() {
-        fetch(getURLForPlatform("phoenix") + "api/v1/offers/bytopic/?topicIDs=" + this.createTopicList(), {
+        // ToDo: Probably need to either enable an offers endpoint or to just add all possible 
+        // offers onto an event object or something. Probably the former
+        fetch(getURLForPlatform() + "api/v1/offers/bytopic/?topicIDs=" + this.createTopicList(), {
             method: 'GET',
             headers: {
                 'Accept': 'application/json',
@@ -91,7 +96,7 @@ class NewEvent extends React.Component {
     }
 
     fetchTopicsFromDescription() {
-        fetch(getURLForPlatform("banksy") + "tags", {
+        fetch(getURLForPlatform() + "api/v1/events/tags/", {
             method: 'POST',
             headers: {
                 'Accept': 'application/json',
@@ -116,7 +121,7 @@ class NewEvent extends React.Component {
 
     submitForm() {
         console.log(this.state);
-        fetch(getURLForPlatform("phoenix") + "api/v1/events/", {
+        fetch(getURLForPlatform() + "api/v1/events/", {
             method: 'POST',
             Authorization: 'Token ' + this.props.token,
             headers: {

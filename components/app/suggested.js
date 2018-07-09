@@ -29,7 +29,7 @@ class Suggested extends React.Component {
     }
 
     componentDidMount() {
-        fetch(getURLForPlatform("phoenix") + "api/v1/events/suggested", {
+        fetch(getURLForPlatform() + "api/v1/user/" + this.props.user.id + "/recommendations/", {
             headers: {
                 Authorization: "Token " + this.props.token
             },
@@ -39,6 +39,7 @@ class Suggested extends React.Component {
             });
     }
 
+    // TODO: Probably need to switch this from a "SuggestedEventDetailView to the generic EventDetailView"
     render() {
         if (this.state.data.length > 0) {
             return (
@@ -59,6 +60,7 @@ class Suggested extends React.Component {
 function mapStateToProps(state) {
     return {
         token: state.tokenReducer.token,
+        user: state.userReducer.user,
     };
 }
 

@@ -53,7 +53,7 @@ class MyEventDetailWrapper extends React.Component {
     });
 
     componentDidMount() {
-        fetch(getURLForPlatform("phoenix") + "api/v1/events/" + this.props.navigation.state.params.id, {
+        fetch(getURLForPlatform() + "api/v1/events/" + this.props.navigation.state.params.id, {
             method: 'GET',
             Authorization: "Token " + this.props.token
         })
@@ -61,15 +61,6 @@ class MyEventDetailWrapper extends React.Component {
             .then(responseObj => {
                 this.props.eventActions.saveCurrentEvent(responseObj);
             });
-        
-        fetch(getURLForPlatform("phoenix") + "api/v1/threads/byevent/?eventID=" + this.props.navigation.state.params.id, {
-            method: 'GET',
-            Authorization: "Token " + this.props.token
-        })
-        .then(response => response.json())
-        .then(responseObj => {
-            this.props.eventActions.saveCurrentEventMessages(responseObj);
-        })
     }
 
     render() {

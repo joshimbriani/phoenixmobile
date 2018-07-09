@@ -11,13 +11,13 @@ export function saveUserObject(user) {
 
 export function loadUser(token) {
     return function action(dispatch) {
-        return fetch(getURLForPlatform("phoenix") + "api/v1/users/current/", {
+        return fetch(getURLForPlatform() + "api/v1/user/", {
             method: 'GET',
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json',
-            },
-            Authorization: 'Token ' + token
+                'Authorization': 'Token ' + token
+            }
         }).then(response => response.json())
             .then(responseObj => dispatch(saveUserObject(responseObj)));
     }
@@ -25,7 +25,7 @@ export function loadUser(token) {
 
 export function logout(token) {
     return function action(dispatch) {
-        return fetch(getURLForPlatform("phoenix") + "rest-auth/logout/", {
+        return fetch(getURLForPlatform() + "rest_auth/logout/", {
             method: 'POST',
             Authorization: 'Token ' + token
         }).then(response => { dispatch(purgeUserObject()); dispatch(purgeUserToken())});

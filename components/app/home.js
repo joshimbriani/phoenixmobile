@@ -27,11 +27,13 @@ class Home extends React.Component {
     componentDidMount() {
         this.props.userActions.loadUser(this.props.token);
         this.props.colorActions.resetColor();
-        fetch(getURLForPlatform("phoenix") + "api/v1/users/topics/?format=json", {
-            Authorization: "Token " + this.props.token
+        fetch(getURLForPlatform() + "api/v1/user/", {
+            headers: {
+                Authorization: "Token " + this.props.token
+            }
         }).then(response => response.json())
             .then(responseObj => {
-                this.setState({ data: [{ id: -1, name: "IDK", color: "0097e6", icon: "help" }].concat(responseObj) });
+                this.setState({ data: [{ id: -1, name: "IDK", color: "0097e6", icon: "help" }].concat('followingTopics' in responseObj ? responseObj['followingTopics'] : []) });
             })
     }
 
@@ -61,6 +63,7 @@ class Home extends React.Component {
         this.setState({ searchQuery: text });
     }
 
+    // TODO: Does IDK need to route to a special IDK page or just to the suggested page?
     routeToTopic(item) {
         if (item.id === -1) {
             this.props.navigation.navigate('IDK', {});
@@ -70,11 +73,13 @@ class Home extends React.Component {
     }
 
     _onRefresh() {
-        fetch(getURLForPlatform("phoenix") + "api/v1/users/topics/?format=json", {
-            Authorization: "Token " + this.props.token
+        fetch(getURLForPlatform() + "api/v1/user/", {
+            headers: {
+                Authorization: "Token " + this.props.token
+            }
         }).then(response => response.json())
             .then(responseObj => {
-                this.setState({ refreshing: false, data: [{ id: -1, name: "IDK", color: "#0097e6", icon: "help" }].concat(responseObj) });
+                this.setState({ data: [{ id: -1, name: "IDK", color: "0097e6", icon: "help" }].concat('followingTopics' in responseObj ? responseObj['followingTopics'] : []) });
             })
     }
 
