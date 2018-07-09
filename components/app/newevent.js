@@ -57,6 +57,9 @@ class NewEvent extends React.Component {
     // this.state.topics.map(t => t.id).join(",");
     createTopicList() {
         var returnTopics = "";
+        if (!this.state.topics) {
+            return returnTopics;
+        }
         for (var i = 0; i < this.state.topics.length; i++) {
             if (this.state.topics[i].id) {
                 returnTopics += this.state.topics[i].id;
@@ -93,7 +96,7 @@ class NewEvent extends React.Component {
     }
 
     fetchTopicsFromDescription() {
-        fetch(getURLForPlatform() + "events/tags/", {
+        fetch(getURLForPlatform() + "api/v1/events/tags/", {
             method: 'POST',
             headers: {
                 'Accept': 'application/json',
