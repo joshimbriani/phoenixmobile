@@ -86,7 +86,7 @@ class Topic extends React.Component {
                         <Button onPress={this.followTopic} style={{ justifyContent: "center" }}><Text>{isTopicFollowed(this.props.user.followingTopics, this.props.navigation.state.params.id) && 'Unfollow'}{!isTopicFollowed(this.props.user.followingTopics, this.props.navigation.state.params.id) && 'Follow'}</Text></Button>
                     </View>
                     <View style={{ flex: 10 }}>
-                        <KootaListView data={this.state.data} pressCallback={(item) => this.props.navigation.navigate('EventDetail', { event: item.title, id: item.id })} />
+                        <KootaListView data={this.state.data} pressCallback={(item) => this.props.navigation.navigate('EventDetail', { event: item.title, id: item.id, color: this.props.navigation.state.params.color })} />
                     </View>
                 </Container>
             );

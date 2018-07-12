@@ -24,10 +24,15 @@ class EventDetail extends React.Component {
     }
 
     componentDidMount() {
-        fetch(getURLForPlatform() + "api/v1/events/" + this.props.navigation.state.params.id + "?format=json").then(response => response.json())
-            .then(responseObj => {
-                this.setState({ data: responseObj });
-            })
+        fetch(getURLForPlatform() + "api/v1/events/" + this.props.navigation.state.params.id + "?format=json", {
+            headers: {
+                Authorization: "Token " + this.props.token
+            }
+        })
+        .then(response => response.json())
+        .then(responseObj => {
+            this.setState({ data: responseObj });
+        })
     }
 
     render() {
@@ -69,7 +74,7 @@ class EventDetail extends React.Component {
 
 function mapStateToProps(state) {
     return {
-
+        token: state.tokenReducer.token
     };
 }
 

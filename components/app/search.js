@@ -75,6 +75,13 @@ class Search extends React.Component {
                                 </TouchableHighlight>
                             )
                         }
+                        if (section.title === "Offers") {
+                            return (
+                                <View key={item.id} style={[styles.listitem]}>
+                                    <Text style={styles.itemText}>{item.name}</Text>
+                                </View>
+                            )
+                        }
                     }}
                     renderSectionHeader={({section}) => this.renderEmptySections(section)}
                     sections={this.state.data}

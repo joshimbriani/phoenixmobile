@@ -17,44 +17,44 @@ import fontBasedOnPlatform from '../components/utils/fontBasedOnPlatform';
 //import { styles } from '../../assets/styles';
 
 export const styles = StyleSheet.create({
-  titleStyle: {
-    backgroundColor: 'white',
-    color: 'black',
-    fontWeight: 'bold',
-    fontSize: 20,
-    paddingLeft: 10,
-  },
-  bodyStyle: {
-    backgroundColor: 'white',
-    color: 'grey',
-    fontSize: 15,
-    paddingLeft: 30,
-  },
-  listitem: {
-    alignSelf: 'stretch',
-    height: 200,
-  },
-  itemText: {
-    color: 'white',
-    fontSize: 40,
-    paddingTop: 5,
-    textAlign: 'center',
-    fontFamily: 'Roboto_medium'
-  },
-  listView: {
-  	flex: 5
-  },
-  gridView: {
-    flex: 1,
-  },
-  itemBox: {
-    height: 150,
-    backgroundColor: '#1abc9c',
-    borderRadius: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-      container: {
+    titleStyle: {
+        backgroundColor: 'white',
+        color: 'black',
+        fontWeight: 'bold',
+        fontSize: 20,
+        paddingLeft: 10,
+    },
+    bodyStyle: {
+        backgroundColor: 'white',
+        color: 'grey',
+        fontSize: 15,
+        paddingLeft: 30,
+    },
+    listitem: {
+        alignSelf: 'stretch',
+        height: 200,
+    },
+    itemText: {
+        color: 'white',
+        fontSize: 20,
+        paddingTop: 5,
+        textAlign: 'center',
+        fontFamily: 'Roboto_medium'
+    },
+    listView: {
+        flex: 5
+    },
+    gridView: {
+        flex: 1,
+    },
+    itemBox: {
+        height: 150,
+        backgroundColor: '#1abc9c',
+        borderRadius: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    container: {
         flex: 1,
         backgroundColor: '#fff',
         paddingTop: 22,
