@@ -67,16 +67,54 @@ export const styles = StyleSheet.create({
     followView: {
         flex: -1
     },
-
-
-
-
-
-
-
-
-
-
+    eventTabView: {
+        flex: 1,
+    },
+    eventTabBar: {
+        
+    },
+    eventDetailHeader: {
+        backgroundColor: '#229954',
+        flex: 1,
+        padding: 15,
+        justifyContent: 'space-between'
+    },
+    eventDetailBody: {
+        flex: 1,
+        paddingTop: 5,
+        paddingLeft: 10,
+        paddingRight: 10
+    },
+    eventDetailHeading: {
+        fontSize: 30,
+        color: 'white'
+    },
+    eventDetailSubHeading: {
+        color: 'white',
+    },
+    eventDetailSectionHeader: {
+        fontWeight: 'bold',
+        fontSize: 20
+    },
+    eventDetailPlaceBody: {
+        flex: 3,
+        paddingTop: 5,
+        paddingLeft: 10,
+        paddingRight: 10
+    },
+    eventDetailPlaceMap: {
+        flex: 7,
+        backgroundColor: 'red'
+    },
+    eventDetailPeopleSection: {
+        paddingTop: 5,
+        paddingLeft: 10,
+        paddingRight: 10
+    },
+    eventDetailActionButton: {
+        flexDirection: 'row',
+        flex: 0.15
+    },
     flex1: {
         flex: 1,
     },

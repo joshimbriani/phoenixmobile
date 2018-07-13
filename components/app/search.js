@@ -68,7 +68,7 @@ class Search extends React.Component {
                         }
                         if (section.title === "Events") {
                             return (
-                                <TouchableHighlight onPress={() => { this.props.navigation.navigate('EventDetail', { event: item.title, id: item.id }) }}>
+                                <TouchableHighlight onPress={() => { this.props.navigation.navigate('EventDetailWrapper', { event: item.title, id: item.id }) }}>
                                     <View key={item.id} style={[styles.listitem]}>
                                         <Text style={styles.itemText}>{item.title}</Text>
                                     </View>

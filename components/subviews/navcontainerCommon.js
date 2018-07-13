@@ -18,7 +18,7 @@ import LegalSettings from '../settings/legal-settings';
 import AboutKootaSettings from '../settings/about-koota-settings';
 import NewEvent from '../app/newevent';
 import Search from '../app/search';
-import EventDetail from '../app/eventdetail';
+import EventDetailWrapper from '../app/eventDetailWrapper';
 import Filter from './filter';
 import IDK from '../app/idk';
 import myEventDetailWrapper from '../myevents/myEventDetailWrapper';
@@ -40,9 +40,9 @@ export const HomeStack = StackNavigator({
         path: '/newevent',
         screen: NewEvent,
     },
-    EventDetail: {
+    EventDetailWrapper: {
         path: '/event/:event',
-        screen: EventDetail,
+        screen: EventDetailWrapper,
     },
     Filter: {
         path: '/filter',
