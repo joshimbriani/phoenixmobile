@@ -22,6 +22,7 @@ import EventDetailWrapper from '../app/eventDetailWrapper';
 import Filter from './filter';
 import IDK from '../app/idk';
 import myEventDetailWrapper from '../myevents/myEventDetailWrapper';
+import ConversationView from '../app/messaging/conversationView';
 import { styles } from '../../assets/styles';
 
 export const HomeStack = StackNavigator({
@@ -62,6 +63,10 @@ export const HomeStack = StackNavigator({
                 size={35}
                 onPress={() => navigation.navigate('DrawerOpen')} />
         })
+    },
+    ConversationView: {
+        path: '/thread/:threadid',
+        screen: ConversationView
     },
 });
 

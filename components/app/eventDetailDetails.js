@@ -11,7 +11,6 @@ class EventDetailDetails extends React.Component {
     // TODO: Offer View
     // TODO: Need to handle recursive topic case
     render() {
-        console.log("The props are", this.props);
         if (Object.keys(this.props.event).length > 0) {
             const date = new Date(this.props.event.created)
             return (

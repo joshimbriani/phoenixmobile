@@ -12,6 +12,11 @@ import { styles } from '../../assets/styles';
 import EventDetailDetails from './eventDetailDetails';
 import EventDetailPlace from './eventDetailPlace';
 import EventDetailPeople from './eventDetailPeople';
+import EventDetailMessages from './eventDetailMessages';
+
+// TODO: Do I need to pass navigation to all the objects?
+
+// TODO: Add a refresh button to refresh event
 
 const initialLayout = {
     height: 0,
@@ -27,20 +32,23 @@ class EventDetailWrapper extends React.Component {
 
     constructor(props) {
         super(props);
+        var routes = [
+            { key: 'details', title: 'Details' },
+            { key: 'place', title: 'Place' },
+            { key: 'people', title: 'People' },
+            { key: 'messages', title: 'Messages'}
+        ];
+
         this.state = {
             eventData: {},
             index: 0,
-            routes: [
-                { key: 'details', title: 'Details' },
-                { key: 'place', title: 'Place' },
-                { key: 'people', title: 'People' },
-            ],
+            routes: routes,
         }
     }
 
     _handleIndexChange = index => this.setState({ index });
 
-    _renderHeader = props => <TabBar {...props} style={[styles.eventTabBar, { backgroundColor: '#' + this.props.navigation.state.params.color }]} />;
+    _renderHeader = props => <TabBar {...props} labelStyle={{fontSize: 11}} style={[styles.eventTabBar, { backgroundColor: '#' + this.props.navigation.state.params.color }]} />;
 
     _renderScene = ({ route }) => {
         switch (route.key) {
@@ -50,6 +58,8 @@ class EventDetailWrapper extends React.Component {
                 return <EventDetailPlace event={this.state.eventData} color={this.props.navigation.state.params.color} navigation={this.props.navigation} />;
             case 'people':
                 return <EventDetailPeople event={this.state.eventData} color={this.props.navigation.state.params.color} navigation={this.props.navigation} />
+            case 'messages':
+                return <EventDetailMessages event={this.state.eventData}  color={this.props.navigation.state.params.color} navigation={this.props.navigation} />
             default:
                 return null;
         }
