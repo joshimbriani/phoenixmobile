@@ -29,35 +29,65 @@ class ConversationView extends React.Component {
 
     _keyExtractor = (item, index) => item.id;
 
+    componentDidMount() {
+        //console.log(this.scrollView)
+        setTimeout(() => {
+            this.scrollView.scrollToEnd({animated: false})
+        }, 50);
+    }
+
     render() {
         return (
             <View style={[styles.flex1]} >
                 <ScrollView
+                    ref={scrollView => { this.scrollView = scrollView; }}
                     style={{ flex: 1, flexGrow: 1 }}>
                     <FlatList
                         data={this.props.navigation.state.params.thread.messages}
-
                         keyExtractor={this._keyExtractor}
                         renderItem={({ item, separators }) => {
-                            return (
-                                <View style={[styles.flex1, { flexDirection: 'row', alignContent: 'flex-end' }]}>
-                                    <View>
-                                        <Image
-                                            source={{ uri: this.getProfilePictureFromMessage(item.fromUser, this.props.navigation.state.params.thread.users) }}
-                                            style={{ borderRadius: 25, borderWidth: 1, borderColor: '#fff', width: 20, height: 20 }}
-                                        />
-                                    </View>
-                                    <View>
-                                        <View>
-                                            <Text>{item.content}</Text>
+                            if (item.fromUser !== this.props.user.id) {
+                                return (
+                                    <View style={[styles.flex1, { flexDirection: 'row', alignContent: 'flex-end' }]}>
+                                        <View style={{justifyContent: 'flex-end'}}>
+                                            <Image
+                                                source={{ uri: this.getProfilePictureFromMessage(item.fromUser, this.props.navigation.state.params.thread.users) }}
+                                                style={{ borderRadius: 25, borderWidth: 1, borderColor: '#fff', width: 20, height: 20 }}
+                                            />
                                         </View>
-                                        <HideableView hide={true}>
-                                            <Text>{this.getUsernameFromMessage(item.fromUser, this.props.navigation.state.params.thread.users)}</Text>
-                                            <Text>{getDateStringForMessage(new Date(item.sentDate))}</Text>
-                                        </HideableView>
+                                        <View>
+                                            <View style={{backgroundColor: 'red', padding: 10, borderRadius: 10, borderWidth: 1, borderColor: 'white'}}>
+                                                <Text>{item.content}</Text>
+                                            </View>
+                                            <HideableView hide={true}>
+                                                <Text>{this.getUsernameFromMessage(item.fromUser, this.props.navigation.state.params.thread.users)}</Text>
+                                                <Text>{getDateStringForMessage(new Date(item.sentDate))}</Text>
+                                            </HideableView>
+                                        </View>
                                     </View>
-                                </View>
-                            )
+                                )
+                            } else {
+                                return (
+                                    <View style={[styles.flex1, { flexDirection: 'row', alignContent: 'flex-end' }]}>
+                                        <View style={{flex: 1}}></View>
+                                        <View>
+                                            <View style={{backgroundColor: 'blue', padding: 10, borderRadius: 10, borderWidth: 1, borderColor: 'white'}}>
+                                                <Text>{item.content}</Text>
+                                            </View>
+                                            <HideableView hide={true}>
+                                                <Text>{this.getUsernameFromMessage(item.fromUser, this.props.navigation.state.params.thread.users)}</Text>
+                                                <Text>{getDateStringForMessage(new Date(item.sentDate))}</Text>
+                                            </HideableView>
+                                        </View>
+                                        <View style={{justifyContent: 'flex-end'}}>
+                                            <Image
+                                                source={{ uri: this.getProfilePictureFromMessage(item.fromUser, this.props.navigation.state.params.thread.users) }}
+                                                style={{ borderRadius: 25, borderWidth: 1, borderColor: '#fff', width: 20, height: 20 }}
+                                            />
+                                        </View>
+                                    </View>
+                                )
+                            }
                         }}
                     />
                 </ScrollView>

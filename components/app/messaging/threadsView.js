@@ -11,10 +11,6 @@ import { generateUserToString, getDateStringForMessage } from '../../utils/textU
 class ThreadsView extends React.Component {
     _keyExtractor = (item, index) => item.id;
 
-    _onRefresh = () => {
-        console.log("Refreshing")
-      }
-
     render() {
         if (Object.keys(this.props.threads).length > 0) {
             return (
@@ -22,12 +18,6 @@ class ThreadsView extends React.Component {
                     <FlatList
                         data={this.props.threads}
                         keyExtractor={this._keyExtractor}
-                        refreshControl={
-                            <RefreshControl
-                              onRefresh={this._onRefresh}
-                            />
-                          }
-                  
                         renderItem={({item, separators}) => {
                             const date = new Date(item.lastUpdate)
                             return (
@@ -42,7 +32,7 @@ class ThreadsView extends React.Component {
                                     </View>
                                     <View style={{flex: 1, justifyContent: 'center', paddingLeft: 15}}>
                                         <Text numberOfLines={1} style={{fontWeight: "bold"}}>{generateUserToString(this.props.user.id, item.users, this.props.creator)}</Text>
-                                        <Text numberOfLines={1}>{item.messages[0].content}</Text>
+                                        <Text numberOfLines={1}>{item.messages[item.messages.length - 1].content}</Text>
                                     </View>
                                     <View style={{justifyContent: 'center'}}>
                                         <Text>{getDateStringForMessage(date)}</Text>
