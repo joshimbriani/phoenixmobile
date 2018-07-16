@@ -1,5 +1,6 @@
 import React from 'react';
-import { SectionList, Image, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { Image, Text, TouchableOpacity, View } from 'react-native';
+import PlatformIonicon from '../../utils/platformIonicon';
 
 import PropTypes from 'prop-types';
 
@@ -8,20 +9,31 @@ export class UserRow extends React.Component {
     constructor(props) {
         super(props);
 
-        this.state = {
-            selected: false,
-        }
+        this.selectRow = this.selectRow.bind(this);
     }
     render() {
         if (Object.keys(this.props.user).length > 0) {
-            return (
-                <TouchableOpacity onPress={() => this.props.select(this.props.user)}>
-                    <View style={{flexDirection: 'row'}}>
-                        <Image style={{ width: 50, height: 50, borderRadius:30, borderWidth: 1, borderColor: '#fff', marginRight: 10 }} source={{ uri: this.props.user.profilePicture }} />
-                        <Text style={{ fontSize: 15, color: 'black', alignSelf: 'center' }} key={(this.props.section || '') + this.props.user.id}>{this.props.user.username}</Text>
-                    </View>
-                </TouchableOpacity>
-            )
+            if (!this.userInList(this.props.user)) {
+                return (
+                    <TouchableOpacity onPress={this.selectRow}>
+                        <View style={{flexDirection: 'row'}}>
+                            <Image style={{ width: 50, height: 50, borderRadius:30, borderWidth: 1, borderColor: '#fff', marginRight: 10 }} source={{ uri: this.props.user.profilePicture }} />
+                            <Text style={{ fontSize: 15, color: 'black', alignSelf: 'center' }} key={(this.props.section || '') + this.props.user.id}>{this.props.user.username}</Text>
+                        </View>
+                    </TouchableOpacity>
+                )
+            } else {
+                return (
+                    <TouchableOpacity onPress={this.selectRow}>
+                        <View style={{flexDirection: 'row'}}>
+                            <View style={{ width: 50, height: 50, borderRadius:30, borderWidth: 1, borderColor: '#fff', marginRight: 10 }}>
+                                <PlatformIonicon name={'checkmark'} size={40} style={{alignSelf: 'center', justifyContent: 'center'}} />
+                            </View>
+                            <Text style={{ fontSize: 15, color: 'black', alignSelf: 'center' }} key={(this.props.section || '') + this.props.user.id}>{this.props.user.username}</Text>
+                        </View>
+                    </TouchableOpacity>
+                )
+            }
         } else {
             return (
                 <View>
@@ -29,6 +41,21 @@ export class UserRow extends React.Component {
                 </View>
             )
         }
+    }
+
+    selectRow() {
+        this.props.select(this.props.user);
+    }
+
+    userInList(user) {
+        var inList = false;
+        this.props.toUsers.forEach((listUser) => {
+            if (listUser.id === user.id) {
+                inList = true
+            }
+        })
+
+        return inList
     }
 }
 

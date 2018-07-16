@@ -8,23 +8,43 @@ import { getURLForPlatform } from '../../utils/networkUtils';
 import { getDateStringForMessage } from '../../utils/textUtils';
 import PlatformIonicon from '../../utils/platformIonicon';
 import { Bubble } from './bubble';
+import { getMaterialColor } from '../../utils/styleutils';
 
 // Probably want to switch to https://github.com/APSL/react-native-keyboard-aware-scroll-view at some point
 
-// newConvo 
+// Two options for starting a new conversation:
+// newConvo=false or not included - params={userString, eventName, color, thread} 
+// newConvo=true - params={userString, eventName, eventID, toUsers}
 
 class ConversationView extends React.Component {
     static navigationOptions = ({ navigation }) => ({
         headerTitle: <ConversationHeader users={navigation.state.params.userString} eventName={navigation.state.params.eventName} />,
-        headerStyle: { backgroundColor: '#' + navigation.state.params.color },
+        headerStyle: { backgroundColor: typeof(jsVar) == 'undefined' ? getMaterialColor() : '#' + navigation.state.params.color },
+        headerLeft: <PlatformIonicon name={'arrow-back'} size={24} style={{overflow: 'hidden', margin: 16, transform: [{'scaleX': 1}]}} onPress={ () => { if (navigation.state.params.backKey) { navigation.goBack(navigation.state.params.backKey) } else {navigation.goBack()} }} />,
     });
 
     constructor(props) {
         super(props);
 
-        this.state = {
-            messageContent: "",
-            messages: this.props.navigation.state.params.thread.messages
+        // TODO: when the convo is a new one, users can just contain the logged in user
+        // But when we switch to websockets, it's possible for others to message before the user
+        // Closes the conversation
+        if (this.props.navigation.state.params.newConvo) {
+            this.state = {
+                messageContent: "",
+                messages: [],
+                threadID: '',
+                users: [
+                    {id: this.props.user.id, username: this.props.user.username, profilePicture: this.props.user.profilePicture}
+                ]
+            }
+        } else {
+            this.state = {
+                messageContent: "",
+                messages: this.props.navigation.state.params.thread.messages,
+                threadID: this.props.navigation.state.params.thread.id,
+                users: this.props.navigation.state.params.thread.users
+            }
         }
 
         this.sendMessage = this.sendMessage.bind(this);
@@ -62,14 +82,14 @@ class ConversationView extends React.Component {
                                     <View style={[styles.flex1, { flexDirection: 'row', alignContent: 'flex-end', marginTop: 5, marginBottom: 5 }]}>
                                         <View style={{justifyContent: 'flex-end'}}>
                                             <Image
-                                                source={{ uri: this.getProfilePictureFromMessage(item.fromUser, this.props.navigation.state.params.thread.users) }}
+                                                source={{ uri: this.getProfilePictureFromMessage(item.fromUser, this.state.users) }}
                                                 style={{ borderRadius: 25, borderWidth: 1, borderColor: '#fff', width: 20, height: 20 }}
                                             />
                                         </View>
                                         <Bubble 
                                             isUserSender={item.fromUser === this.props.user.id} 
                                             message={item.content} 
-                                            username={this.getUsernameFromMessage(item.fromUser, this.props.navigation.state.params.thread.users)}
+                                            username={this.getUsernameFromMessage(item.fromUser, this.state.users)}
                                             sendDate={getDateStringForMessage(new Date(item.sentDate))}
                                         />
                                     </View>
@@ -81,7 +101,7 @@ class ConversationView extends React.Component {
                                         <Bubble 
                                             isUserSender={item.fromUser === this.props.user.id} 
                                             message={item.content} 
-                                            username={this.getUsernameFromMessage(item.fromUser, this.props.navigation.state.params.thread.users)}
+                                            username={this.getUsernameFromMessage(item.fromUser, this.state.users)}
                                             sendDate={getDateStringForMessage(new Date(item.sentDate))}
                                         />
                                     </View>
@@ -147,12 +167,26 @@ class ConversationView extends React.Component {
             return
         }
 
-        var messageBody = {
-            from: this.props.user.id,
-            sentDate: new Date(),
-            content: this.state.messageContent,
-            createThread: false,
-            thread: this.props.navigation.state.params.thread.id
+        if (this.props.navigation.state.params.newConvo && this.state.messages.length < 1) {
+            // Is a newConvo
+            console.log(this.props.navigation.state.params)
+            var messageBody = {
+                from: this.props.user.id,
+                sentDate: new Date(),
+                content: this.state.messageContent,
+                createThread: true,
+                event: this.props.navigation.state.params.eventID,
+                users: this.props.navigation.state.params.toUsers
+            }
+        } else {
+            
+            var messageBody = {
+                from: this.props.user.id,
+                sentDate: new Date(),
+                content: this.state.messageContent,
+                createThread: false,
+                thread: this.state.threadID
+            }
         }
 
         fetch(getURLForPlatform() + "api/v1/messages/", {
@@ -165,6 +199,10 @@ class ConversationView extends React.Component {
             .then(responseJSON => {
                 console.log(responseJSON)
                 this.setState({messageContent: ""})
+
+                if (this.state.threadID === '') {
+                    this.setState({threadID: responseJSON['threadID']})
+                }
             })
 
         messageBody["fromUser"] = this.props.user.id;

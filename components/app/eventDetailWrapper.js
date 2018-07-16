@@ -163,8 +163,6 @@ class EventDetailWrapper extends React.Component {
                 this.setState({ eventData: responseObj });
                 this.props.navigation.setParams({usersInterested: responseObj["interested"], usersGoing: responseObj["going"]})
             });
-
-        
     }
 }
 

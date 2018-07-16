@@ -27,7 +27,7 @@ class EventDetailMessages extends React.Component {
                         containerStyle={{}}
                         style={{ backgroundColor: '#e84118' }}
                         position="bottomRight"
-                        onPress={() => this.props.navigation.navigate('NewMessage', { creator: this.props.event.userBy, interested: this.props.event.interested, going: this.props.event.going })}>
+                        onPress={() => this.props.navigation.navigate('NewMessage', { threads: this.props.event.threads, creator: this.props.event.userBy, interested: this.props.event.interested, going: this.props.event.going, eventName: this.props.event.title, eventID: this.props.event.id })}>
                             <PlatformIonicon
                                 name={"add"}
                                 size={50} //this doesn't adjust the size...?
