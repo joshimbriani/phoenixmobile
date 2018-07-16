@@ -1,7 +1,7 @@
 import { connect } from 'react-redux';
 import React from 'react';
 import { styles } from '../../../assets/styles';
-import { Button, DeviceEventEmitter, FlatList, Image, ScrollView, Platform, KeyboardAvoidingView, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { BackHandler, DeviceEventEmitter, FlatList, Image, ScrollView, KeyboardAvoidingView, TextInput, TouchableOpacity, View } from 'react-native';
 import { ConversationHeader } from './conversationHeader';
 import { getURLForPlatform } from '../../utils/networkUtils';
 
@@ -48,7 +48,7 @@ class ConversationView extends React.Component {
         }
 
         this.sendMessage = this.sendMessage.bind(this);
-
+        this.handleBackPress = this.handleBackPress.bind(this);
     }
 
     _keyExtractor = (item, index) => item.id;
@@ -59,7 +59,14 @@ class ConversationView extends React.Component {
             this.scrollView.scrollToEnd({animated: false})
         }, 150);
 
+        BackHandler.addEventListener('hardwareBackPress', this.handleBackPress)
+
     }
+
+    componentWillUnmount() {
+        BackHandler.removeEventListener('hardwareBackPress', this.handleBackPress);
+      }
+    
 
     componentWillUnmount() {
         DeviceEventEmitter.emit('refresh',  {})
@@ -144,6 +151,17 @@ class ConversationView extends React.Component {
                 </KeyboardAvoidingView>
             </View>
         )
+    }
+
+    handleBackPress() {
+        if (this.props.navigation.state.params.backKey) 
+        { 
+            this.props.navigation.goBack(this.props.navigation.state.params.backKey) 
+        } else {
+            this.props.navigation.goBack()
+        }
+
+        return true;
     }
 
     getUsernameFromMessage(messageSender, users) {
