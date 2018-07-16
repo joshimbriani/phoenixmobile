@@ -45,23 +45,6 @@ class EventDetailDetails extends React.Component {
                             </View>}
                         </View>
                     </ScrollView>
-                    <View style={[styles.eventDetailActionButton, {margin: 5}]}>
-                        <TouchableOpacity
-                            onPress={this.markUserAsInterested}
-                            style={{ borderTopLeftRadius: 5, borderBottomLeftRadius: 5, flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#E54E2D' }}>
-                            <View style={{alignItems: 'center'}}>
-                                <Text>I'm</Text>
-                                <Text>Interested!</Text>
-                            </View>
-                        </TouchableOpacity>
-                        <TouchableOpacity
-                            onPress={this.markUserAsGoing}
-                            style={{ borderTopRightRadius: 5, borderBottomRightRadius: 5, flex: 3, justifyContent: 'center', alignItems: 'center', backgroundColor: '#CC4528' }}>
-                            <View>
-                                <Text style={{fontSize: 25}}>I'm Going!</Text>
-                            </View>
-                        </TouchableOpacity>
-                    </View>
                 </View>
             )
         } else {

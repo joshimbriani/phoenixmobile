@@ -3,8 +3,10 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { styles } from '../../assets/styles';
 import { Text, View } from 'react-native';
+import { Fab } from 'native-base';
 
 import ThreadsView from './messaging/threadsView';
+import PlatformIonicon from '../utils/platformIonicon';
 
 class EventDetailMessages extends React.Component {
     render() {
@@ -14,10 +16,24 @@ class EventDetailMessages extends React.Component {
                     <ThreadsView
                         eventName={this.props.event.title}
                         color={this.props.color}
-                        threads={this.props.event.threads} 
-                        creator={this.props.event.userBy} 
+                        threads={this.props.event.threads}
+                        creator={this.props.event.userBy.username}
                         navigation={this.props.navigation}
-                        />
+                        userGoing={this.props.userGoing}
+                        userInterested={this.props.userInterested}
+                    />
+                    <Fab
+                        active={true}
+                        containerStyle={{}}
+                        style={{ backgroundColor: '#e84118' }}
+                        position="bottomRight"
+                        onPress={() => this.props.navigation.navigate('NewMessage', { creator: this.props.event.userBy, interested: this.props.event.interested, going: this.props.event.going })}>
+                            <PlatformIonicon
+                                name={"add"}
+                                size={50} //this doesn't adjust the size...?
+                                style={{ color: "white" }}
+                            />
+                    </Fab>
                 </View>
             )
         } else {
@@ -32,7 +48,9 @@ class EventDetailMessages extends React.Component {
 
 EventDetailMessages.propTypes = {
     color: PropTypes.string,
-    event: PropTypes.object
+    event: PropTypes.object,
+    userInterested: PropTypes.bool,
+    userGoing: PropTypes.bool
 }
 
 function mapStateToProps(state) {

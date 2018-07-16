@@ -24,7 +24,7 @@ export function getDateStringForMessage(date) {
         return date.getMonth() + '/' + date.getDate() + '/' + date.getFullYear()
     }
     else if (now.getMonth() === date.getMonth() && now.getDate() === date.getDate() && now.getFullYear() === date.getFullYear()) {
-        return (date.getHours() % 12) + ':' + date.getMinutes() + (date.getHours() < 12 ? 'AM' : 'PM');
+        return (date.getHours() % 12) + ':' + (date.getMinutes() < 10 ? ('0' + date.getMinutes()) : date.getMinutes()) + (date.getHours() < 12 ? 'AM' : 'PM');
     } else {
         return getMonthNameFromMonthNumber(date.getMonth()) + ' ' + date.getDate()
     }

@@ -22,7 +22,7 @@ class ThreadsView extends React.Component {
                             const date = new Date(item.lastUpdate)
                             return (
                             <TouchableOpacity
-                                onPress={() => this.props.navigation.navigate('ConversationView', { thread: item, eventName: this.props.eventName, color: this.props.color, userString: generateUserToString(this.props.user.id, item.users, this.props.creator) })}>
+                                onPress={() => this.props.navigation.navigate('ConversationView', { newConvo: false, thread: item, eventName: this.props.eventName, color: this.props.color, userString: generateUserToString(this.props.user.id, item.users, this.props.creator) })}>
                                 <View style={{flexDirection: 'row', marginTop: 10, paddingRight: 10, paddingLeft: 10, paddingBottom: 10, borderBottomWidth: 0.5, borderColor: '#000'}}>
                                     <View style={{ justifyContent: 'center'}}>
                                         <Image
@@ -44,10 +44,13 @@ class ThreadsView extends React.Component {
                 </View>
             )
         } else {
+            const invLevel = this.getUserInvolvementLevel(this.props.userGoing, this.props.userInterested);
             return (
-                <View>
-                    <Text>No messages found. Send a new message by long pressing on a user. 
-                        Remember only messages sent by users in the context of this event will show up here.</Text>
+                <View style={{padding: 5}}>
+                    <Text>No messages found. Send a new message by pressing the add button down below.</Text>
+                    <Text>Remember only messages sent by users in the context of this event will show up here.</Text>
+                    <Text>You are currently marked as <Text style={{fontWeight: 'bold'}}>{invLevel[0]}</Text> for this event.</Text>
+                    <Text><Text style={{fontWeight: 'bold'}}>{invLevel[0]}</Text> users can message <Text style={{fontWeight: 'bold'}}>{invLevel[1]}</Text> {invLevel[2]}</Text>
                 </View>
             )
         }
@@ -55,6 +58,18 @@ class ThreadsView extends React.Component {
 
     generateUserImage(users) {
         return users[0].profilePicture
+    }
+
+    getUserInvolvementLevel(userGoing, userInvolved) {
+        if (userGoing) {
+            return ['Going', 'the event organizer and other interested or going users.', '']
+        }
+
+        if (userInvolved) {
+            return ['Interested', 'the event organizer and other interested or going users.', '']
+        }
+
+        return ['Not Interested or Going', 'the event organizer.', 'Mark yourself as interested or going to message other users!']
     }
 }
 

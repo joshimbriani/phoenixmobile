@@ -23,6 +23,7 @@ import Filter from './filter';
 import IDK from '../app/idk';
 import myEventDetailWrapper from '../myevents/myEventDetailWrapper';
 import ConversationView from '../app/messaging/conversationView';
+import NewMessage from '../app/messaging/newMessage';
 import { styles } from '../../assets/styles';
 
 export const HomeStack = StackNavigator({
@@ -68,6 +69,10 @@ export const HomeStack = StackNavigator({
         path: '/thread/:threadid',
         screen: ConversationView
     },
+    NewMessage: {
+        path: '/thread/new',
+        screen: NewMessage
+    }
 });
 
 export const SettingsStack = StackNavigator({

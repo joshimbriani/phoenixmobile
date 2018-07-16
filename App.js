@@ -7,6 +7,7 @@ import configureStore from './redux/store'
 import * as colorActions from './redux/actions/backgroundColor'
 import Index from './components/app/index';
 import { PersistGate } from 'redux-persist/es/integration/react';
+import { MenuProvider } from 'react-native-popup-menu';
 
 const { persistor, store } = configureStore();
 
@@ -15,7 +16,9 @@ export default class App extends React.Component {
     return (
       <Provider store={store}>
         <PersistGate loading={null} persistor={persistor}>
-          <Index />
+          <MenuProvider>
+            <Index />
+          </MenuProvider>
         </PersistGate>
       </Provider>
     );
