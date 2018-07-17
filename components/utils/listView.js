@@ -3,6 +3,8 @@ import { FlatList, StyleSheet, Text, TouchableHighlight, View } from 'react-nati
 import PropTypes from 'prop-types';
 import { styles } from '../../assets/styles';
 
+import { materialColors, getMaterialColorLength } from '../utils/styleutils';
+
 export class KootaListView extends React.Component {
 
     render() {
@@ -15,7 +17,7 @@ export class KootaListView extends React.Component {
                 renderItem={({ item, index }) => {
                     return (
                         <TouchableHighlight onPress={() => { this.props.pressCallback(item) }}>
-                            <View key={item.id} style={[styles.listitem, {}]}>
+                            <View key={item.id} style={[styles.listitem, {backgroundColor: materialColors[index % getMaterialColorLength]}]} >
                                 <Text style={styles.itemText}>{item.title}</Text>
                             </View>
                         </TouchableHighlight>
@@ -28,5 +30,6 @@ export class KootaListView extends React.Component {
 
 KootaListView.PropTypes = {
     data: PropTypes.array,
-    pressCallback: PropTypes.func
+    pressCallback: PropTypes.func,
+    colors: PropTypes.array
 }

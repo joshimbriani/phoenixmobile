@@ -24,9 +24,9 @@ class EventDetailPeople extends React.Component {
                             <Text style={{paddingLeft: 20}}>{this.props.event.userBy.username}</Text>
                         </View>
                     </View>
-                    <View style={[styles.eventDetailPeopleSection, { flex: 3, justifyContent: 'space-between' }]}>
+                    <View style={[styles.eventDetailPeopleSection, { flex: 3, justifyContent: 'flex-end' }]}>
                         <Text style={styles.eventDetailSectionHeader}>Going</Text>
-                        <View style={{flexDirection: 'row'}}>
+                        <View style={{flexDirection: 'row', }}>
                             {this.props.event.going.map((user, index) => {
                                 return (
                                     <Image 
@@ -37,7 +37,10 @@ class EventDetailPeople extends React.Component {
                                 )
                             })}
                         </View>
-                        <ProgressBar style={{alignSelf: 'flex-end'}} progress={this.props.event.going && this.props.event.capacity && (this.props.event.going.length / this.props.event.capacity)} width={Dimensions.get('window').width - 30} />
+                        <View>
+                            <ProgressBar style={{marginTop: 'auto'}} progress={this.props.event.going && this.props.event.capacity && (this.props.event.going.length / this.props.event.capacity)} width={Dimensions.get('window').width - 30} />
+                            <Text>{this.props.event.going.length} out of {this.props.event.capacity} places have been filled.</Text>
+                        </View>
                     </View>
                     <View style={[styles.eventDetailPeopleSection, { flex: 3 }]}>
                         <Text style={styles.eventDetailSectionHeader}>Interested</Text>

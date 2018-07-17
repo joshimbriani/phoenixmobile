@@ -60,16 +60,11 @@ class ConversationView extends React.Component {
         }, 150);
 
         BackHandler.addEventListener('hardwareBackPress', this.handleBackPress)
-
     }
 
     componentWillUnmount() {
+        DeviceEventEmitter.emit('refresh',  {});
         BackHandler.removeEventListener('hardwareBackPress', this.handleBackPress);
-      }
-    
-
-    componentWillUnmount() {
-        DeviceEventEmitter.emit('refresh',  {})
     }
 
     render() {

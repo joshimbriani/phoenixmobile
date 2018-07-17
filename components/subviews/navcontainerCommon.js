@@ -24,6 +24,7 @@ import IDK from '../app/idk';
 import myEventDetailWrapper from '../myevents/myEventDetailWrapper';
 import ConversationView from '../app/messaging/conversationView';
 import NewMessage from '../app/messaging/newMessage';
+import GroupWrapper from '../app/groupWrapper';
 import { styles } from '../../assets/styles';
 
 export const HomeStack = StackNavigator({
@@ -147,3 +148,18 @@ export const ProfileStack = StackNavigator({
         })
     }
 });
+
+export const GroupStack = StackNavigator({
+    GroupHome: {
+        path: '/groups',
+        screen: GroupWrapper
+    },
+    ConversationView: {
+        path: '/thread/:threadid',
+        screen: ConversationView
+    },
+    NewMessage: {
+        path: '/thread/new',
+        screen: NewMessage
+    }
+})

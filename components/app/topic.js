@@ -11,16 +11,37 @@ import { getURLForPlatform } from '../utils/networkUtils';
 import { KootaListView } from '../utils/listView';
 import { styles } from '../../assets/styles';
 
+import {
+    Menu,
+    MenuTrigger,
+    MenuOptions,
+    MenuOption
+  } from 'react-native-popup-menu';
+
 class Topic extends React.Component {
 
     static navigationOptions = ({ navigation }) => ({
         title: navigation.state.params.topic,
         headerStyle: { backgroundColor: '#' + navigation.state.params.color },
-        headerRight: <PlatformIonicon
-            name='funnel'
-            style={{ paddingRight: 10 }}
-            size={35}
-            onPress={() => navigation.navigate('Filter')} />
+        headerRight: <Menu style={{paddingRight: 20}}>
+                        <MenuTrigger>
+                            <View style={{paddingLeft: 20, paddingRight: 20, paddingTop: 10, paddingBottom: 10}}>
+                                <PlatformIonicon
+                                    name={'more'}
+                                    size={30}
+                                    style={{ color: "white" }}
+                                />
+                            </View>
+                        </MenuTrigger>
+                        <MenuOptions optionsContainerStyle={{ marginTop: 30 }}>
+                            <MenuOption onSelect={navigation.state.params.toggleTopic}>
+                                <Text>{isTopicFollowed((navigation.state.params.followingTopics || []), navigation.state.params.topicID) ? "Unfollow" : "Follow"}</Text>
+                            </MenuOption>
+                            <MenuOption onSelect={() => navigation.navigate('Filter')}>
+                                <Text>Filter</Text>
+                            </MenuOption>
+                        </MenuOptions>
+                    </Menu>
     });
 
     constructor(props) {
@@ -30,11 +51,14 @@ class Topic extends React.Component {
             data: [],
         }
 
-        this.followTopic = this.followTopic.bind(this);
+        this.toggleTopic = this.toggleTopic.bind(this);
     }
 
     componentDidMount() {
+        this.props.userActions.loadUser(this.props.token)
+
         this.props.colorActions.changeColor(this.props.navigation.state.params.color);
+        this.props.navigation.setParams({ toggleTopic: this.toggleTopic, followingTopics: this.props.user.followingTopics, topicID: this.props.navigation.state.params.id, userID: this.props.user.id });
         fetch(getURLForPlatform() + "api/v1/events/search?topic=" + this.props.navigation.state.params.id, {
             headers: {
                 Authorization: "Token " + this.props.token
@@ -43,38 +67,44 @@ class Topic extends React.Component {
             .then(responseObj => {
                 this.setState({ data: responseObj });
             });
+
+            var mColors;
+            if (this.state.colors && this.state.colors.length === 1 && this.state.colors[0] === "ffffff") {
+                mColors = (new ColorScheme()).from_hex(this.props.navigation.state.params.color).scheme('mono');
+                this.setState({ colors: mColors.colors() });
+            } else {
+                mColors = this.state.colors;
+            }
     }
 
     componentWillMount() {
-        var mColors;
-        if (this.state.colors && this.state.colors.length === 1 && this.state.colors[0] === "ffffff") {
-            mColors = (new ColorScheme()).from_hex(this.props.navigation.state.params.color).scheme('mono');
-            this.setState({ colors: mColors.colors() });
-        } else {
-            mColors = this.state.colors;
-        }
+        
     }
 
     componentWillUnmount() {
         this.props.colorActions.resetColor();
     }
 
-    followTopic() {
-        if (isTopicFollowed(this.props.user.followingTopics, this.props.navigation.state.params.id)) {
-            return
-        }
-        var user = Object.assign({}, this.props.user);
-        user["followingTopics"].push(this.props.navigation.state.params.id)
-        // ToDo: Test this out
-        fetch(getURLForPlatform() + "api/v1/user/" + this.props.user.id, {
+    toggleTopic() {
+        fetch(getURLForPlatform() + "api/v1/topic/" + this.props.navigation.state.params.id + "/follow/", {
             method: 'PUT',
             headers: {
                 Authorization: "Token " + this.props.token
             },
-            body: JSON.stringify(user),
         }).then(response => response.json())
             .then(responseJSON => {
-                this.props.userActions.loadUser(this.props.token)
+                if (responseJSON["success"] !== true) {
+                    console.log("Bad going.")
+                } else {
+                    var userFollow = this.props.user.followingTopics.slice();
+                    if (responseJSON["action"] === "add") {
+                        userFollow.push({id: this.props.navigation.state.params.id})
+                    } else if (responseJSON["action"] === "remove") {
+                        removeTopic(userFollow, this.props.navigation.state.params.id)
+                    }
+                    this.props.navigation.setParams({ followingTopics: userFollow });
+                    this.props.userActions.loadUser(this.props.token);
+                }
             })
     }
 
@@ -82,11 +112,8 @@ class Topic extends React.Component {
         if (this.state.data.length > 0) {
             return (
                 <Container style={{ flex: 1 }}>
-                    <View style={{ flex: 1, flexDirection: "row", justifyContent: "center" }}>
-                        <Button onPress={this.followTopic} style={{ justifyContent: "center" }}><Text>{isTopicFollowed(this.props.user.followingTopics, this.props.navigation.state.params.id) && 'Unfollow'}{!isTopicFollowed(this.props.user.followingTopics, this.props.navigation.state.params.id) && 'Follow'}</Text></Button>
-                    </View>
                     <View style={{ flex: 10 }}>
-                        <KootaListView data={this.state.data} pressCallback={(item) => this.props.navigation.navigate('EventDetailWrapper', { event: item.title, id: item.id, color: this.props.navigation.state.params.color })} />
+                        <KootaListView colors={this.state.colors} data={this.state.data} pressCallback={(item) => this.props.navigation.navigate('EventDetailWrapper', { event: item.title, id: item.id, color: this.props.navigation.state.params.color })} />
                     </View>
                 </Container>
             );
@@ -121,11 +148,21 @@ export default connect(
 )(Topic);
 
 function isTopicFollowed (topicList, topic) {
+    console.log("testing follow")
     for (var i = 0; i < topicList.length; i++) {
+        console.log(topic, topicList[i].id)
         if (topic === topicList[i].id) {
             return true;
         }
     }
 
     return false;
+}
+
+function removeTopic(userFollow, topicID) {
+    for (var i = userFollow.length - 1; i >= 0; i--) {
+        if (userFollow[i].id === topicID) {
+            userFollow.splice(i, 1)
+        }
+    }
 }

@@ -3,7 +3,7 @@ import { StyleSheet, Text, FlatList, ScrollView, View } from 'react-native';
 import { DrawerNavigator, StackNavigator } from 'react-navigation';
 import SideDrawer from './sidedrawer';
 import PlatformIonicon from '../utils/platformIonicon';
-import { HomeStack, ProfileStack, SettingsStack, MyEventsStack } from './navcontainerCommon';
+import { HomeStack, ProfileStack, SettingsStack, GroupStack } from './navcontainerCommon';
 import Login from '../auth/login';
 import Register from '../auth/register';
 import { styles } from '../../assets/styles';
@@ -23,13 +23,13 @@ const MainNavContainer = DrawerNavigator({
             ),
         },
     },
-    MyEvents: {
-        screen: MyEventsStack,
+    Groups: {
+        screen: GroupStack,
         navigationOptions: {
-            drawerLabel: 'My Events',
+            drawerLabel: 'Groups',
             drawerIcon: ({ tintColor, focused }) => (
                 <PlatformIonicon
-                    name='calendar'
+                    name='people'
                     size={20}
                     style={{ color: tintColor }}
                 />
@@ -39,7 +39,7 @@ const MainNavContainer = DrawerNavigator({
     Profile: {
         screen: ProfileStack,
         navigationOptions: {
-            drawerLabel: 'Profile',
+            drawerLabel: 'My Koota',
             drawerIcon: ({ tintColor, focused }) => (
                 <PlatformIonicon
                     name='person'

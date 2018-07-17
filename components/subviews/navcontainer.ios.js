@@ -1,7 +1,7 @@
 import React from 'react';
 import { TabNavigator, StackNavigator } from 'react-navigation';
 import PlatformIonicon from '../utils/platformIonicon';
-import {HomeStack, MyEventsStack, ProfileStack, SettingsStack} from './navcontainerCommon';
+import {HomeStack, ProfileStack, SettingsStack, GroupStack} from './navcontainerCommon';
 import Login from '../auth/login';
 import Register from '../auth/register';
 import { styles } from '../../assets/styles';
@@ -20,13 +20,13 @@ const MainNavContainer = TabNavigator({
             ),
         },
     },
-    MyEvents: {
-        screen: MyEventsStack,
+    Groups: {
+        screen: GroupStack,
         navigationOptions: {
-            tabBarLabel: 'My Events',
+            tabBarLabel: 'Groups',
             tabBarIcon: ({ tintColor, focused }) => (
                 <PlatformIonicon
-                    name='calendar'
+                    name='people'
                     size={20}
                     style={{ color: tintColor }}
                 />
@@ -36,7 +36,7 @@ const MainNavContainer = TabNavigator({
     Profile: {
         screen: ProfileStack,
         navigationOptions: {
-            tabBarLabel: 'Profile',
+            tabBarLabel: 'My Koota',
             tabBarIcon: ({ tintColor, focused }) => (
                 <PlatformIonicon
                     name='person'

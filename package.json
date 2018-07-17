@@ -37,6 +37,7 @@
     "react-native-swiper": "^1.5.13",
     "react-native-tab-view": "0.0.74",
     "react-navigation": "^1.0.0-beta.19",
+    "react-navigation-backhandler": "^1.1.1",
     "react-redux": "^5.0.6",
     "redux": "^3.7.2",
     "redux-persist": "^5.5.0",

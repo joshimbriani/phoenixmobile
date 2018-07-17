@@ -41,8 +41,6 @@ class NewMessage extends React.Component {
     componentDidMount() {
         this.props.navigation.setParams({ startConversation: this.startConversation, toUsers: this.state.toUsers });
         
-        console.log(this.props.navigation.state.params.interested)
-        console.log(this.props.navigation.state.params.going)
         this.setState({creator: this.props.navigation.state.params.creator, interested: this.removeUserFromList(this.props.navigation.state.params.interested), going: this.removeUserFromList(this.props.navigation.state.params.going)});
     }
 
