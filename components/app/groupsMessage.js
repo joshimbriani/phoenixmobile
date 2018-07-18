@@ -3,24 +3,23 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { styles } from '../../assets/styles';
 import { Text, View } from 'react-native';
-import { Fab } from 'native-base';
+import { generateUserToString } from '../utils/textUtils';
 
-import ThreadsView from './messaging/threadsView';
+import ConversationView from './messaging/conversationView';
 import PlatformIonicon from '../utils/platformIonicon';
+
 
 class GroupsMessage extends React.Component {
     render() {
         if (Object.keys(this.props.group).length > 0) {
             return (
                 <View style={styles.flex1} >
-                    <ThreadsView
+                    <ConversationView
+                        newConvo={false}
+                        thread={this.props.group.thread}
                         eventName={this.props.group.name}
                         color={this.props.group.color}
-                        threads={this.props.group.thread}
-                        creator={this.props.event.userBy.username}
-                        navigation={this.props.navigation}
-                        userGoing={this.props.userGoing}
-                        userInterested={this.props.userInterested}
+                        userString={generateUserToString(this.props.user.id, this.props.group.users, null)}
                     />
                 </View>
             )
@@ -43,6 +42,7 @@ GroupsMessage.propTypes = {
 
 function mapStateToProps(state) {
     return {
+        user: state.userReducer.user
     };
 }
 

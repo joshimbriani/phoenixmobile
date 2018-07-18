@@ -78,9 +78,7 @@ class NewMessage extends React.Component {
 
     removeUserFromList(list) {
         var copy = list.slice();
-        console.log(list, copy)
         for (var i = copy.length-1; i >= 0; i--) {
-            console.log(copy[i].id, this.props.user.id)
             if (copy[i].id === this.props.user.id) {
                 copy.splice(i, 1);
             }

@@ -25,6 +25,8 @@ import myEventDetailWrapper from '../myevents/myEventDetailWrapper';
 import ConversationView from '../app/messaging/conversationView';
 import NewMessage from '../app/messaging/newMessage';
 import GroupWrapper from '../app/groupWrapper';
+import GroupsList from '../app/groupsList';
+import NewGroup from '../app/newGroup';
 import { styles } from '../../assets/styles';
 
 export const HomeStack = StackNavigator({
@@ -150,13 +152,21 @@ export const ProfileStack = StackNavigator({
 });
 
 export const GroupStack = StackNavigator({
-    GroupHome: {
-        path: '/groups',
+    GroupsList: {
+        path: '/groups/',
+        screen: GroupsList
+    },
+    GroupWrapper: {
+        path: '/groups/:id',
         screen: GroupWrapper
     },
     ConversationView: {
         path: '/thread/:threadid',
         screen: ConversationView
+    },
+    NewGroup: {
+        path: '/groups/news',
+        screen: NewGroup
     },
     NewMessage: {
         path: '/thread/new',

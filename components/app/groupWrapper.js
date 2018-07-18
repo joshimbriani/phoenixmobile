@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { Platform, Text } from 'react-native';
+import { Platform, Text, Dimensions } from 'react-native';
 import PlatformIonicon from '../utils/platformIonicon';
 
 import { TabViewAnimated, TabBar } from 'react-native-tab-view';
@@ -12,16 +12,8 @@ const initialLayout = {
 };
 
 class GroupWrapper extends React.Component{
-    static navigationOptions = (Platform.OS === 'android') ? ({ navigation }) => ({
-        title: 'Groups',
-        headerLeft: <PlatformIonicon
-            name="menu"
-            style={{ paddingLeft: 10 }}
-            size={35}
-            onPress={() => navigation.navigate('DrawerOpen')} />
-    }) : ({ navigation }) => ({
-        title: 'Home',
-        headerStyle: { paddingTop: -22, }
+    static navigationOptions = ({ navigation }) => ({
+        title: navigation.state.params.groupName,
     });
 
     constructor(props) {
@@ -34,26 +26,36 @@ class GroupWrapper extends React.Component{
         this.state = {
             index: 0,
             routes: routes,
+            group: {}
         }
 
-    }  
+    }
 
-    render() {
-        return (
-            <Text>Group</Text>
-        )
+    componentDidMount() {
+        fetch(getURLForPlatform() + "api/v1/groups/" + this.props.navigation.state.groupID, {
+            headers: {
+                Authorization: "Token " + this.props.token
+            },
+        })
+            .then(response => response.json())
+            .then(responseObj => {
+                this.setState({group: responseObj})
+                this.props.navigation.setParams({groupName: responseObj["name"]})
+            });
+
+        
     }
 
     _handleIndexChange = index => this.setState({ index });
 
-    _renderHeader = props => <TabBar {...props} labelStyle={{fontSize: 11}} style={[styles.eventTabBar, { backgroundColor: '#' + this.props.navigation.state.params.color }]} />;
+    _renderHeader = props => <TabBar {...props} labelStyle={{fontSize: 11}} style={[styles.eventTabBar, { backgroundColor: '#' + this.state.group.color }]} />;
 
     _renderScene = ({ route }) => {
         switch (route.key) {
             case 'messages':
-                return <EventDetailDetails event={this.state.eventData} color={this.props.navigation.state.params.color} navigation={this.props.navigation} />;
+                return <GroupsMessage group={this.state.group} />;
             case 'details':
-                return <EventDetailPlace event={this.state.eventData} color={this.props.navigation.state.params.color} navigation={this.props.navigation} />;
+                return <GroupsMessage group={this.state.group} />;
             default:
                 return null;
         }

@@ -182,7 +182,6 @@ class ConversationView extends React.Component {
 
         if (this.props.navigation.state.params.newConvo && this.state.messages.length < 1) {
             // Is a newConvo
-            console.log(this.props.navigation.state.params)
             var messageBody = {
                 from: this.props.user.id,
                 sentDate: new Date(),

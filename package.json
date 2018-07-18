@@ -33,6 +33,7 @@
     "react-native-popup-menu": "^0.12.6",
     "react-native-progress": "^3.5.0",
     "react-native-settings-list": "^1.8.0",
+    "react-native-status-color-picker": "^1.0.5",
     "react-native-super-grid": "^1.1.0",
     "react-native-swiper": "^1.5.13",
     "react-native-tab-view": "0.0.74",
