@@ -197,14 +197,17 @@ class NewGroup extends React.Component{
             return;
         }
 
+        console.log(this.state.groupUsers)
         if (this.state.groupUsers.length < 2) {
-            this.setState({errors: "You need to add at least one user to your group beside yourself!"})
+            this.setState({errors: "You need to add at least one user to your group beside yourself!"});
+            return;
         }
 
         var groupObject = {
             'name': this.state.name,
             'users': this.state.groupUsers.map(user => user.id),
-            'color': this.state.color
+            'color': this.state.color,
+            'description': this.state.description
         }
 
         fetch(getURLForPlatform() + "api/v1/groups/", {
@@ -217,9 +220,9 @@ class NewGroup extends React.Component{
         .then(response => response.json())
         .then(responseObj => {
             if (responseObj["success"]) {
-                console.log("Success")
+                this.props.navigation.navigate('GroupWrapper', {backKey: this.props.navigation.state.key, groupID: responseObj["groupID"]});
             } else {
-                console.log("Fail")
+                this.setState({errors: "Something went wrong. Please try again in a few minutes."})
             }
         });
     }

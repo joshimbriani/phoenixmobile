@@ -20,6 +20,7 @@ class GroupsMessage extends React.Component {
                         eventName={this.props.group.name}
                         color={this.props.group.color}
                         userString={generateUserToString(this.props.user.id, this.props.group.users, null)}
+                        navigation={this.props.navigation}
                     />
                 </View>
             )

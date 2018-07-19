@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { Platform, Text, FlatList, View } from 'react-native';
+import { Platform, Text, FlatList, View, TouchableOpacity, RefreshControl, DeviceEventEmitter } from 'react-native';
 import PlatformIonicon from '../utils/platformIonicon';
 import { getURLForPlatform } from '../utils/networkUtils';
 
@@ -23,22 +23,45 @@ class GroupsList extends React.Component{
         super(props);
 
         this.state = {
-            groups: []
+            groups: [],
+            refreshing: false
         }
 
     }  
 
     componentDidMount() {
         this.loadGroups();
+
+        DeviceEventEmitter.addListener('refresh', (e)=>{ this.loadGroups() })
     }
 
     _keyExtractor = (item, index) => item.id;
 
-    _renderItem = ({item}) => (
-        <View>
-            <Text>{item.name}</Text>
-        </View>
-    )
+    _renderItem = ({item, index}) => {
+        return (
+        <TouchableOpacity onPress={() => this.props.navigation.navigate('GroupWrapper', {groupID: item.id})}>
+            <View key={index} style={{flexDirection: 'row', height: 75, borderBottomWidth: 1}}>
+                <View style={{justifyContent: 'center', paddingRight: 10, paddingLeft: 10}}>
+                    <View style={{backgroundColor: item.color, height: 50, aspectRatio: 1, borderRadius: 50}}></View>
+                </View>
+                <View style={{justifyContent: 'center', flex: 1}}>
+                    <Text style={{fontWeight: 'bold'}}>{item.name}</Text>
+                </View>
+                <View style={{justifyContent: 'center', paddingRight: 5}}>
+                    <PlatformIonicon
+                        name={"arrow-dropright"}
+                        size={50}
+                        style={{color: "black"}}
+                    />
+                </View>
+            </View>
+        </TouchableOpacity>
+    )}
+
+    _onRefresh = () => {
+        this.setState({refreshing: true})
+        this.loadGroups();
+    }
 
     render() {
         // TODO: Pass the groupID through the GroupWrapper
@@ -49,6 +72,12 @@ class GroupsList extends React.Component{
                     extraData={this.state}
                     keyExtractor={this._keyExtractor}
                     renderItem={this._renderItem}
+                    refreshControl={
+                        <RefreshControl
+                            refreshing={this.state.refreshing}
+                            onRefresh={this._onRefresh}
+                        />
+                    }
                 />
                 <Fab
                     active={true}
@@ -74,7 +103,7 @@ class GroupsList extends React.Component{
         })
             .then(response => response.json())
             .then(responseObj => {
-                this.setState({groups: responseObj["groups"]})
+                this.setState({groups: responseObj["groups"], refreshing: false})
             });
     }
 }

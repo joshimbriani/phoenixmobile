@@ -29,7 +29,7 @@ class ConversationView extends React.Component {
         // TODO: when the convo is a new one, users can just contain the logged in user
         // But when we switch to websockets, it's possible for others to message before the user
         // Closes the conversation
-        if (this.props.navigation.state.params.newConvo) {
+        if (this.props.navigation && this.props.navigation.state && this.props.navigation.state.params && this.props.navigation.state.params.newConvo) {
             this.state = {
                 messageContent: "",
                 messages: [],
@@ -39,11 +39,20 @@ class ConversationView extends React.Component {
                 ]
             }
         } else {
-            this.state = {
-                messageContent: "",
-                messages: this.props.navigation.state.params.thread.messages,
-                threadID: this.props.navigation.state.params.thread.id,
-                users: this.props.navigation.state.params.thread.users
+            if (this.props.navigation && this.props.navigation.state && this.props.navigation.state.params && this.props.navigation.state.params.thread) {
+                this.state = {
+                    messageContent: "",
+                    messages: this.props.navigation.state.params.thread.messages,
+                    threadID: this.props.navigation.state.params.thread.id,
+                    users: this.props.navigation.state.params.thread.users
+                }
+            } else if (this.props.thread) {
+                this.state = {
+                    messageContent: "",
+                    messages: this.props.thread.messages,
+                    threadID: this.props.thread.id,
+                    users: this.props.thread.users
+                }
             }
         }
 
@@ -54,7 +63,6 @@ class ConversationView extends React.Component {
     _keyExtractor = (item, index) => item.id;
 
     componentDidMount() {
-        //console.log(this.scrollView)
         setTimeout(() => {
             this.scrollView.scrollToEnd({animated: false})
         }, 150);
@@ -68,6 +76,7 @@ class ConversationView extends React.Component {
     }
 
     render() {
+        console.log(this.state.users)
         return (
             <View style={[styles.flex1]} >
                 <ScrollView
@@ -112,7 +121,7 @@ class ConversationView extends React.Component {
                         }}
                     />
                 </ScrollView>
-                <KeyboardAvoidingView enabled keyboardVerticalOffset={75} behavior="padding">
+                <KeyboardAvoidingView enabled keyboardVerticalOffset={this.props.navigation ? 75 : 120} behavior="padding">
                     <View style={{ flexDirection: 'row', padding: 5, backgroundColor: '#f9f9f9' }}>
                         <TouchableOpacity
                             onPress={() => console.log("Pressed media button")}>
@@ -180,7 +189,7 @@ class ConversationView extends React.Component {
             return
         }
 
-        if (this.props.navigation.state.params.newConvo && this.state.messages.length < 1) {
+        if (this.props.navigation && this.props.navigation.state && this.props.navigation.state.params.newConvo && this.state.messages.length < 1) {
             // Is a newConvo
             var messageBody = {
                 from: this.props.user.id,
@@ -209,7 +218,6 @@ class ConversationView extends React.Component {
             body: JSON.stringify(messageBody),
         }).then(response => response.json())
             .then(responseJSON => {
-                console.log(responseJSON)
                 this.setState({messageContent: ""})
 
                 if (this.state.threadID === '') {

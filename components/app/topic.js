@@ -148,9 +148,7 @@ export default connect(
 )(Topic);
 
 function isTopicFollowed (topicList, topic) {
-    console.log("testing follow")
     for (var i = 0; i < topicList.length; i++) {
-        console.log(topic, topicList[i].id)
         if (topic === topicList[i].id) {
             return true;
         }
