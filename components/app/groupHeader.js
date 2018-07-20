@@ -14,18 +14,22 @@ export class GroupHeader extends React.Component {
                 return (
                     <View style={{paddingLeft: 10, flexDirection: 'row'}}>
                         <TouchableOpacity onPress={this.props.saveEdits}>
-                            <PlatformIonicon
-                                name={'sad'}
-                                size={30}
-                                style={{ color: "black" }}
-                            />
+                            <View style={{padding: 5}}>
+                                <PlatformIonicon
+                                    name={'sad'}
+                                    size={30}
+                                    style={{ color: "black" }}
+                                />
+                            </View>
                         </TouchableOpacity>
                         <TouchableOpacity onPress={this.props.cancelEditing}>
-                            <PlatformIonicon
-                                name={'close-circle'}
-                                size={30}
-                                style={{ color: "black" }}
-                            />
+                            <View style={{padding: 5}}>
+                                <PlatformIonicon
+                                    name={'close-circle'}
+                                    size={30}
+                                    style={{ color: "black" }}
+                                />
+                            </View>
                         </TouchableOpacity>
                     </View>
                 )

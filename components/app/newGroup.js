@@ -197,7 +197,6 @@ class NewGroup extends React.Component{
             return;
         }
 
-        console.log(this.state.groupUsers)
         if (this.state.groupUsers.length < 2) {
             this.setState({errors: "You need to add at least one user to your group beside yourself!"});
             return;

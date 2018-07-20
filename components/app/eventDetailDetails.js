@@ -16,7 +16,7 @@ class EventDetailDetails extends React.Component {
             return (
                 <View style={styles.flex1} >
                     <ScrollView style={{ flex: 1 }}>
-                        <View style={[styles.eventDetailHeader, { backgroundColor: getComplementaryColor('#' + this.props.color) }]} >
+                        <View style={[styles.eventDetailHeader, { backgroundColor: getComplementaryColor(this.props.color) }]} >
                             <Text style={styles.eventDetailHeading}>{this.props.event.title}</Text>
                             <Text style={styles.eventDetailSubHeading}>{getDayOfWeekFromDayNumber(date.getDay())} {getMonthNameFromMonthNumber(date.getMonth())} {date.getDate()}, {date.getFullYear()} @ {(date.getHours() % 12) + ':' + (date.getMinutes() < 10 ? ('0' + date.getMinutes()) : date.getMinutes()) + (date.getHours() < 12 ? 'AM' : 'PM')}</Text>
                             <View style={{flexDirection: 'row'}}>

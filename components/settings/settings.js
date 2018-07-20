@@ -70,19 +70,6 @@ class Settings extends React.Component {
                         <SettingsList.Item
                             icon={
                                 <PlatformIonicon
-                                    name='person'
-                                    size={30}
-                                    style={{ paddingTop: 10, paddingLeft: 5 }}
-                                />
-                            }
-                            title='Profile'
-                            titleInfo={this.props.user["username"]}
-                            titleInfoStyle={styles.titleInfoStyle}
-                            onPress={() => this.props.navigation.navigate("ProfileSettings", {})}
-                        />
-                        <SettingsList.Item
-                            icon={
-                                <PlatformIonicon
                                     name='notifications'
                                     size={30}
                                     style={{ paddingTop: 10, paddingLeft: 5 }}

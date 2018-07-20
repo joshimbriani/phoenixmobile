@@ -113,7 +113,7 @@ class Topic extends React.Component {
             return (
                 <Container style={{ flex: 1 }}>
                     <View style={{ flex: 10 }}>
-                        <KootaListView colors={this.state.colors} data={this.state.data} pressCallback={(item) => this.props.navigation.navigate('EventDetailWrapper', { event: item.title, id: item.id, color: this.props.navigation.state.params.color })} />
+                        <KootaListView colors={this.state.colors} data={this.state.data} pressCallback={(item) => this.props.navigation.navigate('EventDetailWrapper', { event: item.title, id: item.id, color: '#' + this.props.navigation.state.params.color })} />
                     </View>
                 </Container>
             );

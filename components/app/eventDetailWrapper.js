@@ -10,6 +10,8 @@ import EventDetailPlace from './eventDetailPlace';
 import EventDetailPeople from './eventDetailPeople';
 import EventDetailMessages from './eventDetailMessages';
 
+import { getMaterialColor } from '../utils/styleutils';
+
 import {
     Menu,
     MenuTrigger,
@@ -28,7 +30,7 @@ class EventDetailWrapper extends React.Component {
 
     static navigationOptions = ({ navigation }) => ({
         title: navigation.state.params.event,
-        headerStyle: { backgroundColor: '#' + navigation.state.params.color },
+        headerStyle: { backgroundColor: navigation.state.params.color },
         headerRight: <Menu style={{paddingRight: 20}}>
             <MenuTrigger>
                 <View style={{paddingLeft: 20, paddingRight: 20, paddingTop: 10, paddingBottom: 10}}>
@@ -66,16 +68,18 @@ class EventDetailWrapper extends React.Component {
             eventData: {},
             index: 0,
             routes: routes,
+            color: getMaterialColor()
         }
 
         this.loadEvent = this.loadEvent.bind(this);
         this.markUserAsGoing = this.markUserAsGoing.bind(this);
         this.markUserAsInterested = this.markUserAsInterested.bind(this);
+
     }  
 
     _handleIndexChange = index => this.setState({ index });
 
-    _renderHeader = props => <TabBar {...props} labelStyle={{fontSize: 11}} style={[styles.eventTabBar, { backgroundColor: '#' + this.props.navigation.state.params.color }]} />;
+    _renderHeader = props => <TabBar {...props} labelStyle={{fontSize: 11}} style={[styles.eventTabBar, { backgroundColor: this.props.navigation.state.params.color }]} />;
 
     _renderScene = ({ route }) => {
         switch (route.key) {
@@ -101,6 +105,10 @@ class EventDetailWrapper extends React.Component {
     componentDidMount() {
         this.loadEvent();
         this.props.navigation.setParams({ markUserAsInterested: this.markUserAsInterested, markUserAsGoing: this.markUserAsGoing, loadEvent: this.loadEvent, userID: this.props.user.id });
+
+        if (!this.props.navigation.state.params.color) {
+            this.props.navigation.setParams({color: this.state.color});
+        }
 
         DeviceEventEmitter.addListener('refresh', (e)=>{ this.loadEvent() })
     }

@@ -9,6 +9,8 @@ import PlatformIonicon from '../utils/platformIonicon';
 import {getURLForPlatform} from '../utils/networkUtils';
 import { styles } from '../../assets/styles';
 
+import { getMaterialColor } from '../utils/styleutils';
+
 
 class Search extends React.Component {
     state = {
@@ -27,7 +29,7 @@ class Search extends React.Component {
 
     componentDidMount() {
         this.props.colorActions.resetColor();
-        fetch(getURLForPlatform() + "api/v1/search?query=" + this.props.navigation.state.params.query).then(response => response.json())
+        fetch(getURLForPlatform() + "api/v1/search/?query=" + this.props.navigation.state.params.query).then(response => response.json())
             .then(responseObj => {
                 this.setState({ data: responseObj });
             })
@@ -67,9 +69,10 @@ class Search extends React.Component {
                             )
                         }
                         if (section.title === "Events") {
+                            const color = getMaterialColor();
                             return (
-                                <TouchableHighlight onPress={() => { this.props.navigation.navigate('EventDetailWrapper', { event: item.title, id: item.id }) }}>
-                                    <View key={item.id} style={[styles.listitem]}>
+                                <TouchableHighlight onPress={() => { this.props.navigation.navigate('EventDetailWrapper', { event: item.title, id: item.id, color: color }) }}>
+                                    <View key={item.id} style={[styles.listitem, {backgroundColor: color}]}>
                                         <Text style={styles.itemText}>{item.title}</Text>
                                     </View>
                                 </TouchableHighlight>

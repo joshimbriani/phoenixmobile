@@ -22,8 +22,8 @@ export function fetchAchievements(token) {
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json',
+                'Authorization': 'Token ' + token
             },
-            Authorization: 'Token ' + token
         }).then(response => response.json())
             .then(responseObj => dispatch(saveAchievements(responseObj)));
     }

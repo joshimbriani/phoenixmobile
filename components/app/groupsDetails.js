@@ -33,7 +33,7 @@ class GroupsDetails extends React.Component {
     render() {
         if (Object.keys(this.props.group).length > 0) {
             return (
-                <View style={styles.flex1} >
+                <View style={[styles.flex1, {padding: 10}]} >
                     <View style={{flexDirection: 'row', height: 50}}>
                         <View style={{flex: 1}}>
                             <Text style={{fontWeight: 'bold'}}>Name</Text>
@@ -64,7 +64,7 @@ class GroupsDetails extends React.Component {
                                 />
                             </HideableView>
                             <HideableView hide={this.props.editing}>
-                                <View style={{ backgroundColor: this.props.color, height: 50, aspectRatio: 1 }}></View>
+                                <View style={{ backgroundColor: this.props.group.color, height: 50, aspectRatio: 1, borderRadius: 30 }}></View>
                             </HideableView>
                         </View>
                     </View>

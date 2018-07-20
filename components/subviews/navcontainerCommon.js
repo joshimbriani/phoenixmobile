@@ -5,7 +5,6 @@ import { StackNavigator } from 'react-navigation';
 import PlatformIonicon from '../utils/platformIonicon';
 import Suggested from '../app/suggested';
 import ProfileTabContainer from '../profile/profileTabContainer';
-import MyEvents from '../myevents/myEvents';
 import Home from '../app/home';
 import Topic from '../app/topic';
 import Settings from '../settings/settings';
@@ -21,7 +20,7 @@ import Search from '../app/search';
 import EventDetailWrapper from '../app/eventDetailWrapper';
 import Filter from './filter';
 import IDK from '../app/idk';
-import myEventDetailWrapper from '../myevents/myEventDetailWrapper';
+import MyEvents from '../profile/myEvents';
 import ConversationView from '../app/messaging/conversationView';
 import NewMessage from '../app/messaging/newMessage';
 import GroupWrapper from '../app/groupWrapper';
@@ -129,18 +128,6 @@ export const SettingsStack = StackNavigator({
     }
 });
 
-export const MyEventsStack = StackNavigator({
-    MyEvents: {
-        screen: MyEvents,
-        navigationOptions: ({ navigation }) => ({
-            title: 'My Events'
-        })
-    },
-    MyEventsDetail: {
-        screen: myEventDetailWrapper,
-    }
-});
-
 export const ProfileStack = StackNavigator({
     ProfileTabContainer: {
         screen: ProfileTabContainer,
@@ -148,6 +135,10 @@ export const ProfileStack = StackNavigator({
         navigationOptions: ({ navigation }) => ({
             title: 'Profile'
         })
+    },
+    EventDetailWrapper: {
+        screen: EventDetailWrapper,
+        path: '/event/:id'
     }
 });
 

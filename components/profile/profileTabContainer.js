@@ -7,6 +7,7 @@ import { bindActionCreators } from 'redux';
 
 import Profile from './profile';
 import Achievements from './achievements';
+import MyEvents from './myEvents';
 import * as achievementActions from '../../redux/actions/achievements';
 import * as userActions from '../../redux/actions/user';
 import { styles } from '../../assets/styles';
@@ -18,14 +19,14 @@ const initialLayout = {
 
 class ProfileTabContainer extends React.Component {
     static navigationOptions = (Platform.OS === 'android') ? ({ navigation }) => ({
-        title: 'Profile',
+        title: 'My Koota',
         headerLeft: <PlatformIonicon
             name="menu"
             style={{ paddingLeft: 10 }}
             size={35}
             onPress={() => navigation.navigate('DrawerOpen')} />
     }) : ({ navigation }) => ({
-        title: 'Profile',
+        title: 'My Koota',
         headerStyle: { paddingTop: -22, }
     });
 
@@ -33,6 +34,7 @@ class ProfileTabContainer extends React.Component {
         index: 0,
         routes: [
             { key: 'profile', title: 'My Profile' },
+            { key: 'myEvents', title: 'My Events'},
             { key: 'achievements', title: 'Achievements' },
         ],
     };
@@ -46,22 +48,27 @@ class ProfileTabContainer extends React.Component {
         this.setState({ index });
         if (index === 0) {
             this.props.userActions.loadUser(this.props.token);
-        } else if (index === 1) {
-            this.props.achievementActions.fetchAchievements(this.props.token);
         }
     }
 
-    _renderHeader = props => <TabBar {...props} />;
+    _renderHeader = props => <TabBar labelStyle={{fontSize: 11}} {...props} />;
 
-    _renderScene = SceneMap({
-        profile: Profile,
-        achievements: Achievements,
-    });
+    _renderScene = ({ route }) => {
+        switch (route.key) {
+            case 'profile':
+                return <Profile navigation={this.props.navigation} />;
+            case 'achievements':
+                return <Achievements navigation={this.props.navigation} />;
+            case 'myEvents':
+                return <MyEvents navigation={this.props.navigation} />
+            default:
+                return null;
+        }
+    }
 
     render() {
         return (
             <TabViewAnimated
-                style={styles.container}
                 navigationState={this.state}
                 renderScene={this._renderScene}
                 renderHeader={this._renderHeader}
@@ -74,7 +81,7 @@ class ProfileTabContainer extends React.Component {
 
 function mapStateToProps(state) {
     return {
-        
+        token: state.tokenReducer.token
     };
 }
 

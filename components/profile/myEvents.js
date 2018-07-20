@@ -2,12 +2,13 @@ import React from 'react';
 import { Container, Fab, Header, ListItem, Item, Input, Icon, Button, Text } from 'native-base';
 import { Platform, SectionList, StyleSheet, TouchableHighlight, View } from 'react-native';
 import PlatformIonicon from '../utils/platformIonicon';
-import MyEventDetailWrapper from './myEventDetailWrapper';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { getURLForPlatform } from '../utils/networkUtils';
 import * as userActions from '../../redux/actions/user';
 import { styles } from '../../assets/styles';
+
+import { getMaterialColor } from '../utils/styleutils';
 
 
 class MyEvents extends React.Component {
@@ -27,8 +28,14 @@ class MyEvents extends React.Component {
         headerStyle: { paddingTop: -22, }
     });
 
+    constructor(props) {
+        super(props);
+
+        this.noEventsInMyEvents = this.noEventsInMyEvents.bind(this);
+    }
+
     componentDidMount() {
-            this.props.userActions.loadUser(this.props.token);
+        this.props.userActions.loadUser(this.props.token);
     }
 
     renderEmptySections(section) {
@@ -43,7 +50,7 @@ class MyEvents extends React.Component {
 
     noEventsInMyEvents() {
         if (Object.keys(this.props.user).length > 0) {
-            return this.props.user.eventsCreated.length + this.props.user.goingTo.length + this.props.user.invitedTo.length + this.props.user.interestedIn.length;
+            return this.props.user.events.length + this.props.user.goingTo.length + this.props.user.invitedTo.length + this.props.user.interestedIn.length;
         }
 
         return 0
@@ -63,9 +70,10 @@ class MyEvents extends React.Component {
             <Container>
                 <SectionList
                     renderItem={({ item, section }) => {
+                        const color = getMaterialColor();
                         return (
-                            <TouchableHighlight onPress={() => { this.props.navigation.navigate('MyEventsDetail', { title: item.title, id: item.id }); }}>
-                                <View key={item.id} style={[styles.listitem]}>
+                            <TouchableHighlight onPress={() => this.props.navigation.navigate('EventDetailWrapper', { event: item.title, id: item.id, color: color  }) }>
+                                <View key={item.id} style={[styles.listitem, {backgroundColor: color}]}>
                                     <Text style={styles.itemText}>{item.title}</Text>
                                 </View>
                             </TouchableHighlight>
@@ -73,7 +81,7 @@ class MyEvents extends React.Component {
                     }}
                     renderSectionHeader={({ section }) => this.renderEmptySections(section)}
                     sections={[
-                        {name: 'Created', data: this.props.user.eventsCreated},
+                        {name: 'Created', data: this.props.user.events},
                         {name: 'Going To', data: this.props.user.goingTo},
                         {name: 'Invited To', data: this.props.user.invitedTo},
                         {name: 'Interested In', data: this.props.user.interestedIn}

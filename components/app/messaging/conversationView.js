@@ -76,7 +76,6 @@ class ConversationView extends React.Component {
     }
 
     render() {
-        console.log(this.state.users)
         return (
             <View style={[styles.flex1]} >
                 <ScrollView
