@@ -1,6 +1,6 @@
 import React from 'react';
 import { Container, Content, Form, Header, Item, Input, Icon, Label, Button, Text } from 'native-base';
-import { Alert, StatusBar, FlatList, ScrollView, StyleSheet, TextInput, TouchableHighlight, TouchableOpacity, View } from 'react-native';
+import { Alert, StatusBar, FlatList, ScrollView, StyleSheet, TextInput, TouchableHighlight, TouchableOpacity, View, Picker, ToastAndroid } from 'react-native';
 import PlatformIonicon from '../utils/platformIonicon';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -12,13 +12,9 @@ import fontBasedOnPlatform from '../utils/fontBasedOnPlatform';
 import { getURLForPlatform } from '../utils/networkUtils';
 import { styles } from '../../assets/styles';
 
-const ITEMS_TO_VALIDATE = ["title", "description", "place", "datetime"];
+import { _debouncedSearch } from '../utils/textUtils';
 
-// Temp list of topics
-const topics = [{id: 1, title: "Test"}, {id: 2, title: "Test1"}, {id: 3, title: "Test2"}, 
-                {id: 4, title: "Test3"}, {id: 5, title: "Test4"}, {id: 6, title: "Test5"},
-                {id: 7, title: "Test6"}, {id: 8, title: "Test7"}, {id: 9, title: "Test8"},
-                {id: 7, title: "Test6"}, {id: 8, title: "Test7"}, {id: 9, title: "Test8"}]
+const ITEMS_TO_VALIDATE = ["title", "description", "place", "datetime"];
 
 class NewEvent extends React.Component {
 
@@ -43,13 +39,14 @@ class NewEvent extends React.Component {
             formIsValid: false,
             isDateTimePickerVisible: false,
             topics: [],
-            offers: []
+            offers: [],
+            topic: ""
         }
         this.onChange = this.onChange.bind(this);
         this.formIsValid = this.formIsValid.bind(this);
         this.submitForm = this.submitForm.bind(this);
         this.createTopicList = this.createTopicList.bind(this);
-        this.fetchOffersFromTopics = this.fetchOffersFromTopics.bind(this);
+        this.removeTopic = this.removeTopic.bind(this);
     }
 
     // Todo: Need to decide what to do with objects thst don't exist on the DB. Right now
@@ -76,25 +73,6 @@ class NewEvent extends React.Component {
         this.setState(stateRepresentation);
     }
 
-    componentDidUpdate(nextProps, nextState) {
-        if (nextState.topics !== this.state.topics) {
-            this.fetchOffersFromTopics();
-        }
-    }
-
-    fetchOffersFromTopics() {
-        // ToDo: Probably need to either enable an offers endpoint or to just add all possible 
-        // offers onto an event object or something. Probably the former
-        fetch(getURLForPlatform() + "api/v1/offers/bytopic/?topicIDs=" + this.createTopicList(), {
-            method: 'GET',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
-            },
-        }).then(response => response.json())
-        .then(responseJSON => this.setState({offers: responseJSON["offers"]}))
-    }
-
     fetchTopicsFromDescription() {
         fetch(getURLForPlatform() + "api/v1/events/tags/", {
             method: 'POST',
@@ -107,7 +85,7 @@ class NewEvent extends React.Component {
                 'title': this.state.title
             })
         }).then(response => response.json())
-        .then(responseJSON => this.setState({topics: responseJSON["topics"]}))
+        .then(responseJSON => {console.log(responseJSON["tags"].topics); this.setState({topics: JSON.parse(responseJSON["tags"])["topics"], offers: JSON.parse(responseJSON["offers"])["offers"]})})
     }
 
     formIsValid() {
@@ -120,24 +98,25 @@ class NewEvent extends React.Component {
     }
 
     submitForm() {
-        console.log(this.state);
         fetch(getURLForPlatform() + "api/v1/events/", {
             method: 'POST',
-            Authorization: 'Token ' + this.props.token,
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json',
+                Authorization: 'Token ' + this.props.token,
             },
             body: JSON.stringify({
-                'created': Date.now(),
                 'title': this.state.title,
                 'description': this.state.description,
                 'place': this.state.place,
                 'restrictToSameGender': this.state.restrictToGender,
                 'capacity': this.state.capacity,
+                'datetime': this.state.datetime,
+                'topics': this.state.topics.map((topic) => topic.id)
             })
         }).then(response => {
-            if (this.response.ok) {
+            if (response.ok) {
+                ToastAndroid.show('Event Created', ToastAndroid.SHORT)
                 this.props.navigation.goBack();
             }
         });
@@ -152,8 +131,34 @@ class NewEvent extends React.Component {
         this._hideDateTimePicker();
     };
 
+    removeTopic(index) {
+        var topics = this.state.topics.slice();
+        topics.splice(index, 1);
+        this.setState({topics: topics});
+    }
+
+    addTopic() {
+        if (this.state.topic.length < 1) {
+            return;
+        }
+
+        fetch(getURLForPlatform() + "api/v1/topics/getorcreate/?word=" + this.state.topic, {
+            method: 'PUT',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                Authorization: 'Token ' + this.props.token,
+            },
+        }).then(response => response.json())
+        .then(responseJSON => {
+            var topics = this.state.topics.slice();
+            topics.push(responseJSON)
+            this.setState({topics: topics, topic: ""});
+        });
+    }
 
     render() {
+        console.log(this.state.offers)
         return (
             <Swiper nextButton={<Text>&gt;</Text>} buttonWrapperStyle={{alignItems: 'flex-end'}} prevButton={<Text>&lt;</Text>} style={styles.wrapper} showsButtons={true} loop={false} removeClippedSubviews={false} >
                 <View style={styles.flex1}>
@@ -171,7 +176,7 @@ class NewEvent extends React.Component {
                                     <Label>Title</Label>
                                     <Input 
                                         name="title" 
-                                        onEndEditing={() => this.fetchTopicsFromDescription()} 
+                                        onBlur={() => this.fetchTopicsFromDescription()} 
                                         onChangeText={(text) => this.onChange("title", text)} 
                                     />
                                 </Item>
@@ -179,7 +184,7 @@ class NewEvent extends React.Component {
                                     <Label>Full Description</Label>
                                     <Input
                                         name="description" 
-                                        onEndEditing={() => this.fetchTopicsFromDescription()} 
+                                        onBlur={() => this.fetchTopicsFromDescription()} 
                                         multiline={true} 
                                         numberOfLines={5}
                                         onChangeText={(text) => this.onChange("description", text)} 
@@ -209,7 +214,7 @@ class NewEvent extends React.Component {
                             </ScrollView>
                         }
 
-                        {this.state.offers && this.state.offers.length < 1 && <Text style={{ margin: 5 }}>There are no offers for your event so far! Add some more detail and see if you can find some!</Text>}
+                        {this.state.offers && this.state.offers.length < 1 && <Text style={{ margin: 5 }}>There are no offers for your event so far! Either add some more detail or add some extra topics and see if you can find some!</Text>}
                     </View>
                 </View>
                 <View style={styles.flex1}>
@@ -257,18 +262,27 @@ class NewEvent extends React.Component {
                     </View>
                     <View style={styles.formContainer}>
                         <Content style={styles.flex1}>
-                            <View style={styles.topicContainer}>
-                                {topics && topics.length > 0 && topics.map((topic, index) => 
+                            <View style={[styles.topicContainer, {flex: 3}]}>
+                                {this.state.topics && this.state.topics.length > 0 && this.state.topics.map((topic, index) => 
                                     <View key={index} style={styles.topicBubble}>
-                                        <Text>{topic.title}</Text>
+                                        <PlatformIonicon
+                                            name={'close-circle'}
+                                            size={30}
+                                            style={{ color: "white" }}
+                                            onPress={() => this.removeTopic(index)}
+                                        />
+                                        <Text style={{color: 'white', paddingLeft: 5}}>{topic.name}</Text>
                                     </View>
                                 )}
                             </View>
-                            <Form>
-                                {/*<Item stackedLabel last>
+                            <Form style={{flex: 1}}>
+                                <Item stackedLabel last>
                                     <Label>Add Topic</Label>
-                                    <Input name="topic" onChangeText={(text) => this.onChange("title", text)} />
-                                </Item>*/}
+                                    <Input name="topic" value={this.state.topic} onChangeText={(text) => this.setState({"topic": text})} />
+                                </Item>
+                                <Button title="Add" accessibilityLabel="Press this button to add a new topic." onPress={() => this.addTopic()}>
+                                    <Text>Add</Text>
+                                </Button>
                             </Form>
                         </Content>
                     </View>
@@ -284,17 +298,21 @@ class NewEvent extends React.Component {
                     <Form>
                         <Item floatingLabel>
                             <Label>Amount of People</Label>
-                            <Input name="amount" onChangeText={(text) => this.onChange("amount", text)} />
+                            <Input keyboardType="numeric" name="amount" onChangeText={(text) => this.onChange("amount", text)} />
                         </Item>
-                        <Item floatingLabel>
-                            <Label>Restrict to the same gender?</Label>
-                            <Input name="restrictToGender" onChangeText={(text) => this.onChange("restrictToGender", text)} />
-                        </Item>
+                        <Text>Restrict to the same gender?</Text>
+                            <Picker
+                                selectedValue={this.state.restrictToGender}
+                                style={{ height: 50, width: 100 }}
+                                onValueChange={(itemValue, itemIndex) => this.setState({restrictToGender: itemValue === "true"})}>
+                                <Picker.Item label="Yes" value="true" />
+                                <Picker.Item label="No" value="false" />
+                            </Picker>
                         <Button title="Invite" accessibilityLabel="Invite friends to your event." onPress={this.inviteFriends}>
                             <Text>Invite Friends</Text>
                         </Button>
                     </Form>
-                    <Button title="Submit" accessibilityLabel="Press this button to submit your information and create a new event." disabled={!this.state.formIsValid} onPress={this.submitForm}>
+                    <Button title="Create" accessibilityLabel="Press this button to submit your information and create a new event." disabled={!this.state.formIsValid} onPress={this.submitForm}>
                         <Text>Submit</Text>
                     </Button>
                 </View>

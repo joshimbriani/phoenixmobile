@@ -1,4 +1,5 @@
 import { getMonthNameFromMonthNumber } from './datetimeUtils';
+import { debounce } from 'lodash'
 
 
 export function generateUserToString(userID, users, creator) {
@@ -28,4 +29,8 @@ export function getDateStringForMessage(date) {
     } else {
         return getMonthNameFromMonthNumber(date.getMonth()) + ' ' + date.getDate()
     }
+}
+
+export function _debouncedSearch(func) {
+    debounce(func, 1000);
 }

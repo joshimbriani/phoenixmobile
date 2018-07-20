@@ -157,10 +157,13 @@ export const styles = StyleSheet.create({
         alignSelf: "stretch",
         flexDirection: "row",
         flexWrap: "wrap",
-        backgroundColor: "red",
     },
     topicBubble: {
-        backgroundColor: "green"
+        backgroundColor: "#2ecc71",
+        padding: 10,
+        margin: 10,
+        borderRadius: 10,
+        flexDirection: 'row'
     },
     offerScrollContainer: {
         alignSelf: "stretch",

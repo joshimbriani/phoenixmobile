@@ -15,6 +15,7 @@ import RestrictedModeSettings from '../settings/restricted-mode-settings';
 import HelpSettings from '../settings/help-settings';
 import LegalSettings from '../settings/legal-settings';
 import AboutKootaSettings from '../settings/about-koota-settings';
+import NotificationSettings from '../settings/notificationSettings';
 import NewEvent from '../app/newevent';
 import Search from '../app/search';
 import EventDetailWrapper from '../app/eventDetailWrapper';
@@ -125,6 +126,10 @@ export const SettingsStack = StackNavigator({
         navigationOptions: ({ navigation }) => ({
             title: 'About Koota Settings',
         })
+    },
+    NotificationSettings: {
+        screen: NotificationSettings,
+
     }
 });
 

@@ -34,13 +34,8 @@ class Settings extends React.Component {
         this.onValueChange = this.onValueChange.bind(this);
         this.onValueChange2 = this.onValueChange2.bind(this);
         this.onValueChange3 = this.onValueChange3.bind(this);
+        this.logout = this.logout.bind(this);
         this.state = { switchValue: false, switchValue2: false, switchValue3: false };
-    }
-
-    componentWillReceiveProps(nextProps) {
-        if (nextProps.token === "") {
-            this.resetNavigation('Register');
-        }
     }
 
     render() {
@@ -68,18 +63,19 @@ class Settings extends React.Component {
                     <SettingsList borderColor='#c8c7cc' defaultItemSize={50}>
                         <SettingsList.Header headerStyle={{ marginTop: 15 }} />
                         <SettingsList.Item
-                            icon={
-                                <PlatformIonicon
-                                    name='notifications'
-                                    size={30}
-                                    style={{ paddingTop: 10, paddingLeft: 5 }}
-                                />
-                            }
-                            hasSwitch={true}
-                            switchState={this.state.switchValue}
-                            switchOnValueChange={this.onValueChange}
+                            hasSwitch={false}
                             hasNavArrow={false}
+                            title='Logout'
+                            onPress={() => this.logout()}
+                        />
+                        <SettingsList.Item
+                            icon={<PlatformIonicon
+                                name='notifications'
+                                size={30}
+                                style={{ paddingTop: 10, paddingLeft: 5 }}
+                            />}
                             title='Notifications'
+                            onPress={() => this.props.navigation.navigate("NotificationSettings", {})}
                         />
                         <SettingsList.Item
                             icon={
@@ -208,15 +204,8 @@ class Settings extends React.Component {
         this.setState({ switchValue3: value });
     }
 
-    resetNavigation(targetRoute) {
-        const resetAction = NavigationActions.reset({
-            index: 0,
-            key: null,
-            actions: [
-                NavigationActions.navigate({ routeName: targetRoute }),
-            ],
-        });
-        this.props.navigation.dispatch(resetAction);
+    logout() {
+        this.props.userActions.logout(this.props.token);
     }
 }
 
