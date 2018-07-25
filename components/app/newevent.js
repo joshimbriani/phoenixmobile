@@ -302,7 +302,7 @@ class NewEvent extends React.Component {
                         </Item>
                         <Text>Restrict to the same gender?</Text>
                             <Picker
-                                selectedValue={this.state.restrictToGender}
+                                selectedValue={this.state.restrictToGender ? "true" : "false"}
                                 style={{ height: 50, width: 100 }}
                                 onValueChange={(itemValue, itemIndex) => this.setState({restrictToGender: itemValue === "true"})}>
                                 <Picker.Item label="Yes" value="true" />
