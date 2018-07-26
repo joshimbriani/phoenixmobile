@@ -1,6 +1,6 @@
 import React from 'react';
-import { Container, Content, Form, Header, Item, Input, Icon, Label, Button, Text } from 'native-base';
-import { Alert, StatusBar, FlatList, ScrollView, StyleSheet, TextInput, TouchableHighlight, TouchableOpacity, View, Picker, ToastAndroid } from 'react-native';
+import { Content, Form, Item, Input, Label, Button, Text } from 'native-base';
+import { ScrollView, View, Picker, ToastAndroid } from 'react-native';
 import PlatformIonicon from '../utils/platformIonicon';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -11,6 +11,7 @@ import DateTimePicker from 'react-native-modal-datetime-picker';
 import fontBasedOnPlatform from '../utils/fontBasedOnPlatform';
 import { getURLForPlatform } from '../utils/networkUtils';
 import { styles } from '../../assets/styles';
+import { OfferContainer } from './offerContainer';
 
 import { _debouncedSearch } from '../utils/textUtils';
 
@@ -40,6 +41,7 @@ class NewEvent extends React.Component {
             isDateTimePickerVisible: false,
             topics: [],
             offers: [],
+            selectedOffers: [],
             topic: ""
         }
         this.onChange = this.onChange.bind(this);
@@ -47,6 +49,7 @@ class NewEvent extends React.Component {
         this.submitForm = this.submitForm.bind(this);
         this.createTopicList = this.createTopicList.bind(this);
         this.removeTopic = this.removeTopic.bind(this);
+        this.addToEvent = this.addToEvent.bind(this);
     }
 
     // Todo: Need to decide what to do with objects thst don't exist on the DB. Right now
@@ -85,7 +88,22 @@ class NewEvent extends React.Component {
                 'title': this.state.title
             })
         }).then(response => response.json())
-        .then(responseJSON => {console.log(responseJSON["tags"].topics); this.setState({topics: JSON.parse(responseJSON["tags"])["topics"], offers: JSON.parse(responseJSON["offers"])["offers"]})})
+        .then(responseJSON => {
+            this.setState({topics: JSON.parse(responseJSON["tags"]), offers: JSON.parse(responseJSON["offers"])})
+        })
+    }
+
+    fetchOffersFromTopics() {
+        fetch(getURLForPlatform() + "api/v1/offers/?topicIDs=" + this.state.topics.map((topic) => topic.id).join(","), {
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                Authorization: 'Token ' + this.props.token,
+            },
+        }).then(response => response.json())
+        .then(responseJSON =>  {
+            this.setState({offers: responseJSON});
+        })
     }
 
     formIsValid() {
@@ -134,7 +152,7 @@ class NewEvent extends React.Component {
     removeTopic(index) {
         var topics = this.state.topics.slice();
         topics.splice(index, 1);
-        this.setState({topics: topics});
+        this.setState({topics: topics},this.fetchOffersFromTopics);
     }
 
     addTopic() {
@@ -153,12 +171,19 @@ class NewEvent extends React.Component {
         .then(responseJSON => {
             var topics = this.state.topics.slice();
             topics.push(responseJSON)
-            this.setState({topics: topics, topic: ""});
+            this.setState({topics: topics, topic: ""},this.fetchOffersFromTopics);
         });
     }
 
+    addToEvent(offerID) {
+        var offers = this.state.selectedOffers.slice();
+        if (offers.indexOf(offerID) === -1) {
+            offers.push(offerID);
+            this.setState({selectedOffers: offers});
+        }
+    }
+
     render() {
-        console.log(this.state.offers)
         return (
             <Swiper nextButton={<Text>&gt;</Text>} buttonWrapperStyle={{alignItems: 'flex-end'}} prevButton={<Text>&lt;</Text>} style={styles.wrapper} showsButtons={true} loop={false} removeClippedSubviews={false} >
                 <View style={styles.flex1}>
@@ -206,9 +231,7 @@ class NewEvent extends React.Component {
                         {this.state.offers && this.state.offers.length > 0 && <ScrollView style={styles.offerScrollContainer}>
                             {this.state.offers.map((offer, index) => {
                                 return (
-                                    <View key={index} style={styles.offerItemContainer}>
-                                        <Text>{offer.name}</Text>
-                                    </View>
+                                    <OfferContainer index={index} offer={offer} addToEvent={this.addToEvent} />
                                 )
                             })}
                             </ScrollView>

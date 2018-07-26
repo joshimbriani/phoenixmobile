@@ -137,13 +137,11 @@ class GroupWrapper extends React.Component{
     }
 
     cancelEditing() {
-        console.log("Cancel editing")
         this.setState({editing: false})
         this.props.navigation.setParams({ editing: false })
     }
 
     edit() {
-        console.log("Edit")
         this.setState({editing: true})
         this.props.navigation.setParams({ editing: true })
     }

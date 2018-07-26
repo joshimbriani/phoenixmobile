@@ -169,7 +169,7 @@ export const styles = StyleSheet.create({
         alignSelf: "stretch",
         flexDirection: "row",
         flexWrap: "wrap",
-        backgroundColor: "red",
+        padding: 10
     },
     offerItemContainer: {
         width: 120,
