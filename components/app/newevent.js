@@ -50,6 +50,7 @@ class NewEvent extends React.Component {
         this.createTopicList = this.createTopicList.bind(this);
         this.removeTopic = this.removeTopic.bind(this);
         this.addToEvent = this.addToEvent.bind(this);
+        this.removeFromEvent = this.removeFromEvent.bind(this);
     }
 
     // Todo: Need to decide what to do with objects thst don't exist on the DB. Right now
@@ -109,6 +110,7 @@ class NewEvent extends React.Component {
     formIsValid() {
         for (var property in ITEMS_TO_VALIDATE) {
             if (this.state[ITEMS_TO_VALIDATE[property]] === "") {
+                console.log(property)
                 return false;
             }
         }
@@ -116,6 +118,7 @@ class NewEvent extends React.Component {
     }
 
     submitForm() {
+        console.log(this.state)
         fetch(getURLForPlatform() + "api/v1/events/", {
             method: 'POST',
             headers: {
@@ -128,9 +131,10 @@ class NewEvent extends React.Component {
                 'description': this.state.description,
                 'place': this.state.place,
                 'restrictToSameGender': this.state.restrictToGender,
-                'capacity': this.state.capacity,
+                'capacity': this.state.amount,
                 'datetime': this.state.datetime,
-                'topics': this.state.topics.map((topic) => topic.id)
+                'topics': this.state.topics.map((topic) => topic.id),
+                'offers': this.state.selectedOffers
             })
         }).then(response => {
             if (response.ok) {
@@ -160,6 +164,8 @@ class NewEvent extends React.Component {
             return;
         }
 
+        console.log(this.state.topic)
+
         fetch(getURLForPlatform() + "api/v1/topics/getorcreate/?word=" + this.state.topic, {
             method: 'PUT',
             headers: {
@@ -169,6 +175,7 @@ class NewEvent extends React.Component {
             },
         }).then(response => response.json())
         .then(responseJSON => {
+            console.log(responseJSON)
             var topics = this.state.topics.slice();
             topics.push(responseJSON)
             this.setState({topics: topics, topic: ""},this.fetchOffersFromTopics);
@@ -179,6 +186,15 @@ class NewEvent extends React.Component {
         var offers = this.state.selectedOffers.slice();
         if (offers.indexOf(offerID) === -1) {
             offers.push(offerID);
+            this.setState({selectedOffers: offers});
+        }
+    }
+
+    removeFromEvent(offerID) {
+        var offers = this.state.selectedOffers.slice();
+        const index = offers.indexOf(offerID)
+        if (index !== -1) {
+            offers.splice(index, 1);
             this.setState({selectedOffers: offers});
         }
     }
@@ -221,6 +237,41 @@ class NewEvent extends React.Component {
                 </View>
                 <View style={styles.flex1}>
                     <View style={styles.header}>
+                        <Text style={styles.questionHeader}>Topics?</Text>
+                        <View style={styles.tagline}>
+                            <Text style={styles.taglineText}>Which topics does</Text>
+                            <Text style={styles.taglineText}>your event fit?</Text>
+                        </View>
+                    </View>
+                    <View style={styles.formContainer}>
+                        <Content style={styles.flex1}>
+                            <View style={[styles.topicContainer, {flex: 3}]}>
+                                {this.state.topics && this.state.topics.length > 0 && this.state.topics.map((topic, index) => 
+                                    <View key={index} style={styles.topicBubble}>
+                                        <PlatformIonicon
+                                            name={'close-circle'}
+                                            size={30}
+                                            style={{ color: "white" }}
+                                            onPress={() => this.removeTopic(index)}
+                                        />
+                                        <Text style={{color: 'white', paddingLeft: 5}}>{topic.name}</Text>
+                                    </View>
+                                )}
+                            </View>
+                            <Form style={{flex: 1}}>
+                                <Item stackedLabel last>
+                                    <Label>Add Topic</Label>
+                                    <Input name="topic" value={this.state.topic} onChangeText={(text) => this.setState({"topic": text})} />
+                                </Item>
+                                <Button title="Add" accessibilityLabel="Press this button to add a new topic." onPress={() => this.addTopic()}>
+                                    <Text>Add</Text>
+                                </Button>
+                            </Form>
+                        </Content>
+                    </View>
+                </View>
+                <View style={styles.flex1}>
+                    <View style={styles.header}>
                         <Text style={styles.questionHeader}>Offers?</Text>
                         <View style={styles.tagline}>
                             <Text style={styles.taglineText}>Do any of these standing</Text>
@@ -231,7 +282,7 @@ class NewEvent extends React.Component {
                         {this.state.offers && this.state.offers.length > 0 && <ScrollView style={styles.offerScrollContainer}>
                             {this.state.offers.map((offer, index) => {
                                 return (
-                                    <OfferContainer index={index} offer={offer} addToEvent={this.addToEvent} />
+                                    <OfferContainer index={index} offer={offer} addToEvent={this.addToEvent} removeFromEvent={this.removeFromEvent} />
                                 )
                             })}
                             </ScrollView>
@@ -274,41 +325,6 @@ class NewEvent extends React.Component {
                         onCancel={this._hideDateTimePicker}
                         mode="datetime"
                     />
-                </View>
-                <View style={styles.flex1}>
-                    <View style={styles.header}>
-                        <Text style={styles.questionHeader}>Topics?</Text>
-                        <View style={styles.tagline}>
-                            <Text style={styles.taglineText}>Which topics does</Text>
-                            <Text style={styles.taglineText}>your event fit?</Text>
-                        </View>
-                    </View>
-                    <View style={styles.formContainer}>
-                        <Content style={styles.flex1}>
-                            <View style={[styles.topicContainer, {flex: 3}]}>
-                                {this.state.topics && this.state.topics.length > 0 && this.state.topics.map((topic, index) => 
-                                    <View key={index} style={styles.topicBubble}>
-                                        <PlatformIonicon
-                                            name={'close-circle'}
-                                            size={30}
-                                            style={{ color: "white" }}
-                                            onPress={() => this.removeTopic(index)}
-                                        />
-                                        <Text style={{color: 'white', paddingLeft: 5}}>{topic.name}</Text>
-                                    </View>
-                                )}
-                            </View>
-                            <Form style={{flex: 1}}>
-                                <Item stackedLabel last>
-                                    <Label>Add Topic</Label>
-                                    <Input name="topic" value={this.state.topic} onChangeText={(text) => this.setState({"topic": text})} />
-                                </Item>
-                                <Button title="Add" accessibilityLabel="Press this button to add a new topic." onPress={() => this.addTopic()}>
-                                    <Text>Add</Text>
-                                </Button>
-                            </Form>
-                        </Content>
-                    </View>
                 </View>
                 <View style={styles.flex1}>
                     <View style={styles.header}>

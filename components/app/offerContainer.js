@@ -18,7 +18,7 @@ export class OfferContainer extends React.Component {
         const width = Dimensions.get('window').width;
         if (Object.keys(this.props.offer).length > 0) {
             return (
-                <View key={this.props.index} style={{flexDirection: 'row', shadowRadius: 10, shadowOpacity: 1, shadowColor: 'black', elevation: 2, backgroundColor: 'white', padding: 5}}>
+                <View key={this.props.index} style={{flexDirection: 'row', shadowRadius: 10, shadowOpacity: 1, shadowColor: 'black', elevation: 2, backgroundColor: 'white', padding: 5, marginBottom: 5}}>
                     <View style={{paddingRight: 10}}>
                         <Image
                             style={{ width: 100, height: 100 }}
@@ -29,7 +29,7 @@ export class OfferContainer extends React.Component {
                         {this.props.offer.adType === "OF" && <Text style={{ fontWeight: 'bold' }} numberOfLines={2}>{this.props.offer.name}</Text>}
                         <Text numberOfLines={1}>{this.props.offer.place.name}</Text>
                         <Text numberOfLines={1}>{this.props.offer.place.addressStreet}</Text>
-                        {this.props.offer.place && this.props.offer.place.addressUnit && <Text numberOfLines={1}>{this.props.offer.place.addressUnit}</Text>}
+                        {this.props.offer.place.addressUnit && this.props.offer.place.addressUnit.length > 0 && <Text numberOfLines={1}>{this.props.offer.place.addressUnit}</Text>}
                         <Text numberOfLines={1}>{this.props.offer.place.addressState}</Text>
                         {this.props.offer.adType === "IN" && <Text numberOfLines={1}>{this.props.offer.tagLine}</Text>}
                     </View>
@@ -39,6 +39,8 @@ export class OfferContainer extends React.Component {
                             if (!this.state.checked) {
                                 // It wasn't checked but now it is
                                 this.props.addToEvent(this.props.offer.id);
+                            } else {
+                                this.props.removeFromEvent(this.props.offer.id);
                             }
                             this.setState({checked: !this.state.checked})
                         }}
