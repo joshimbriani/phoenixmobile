@@ -1,6 +1,6 @@
 import React from 'react';
 import { Content, Form, Item, Input, Label, Button, Text } from 'native-base';
-import { ScrollView, View, Picker, ToastAndroid } from 'react-native';
+import { ScrollView, View, Picker, ToastAndroid, KeyboardAvoidingView } from 'react-native';
 import PlatformIonicon from '../utils/platformIonicon';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -12,10 +12,12 @@ import fontBasedOnPlatform from '../utils/fontBasedOnPlatform';
 import { getURLForPlatform } from '../utils/networkUtils';
 import { styles } from '../../assets/styles';
 import { OfferContainer } from './offerContainer';
+import { REACT_SWIPER_BOTTOM_MARGIN } from '../utils/constants';
+import moment from 'moment'
 
 import { _debouncedSearch } from '../utils/textUtils';
 
-const ITEMS_TO_VALIDATE = ["title", "description", "place", "datetime"];
+const ITEMS_TO_VALIDATE = ["title", "description", "place", "datetime", "duration"];
 
 class NewEvent extends React.Component {
 
@@ -89,9 +91,9 @@ class NewEvent extends React.Component {
                 'title': this.state.title
             })
         }).then(response => response.json())
-        .then(responseJSON => {
-            this.setState({topics: JSON.parse(responseJSON["tags"]), offers: JSON.parse(responseJSON["offers"])})
-        })
+            .then(responseJSON => {
+                this.setState({ topics: JSON.parse(responseJSON["tags"]), offers: JSON.parse(responseJSON["offers"]) })
+            })
     }
 
     fetchOffersFromTopics() {
@@ -102,9 +104,9 @@ class NewEvent extends React.Component {
                 Authorization: 'Token ' + this.props.token,
             },
         }).then(response => response.json())
-        .then(responseJSON =>  {
-            this.setState({offers: responseJSON});
-        })
+            .then(responseJSON => {
+                this.setState({ offers: responseJSON });
+            })
     }
 
     formIsValid() {
@@ -119,29 +121,32 @@ class NewEvent extends React.Component {
 
     submitForm() {
         console.log(this.state)
-        fetch(getURLForPlatform() + "api/v1/events/", {
-            method: 'POST',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
-                Authorization: 'Token ' + this.props.token,
-            },
-            body: JSON.stringify({
-                'title': this.state.title,
-                'description': this.state.description,
-                'place': this.state.place,
-                'restrictToSameGender': this.state.restrictToGender,
-                'capacity': this.state.amount,
-                'datetime': this.state.datetime,
-                'topics': this.state.topics.map((topic) => topic.id),
-                'offers': this.state.selectedOffers
-            })
-        }).then(response => {
-            if (response.ok) {
-                ToastAndroid.show('Event Created', ToastAndroid.SHORT)
-                this.props.navigation.goBack();
-            }
-        });
+        // TODO: Need to give error messages
+        if (this.state.formIsValid) {
+            fetch(getURLForPlatform() + "api/v1/events/", {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                    Authorization: 'Token ' + this.props.token,
+                },
+                body: JSON.stringify({
+                    'title': this.state.title,
+                    'description': this.state.description,
+                    'place': this.state.place,
+                    'restrictToSameGender': this.state.restrictToGender,
+                    'capacity': this.state.amount,
+                    'datetime': this.state.datetime,
+                    'topics': this.state.topics.map((topic) => topic.id),
+                    'offers': this.state.selectedOffers
+                })
+            }).then(response => {
+                if (response.ok) {
+                    ToastAndroid.show('Event Created', ToastAndroid.SHORT)
+                    this.props.navigation.goBack();
+                }
+            });
+        }
     }
 
     _showDateTimePicker = () => this.setState({ isDateTimePickerVisible: true });
@@ -149,22 +154,26 @@ class NewEvent extends React.Component {
     _hideDateTimePicker = () => this.setState({ isDateTimePickerVisible: false });
 
     _handleDatePicked = (date) => {
-        this.setState({ datetime: date });
+        if (date - (new Date()) < 0) {
+            // They picked a time in the past
+            // Probably want to give an error message
+            // TODO: Error message
+        } else {
+            this.setState({ datetime: date });
+        }
         this._hideDateTimePicker();
     };
 
     removeTopic(index) {
         var topics = this.state.topics.slice();
         topics.splice(index, 1);
-        this.setState({topics: topics},this.fetchOffersFromTopics);
+        this.setState({ topics: topics }, this.fetchOffersFromTopics);
     }
 
     addTopic() {
         if (this.state.topic.length < 1) {
             return;
         }
-
-        console.log(this.state.topic)
 
         fetch(getURLForPlatform() + "api/v1/topics/getorcreate/?word=" + this.state.topic, {
             method: 'PUT',
@@ -174,19 +183,18 @@ class NewEvent extends React.Component {
                 Authorization: 'Token ' + this.props.token,
             },
         }).then(response => response.json())
-        .then(responseJSON => {
-            console.log(responseJSON)
-            var topics = this.state.topics.slice();
-            topics.push(responseJSON)
-            this.setState({topics: topics, topic: ""},this.fetchOffersFromTopics);
-        });
+            .then(responseJSON => {
+                var topics = this.state.topics.slice();
+                topics.push(responseJSON)
+                this.setState({ topics: topics, topic: "" }, this.fetchOffersFromTopics);
+            });
     }
 
     addToEvent(offerID) {
         var offers = this.state.selectedOffers.slice();
         if (offers.indexOf(offerID) === -1) {
             offers.push(offerID);
-            this.setState({selectedOffers: offers});
+            this.setState({ selectedOffers: offers });
         }
     }
 
@@ -195,13 +203,16 @@ class NewEvent extends React.Component {
         const index = offers.indexOf(offerID)
         if (index !== -1) {
             offers.splice(index, 1);
-            this.setState({selectedOffers: offers});
+            this.setState({ selectedOffers: offers });
         }
     }
 
     render() {
+        console.log((new Date()) - this.state.datetime)
+        console.log(typeof this.state.datetime);
+        console.log(this.state.datetime.length > 0)
         return (
-            <Swiper nextButton={<Text>&gt;</Text>} buttonWrapperStyle={{alignItems: 'flex-end'}} prevButton={<Text>&lt;</Text>} style={styles.wrapper} showsButtons={true} loop={false} removeClippedSubviews={false} >
+            <Swiper nextButton={<Text>&gt;</Text>} buttonWrapperStyle={{ alignItems: 'flex-end' }} prevButton={<Text>&lt;</Text>} style={styles.wrapper} showsButtons={true} loop={false} removeClippedSubviews={false} >
                 <View style={styles.flex1}>
                     <View style={styles.header}>
                         <Text style={styles.questionHeader}>What?</Text>
@@ -215,20 +226,20 @@ class NewEvent extends React.Component {
                             <Form>
                                 <Item stackedLabel>
                                     <Label>Title</Label>
-                                    <Input 
-                                        name="title" 
-                                        onBlur={() => this.fetchTopicsFromDescription()} 
-                                        onChangeText={(text) => this.onChange("title", text)} 
+                                    <Input
+                                        name="title"
+                                        onBlur={() => this.fetchTopicsFromDescription()}
+                                        onChangeText={(text) => this.onChange("title", text)}
                                     />
                                 </Item>
                                 <Item stackedLabel last>
                                     <Label>Full Description</Label>
                                     <Input
-                                        name="description" 
-                                        onBlur={() => this.fetchTopicsFromDescription()} 
-                                        multiline={true} 
+                                        name="description"
+                                        onBlur={() => this.fetchTopicsFromDescription()}
+                                        multiline={true}
                                         numberOfLines={5}
-                                        onChangeText={(text) => this.onChange("description", text)} 
+                                        onChangeText={(text) => this.onChange("description", text)}
                                     />
                                 </Item>
                             </Form>
@@ -236,39 +247,44 @@ class NewEvent extends React.Component {
                     </View>
                 </View>
                 <View style={styles.flex1}>
-                    <View style={styles.header}>
-                        <Text style={styles.questionHeader}>Topics?</Text>
-                        <View style={styles.tagline}>
-                            <Text style={styles.taglineText}>Which topics does</Text>
-                            <Text style={styles.taglineText}>your event fit?</Text>
-                        </View>
-                    </View>
-                    <View style={styles.formContainer}>
-                        <Content style={styles.flex1}>
-                            <View style={[styles.topicContainer, {flex: 3}]}>
-                                {this.state.topics && this.state.topics.length > 0 && this.state.topics.map((topic, index) => 
-                                    <View key={index} style={styles.topicBubble}>
-                                        <PlatformIonicon
-                                            name={'close-circle'}
-                                            size={30}
-                                            style={{ color: "white" }}
-                                            onPress={() => this.removeTopic(index)}
-                                        />
-                                        <Text style={{color: 'white', paddingLeft: 5}}>{topic.name}</Text>
-                                    </View>
-                                )}
+                    <KeyboardAvoidingView keyboardVerticalOffset={this.props.navigation ? 35 : 80} behavior="padding" style={styles.flex1}>
+                        <View style={styles.header}>
+                            <Text style={styles.questionHeader}>Topics?</Text>
+                            <View style={styles.tagline}>
+                                <Text style={styles.taglineText}>Which topics does</Text>
+                                <Text style={styles.taglineText}>your event fit?</Text>
                             </View>
-                            <Form style={{flex: 1}}>
-                                <Item stackedLabel last>
-                                    <Label>Add Topic</Label>
-                                    <Input name="topic" value={this.state.topic} onChangeText={(text) => this.setState({"topic": text})} />
-                                </Item>
-                                <Button title="Add" accessibilityLabel="Press this button to add a new topic." onPress={() => this.addTopic()}>
-                                    <Text>Add</Text>
-                                </Button>
-                            </Form>
-                        </Content>
-                    </View>
+                        </View>
+                        <View style={styles.formContainer}>
+                            <ScrollView>
+                                <View style={[styles.topicContainer, { flex: 3 }]}>
+                                    {this.state.topics && this.state.topics.length > 0 && this.state.topics.map((topic, index) =>
+                                        <View key={index} style={styles.topicBubble}>
+                                            <PlatformIonicon
+                                                name={'close-circle'}
+                                                size={30}
+                                                style={{ color: "white" }}
+                                                onPress={() => this.removeTopic(index)}
+                                            />
+                                            <Text style={{ color: 'white', paddingLeft: 5 }}>{topic.name}</Text>
+                                        </View>
+                                    )}
+                                </View>
+                            </ScrollView>
+                            <View style={{marginBottom: REACT_SWIPER_BOTTOM_MARGIN}}>
+                                <Form style={{ flexDirection: 'row' }}>
+                                    <View style={{ flex: 1, paddingLeft: 10 }}>
+                                        <Input placeholder="Add Extra Topics Here" name="topic" value={this.state.topic} onChangeText={(text) => this.setState({ "topic": text })} />
+                                    </View>
+                                    <View style={{paddingRight: 10}}>
+                                        <Button title="Add" accessibilityLabel="Press this button to add a new topic." onPress={() => this.addTopic()}>
+                                            <Text>Add</Text>
+                                        </Button>
+                                    </View>
+                                </Form>
+                            </View>
+                        </View>
+                    </KeyboardAvoidingView>
                 </View>
                 <View style={styles.flex1}>
                     <View style={styles.header}>
@@ -278,17 +294,17 @@ class NewEvent extends React.Component {
                             <Text style={styles.taglineText}>offers apply to your event?</Text>
                         </View>
                     </View>
-                    <View style={{flex: 1, flexDirection: "row", flexWrap: "wrap", alignSelf: "stretch"}}>
+                    <View style={{ flex: 1, flexDirection: "row", flexWrap: "wrap", alignSelf: "stretch" }}>
                         {this.state.offers && this.state.offers.length > 0 && <ScrollView style={styles.offerScrollContainer}>
                             {this.state.offers.map((offer, index) => {
                                 return (
                                     <OfferContainer index={index} offer={offer} addToEvent={this.addToEvent} removeFromEvent={this.removeFromEvent} />
                                 )
                             })}
-                            </ScrollView>
+                        </ScrollView>
                         }
 
-                        {this.state.offers && this.state.offers.length < 1 && <Text style={{ margin: 5 }}>There are no offers for your event so far! Either add some more detail or add some extra topics and see if you can find some!</Text>}
+                        {this.state.offers && this.state.offers.length < 1 && <View style={{ flex: 1, justifyContent: 'center', alignSelf: 'center', padding: 10 }}><Text>There are no offers for your event so far! Either add some more detail or add some extra topics and see if you can find some!</Text></View>}
                     </View>
                 </View>
                 <View style={styles.flex1}>
@@ -310,19 +326,36 @@ class NewEvent extends React.Component {
                     <View style={styles.header}>
                         <Text style={styles.questionHeader}>When?</Text>
                         <View style={styles.tagline}>
-                            <Text style={styles.taglineText}>When do you want</Text>
-                            <Text style={styles.taglineText}>to have your event?</Text>
+                            <Text style={styles.taglineText}>When do you want to have</Text>
+                            <Text style={styles.taglineText}>your event and how long</Text>
+                            <Text style={styles.taglineText}>will it last?</Text>
                         </View>
                     </View>
-                    <Form>
-                        <Button title="SetDateTime" accessibilityLabel="Press this button to set the date and time of your event!" onPress={this._showDateTimePicker}>
-                            <Text>Pick Date and Time</Text>
-                        </Button>
-                    </Form>
+                    <View style={{ flex: 1 }}>
+                        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+                            {typeof this.state.datetime !== "string" && <Text style={{ fontSize: 20, fontWeight: 'bold' }}>{moment(this.state.datetime.toISOString(), moment.ISO_8601).format('MMMM Do YYYY, h:mm:ss a')}</Text>}
+                            {this.state.datetime.length <= 0 && <Text>No Date Selected</Text>}
+                        </View>
+                        <Form style={{ marginBottom: REACT_SWIPER_BOTTOM_MARGIN, paddingLeft: 10 }}>
+                            <Button title="SetDateTime" accessibilityLabel="Press this button to set the date and time of your event!" onPress={this._showDateTimePicker}>
+                                <Text>Pick Date and Time</Text>
+                            </Button>
+                        </Form>
+                    </View>
+                    <View style={{ flex: 1 }}>
+                        <Form>
+                            <Item floatingLabel>
+                                <Label>Duration</Label>
+                                <Input name="place" onChangeText={(text) => this.onChange("duration", text)} />
+                            </Item>
+                        </Form>
+                    </View>
                     <DateTimePicker
                         isVisible={this.state.isDateTimePickerVisible}
                         onConfirm={this._handleDatePicked}
                         onCancel={this._hideDateTimePicker}
+                        minimumDate={new Date()}
+                        is24Hour={false}
                         mode="datetime"
                     />
                 </View>
@@ -334,26 +367,30 @@ class NewEvent extends React.Component {
                             <Text style={styles.taglineText}>you looking to join you?</Text>
                         </View>
                     </View>
-                    <Form>
+                    <Form style={{ flex: 1 }}>
                         <Item floatingLabel>
                             <Label>Amount of People</Label>
                             <Input keyboardType="numeric" name="amount" onChangeText={(text) => this.onChange("amount", text)} />
                         </Item>
-                        <Text>Restrict to the same gender?</Text>
+                        <View style={{ marginLeft: 10, marginRight: 10, marginTop: 10 }}>
+                            <Text>Restrict to the same gender?</Text>
                             <Picker
                                 selectedValue={this.state.restrictToGender ? "true" : "false"}
                                 style={{ height: 50, width: 100 }}
-                                onValueChange={(itemValue, itemIndex) => this.setState({restrictToGender: itemValue === "true"})}>
+                                onValueChange={(itemValue, itemIndex) => this.setState({ restrictToGender: itemValue === "true" })}>
                                 <Picker.Item label="Yes" value="true" />
                                 <Picker.Item label="No" value="false" />
                             </Picker>
-                        <Button title="Invite" accessibilityLabel="Invite friends to your event." onPress={this.inviteFriends}>
+                        </View>
+                    </Form>
+                    <View style={{ flexDirection: 'row', marginBottom: REACT_SWIPER_BOTTOM_MARGIN }}>
+                        <Button title="Invite" accessibilityLabel="Invite friends to your event." onPress={this.inviteFriends} style={{ marginLeft: 10, marginRight: 10 }}>
                             <Text>Invite Friends</Text>
                         </Button>
-                    </Form>
-                    <Button title="Create" accessibilityLabel="Press this button to submit your information and create a new event." disabled={!this.state.formIsValid} onPress={this.submitForm}>
-                        <Text>Submit</Text>
-                    </Button>
+                        <Button title="Create" accessibilityLabel="Press this button to submit your information and create a new event." onPress={this.submitForm}>
+                            <Text>Submit</Text>
+                        </Button>
+                    </View>
                 </View>
             </Swiper>
         );

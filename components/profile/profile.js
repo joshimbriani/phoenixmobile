@@ -1,11 +1,11 @@
 import React from 'react';
-import { View, Text, Image, Button, TextInput, ToastAndroid, TouchableOpacity } from 'react-native';
+import { View, Text, Image, Button, TextInput, ToastAndroid, TouchableOpacity, FlatList } from 'react-native';
 import PlatformIonicon from '../utils/platformIonicon';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 import * as userActions from '../../redux/actions/user';
 import { getURLForPlatform } from '../utils/networkUtils';
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 
 class Profile extends React.Component {
 
@@ -22,6 +22,22 @@ class Profile extends React.Component {
     componentDidMount() {
         this.setState({email: this.props.user.email})
     }
+
+    // TODO: Change 'sad' to 'save'
+    // TODO: replace friend with whatever
+
+    _keyExtractor = (item, index) => item.id;
+
+    _renderItem = ({item}) => (
+        <View>
+            <Image
+                style={{ width: 50, height: 50, borderRadius:25, borderWidth: 1, borderColor: '#ecf0f1' }}
+                source={{ uri: item.profilePicture }}
+            />
+            <Text>{item.username}</Text>
+            
+        </View>
+    );
 
     render() {
         const date = new Date(this.props.user.created);
@@ -104,10 +120,34 @@ class Profile extends React.Component {
                             </View>
                         </View>
                     </View>
+                    <View>
+                        <View style={{flexDirection: 'row', backgroundColor: '#2196F3', alignItems: 'center'}}>
+                            <View style={{flex: 1, padding: 20}}>
+                                <Text style={{fontWeight: 'bold', color: 'white'}}>Requests</Text>
+                            </View>
+                        </View>
+                        <View style={{backgroundColor: '#ecf0f1', padding: 10, flexDirection: 'row'}}>
+                            <FlatList
+                                horizontal={true}
+                                data={this.props.user.pendingRequests}
+                                extraData={this.props}
+                                keyExtractor={this._keyExtractor}
+                                renderItem={this._renderItem}
+                            />
+                        </View>
+                    </View>
+                    <View>
+                        <View style={{flexDirection: 'row', backgroundColor: '#2196F3', alignItems: 'center'}}>
+                            <View style={{flex: 1, padding: 20}}>
+                                <Text style={{fontWeight: 'bold', color: 'white'}}>Friends</Text>
+                            </View>
+                        </View>
+                        <View style={{backgroundColor: '#ecf0f1', padding: 10, flexDirection: 'row'}}>
+                            
+                        </View>
+                    </View>
                 </View>
             </KeyboardAwareScrollView>
-            
-                
         );
     }
 

@@ -1,0 +1,1 @@
+export const REACT_SWIPER_BOTTOM_MARGIN = 45;

@@ -37,16 +37,6 @@ class Home extends React.Component {
             })
     }
 
-    componentWillReceiveProps() {
-        // Not sure why I have this. Do I want it to be auto refreshed?
-        /*fetch(getURLForPlatform("phoenix") + "api/v1/users/topics/?format=json", {
-            Authorization: "Token " + this.props.token
-        }).then(response => response.json())
-            .then(responseObj => {
-                this.setState({ data: [{ id: -1, name: "IDK", color: "0000ff", icon: "help" }].concat(responseObj) });
-            })*/
-    }
-
     static navigationOptions = (Platform.OS === 'android') ? ({ navigation }) => ({
         title: 'Home',
         headerLeft: <PlatformIonicon

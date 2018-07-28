@@ -1,13 +1,10 @@
 import React from 'react';
-import { Container, Fab, Header, Item, Input, Icon, Button, Text } from 'native-base';
-import { Alert, Platform, StyleSheet, TouchableHighlight, View } from 'react-native';
-import GridView from 'react-native-super-grid';
+import { Platform, View } from 'react-native';
 import PlatformIonicon from '../utils/platformIonicon';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import * as colorActions from '../../redux/actions/backgroundColor';
 import * as userActions from '../../redux/actions/user';
-import randomMC from 'random-material-color';
 import SettingsList from 'react-native-settings-list';
 import { Dropdown } from 'react-native-material-dropdown';
 import { NavigationActions } from 'react-navigation';
@@ -36,6 +33,12 @@ class Settings extends React.Component {
         this.onValueChange3 = this.onValueChange3.bind(this);
         this.logout = this.logout.bind(this);
         this.state = { switchValue: false, switchValue2: false, switchValue3: false };
+    }
+
+    componentWillReceiveProps(nextProps) {
+        if (nextProps.token === "") {
+            this.resetNavigation('Register');
+        }
     }
 
     render() {
@@ -206,6 +209,17 @@ class Settings extends React.Component {
 
     logout() {
         this.props.userActions.logout(this.props.token);
+    }
+
+    resetNavigation(targetRoute) {
+        const resetAction = NavigationActions.reset({
+            index: 0,
+            key: null,
+            actions: [
+                NavigationActions.navigate({ routeName: targetRoute }),
+            ],
+        });
+        this.props.navigation.dispatch(resetAction);
     }
 }
 

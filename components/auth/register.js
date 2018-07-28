@@ -31,11 +31,25 @@ class Register extends React.Component {
         this.submitForm = this.submitForm.bind(this);
         this.goToScreenAndErasePreviousScreens = this.goToScreenAndErasePreviousScreens.bind(this);
         this.register = this.register.bind(this);
-        this.parseRegisterSuccess = this.parseRegisterSuccess.bind(this);
+        this.parseRegisterSuccess = this.parseRegisterSuccess.bind(this); 
     }
 
     componentDidMount() {
+        /*const resetAction = NavigationActions.reset({
+            index: 0,
+            actions: [
+                NavigationActions.navigate({ routeName: 'Register' })
+            ]
+          });
+          
+            this.props.navigation.dispatch(resetAction);*/
+          
+          
         if (this.props.token) {
+            if (this.props.navigation.state && this.props.navigation.state.params && this.props.navigation.state.params.stay) {
+                return;
+            }
+
             this.goToScreenAndErasePreviousScreens('Main');
         }
     }
