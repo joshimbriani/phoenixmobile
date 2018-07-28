@@ -27,6 +27,7 @@ import NewMessage from '../app/messaging/newMessage';
 import GroupWrapper from '../app/groupWrapper';
 import GroupsList from '../app/groupsList';
 import NewGroup from '../app/newGroup';
+import AddFriends from '../profile/addFriends';
 import { styles } from '../../assets/styles';
 
 export const HomeStack = StackNavigator({
@@ -144,6 +145,18 @@ export const ProfileStack = StackNavigator({
     EventDetailWrapper: {
         screen: EventDetailWrapper,
         path: '/event/:id'
+    },
+    ConversationView: {
+        path: '/thread/:threadid',
+        screen: ConversationView
+    },
+    NewMessage: {
+        path: '/thread/new',
+        screen: NewMessage
+    },
+    AddFriends: {
+        path: '/addfriends',
+        screen: AddFriends
     }
 });
 

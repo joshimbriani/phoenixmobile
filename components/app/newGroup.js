@@ -170,7 +170,7 @@ class NewGroup extends React.Component{
     }
 
     loadUsers(query) {
-        fetch(getURLForPlatform() + "api/v1/user/search/?username=" + query, {
+        fetch(getURLForPlatform() + "api/v1/user/search/?username=" + query + '&relationship=true', {
             headers: {
                 Authorization: "Token " + this.props.token
             },

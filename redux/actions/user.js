@@ -19,7 +19,10 @@ export function loadUser(token) {
                 'Authorization': 'Token ' + token
             }
         }).then(response => response.json())
-            .then(responseObj => dispatch(saveUserObject(responseObj)));
+            .then(responseObj => {
+                //console.log(responseObj);
+                dispatch(saveUserObject(responseObj))
+            });
     }
 }
 
@@ -28,7 +31,10 @@ export function logout(token) {
         return fetch(getURLForPlatform() + "rest_auth/logout/", {
             method: 'POST',
             Authorization: 'Token ' + token
-        }).then(response => { dispatch(purgeUserObject()); dispatch(purgeUserToken())});
+        }).then(response => { 
+            dispatch(purgeUserObject()); 
+            dispatch(purgeUserToken())
+        });
     }
 }
 

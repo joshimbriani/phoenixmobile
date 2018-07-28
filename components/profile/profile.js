@@ -6,6 +6,7 @@ import { getURLForPlatform } from '../utils/networkUtils';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import { Input, Form, Item } from 'native-base';
 
 class Profile extends React.Component {
 
@@ -13,14 +14,21 @@ class Profile extends React.Component {
         super(props);
         this.state = {
             editingDetails: false,
-            email: this.props.user.email
+            email: this.props.user.email,
+            filteredFriends: [],
+            filterString: ""
         }
 
         this.editUser = this.editUser.bind(this);
+        this.acceptRequest = this.acceptRequest.bind(this);
+        this.denyRequest = this.denyRequest.bind(this);
+        this.filterFriends = this.filterFriends.bind(this);
     }
 
     componentDidMount() {
-        this.setState({email: this.props.user.email})
+        this.setState({email: this.props.user.email, filteredFriends: this.props.user.friends});
+        this.props.userActions.loadUser(this.props.token);
+        this.filterFriends(this.state.filterString, {})
     }
 
     // TODO: Change 'sad' to 'save'
@@ -29,20 +37,132 @@ class Profile extends React.Component {
     _keyExtractor = (item, index) => item.id;
 
     _renderItem = ({item}) => (
-        <View>
+        <View style={{width: 150, justifyContent: 'center', alignItems: 'center', shadowRadius: 10, shadowOpacity: 1, shadowColor: 'black', elevation: 2, backgroundColor: 'white', margin: 10, padding: 5}}>
             <Image
                 style={{ width: 50, height: 50, borderRadius:25, borderWidth: 1, borderColor: '#ecf0f1' }}
                 source={{ uri: item.profilePicture }}
             />
             <Text>{item.username}</Text>
-            
+            <View style={{flexDirection: 'row'}}>
+                <View style={{margin: 5}}>
+                    <Button
+                        onPress={() => this.denyRequest(item.id)}
+                        title="Deny"
+                        color="#F44336"
+                        accessibilityLabel="Deny the friend request"
+                    />
+                </View>
+                <View style={{margin: 5}}>
+                    <Button
+                        onPress={() => this.acceptRequest(item)}
+                        title="Accept"
+                        color="#4CAF50"
+                        accessibilityLabel="Accept the friend request"
+                    />
+                </View>
+            </View>
         </View>
     );
+
+    renderFriends = ({item}) => (
+        <TouchableOpacity onLongPress={() => console.log("Modal press")}>
+            <View style={{ borderBottomWidth: 1, flexDirection: 'row'}}>
+                <View style={{padding: 10}}>
+                    <Image
+                        style={{ width: 50, height: 50, borderRadius:25, borderWidth: 1, borderColor: '#ecf0f1' }}
+                        source={{ uri: item.profilePicture }}
+                    />
+                </View>
+                <View style={{justifyContent: 'center'}}>
+                    <Text style={{margin: 10}}>{item.username}</Text>
+                </View>
+            </View>
+        </TouchableOpacity>
+    )
+
+    acceptRequest(userFor) {
+        console.log("Accept friend request")
+        fetch(getURLForPlatform() + 'api/v1/user/' + this.props.user.id + '/requests/', {
+            headers: {
+                Authorization: "Token " + this.props.token
+            },
+            method: 'PUT',
+            body: JSON.stringify({
+                'status': 1,
+                'user': userFor.id
+            })
+        }).then(request => request.json())
+        .then(requestObject => {
+            if (requestObject["success"]) {
+                this.props.userActions.loadUser(this.props.token).then();
+                this.filterFriends(this.state.filterString, userFor);
+            }
+        })
+    }
+
+    denyRequest(userFor) {
+        console.log("Deny friend request")
+        fetch(getURLForPlatform() + 'api/v1/user/' + this.props.user.id + '/requests/', {
+            headers: {
+                Authorization: "Token " + this.props.token
+            },
+            method: 'PUT',
+            body: JSON.stringify({
+                'status': 3,
+                'user': userFor
+            })
+        }).then(request => request.json())
+        .then(requestObject => {
+            if (requestObject["success"]) {
+                this.props.userActions.loadUser(this.props.token);
+            }
+        })
+    }
+
+    emptyFriendList = () => (
+        <View style={{justifyContent: 'center', alignItems: 'center'}}>
+            <Text>Can't find any users! Add some friends via the add button in the friends heading</Text>
+        </View>
+    );
+
+    filterFriends(text, newFriend) {
+        var filteredFriends = this.props.user.friends.slice();
+        if (Object.keys(newFriend).length > 0 && filteredFriends.map((friend) => friend.id).indexOf(newFriend.id) === -1) {
+            filteredFriends.push(newFriend);
+        }
+        if (text === "") {
+            this.setState({filteredFriends: filteredFriends});
+            return;
+        }
+        for (var i = filteredFriends.length - 1; i >= 0; i--) {
+            if (!filteredFriends[i].username.toUpperCase().includes(text.toUpperCase())) {
+                filteredFriends.splice(i, 1);
+            }
+        }
+
+        this.setState({filteredFriends: filteredFriends});
+    }
+
+    editUser() {
+        fetch(getURLForPlatform() + "api/v1/user/" + this.props.user.id + "/", {
+            headers: {
+                Authorization: "Token " + this.props.token
+            },
+            method: 'PUT',
+            body: JSON.stringify({
+                'email': this.state.email
+            })
+        }).then(response => response.json())
+            .then(responseObj => {
+                this.setState({ email: responseObj["email"], editingDetails: false });
+                this.props.userActions.loadUser(this.props.token);
+            });
+    }
 
     render() {
         const date = new Date(this.props.user.created);
         return (
-            <KeyboardAwareScrollView>
+            <KeyboardAwareScrollView >
                 <View style={{ flex: 1 }}>
                     <View style={{justifyContent: 'center', alignItems: 'center', backgroundColor: '#c0392b', height: 175}}>
                         <Image
@@ -101,6 +221,58 @@ class Profile extends React.Component {
                             </View>
                         </View>
                     </View>
+                    {this.props.user.pendingRequests && this.props.user.pendingRequests.length > 0 && <View>
+                        <View style={{flexDirection: 'row', backgroundColor: '#2196F3', alignItems: 'center'}}>
+                            <View style={{flex: 1, padding: 20}}>
+                                <Text style={{fontWeight: 'bold', color: 'white'}}>Requests</Text>
+                            </View>
+                        </View>
+                        <View style={{backgroundColor: '#ecf0f1', padding: 10, flexDirection: 'row'}}>
+                            <FlatList
+                                horizontal={true}
+                                data={this.props.user.pendingRequests}
+                                extraData={this.props}
+                                keyExtractor={this._keyExtractor}
+                                renderItem={this._renderItem}
+                            />
+                        </View>
+                    </View>}
+                    <View>
+                        <View style={{flexDirection: 'row', backgroundColor: '#2196F3', alignItems: 'center'}}>
+                            <View style={{flex: 1, padding: 20}}>
+                                <Text style={{fontWeight: 'bold', color: 'white'}}>Friends</Text>
+                            </View>
+                            <View style={{paddingRight: 20, flexDirection: 'row'}}>
+                                <TouchableOpacity onPress={() => this.setState({searchFriends: !this.state.searchFriends})}><PlatformIonicon
+                                    name={"search"}
+                                    size={30} //this doesn't adjust the size...?
+                                    style={{ color: "white", paddingRight: 10 }}
+                                /></TouchableOpacity>
+                                <TouchableOpacity onPress={() => this.props.navigation.navigate('AddFriends')}><PlatformIonicon
+                                    name={"add"}
+                                    size={30} //this doesn't adjust the size...?
+                                    style={{ color: "white" }}
+                                /></TouchableOpacity>
+                            </View>
+                        </View>
+                        <View style={{backgroundColor: '#ecf0f1'}}>
+                            {this.state.searchFriends &&
+                            <View style={{padding: 10}}>
+                                <Form>
+                                    <Item>
+                                        <Input value={this.state.filterString} placeholder="Filter Friends" onChangeText={(text) => {this.setState({filterString: text}); this.filterFriends(text, {})}} />
+                                    </Item>
+                                </Form>
+                            </View>}
+                            <FlatList
+                                data={this.state.filteredFriends}
+                                extraData={this.state}
+                                keyExtractor={this._keyExtractor}
+                                renderItem={this.renderFriends}
+                                ListEmptyComponent={this.emptyFriendList}
+                            />
+                        </View>
+                    </View>
                     <View>
                         <View style={{flexDirection: 'row', backgroundColor: '#16a085', alignItems: 'center'}}>
                             <View style={{flex: 1, padding: 20}}>
@@ -120,51 +292,9 @@ class Profile extends React.Component {
                             </View>
                         </View>
                     </View>
-                    <View>
-                        <View style={{flexDirection: 'row', backgroundColor: '#2196F3', alignItems: 'center'}}>
-                            <View style={{flex: 1, padding: 20}}>
-                                <Text style={{fontWeight: 'bold', color: 'white'}}>Requests</Text>
-                            </View>
-                        </View>
-                        <View style={{backgroundColor: '#ecf0f1', padding: 10, flexDirection: 'row'}}>
-                            <FlatList
-                                horizontal={true}
-                                data={this.props.user.pendingRequests}
-                                extraData={this.props}
-                                keyExtractor={this._keyExtractor}
-                                renderItem={this._renderItem}
-                            />
-                        </View>
-                    </View>
-                    <View>
-                        <View style={{flexDirection: 'row', backgroundColor: '#2196F3', alignItems: 'center'}}>
-                            <View style={{flex: 1, padding: 20}}>
-                                <Text style={{fontWeight: 'bold', color: 'white'}}>Friends</Text>
-                            </View>
-                        </View>
-                        <View style={{backgroundColor: '#ecf0f1', padding: 10, flexDirection: 'row'}}>
-                            
-                        </View>
-                    </View>
                 </View>
             </KeyboardAwareScrollView>
         );
-    }
-
-    editUser() {
-        fetch(getURLForPlatform() + "api/v1/user/" + this.props.user.id + "/", {
-            headers: {
-                Authorization: "Token " + this.props.token
-            },
-            method: 'PUT',
-            body: JSON.stringify({
-                'email': this.state.email
-            })
-        }).then(response => response.json())
-            .then(responseObj => {
-                this.setState({ email: responseObj["email"], editingDetails: false });
-                this.props.userActions.loadUser(this.props.token);
-            });
     }
 }
 
