@@ -34,9 +34,6 @@ export class ConversationHeader extends React.Component {
                             <MenuOption onSelect={() => console.log("refresh")}>
                                 <Text>Refresh</Text>
                             </MenuOption>
-                            <MenuOption onSelect={() => console.log("Block user")}>
-                                <Text>Block User</Text>
-                            </MenuOption>
                         </MenuOptions>
                     </Menu>
                 </View>

@@ -156,6 +156,15 @@ class Settings extends React.Component {
                         />
                         <SettingsList.Item
                             icon={<PlatformIonicon
+                                name='notifications'
+                                size={30}
+                                style={{ paddingTop: 10, paddingLeft: 5 }}
+                            />}
+                            title='Blocked Users'
+                            onPress={() => this.props.navigation.navigate("BlockedUserSettings", {})}
+                        />
+                        <SettingsList.Item
+                            icon={<PlatformIonicon
                                 name='hand'
                                 size={30}
                                 style={{ paddingTop: 10, paddingLeft: 5 }}

@@ -34,6 +34,7 @@
     "react-native-gesture-handler": "^1.0.0-alpha.40",
     "react-native-keyboard-aware-scroll-view": "^0.6.0",
     "react-native-material-dropdown": "^0.6.1",
+    "react-native-modal": "^6.5.0",
     "react-native-modal-datetime-picker": "^4.13.0",
     "react-native-popup-menu": "^0.12.6",
     "react-native-progress": "^3.5.0",

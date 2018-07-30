@@ -16,6 +16,7 @@ import HelpSettings from '../settings/help-settings';
 import LegalSettings from '../settings/legal-settings';
 import AboutKootaSettings from '../settings/about-koota-settings';
 import NotificationSettings from '../settings/notificationSettings';
+import BlockedUserSettings from '../settings/blockedSettings';
 import NewEvent from '../app/newevent';
 import Search from '../app/search';
 import EventDetailWrapper from '../app/eventDetailWrapper';
@@ -131,6 +132,9 @@ export const SettingsStack = StackNavigator({
     NotificationSettings: {
         screen: NotificationSettings,
 
+    },
+    BlockedUserSettings: {
+        screen: BlockedUserSettings
     }
 });
 
