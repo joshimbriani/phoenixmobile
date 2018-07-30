@@ -18,9 +18,8 @@ export function loadUser(token) {
                 'Content-Type': 'application/json',
                 'Authorization': 'Token ' + token
             }
-        }).then(response => response.json())
+        }).then(response => response.ok && response.json())
             .then(responseObj => {
-                //console.log(responseObj);
                 dispatch(saveUserObject(responseObj))
             });
     }

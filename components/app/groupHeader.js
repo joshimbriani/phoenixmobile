@@ -5,7 +5,6 @@ import { TouchableOpacity, View } from 'react-native';
 import PlatformIonicon from '../utils/platformIonicon';
 
 // TODO: Probably want to stop hard coding the location of the details slide
-// TODO: NEed to change sad to save
 
 export class GroupHeader extends React.Component {
     render() {
@@ -16,7 +15,7 @@ export class GroupHeader extends React.Component {
                         <TouchableOpacity onPress={this.props.saveEdits}>
                             <View style={{padding: 5}}>
                                 <PlatformIonicon
-                                    name={'sad'}
+                                    name={'save'}
                                     size={30}
                                     style={{ color: "black" }}
                                 />

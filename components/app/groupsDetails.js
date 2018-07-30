@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import { styles } from '../../assets/styles';
 import { Text, View, TextInput } from 'react-native';
 import { Content, Form, Item, Input, Label } from 'native-base';
-import { ColorPicker } from 'react-native-status-color-picker';
+import ColorPicker from '../utils/ColorPicker';
 
 import PlatformIonicon from '../utils/platformIonicon';
 import { materialColors } from '../utils/styleutils';

@@ -34,9 +34,7 @@ class Profile extends React.Component {
         this.filterFriends(this.state.filterString, {})
     }
 
-    // TODO: Change 'sad' to 'save'
     // TODO: replace friend with whatever
-
     _keyExtractor = (item, index) => item.id;
 
     _renderItem = ({ item }) => (
@@ -67,47 +65,49 @@ class Profile extends React.Component {
         </View>
     );
 
-    renderFriends = ({ item }) => (
-        <TouchableOpacity onLongPress={() => this.setState({ modalVisible: true })}>
-            <View style={{ borderBottomWidth: 1, flexDirection: 'row' }}>
-                <View style={{ padding: 10 }}>
-                    <Image
-                        style={{ width: 50, height: 50, borderRadius: 25, borderWidth: 1, borderColor: '#ecf0f1' }}
-                        source={{ uri: item.profilePicture }}
-                    />
-                </View>
-                <View style={{ justifyContent: 'center' }}>
-                    <Text style={{ margin: 10 }}>{item.username}</Text>
-                </View>
-                <Modal
-                    isVisible={this.state.modalVisible}
-                    backdropOpacity={0.5}
-                    onBackButtonPress={() => this.setState({ modalVisible: false })}
-                    onBackdropPress={() => this.setState({ modalVisible: false })}>
-                    <View style={{
-                        borderColor: "rgba(0, 0, 0, 0.1)",
-                        backgroundColor: "white",
-                    }}>
-                        <View style={{
-                            width: 324,
-                            height: 100
-                        }}>
-                            <TouchableOpacity onPress={() => this.unfriendUser(item.id)}>
-                                <View style={{ height: 50, width: 324, borderBottomWidth: 1, borderBottomColor: '#000', justifyContent: 'center', paddingLeft: 10 }}>
-                                    <Text>Unfriend User</Text>
-                                </View>
-                            </TouchableOpacity>
-                            <TouchableOpacity onPress={() => this.blockUser(item.id)}>
-                                <View style={{ height: 50, width: 324, justifyContent: 'center', paddingLeft: 10 }}>
-                                    <Text>Block User</Text>
-                                </View>
-                            </TouchableOpacity>
-                        </View>
+    renderFriends = ({ item }) => {
+        return (
+            <TouchableOpacity onLongPress={() => this.setState({ modalVisible: true })}>
+                <View style={{ borderBottomWidth: 1, flexDirection: 'row' }}>
+                    <View style={{ padding: 10 }}>
+                        <Image
+                            style={{ width: 50, height: 50, borderRadius: 25, borderWidth: 1, borderColor: '#ecf0f1' }}
+                            source={{ uri: item.profilePicture }}
+                        />
                     </View>
-                </Modal>
-            </View>
-        </TouchableOpacity>
-    )
+                    <View style={{ justifyContent: 'center' }}>
+                        <Text style={{ margin: 10 }}>{item.username}</Text>
+                    </View>
+                    <Modal
+                        isVisible={this.state.modalVisible}
+                        backdropOpacity={0.5}
+                        onBackButtonPress={() => this.setState({ modalVisible: false })}
+                        onBackdropPress={() => this.setState({ modalVisible: false })}>
+                        <View style={{
+                            borderColor: "rgba(0, 0, 0, 0.1)",
+                            backgroundColor: "white",
+                        }}>
+                            <View style={{
+                                width: 324,
+                                height: 100
+                            }}>
+                                <TouchableOpacity onPress={() => this.unfriendUser(item.id)}>
+                                    <View style={{ height: 50, width: 324, borderBottomWidth: 1, borderBottomColor: '#000', justifyContent: 'center', paddingLeft: 10 }}>
+                                        <Text>Unfriend User</Text>
+                                    </View>
+                                </TouchableOpacity>
+                                <TouchableOpacity onPress={() => this.blockUser(item.id)}>
+                                    <View style={{ height: 50, width: 324, justifyContent: 'center', paddingLeft: 10 }}>
+                                        <Text>Block User</Text>
+                                    </View>
+                                </TouchableOpacity>
+                            </View>
+                        </View>
+                    </Modal>
+                </View>
+            </TouchableOpacity>
+        )
+    }
 
     unfriendUser(userID) {
         fetch(getURLForPlatform() + 'api/v1/user/' + this.props.user.id + '/unfriend/', {
@@ -262,7 +262,7 @@ class Profile extends React.Component {
                                     style={{ color: "white" }}
                                 /></TouchableOpacity>}
                                 {this.state.editingDetails && <TouchableOpacity onPress={() => this.editUser()}><PlatformIonicon
-                                    name={"sad"}
+                                    name={"save"}
                                     size={30} //this doesn't adjust the size...?
                                     style={{ color: "white", paddingRight: 10 }}
                                 /></TouchableOpacity>}

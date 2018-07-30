@@ -5,7 +5,7 @@ import PlatformIonicon from '../utils/platformIonicon';
 import { getURLForPlatform } from '../utils/networkUtils';
 import Swiper from 'react-native-swiper';
 import { Content, Form, Item, Input, Label } from 'native-base';
-import { ColorPicker } from 'react-native-status-color-picker';
+import ColorPicker from '../utils/ColorPicker';
 
 import { materialColors } from '../utils/styleutils';
 import { styles } from '../../assets/styles';

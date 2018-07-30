@@ -39,7 +39,7 @@ export const styles = StyleSheet.create({
         fontSize: 20,
         paddingTop: 5,
         textAlign: 'center',
-        fontFamily: 'Roboto_medium'
+        fontFamily: 'Roboto'
     },
     listView: {
         flex: 5
@@ -57,7 +57,6 @@ export const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#fff',
-        paddingTop: 22,
     },
     item: {
         padding: 10,
@@ -207,7 +206,7 @@ export const styles = StyleSheet.create({
         marginBottom: 10
     },
     slogan: {
-        fontFamily: "Roboto_thin",
+        fontFamily: "Roboto-Thin",
         color: "white",
         fontSize: 25
     },
@@ -252,7 +251,7 @@ export const styles = StyleSheet.create({
         marginRight: 25
     },
     robotoThin: {
-        fontFamily: "Roboto_thin"
+        fontFamily: "Roboto-Thin"
     },
     socialLoginButtonOverlay: {
         flex: 3
