@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import {
-  View,
+  View,ViewPropTypes
 } from 'react-native';
 
 const HideableView = (props) => {
@@ -27,7 +27,7 @@ HideableView.propTypes = {
       PropTypes.element,
     ])),
   ]).isRequired,
-  style: View.propTypes.style,
+  style: ViewPropTypes.style,
   hide: PropTypes.bool,
 };
 

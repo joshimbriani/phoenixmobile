@@ -3,7 +3,6 @@ import { StyleSheet, Text, FlatList, View } from 'react-native';
 import { connect } from 'react-redux';
 import {bindActionCreators} from 'redux';
 import NavContainer from '../subviews/navcontainer'
-import { Constants } from 'expo';
 import * as colorActions from '../../redux/actions/backgroundColor';
 import { styles } from '../../assets/styles';
 
@@ -15,31 +14,12 @@ class Index extends React.Component {
 
     async componentWillMount() {
         this.props.colorActions.resetColor();
-        await Expo.Font.loadAsync({
-            'Roboto': require('native-base/Fonts/Roboto.ttf'),
-            'Roboto_medium': require('native-base/Fonts/Roboto_medium.ttf'),
-            'Roboto_thin': require('../../assets/fonts/Roboto-Thin.ttf'),
-            'Roboto_bold': require('../../assets/fonts/Roboto-Bold.ttf'),
-        });
-
-        this.setState({ fontLoaded: true });
     }
 
     render() {
         return (
-            <View style={styles.container}>
-                <View style={{
-                    backgroundColor: '#' + this.props.color,
-                    height: Constants.statusBarHeight,
-                    marginTop: -Constants.statusBarHeight
-                }} />
-                {
-                    this.state.fontLoaded ? (
-
-                        <NavContainer />
-
-                    ) : null
-                }
+            <View style={styles.container}> 
+                <NavContainer />
             </View>
         );
     }
