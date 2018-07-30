@@ -15,7 +15,7 @@ class GroupsList extends React.Component{
             size={35}
             onPress={() => navigation.navigate('DrawerOpen')} />
     }) : ({ navigation }) => ({
-        title: 'Home',
+        title: 'Groups',
         headerStyle: { paddingTop: -22, }
     });
 
