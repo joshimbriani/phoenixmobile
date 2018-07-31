@@ -340,7 +340,7 @@ class NewEvent extends React.Component {
                         {this.state.offers && this.state.offers.length > 0 && <ScrollView style={styles.offerScrollContainer}>
                             {this.state.offers.map((offer, index) => {
                                 return (
-                                    <OfferContainer index={index} offer={offer} addToEvent={this.addToEvent} removeFromEvent={this.removeFromEvent} />
+                                    <OfferContainer index={index} offer={offer} addable={true} addToEvent={this.addToEvent} removeFromEvent={this.removeFromEvent} />
                                 )
                             })}
                         </ScrollView>

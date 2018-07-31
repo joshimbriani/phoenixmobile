@@ -6,6 +6,7 @@ import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { getDayOfWeekFromDayNumber, getMonthNameFromMonthNumber } from '../utils/datetimeUtils';
 import { getComplementaryColor } from '../utils/styleutils';
 import { styles } from '../../assets/styles';
+import { OfferContainer } from './offerContainer';
 
 class EventDetailDetails extends React.Component {
     // TODO: Offer View
@@ -41,7 +42,9 @@ class EventDetailDetails extends React.Component {
                             </View>
                             {this.props.event.offers.length > 0 && <View>
                                 <Text style={styles.eventDetailSectionHeader}>Applied Offers</Text>
-                                <Text>lorem ipsum</Text>
+                                {this.props.event.offers.map((offer, index) => {
+                                    return <OfferContainer addable={false} offer={offer} index={index} />
+                                })}
                             </View>}
                         </View>
                     </ScrollView>

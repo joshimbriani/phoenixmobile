@@ -33,7 +33,7 @@ export class OfferContainer extends React.Component {
                         <Text numberOfLines={1}>{this.props.offer.place.addressState}</Text>
                         {this.props.offer.adType === "IN" && <Text numberOfLines={1}>{this.props.offer.tagLine}</Text>}
                     </View>
-                    <CheckBox
+                    {this.props.addable && <CheckBox
                         style={{flex: 1, padding: 10}}
                         onClick={()=> {
                             if (!this.state.checked) {
@@ -45,7 +45,7 @@ export class OfferContainer extends React.Component {
                             this.setState({checked: !this.state.checked})
                         }}
                         isChecked={this.state.checked}
-                    />
+                    />}
                 </View>
             );
         } else {
@@ -57,5 +57,6 @@ export class OfferContainer extends React.Component {
 OfferContainer.propTypes = {
     offer: PropTypes.object.isRequired,
     index: PropTypes.number.isRequired,
-    addToEvent: PropTypes.func.isRequired
+    addable: PropTypes.bool.isRequired,
+    addToEvent: PropTypes.func
 }

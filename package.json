@@ -21,6 +21,7 @@
     "lodash": "^4.17.10",
     "moment": "^2.22.2",
     "native-base": "^2.3.3",
+    "parse-google-place": "^1.2.0",
     "prop-types": "^15.6.0",
     "random-material-color": "^1.0.3",
     "react": "16.0.0-beta.5",

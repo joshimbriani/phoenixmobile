@@ -7,7 +7,6 @@ import { bindActionCreators } from 'redux';
 import * as colorActions from '../../redux/actions/backgroundColor';
 import * as userActions from '../../redux/actions/user';
 import PlatformIonicon from '../utils/platformIonicon';
-import randomMC from 'random-material-color';
 import { getURLForPlatform } from '../utils/networkUtils';
 import { styles } from '../../assets/styles';
 
