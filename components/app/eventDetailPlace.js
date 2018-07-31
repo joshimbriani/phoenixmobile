@@ -3,11 +3,12 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { styles } from '../../assets/styles';
 import { Text, View } from 'react-native';
+import MapView, { PROVIDER_GOOGLE } from 'react-native-maps';
 
 class EventDetailPlace extends React.Component {
     // TODO: Replace place with place.name or address
     // TODO: Put maps into application - https://github.com/react-community/react-native-maps
-    render() { 
+    render() {
         if (Object.keys(this.props.event).length > 0) {
             return (
                 <View style={styles.flex1} >
@@ -28,9 +29,16 @@ class EventDetailPlace extends React.Component {
                             </View>}
                         </View>
                     </View>
-                    <View style={styles.eventDetailPlaceMap}>
-                        <Text>Map</Text>
-                    </View>
+                    <MapView
+                        provider={PROVIDER_GOOGLE}
+                        style={styles.eventDetailPlaceMap}
+                        region={{
+                            latitude: 37.78825,
+                            longitude: -122.4324,
+                            latitudeDelta: 0.015,
+                            longitudeDelta: 0.0121,
+                        }}
+                    ></MapView>
                 </View>
             )
         } else {

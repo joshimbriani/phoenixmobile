@@ -1,6 +1,6 @@
 import React from 'react';
 import { Button, Container, Text } from 'native-base';
-import { Alert, StatusBar, FlatList, StyleSheet, TouchableHighlight, View } from 'react-native';
+import { Alert, StatusBar, FlatList, StyleSheet, TouchableHighlight, View, PermissionsAndroid } from 'react-native';
 import PlatformIonicon from '../utils/platformIonicon';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -10,6 +10,7 @@ import ColorScheme from 'color-scheme';
 import { getURLForPlatform } from '../utils/networkUtils';
 import { KootaListView } from '../utils/listView';
 import { styles } from '../../assets/styles';
+import { getCurrentLocation } from '../utils/otherUtils';
 
 import {
     Menu,
@@ -49,17 +50,25 @@ class Topic extends React.Component {
         this.state = {
             colors: ["ffffff"],
             data: [],
+
         }
 
         this.toggleTopic = this.toggleTopic.bind(this);
     }
 
-    componentDidMount() {
+    async componentDidMount() {
         this.props.userActions.loadUser(this.props.token)
 
         this.props.colorActions.changeColor(this.props.navigation.state.params.color);
         this.props.navigation.setParams({ toggleTopic: this.toggleTopic, followingTopics: this.props.user.followingTopics, topicID: this.props.navigation.state.params.id, userID: this.props.user.id });
-        fetch(getURLForPlatform() + "api/v1/events/search?topic=" + this.props.navigation.state.params.id, {
+        
+        var url = getURLForPlatform() + "api/v1/events/search?topic=" + this.props.navigation.state.params.id;
+        const granted = await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION);
+        if (granted) {
+            const coordinates = await getCurrentLocation();
+            url += '&lat=' + coordinates.latitude + '&long=' + coordinates.longitude;
+        }
+        fetch(url, {
             headers: {
                 Authorization: "Token " + this.props.token
             },
@@ -75,10 +84,6 @@ class Topic extends React.Component {
             } else {
                 mColors = this.state.colors;
             }
-    }
-
-    componentWillMount() {
-        
     }
 
     componentWillUnmount() {

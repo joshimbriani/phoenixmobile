@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, FlatList, View } from 'react-native';
+import { View } from 'react-native';
 import { connect } from 'react-redux';
 import {bindActionCreators} from 'redux';
 import NavContainer from '../subviews/navcontainer'
@@ -14,6 +14,10 @@ class Index extends React.Component {
 
     async componentWillMount() {
         this.props.colorActions.resetColor();
+    }
+
+    componentDidMount() {
+        navigator.geolocation.setRNConfiguration({});
     }
 
     render() {

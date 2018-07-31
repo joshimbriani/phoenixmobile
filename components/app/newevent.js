@@ -1,23 +1,20 @@
 import React from 'react';
 import { Content, Form, Item, Input, Label, Button, Text } from 'native-base';
-import { ScrollView, View, Picker, ToastAndroid, KeyboardAvoidingView } from 'react-native';
+import { ScrollView, View, Picker, ToastAndroid, KeyboardAvoidingView, Platform, PermissionsAndroid, FlatList, TouchableOpacity } from 'react-native';
 import PlatformIonicon from '../utils/platformIonicon';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
-import * as colorActions from '../../redux/actions/backgroundColor'
-import ColorScheme from 'color-scheme';
 import Swiper from 'react-native-swiper';
 import DateTimePicker from 'react-native-modal-datetime-picker';
-import fontBasedOnPlatform from '../utils/fontBasedOnPlatform';
 import { getURLForPlatform } from '../utils/networkUtils';
 import { styles } from '../../assets/styles';
 import { OfferContainer } from './offerContainer';
 import { REACT_SWIPER_BOTTOM_MARGIN } from '../utils/constants';
-import moment from 'moment'
+import moment from 'moment';
+import debounce from 'lodash/debounce';
+import RNGooglePlaces from 'react-native-google-places';
+import { getCurrentLocation } from '../utils/otherUtils';
 
-import { _debouncedSearch } from '../utils/textUtils';
-
-const ITEMS_TO_VALIDATE = ["title", "description", "place", "datetime", "duration"];
+const ITEMS_TO_VALIDATE = ["title", "description", "place", "datetime", "duration", "place"];
 
 class NewEvent extends React.Component {
 
@@ -44,7 +41,12 @@ class NewEvent extends React.Component {
             topics: [],
             offers: [],
             selectedOffers: [],
-            topic: ""
+            topic: "",
+            placePredictions: [],
+            lat: -200,
+            long: -200,
+            placeSearchText: "",
+            place: {}
         }
         this.onChange = this.onChange.bind(this);
         this.formIsValid = this.formIsValid.bind(this);
@@ -53,6 +55,15 @@ class NewEvent extends React.Component {
         this.removeTopic = this.removeTopic.bind(this);
         this.addToEvent = this.addToEvent.bind(this);
         this.removeFromEvent = this.removeFromEvent.bind(this);
+        this.placeDisplay = this.placeDisplay.bind(this);
+    }
+
+    async componentDidMount() {
+        const granted = await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION);
+        if (granted) {
+            const coordinates = await getCurrentLocation();
+            this.setState({ lat: coordinates.latitude, long: coordinates.longitude });
+        }
     }
 
     // Todo: Need to decide what to do with objects thst don't exist on the DB. Right now
@@ -111,8 +122,7 @@ class NewEvent extends React.Component {
 
     formIsValid() {
         for (var property in ITEMS_TO_VALIDATE) {
-            if (this.state[ITEMS_TO_VALIDATE[property]] === "") {
-                console.log(property)
+            if (this.state[ITEMS_TO_VALIDATE[property]] === "" || this.state[ITEMS_TO_VALIDATE[property]] === {}) {
                 return false;
             }
         }
@@ -120,7 +130,6 @@ class NewEvent extends React.Component {
     }
 
     submitForm() {
-        console.log(this.state)
         // TODO: Need to give error messages
         if (this.state.formIsValid) {
             fetch(getURLForPlatform() + "api/v1/events/", {
@@ -149,6 +158,22 @@ class NewEvent extends React.Component {
         }
     }
 
+    getPlaces = debounce((text) => {
+        var optionsItem = {
+            country: 'US'
+        }
+
+        if (this.state.lat > -200 && this.state.long > -200) {
+            optionsItem["latitude"] = this.state.lat;
+            optionsItem["longitude"] = this.state.long;
+            optionsItem["radius"] = 25;
+        }
+
+        RNGooglePlaces.getAutocompletePredictions(text, optionsItem)
+            .then((results) => { console.log(results); this.setState({ placePredictions: results }) })
+            .catch((error) => console.log(error.message));
+    }, 250);
+
     _showDateTimePicker = () => this.setState({ isDateTimePickerVisible: true });
 
     _hideDateTimePicker = () => this.setState({ isDateTimePickerVisible: false });
@@ -163,6 +188,18 @@ class NewEvent extends React.Component {
         }
         this._hideDateTimePicker();
     };
+
+    _keyExtractor = (item, index) => item.placeID;
+
+    _renderItem = ({ item }) => (
+        <TouchableOpacity onPress={() => this.setState({place: item, placePredictions: [], placeSearchText: "" })}>
+            <View id={item.placeID} style={{borderBottomColor: '#333', borderBottomWidth: 1}}>
+                <Text style={{padding: 5}}>{item.primaryText}</Text>
+                <Text style={{padding: 5}}>{item.secondaryText}</Text>
+            </View>
+        </TouchableOpacity>
+    );
+
 
     removeTopic(index) {
         var topics = this.state.topics.slice();
@@ -207,10 +244,15 @@ class NewEvent extends React.Component {
         }
     }
 
+    placeDisplay() {
+        if (Object.keys(this.state.place).length > 0 && this.state.place.primaryText) {
+            return this.state.place.primaryText;
+        } else {
+            return this.state.placeSearchText;
+        }
+    }
+
     render() {
-        console.log((new Date()) - this.state.datetime)
-        console.log(typeof this.state.datetime);
-        console.log(this.state.datetime.length > 0)
         return (
             <Swiper nextButton={<Text>&gt;</Text>} buttonWrapperStyle={{ alignItems: 'flex-end' }} prevButton={<Text>&lt;</Text>} style={styles.wrapper} showsButtons={true} loop={false} removeClippedSubviews={false} >
                 <View style={styles.flex1}>
@@ -271,12 +313,12 @@ class NewEvent extends React.Component {
                                     )}
                                 </View>
                             </ScrollView>
-                            <View style={{marginBottom: REACT_SWIPER_BOTTOM_MARGIN}}>
+                            <View style={{ marginBottom: REACT_SWIPER_BOTTOM_MARGIN }}>
                                 <Form style={{ flexDirection: 'row' }}>
                                     <View style={{ flex: 1, paddingLeft: 10 }}>
                                         <Input placeholder="Add Extra Topics Here" name="topic" value={this.state.topic} onChangeText={(text) => this.setState({ "topic": text })} />
                                     </View>
-                                    <View style={{paddingRight: 10}}>
+                                    <View style={{ paddingRight: 10 }}>
                                         <Button title="Add" accessibilityLabel="Press this button to add a new topic." onPress={() => this.addTopic()}>
                                             <Text>Add</Text>
                                         </Button>
@@ -318,9 +360,17 @@ class NewEvent extends React.Component {
                     <Form>
                         <Item floatingLabel>
                             <Label>Place</Label>
-                            <Input name="place" onChangeText={(text) => this.onChange("place", text)} />
+                            <Input name="place" value={this.placeDisplay()} onChangeText={(text) => { this.setState({ placeSearchText: text, place: {} }); this.getPlaces(text) }} />
                         </Item>
                     </Form>
+                    <View style={{marginBottom: REACT_SWIPER_BOTTOM_MARGIN, flex: 1, backgroundColor: 'white'}}>
+                        <FlatList
+                            data={this.state.placePredictions}
+                            extraData={this.state}
+                            keyExtractor={this._keyExtractor}
+                            renderItem={this._renderItem}
+                        />
+                    </View>
                 </View>
                 <View style={styles.flex1}>
                     <View style={styles.header}>

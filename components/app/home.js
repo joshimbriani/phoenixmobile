@@ -1,6 +1,6 @@
 import React from 'react';
 import { Container, Fab, Header, Item, Input, Icon, Button, Text } from 'native-base';
-import { Alert, Platform, RefreshControl,StyleSheet, TouchableHighlight, View } from 'react-native';
+import { Alert, Platform, RefreshControl, StyleSheet, TouchableHighlight, View, PermissionsAndroid } from 'react-native';
 import GridView from 'react-native-super-grid';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -19,12 +19,14 @@ class Home extends React.Component {
             data: [],
             searchQuery: "",
             refreshing: false,
+            GPSPermission: false
         };
 
         this.changeValue = this.changeValue.bind(this);
+        this.checkUserPermissions = this.checkUserPermissions.bind(this);
     }
 
-    componentDidMount() {
+    async componentDidMount() {
         this.props.userActions.loadUser(this.props.token);
         this.props.colorActions.resetColor();
         fetch(getURLForPlatform() + "api/v1/user/", {
@@ -34,7 +36,46 @@ class Home extends React.Component {
         }).then(response => response.json())
             .then(responseObj => {
                 this.setState({ data: [{ id: -1, name: "IDK", color: "0097e6", icon: "help" }].concat('followingTopics' in responseObj ? responseObj['followingTopics'] : []) });
-            })
+            });
+
+        await this.checkUserPermissions();
+
+        navigator.geolocation.getCurrentPosition((position) => {
+            console.log(position)
+          },
+          (error) => console.error(error.message),
+          Platform.OS === 'ios' ? { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 } : {},
+        );
+    }
+
+    async checkUserPermissions() {
+        if (Platform.OS === 'android') {
+            try {
+                const granted = await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION);
+
+                if (granted) {
+                    this.setState({GPSPermission: true})
+                } else {
+                    const grantedNow = await PermissionsAndroid.request(
+                        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+                        {
+                          'title': 'Koota',
+                          'message': 'Koota needs access to your GPS location ' +
+                                     'so you can find awesome things happening around you.'
+                        }
+                      )
+                      if (grantedNow === PermissionsAndroid.RESULTS.GRANTED) {
+                        console.warn("You can use the camera")
+                        this.setState({GPSPermission: true})
+                      }
+                }
+
+            } catch (err) {
+                console.warn(err)
+            }
+        } else if (Platform.OS === 'ios') {
+            navigator.geolocation.requestAuthorization();
+        }
     }
 
     static navigationOptions = (Platform.OS === 'android') ? ({ navigation }) => ({
