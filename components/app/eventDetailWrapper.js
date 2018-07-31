@@ -161,7 +161,7 @@ class EventDetailWrapper extends React.Component {
     }
 
     loadEvent() {
-        fetch(getURLForPlatform() + "api/v1/events/" + this.props.navigation.state.params.id + "?format=json", {
+        fetch(getURLForPlatform() + "api/v1/events/" + this.props.navigation.state.params.id + "/?format=json", {
             headers: {
                 Authorization: "Token " + this.props.token
             }

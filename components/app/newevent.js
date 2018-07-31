@@ -59,10 +59,14 @@ class NewEvent extends React.Component {
     }
 
     async componentDidMount() {
-        const granted = await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION);
-        if (granted) {
-            const coordinates = await getCurrentLocation();
-            this.setState({ lat: coordinates.latitude, long: coordinates.longitude });
+        if (Platform.OS === 'android') {
+            const granted = await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION);
+            if (granted) {
+                const coordinates = await getCurrentLocation();
+                this.setState({ lat: coordinates.latitude, long: coordinates.longitude });
+            }
+        } else if (Platform.OS === 'ios') {
+            
         }
     }
 

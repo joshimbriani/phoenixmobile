@@ -1,6 +1,6 @@
 import React from 'react';
 import { Button, Container, Text } from 'native-base';
-import { Alert, StatusBar, FlatList, StyleSheet, TouchableHighlight, View, PermissionsAndroid } from 'react-native';
+import { Alert, StatusBar, FlatList, StyleSheet, TouchableHighlight, View, PermissionsAndroid, Platform } from 'react-native';
 import PlatformIonicon from '../utils/platformIonicon';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -63,10 +63,13 @@ class Topic extends React.Component {
         this.props.navigation.setParams({ toggleTopic: this.toggleTopic, followingTopics: this.props.user.followingTopics, topicID: this.props.navigation.state.params.id, userID: this.props.user.id });
         
         var url = getURLForPlatform() + "api/v1/events/search?topic=" + this.props.navigation.state.params.id;
-        const granted = await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION);
-        if (granted) {
-            const coordinates = await getCurrentLocation();
-            url += '&lat=' + coordinates.latitude + '&long=' + coordinates.longitude;
+        console.log(url);
+        if (Platform.OS === 'android') {
+            const granted = await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION);
+            if (granted) {
+                const coordinates = await getCurrentLocation();
+                url += '&lat=' + coordinates.latitude + '&long=' + coordinates.longitude;
+            }
         }
         fetch(url, {
             headers: {
@@ -74,6 +77,7 @@ class Topic extends React.Component {
             },
         }).then(response => response.json())
             .then(responseObj => {
+                console.log(responseObj)
                 this.setState({ data: responseObj });
             });
 
