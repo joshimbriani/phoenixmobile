@@ -30,6 +30,7 @@
     "react-native-collapsible": "^0.12.0",
     "react-native-gesture-handler": "^1.0.0-alpha.40",
     "react-native-google-places": "^2.5.2",
+    "react-native-image-picker": "^0.26.10",
     "react-native-keyboard-aware-scroll-view": "^0.6.0",
     "react-native-maps": "^0.21.0",
     "react-native-material-dropdown": "^0.6.1",

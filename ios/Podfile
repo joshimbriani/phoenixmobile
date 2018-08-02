@@ -38,6 +38,10 @@ target 'phoenixmobile' do
   pod 'GooglePlaces'
   pod 'GooglePlacePicker'
 
+  pod 'react-native-image-picker', :path => '../node_modules/react-native-image-picker'
+
+  pod 'RNVectorIcons', :path => '../node_modules/react-native-vector-icons'
+
   target 'phoenixmobileTests' do
     inherit! :search_paths
     # Pods for testing

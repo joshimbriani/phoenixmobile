@@ -8,6 +8,9 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { Input, Form, Item } from 'native-base';
 import Modal from "react-native-modal";
+import HideableView from '../utils/hideableView';
+
+var ImagePicker = require('react-native-image-picker');
 
 class Profile extends React.Component {
 
@@ -18,7 +21,8 @@ class Profile extends React.Component {
             email: this.props.user.email,
             filteredFriends: [],
             filterString: "",
-            modalVisible: false
+            userModalVisible: false,
+            profilePictureModalVisible: false,
         }
 
         this.editUser = this.editUser.bind(this);
@@ -67,7 +71,7 @@ class Profile extends React.Component {
 
     renderFriends = ({ item }) => {
         return (
-            <TouchableOpacity onLongPress={() => this.setState({ modalVisible: true })}>
+            <TouchableOpacity onLongPress={() => this.setState({ userModalVisible: true })}>
                 <View style={{ borderBottomWidth: 1, flexDirection: 'row' }}>
                     <View style={{ padding: 10 }}>
                         <Image
@@ -79,10 +83,10 @@ class Profile extends React.Component {
                         <Text style={{ margin: 10 }}>{item.username}</Text>
                     </View>
                     <Modal
-                        isVisible={this.state.modalVisible}
+                        isVisible={this.state.userModalVisible}
                         backdropOpacity={0.5}
-                        onBackButtonPress={() => this.setState({ modalVisible: false })}
-                        onBackdropPress={() => this.setState({ modalVisible: false })}>
+                        onBackButtonPress={() => this.setState({ userModalVisible: false })}
+                        onBackdropPress={() => this.setState({ userModalVisible: false })}>
                         <View style={{
                             borderColor: "rgba(0, 0, 0, 0.1)",
                             backgroundColor: "white",
@@ -123,7 +127,7 @@ class Profile extends React.Component {
                 if (requestObject["success"]) {
                     this.props.userActions.loadUser(this.props.token);
                     this.removeUserFromFilteredUsers(userID);
-                    this.setState({ modalVisible: false });
+                    this.setState({ userModalVisible: false });
                 }
             })
     }
@@ -142,7 +146,7 @@ class Profile extends React.Component {
                 if (requestObject["success"]) {
                     this.props.userActions.loadUser(this.props.token);
                     this.removeUserFromFilteredUsers(userID);
-                    this.setState({ modalVisible: false });
+                    this.setState({ userModalVisible: false });
                 }
             })
     }
@@ -238,18 +242,76 @@ class Profile extends React.Component {
             });
     }
 
+    changeProfilePicture() {
+        const options = {
+            title: 'Select Profile Picture',
+            storageOptions: {
+                skipBackup: true,
+                path: 'images'
+            }
+        };
+
+        ImagePicker.showImagePicker(options, (response) => {
+            if (response.didCancel) {
+                return;
+            }
+            if (response.error) {
+                return;
+            }
+
+            const source = { uri: response.uri };
+            console.log(source);
+        })
+    }
+
     render() {
         const date = new Date(this.props.user.created);
         return (
             <KeyboardAwareScrollView >
                 <View style={{ flex: 1 }}>
-                    <View style={{ justifyContent: 'center', alignItems: 'center', backgroundColor: '#c0392b', height: 175 }}>
-                        <Image
-                            style={{ width: 75, height: 75, borderRadius: 38, borderWidth: 1, borderColor: '#c0392b' }}
-                            source={{ uri: this.props.user.profilePicture }}
-                        />
-                        <Text style={{ color: '#ecf0f1', fontSize: 35, fontWeight: 'bold' }}>{this.props.user.username}</Text>
-                    </View>
+                    <HideableView hide={this.state.editingDetails}>
+                        <View style={{ justifyContent: 'center', alignItems: 'center', backgroundColor: '#c0392b', height: 175 }}>
+                            <TouchableOpacity onLongPress={() => this.setState({profilePictureModalVisible: true})}>
+                                <Image
+                                    style={{ width: 75, height: 75, borderRadius: 38, borderWidth: 1, borderColor: '#c0392b' }}
+                                    source={{ uri: this.props.user.profilePicture }}
+                                />
+                            </TouchableOpacity>
+                            <Text style={{ color: '#ecf0f1', fontSize: 35, fontWeight: 'bold' }}>{this.props.user.username}</Text>
+                        </View>
+                    </HideableView>
+                    <HideableView hide={!this.state.editingDetails}>
+                        <View style={{ justifyContent: 'center', alignItems: 'center', backgroundColor: '#c0392b', height: 175 }}>
+                            <TouchableOpacity onPress={() => this.changeProfilePicture()}>
+                                <Image
+                                    style={{ width: 75, height: 75, borderRadius: 38, borderWidth: 1, borderColor: '#c0392b' }}
+                                    source={{ uri: this.props.user.profilePicture }}
+                                />
+                            </TouchableOpacity>
+                            <Text style={{ color: '#ecf0f1', fontSize: 35, fontWeight: 'bold' }}>{this.props.user.username}</Text>
+                        </View>
+                    </HideableView>
+                    <Modal
+                        isVisible={this.state.profilePictureModalVisible}
+                        backdropOpacity={0.5}
+                        onBackButtonPress={() => this.setState({ profilePictureModalVisible: false })}
+                        onBackdropPress={() => this.setState({ profilePictureModalVisible: false })}>
+                        <View style={{
+                            borderColor: "rgba(0, 0, 0, 0.1)",
+                            backgroundColor: "white",
+                        }}>
+                            <View style={{
+                                width: 324,
+                                height: 50
+                            }}>
+                                <TouchableOpacity onPress={() => this.changeProfilePicture()}>
+                                    <View style={{ height: 50, width: 324, borderBottomWidth: 1, borderBottomColor: '#000', justifyContent: 'center', paddingLeft: 10 }}>
+                                        <Text>Change Profile Picture</Text>
+                                    </View>
+                                </TouchableOpacity>
+                            </View>
+                        </View>
+                    </Modal>
                     <View>
                         <View style={{ flexDirection: 'row', backgroundColor: '#8e44ad', alignItems: 'center' }}>
                             <View style={{ flex: 1, padding: 20 }}>

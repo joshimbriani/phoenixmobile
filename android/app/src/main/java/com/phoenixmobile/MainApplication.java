@@ -3,6 +3,11 @@ package com.phoenixmobile;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import com.oblador.vectoricons.VectorIconsPackage;
+import com.airbnb.android.react.maps.MapsPackage;
+import com.imagepicker.ImagePickerPackage;
+import com.arttitude360.reactnative.rngoogleplaces.RNGooglePlacesPackage;
+import com.swmansion.gesturehandler.react.RNGestureHandlerPackage;
 import com.arttitude360.reactnative.rngoogleplaces.RNGooglePlacesPackage;
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
@@ -25,7 +30,10 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
-            new RNGooglePlacesPackage(),
+          new VectorIconsPackage(),
+          new ImagePickerPackage(),
+          new RNGestureHandlerPackage(),
+          new RNGooglePlacesPackage(),
           new MapsPackage()
       );
     }
