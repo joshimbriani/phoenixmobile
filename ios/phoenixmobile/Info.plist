@@ -61,6 +61,12 @@
 		<string>FontAwesome5_Solid.ttf</string>
 		<string>MaterialCommunityIcons.ttf</string>
 	</array>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Koota needs access to your photo library so you can set a profile picture</string>
+	<key>NSCameraUsageDescription</key>
+	<string>Koota needs access to your camera so you can take a picture to use as your profile picture</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>Koota needs access to your photo library so you can set a profile picture</string>
 	<key>NSAppTransportSecurity</key>
 	<dict>
 		<key>NSExceptionDomains</key>

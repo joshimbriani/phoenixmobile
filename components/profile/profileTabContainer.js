@@ -1,5 +1,5 @@
 import React from 'react';
-import { Alert, Platform, StatusBar, FlatList, StyleSheet, TouchableHighlight, View, Dimensions } from 'react-native';
+import { Alert, Platform, StatusBar, FlatList, StyleSheet, TouchableHighlight, View, Dimensions, Text } from 'react-native';
 import PlatformIonicon from '../utils/platformIonicon';
 import { TabViewAnimated, TabBar, SceneMap } from 'react-native-tab-view';
 import { connect } from 'react-redux';

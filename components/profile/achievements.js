@@ -36,7 +36,7 @@ class Achievements extends React.Component {
 
     _keyExtractor = (item, index) => item.id;
 
-    _renderItem = ({item, index}) => (
+    _renderItem = ({ item, index }) => (
         <AchievementListView key={index} achievements={item} />
     )
 
@@ -44,17 +44,13 @@ class Achievements extends React.Component {
         const acCount = this.getAchievementCount();
         return (
             <View style={{ flex: 1 }}>
-                <View style={{flex: 1, justifyContent: 'center', alignContent: 'center', backgroundColor: '#34495e'}}>
-                    <View style={{justifyContent: 'center', alignSelf: 'center', alignItems: 'center'}}>
-                        <View style={{backgroundColor: '#2ecc71', height: 50, aspectRatio: 1, borderRadius: 25, justifyContent: 'center', alignItems: 'center'}}><Text>{acCount}</Text></View>
-                        <View><Text style={{color: 'white'}}>Achievement{acCount !== 1 ? "s" : ""}</Text></View>
+                <View style={{ flex: 1, justifyContent: 'center', alignContent: 'center', backgroundColor: '#34495e' }}>
+                    <View style={{ justifyContent: 'center', alignSelf: 'center', alignItems: 'center' }}>
+                        <View style={{ backgroundColor: '#2ecc71', height: 50, aspectRatio: 1, borderRadius: 25, justifyContent: 'center', alignItems: 'center' }}><Text>{acCount}</Text></View>
+                        <View><Text style={{ color: 'white' }}>Achievement{acCount !== 1 ? "s" : ""}</Text></View>
                     </View>
-                    {/*<View>
-                        <View><Text>{this.state.achievements.length}</Text></View>
-                        <View><Text>Achievement{this.state.achievements.length !== 1 ? "s" : ""}</Text></View>
-                    </View>*/}
                 </View>
-                <View style={{flex: 3}}>
+                <View style={{ flex: 3 }}>
                     <FlatList
                         data={this.state.achievements}
                         extraData={this.state}

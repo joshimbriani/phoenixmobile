@@ -22,7 +22,7 @@ export class AchievementListView extends React.Component {
             <CachedImage 
                 key={index}
                 style={{ margin: 5, width: 50, height: 50, borderRadius:30, borderWidth: 1, borderColor: '#fff' }}
-                source={{ uri: item.icon }}
+                source={{ uri: (item.icon || 'http://via.placeholder.com/200x200') }}
             />
             <Text>{item.title}</Text>
         </View>
