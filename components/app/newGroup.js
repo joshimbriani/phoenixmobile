@@ -10,8 +10,7 @@ import ColorPicker from '../utils/ColorPicker';
 import { materialColors } from '../utils/styleutils';
 import { styles } from '../../assets/styles';
 import HideableView from '../utils/hideableView';
-
-// TODO: Do I want all users to be searchable here?
+import { CachedImage } from 'react-native-cached-image';
 
 class NewGroup extends React.Component{
     static navigationOptions = ({ navigation }) => ({
@@ -44,7 +43,7 @@ class NewGroup extends React.Component{
                 <View style={{flexDirection: 'row', marginBottom: 5, paddingBottom: 5, borderBottomWidth: 1, borderBottomColor: 'black'}}>
                     <View style={{flexDirection: 'row', flex: 1}}>
                         <View style={{paddingRight: 10}}>
-                            <Image
+                            <CachedImage
                                 style={{ width: 50, height: 50, borderRadius:30, borderWidth: 1, borderColor: '#fff' }}
                                 source={{ uri: item.profilePicture }}
                             />

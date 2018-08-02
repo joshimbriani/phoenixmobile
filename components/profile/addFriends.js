@@ -13,6 +13,7 @@ import * as achievementActions from '../../redux/actions/achievements';
 import * as userActions from '../../redux/actions/user';
 import { styles } from '../../assets/styles';
 import { getURLForPlatform } from '../utils/networkUtils';
+import { CachedImage } from 'react-native-cached-image';
 
 const initialLayout = {
     height: 0,
@@ -40,7 +41,7 @@ class AddFriends extends React.Component {
     renderFriends = ({ item }) => (
         <View style={{ borderBottomWidth: 1, flexDirection: 'row' }}>
             <View style={{ padding: 10 }}>
-                <Image
+                <CachedImage
                     style={{ width: 50, height: 50, borderRadius: 25, borderWidth: 1, borderColor: '#ecf0f1' }}
                     source={{ uri: item.profilePicture }}
                 />

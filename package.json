@@ -17,7 +17,10 @@
     "preset": "jest-expo"
   },
   "dependencies": {
+    "buffer": "^5.2.0",
     "color-scheme": "^1.0.0",
+    "crypto-js": "^3.1.9-1",
+    "js-base64": "^2.4.8",
     "lodash": "^4.17.10",
     "moment": "^2.22.2",
     "native-base": "^2.3.3",
@@ -26,6 +29,7 @@
     "random-material-color": "^1.0.3",
     "react": "16.0.0-beta.5",
     "react-native": "^0.51.0",
+    "react-native-cached-image": "github:fungilation/react-native-cached-image",
     "react-native-check-box": "^2.1.0",
     "react-native-collapsible": "^0.12.0",
     "react-native-gesture-handler": "^1.0.0-alpha.40",
@@ -48,6 +52,7 @@
     "react-redux": "^5.0.6",
     "redux": "^3.7.2",
     "redux-persist": "^5.5.0",
-    "redux-thunk": "^2.2.0"
+    "redux-thunk": "^2.2.0",
+    "rn-fetch-blob": "^0.10.12"
   }
 }

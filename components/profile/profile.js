@@ -10,7 +10,11 @@ import { Input, Form, Item } from 'native-base';
 import Modal from "react-native-modal";
 import HideableView from '../utils/hideableView';
 
+import { Base64 } from 'js-base64';
+import md5 from 'crypto-js/md5';
+
 var ImagePicker = require('react-native-image-picker');
+import { CachedImage } from 'react-native-cached-image';
 
 class Profile extends React.Component {
 
@@ -43,7 +47,7 @@ class Profile extends React.Component {
 
     _renderItem = ({ item }) => (
         <View style={{ width: 150, justifyContent: 'center', alignItems: 'center', shadowRadius: 10, shadowOpacity: 1, shadowColor: 'black', elevation: 2, backgroundColor: 'white', margin: 10, padding: 5 }}>
-            <Image
+            <CachedImage
                 style={{ width: 50, height: 50, borderRadius: 25, borderWidth: 1, borderColor: '#ecf0f1' }}
                 source={{ uri: item.profilePicture }}
             />
@@ -74,7 +78,7 @@ class Profile extends React.Component {
             <TouchableOpacity onLongPress={() => this.setState({ userModalVisible: true })}>
                 <View style={{ borderBottomWidth: 1, flexDirection: 'row' }}>
                     <View style={{ padding: 10 }}>
-                        <Image
+                        <CachedImage
                             style={{ width: 50, height: 50, borderRadius: 25, borderWidth: 1, borderColor: '#ecf0f1' }}
                             source={{ uri: item.profilePicture }}
                         />
@@ -242,7 +246,7 @@ class Profile extends React.Component {
             });
     }
 
-    changeProfilePicture() {
+    async changeProfilePicture() {
         const options = {
             title: 'Select Profile Picture',
             storageOptions: {
@@ -252,15 +256,55 @@ class Profile extends React.Component {
         };
 
         ImagePicker.showImagePicker(options, (response) => {
+            console.log("Here?")
             if (response.didCancel) {
                 return;
             }
             if (response.error) {
+                console.log("Errro")
                 return;
             }
 
-            const source = { uri: response.uri };
-            console.log(source);
+            //console.log(MD5(Base64.decode(response.data)))
+            const date = new Date();
+            const fileName = this.props.user.username + date.getFullYear() + date.getMonth() + date.getDate() + date.getHours() + date.getMinutes();
+            fetch(getURLForPlatform() + 'api/v1/image/', {
+                method: 'POST',
+                body: JSON.stringify({
+                    'name': fileName,
+                    'checksum': Base64.encode(md5(response.data).toString())
+                })
+            }).then(serverresponse => serverresponse.json())
+                .then(responseJSON => {
+                    console.log(responseJSON)
+                    const url = responseJSON["url"];
+
+                    const xhr = new XMLHttpRequest();
+                    xhr.open('PUT', url);
+                    xhr.setRequestHeader('Content-Type', 'image/jpeg');
+                    xhr.onreadystatechange = () => {
+                        if (xhr.readyState === 4) {
+                            if (xhr.status === 200) {
+                                fetch(getURLForPlatform() + 'api/v1/user/' + this.props.user.id + '/', {
+                                    method: 'PUT',
+                                    body: JSON.stringify({
+                                        'profilePicture': 'https://s3.us-east-2.amazonaws.com/koota-profile-pictures/' + fileName
+                                    }),
+                                    headers: {
+                                        Authorization: "Token " + this.props.token
+                                    },
+                                }).then(editUserResponse => {
+                                    if (editUserResponse.status === 200) {
+                                        this.props.userActions.loadUser(this.props.token);
+                                        this.setState({profilePictureModalVisible: false})
+                                    }
+                                })
+                            }
+                        }
+                    };
+                    xhr.send({ uri: response.uri, type: 'image/jpeg', name: fileName + '.jpg' })
+
+                })
         })
     }
 
@@ -271,8 +315,8 @@ class Profile extends React.Component {
                 <View style={{ flex: 1 }}>
                     <HideableView hide={this.state.editingDetails}>
                         <View style={{ justifyContent: 'center', alignItems: 'center', backgroundColor: '#c0392b', height: 175 }}>
-                            <TouchableOpacity onLongPress={() => this.setState({profilePictureModalVisible: true})}>
-                                <Image
+                            <TouchableOpacity onLongPress={() => this.setState({ profilePictureModalVisible: true })}>
+                                <CachedImage
                                     style={{ width: 75, height: 75, borderRadius: 38, borderWidth: 1, borderColor: '#c0392b' }}
                                     source={{ uri: this.props.user.profilePicture }}
                                 />
@@ -283,7 +327,7 @@ class Profile extends React.Component {
                     <HideableView hide={!this.state.editingDetails}>
                         <View style={{ justifyContent: 'center', alignItems: 'center', backgroundColor: '#c0392b', height: 175 }}>
                             <TouchableOpacity onPress={() => this.changeProfilePicture()}>
-                                <Image
+                                <CachedImage
                                     style={{ width: 75, height: 75, borderRadius: 38, borderWidth: 1, borderColor: '#c0392b' }}
                                     source={{ uri: this.props.user.profilePicture }}
                                 />

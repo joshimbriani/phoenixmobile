@@ -10,6 +10,8 @@ import PlatformIonicon from '../../utils/platformIonicon';
 import { Bubble } from './bubble';
 import { getMaterialColor } from '../../utils/styleutils';
 
+import { CachedImage } from 'react-native-cached-image';
+
 // Probably want to switch to https://github.com/APSL/react-native-keyboard-aware-scroll-view at some point
 
 // Two options for starting a new conversation:
@@ -91,7 +93,7 @@ class ConversationView extends React.Component {
                                 return (
                                     <View style={[styles.flex1, { flexDirection: 'row', alignContent: 'flex-end', marginTop: 5, marginBottom: 5 }]}>
                                         <View style={{justifyContent: 'flex-end'}}>
-                                            <Image
+                                            <CachedImage
                                                 source={{ uri: this.getProfilePictureFromMessage(item.fromUser, this.state.users) }}
                                                 style={{ borderRadius: 25, borderWidth: 1, borderColor: '#fff', width: 20, height: 20 }}
                                             />

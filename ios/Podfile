@@ -42,6 +42,8 @@ target 'phoenixmobile' do
 
   pod 'RNVectorIcons', :path => '../node_modules/react-native-vector-icons'
 
+  pod 'rn-fetch-blob', :path => '../node_modules/rn-fetch-blob'
+
   target 'phoenixmobileTests' do
     inherit! :search_paths
     # Pods for testing

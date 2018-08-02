@@ -5,6 +5,8 @@ import { styles } from '../../assets/styles';
 import { Dimensions, Image, Text, View } from 'react-native';
 import ProgressBar from 'react-native-progress/Bar';
 
+import { CachedImage } from 'react-native-cached-image';
+
 // TODO: Fix going view
 // TODO: Add Tooltips to images
 // TODO: Add text to progress bar
@@ -17,7 +19,7 @@ class EventDetailPeople extends React.Component {
                     <View style={styles.eventDetailPeopleSection}>
                         <Text style={styles.eventDetailSectionHeader}>Created By</Text>
                         <View style={{flexDirection: 'row', alignItems: 'center', paddingTop: 5}}>
-                            <Image
+                            <CachedImage
                                 style={{ width: 50, height: 50, borderRadius:30, borderWidth: 1, borderColor: '#fff' }}
                                 source={{ uri: this.props.event.userBy.profilePicture }}
                             />
@@ -29,7 +31,7 @@ class EventDetailPeople extends React.Component {
                         <View style={{flexDirection: 'row', }}>
                             {this.props.event.going.map((user, index) => {
                                 return (
-                                    <Image 
+                                    <CachedImage 
                                         key={index}
                                         style={{ margin: 5, width: 50, height: 50, borderRadius:30, borderWidth: 1, borderColor: '#fff' }}
                                         source={{ uri: user.profilePicture }}
@@ -47,7 +49,7 @@ class EventDetailPeople extends React.Component {
                         <View style={{flexDirection: 'row'}}>
                             {this.props.event.interested.map((user, index) => {
                                 return (
-                                    <Image 
+                                    <CachedImage 
                                         key={index}
                                         style={{ margin: 5, width: 50, height: 50, borderRadius:30, borderWidth: 1, borderColor: '#fff' }}
                                         source={{ uri: user.profilePicture }}

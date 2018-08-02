@@ -4,6 +4,8 @@ import PlatformIonicon from '../../utils/platformIonicon';
 
 import PropTypes from 'prop-types';
 
+import { CachedImage } from 'react-native-cached-image';
+
 export class UserRow extends React.Component {
 
     constructor(props) {
@@ -17,7 +19,7 @@ export class UserRow extends React.Component {
                 return (
                     <TouchableOpacity onPress={this.selectRow}>
                         <View style={{flexDirection: 'row'}}>
-                            <Image style={{ width: 50, height: 50, borderRadius:30, borderWidth: 1, borderColor: '#fff', marginRight: 10 }} source={{ uri: this.props.user.profilePicture }} />
+                            <CachedImage style={{ width: 50, height: 50, borderRadius:30, borderWidth: 1, borderColor: '#fff', marginRight: 10 }} source={{ uri: this.props.user.profilePicture }} />
                             <Text style={{ fontSize: 15, color: 'black', alignSelf: 'center' }} key={(this.props.section || '') + this.props.user.id}>{this.props.user.username}</Text>
                         </View>
                     </TouchableOpacity>

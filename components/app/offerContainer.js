@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Image, Text, Dimensions } from 'react-native';
 import PropTypes from 'prop-types';
 import CheckBox from 'react-native-check-box'
+import { CachedImage } from 'react-native-cached-image';
 
 import PlatformIonicon from '../utils/platformIonicon';
 
@@ -20,7 +21,7 @@ export class OfferContainer extends React.Component {
             return (
                 <View key={this.props.index} style={{flexDirection: 'row', shadowRadius: 10, shadowOpacity: 1, shadowColor: 'black', elevation: 2, backgroundColor: 'white', padding: 5, marginBottom: 5}}>
                     <View style={{paddingRight: 10}}>
-                        <Image
+                        <CachedImage
                             style={{ width: 100, height: 100 }}
                             source={{ uri: this.props.offer.icon }}
                         />

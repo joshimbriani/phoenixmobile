@@ -4,6 +4,7 @@ import { FlatList, View, Text, TouchableOpacity, Image } from 'react-native';
 import Collapsible from 'react-native-collapsible';
 
 import PlatformIonicon from '../utils/platformIonicon';
+import { CachedImage } from 'react-native-cached-image';
 
 export class AchievementListView extends React.Component {
     constructor(props) {
@@ -18,7 +19,7 @@ export class AchievementListView extends React.Component {
 
     _renderItem = ({item, index}) => (
         <View key={index} style={{alignItems: 'center', padding: 10}}>
-            <Image 
+            <CachedImage 
                 key={index}
                 style={{ margin: 5, width: 50, height: 50, borderRadius:30, borderWidth: 1, borderColor: '#fff' }}
                 source={{ uri: item.icon }}

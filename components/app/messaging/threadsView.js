@@ -6,6 +6,8 @@ import { FlatList, Image, RefreshControl, Text, TouchableOpacity, View } from 'r
 
 import { generateUserToString, getDateStringForMessage } from '../../utils/textUtils';
 
+import { CachedImage } from 'react-native-cached-image';
+
 // Alternate between colors for threads?
 
 class ThreadsView extends React.Component {
@@ -25,7 +27,7 @@ class ThreadsView extends React.Component {
                                 onPress={() => this.props.navigation.navigate('ConversationView', { newConvo: false, thread: item, eventName: this.props.eventName, color: this.props.color, userString: generateUserToString(this.props.user.id, item.users, this.props.creator) })}>
                                 <View style={{flexDirection: 'row', marginTop: 10, paddingRight: 10, paddingLeft: 10, paddingBottom: 10, borderBottomWidth: 0.5, borderColor: '#000'}}>
                                     <View style={{ justifyContent: 'center'}}>
-                                        <Image
+                                        <CachedImage
                                             source={{uri: this.generateUserImage(item.users)}}
                                             style={{borderRadius:30, borderWidth: 1, borderColor: '#fff', width: 60, height: 60}}
                                         />
