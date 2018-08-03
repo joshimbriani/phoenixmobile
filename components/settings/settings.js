@@ -10,8 +10,6 @@ import { NavigationActions } from 'react-navigation';
 import { styles } from '../../assets/styles';
 import Modal from "react-native-modal";
 
-let distUnit = 'km';
-
 class Settings extends React.Component {
 
     static navigationOptions = (Platform.OS === 'android') ? ({ navigation }) => ({
@@ -41,23 +39,6 @@ class Settings extends React.Component {
     }
 
     render() {
-        if (this.state.switchValue3 == false) {
-            distUnit = 'mi';
-        }
-        else {
-            distUnit = 'km';
-        };
-
-        let data = [{
-            value: '10', label: '10 ' + distUnit
-        },
-        {
-            value: '25', label: '25 ' + distUnit
-        },
-        {
-            value: '50', label: '50 ' + distUnit
-        }
-        ];
 
         return (
             <View style={{ backgroundColor: '#EFEFF4', flex: 1 }}>
