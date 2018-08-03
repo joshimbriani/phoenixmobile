@@ -114,19 +114,19 @@ export const SettingsStack = StackNavigator({
     HelpSettings: {
         screen: HelpSettings,
         navigationOptions: ({ navigation }) => ({
-            title: 'Help Settings',
+            title: 'Help',
         })
     },
     LegalSettings: {
         screen: LegalSettings,
         navigationOptions: ({ navigation }) => ({
-            title: 'Legal Settings',
+            title: 'Legal',
         })
     },
         AboutKootaSettings: {
         screen: AboutKootaSettings,
         navigationOptions: ({ navigation }) => ({
-            title: 'About Koota Settings',
+            title: 'About Koota',
         })
     },
     NotificationSettings: {

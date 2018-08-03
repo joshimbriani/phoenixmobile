@@ -3,12 +3,14 @@ import backgroundColorReducer from './backgroundColor';
 import tokenReducer from './token';
 import userReducer from './user';
 import eventReducer from './events';
+import settingsReducer from './settings';
 
 const reducers = combineReducers({
     backgroundColorReducer,
     tokenReducer,
     userReducer,
-    eventReducer
+    eventReducer,
+    settingsReducer
 });
 
 export default reducers;

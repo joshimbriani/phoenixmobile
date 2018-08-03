@@ -143,7 +143,8 @@ class Profile extends React.Component {
             },
             method: 'PUT',
             body: JSON.stringify({
-                'user': userID
+                'user': userID,
+                'action': 'block'
             })
         }).then(request => request.json())
             .then(requestObject => {

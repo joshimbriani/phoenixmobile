@@ -1,14 +1,14 @@
 import React from 'react';
-import { Platform, View } from 'react-native';
+import { Platform, View, TouchableOpacity, Text } from 'react-native';
 import PlatformIonicon from '../utils/platformIonicon';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import * as colorActions from '../../redux/actions/backgroundColor';
 import * as userActions from '../../redux/actions/user';
+import * as settingsActions from '../../redux/actions/settings';
 import SettingsList from 'react-native-settings-list';
-import { Dropdown } from 'react-native-material-dropdown';
 import { NavigationActions } from 'react-navigation';
 import { styles } from '../../assets/styles';
+import Modal from "react-native-modal";
 
 let distUnit = 'km';
 
@@ -23,16 +23,15 @@ class Settings extends React.Component {
             onPress={() => navigation.navigate('DrawerOpen')} />
     }) : ({ navigation }) => ({
         title: 'Settings',
-        headerStyle: { paddingTop: -22, }
     });
 
-    constructor() {
-        super();
-        this.onValueChange = this.onValueChange.bind(this);
-        this.onValueChange2 = this.onValueChange2.bind(this);
-        this.onValueChange3 = this.onValueChange3.bind(this);
+    constructor(props) {
+        super(props);
+        this.state = { 
+            distMeasureModalVisible: false 
+        };
+
         this.logout = this.logout.bind(this);
-        this.state = { switchValue: false, switchValue2: false, switchValue3: false };
     }
 
     componentWillReceiveProps(nextProps) {
@@ -80,20 +79,7 @@ class Settings extends React.Component {
                             title='Notifications'
                             onPress={() => this.props.navigation.navigate("NotificationSettings", {})}
                         />
-                        <SettingsList.Item
-                            icon={
-                                <PlatformIonicon
-                                    name='sunny'
-                                    size={30}
-                                    style={{ paddingTop: 10, paddingLeft: 5 }}
-                                />
-                            }
-                            hasSwitch={true}
-                            switchState={this.state.switchValue2}
-                            switchOnValueChange={this.onValueChange2}
-                            hasNavArrow={false}
-                            title='Night Mode'
-                        />
+
                         <SettingsList.Header headerStyle={{ marginTop: 15 }} />
                         <SettingsList.Item
                             icon={
@@ -103,46 +89,48 @@ class Settings extends React.Component {
                                     style={{ paddingTop: 10, paddingLeft: 5 }}
                                 />
                             }
-                            hasSwitch={true}
-                            switchState={this.state.switchValue3}
-                            switchOnValueChange={this.onValueChange3}
-                            hasNavArrow={false}
-                            title='Standard / Metric'
+                            hasSwitch={false}
+                            hasNavArrow={true}
+                            title='Distance Measure'
+                            onPress={() => this.setState({ distMeasureModalVisible: true })}
                         />
-                        <SettingsList.Item
-                            icon={
-                                <PlatformIonicon
-                                    name='locate'
-                                    size={30}
-                                    style={{ paddingTop: 10, paddingLeft: 5 }}
-                                />
-                            }
-                            hasNavArrow={false}
-                            title='Radius'
+                        <Modal
+                            isVisible={this.state.distMeasureModalVisible}
+                            backdropOpacity={0.5}
+                            onBackButtonPress={() => this.setState({ distMeasureModalVisible: false })}
+                            onBackdropPress={() => this.setState({ distMeasureModalVisible: false })}>
+                            <View style={{
+                                borderColor: "rgba(0, 0, 0, 0.1)",
+                                backgroundColor: "white",
+                            }}>
+                                <View style={{
+                                    width: 324,
+                                    height: 100
+                                }}>
+                                    <TouchableOpacity onPress={() => this.props.settingsActions.saveDistanceMeasure('mi')}>
+                                        <View style={{ height: 50, width: 324, borderBottomWidth: 1, borderBottomColor: '#000', justifyContent: 'flex-start', paddingLeft: 10, flexDirection: 'row', alignItems: 'center' }}>
+                                            {this.props.distanceMeasure === 'mi' && <PlatformIonicon
+                                                name='checkmark'
+                                                size={30}
+                                                style={{ paddingRight: 10, paddingLeft: 10 }}
+                                            />}
+                                            <Text>Miles</Text>
+                                        </View>
+                                    </TouchableOpacity>
+                                    <TouchableOpacity onPress={() => this.props.settingsActions.saveDistanceMeasure('km')}>
+                                        <View style={{ height: 50, width: 324, justifyContent: 'flex-start', paddingLeft: 10, flexDirection: 'row', alignItems: 'center' }}>
+                                            {this.props.distanceMeasure === 'km' && <PlatformIonicon
+                                                name='checkmark'
+                                                size={30}
+                                                style={{ paddingRight: 10, paddingLeft: 10 }}
+                                            />}
+                                            <Text>Kilometers</Text>
+                                        </View>
+                                    </TouchableOpacity>
+                                </View>
+                            </View>
+                        </Modal>
 
-                            arrowIcon={
-                                <Dropdown
-                                    label='Distance'
-                                    value='yup'
-                                    //width={10000}
-                                    //itemTextSize={100}
-                                    fontSize={15} //this changes to default size after the dropdown has been used
-                                    marginLeft={100}
-                                    data={data}
-                                />
-                            }
-                            titleInfoStyle={styles.titleInfoStyle}
-                        />
-
-                        <SettingsList.Item
-                            icon={<PlatformIonicon
-                                name='pin'
-                                size={30}
-                                style={{ paddingTop: 10, paddingLeft: 5 }}
-                            />}
-                            title='Locations'
-                            onPress={() => this.props.navigation.navigate("LocationsSettings", {})}
-                        />
                         <SettingsList.Header headerStyle={{ marginTop: 15 }} />
 
                         <SettingsList.Item
@@ -163,15 +151,7 @@ class Settings extends React.Component {
                             title='Blocked Users'
                             onPress={() => this.props.navigation.navigate("BlockedUserSettings", {})}
                         />
-                        <SettingsList.Item
-                            icon={<PlatformIonicon
-                                name='hand'
-                                size={30}
-                                style={{ paddingTop: 10, paddingLeft: 5 }}
-                            />}
-                            title='Restrictions & Alerts'
-                            onPress={() => this.props.navigation.navigate("RestrictedModeSettings", {})}
-                        />
+
                         <SettingsList.Item
                             icon={<PlatformIonicon
                                 name='help-circle'
@@ -181,7 +161,7 @@ class Settings extends React.Component {
                             title='Help'
                             onPress={() => this.props.navigation.navigate("HelpSettings", {})}
                         />
-                        
+
                         <SettingsList.Item
                             icon={<PlatformIonicon
                                 name='folder'
@@ -206,16 +186,6 @@ class Settings extends React.Component {
         );
     }
 
-    onValueChange(value) {
-        this.setState({ switchValue: value });
-    }
-    onValueChange2(value) {
-        this.setState({ switchValue2: value });
-    }
-    onValueChange3(value) {
-        this.setState({ switchValue3: value });
-    }
-
     logout() {
         this.props.userActions.logout(this.props.token);
     }
@@ -234,15 +204,15 @@ class Settings extends React.Component {
 
 function mapStateToProps(state) {
     return {
-        color: state.backgroundColorReducer.color,
         user: state.userReducer.user,
         token: state.tokenReducer.token,
+        distanceMeasure: state.settingsReducer.distanceMeasure
     };
 }
 
 function mapDispatchToProps(dispatch) {
     return {
-        colorActions: bindActionCreators(colorActions, dispatch),
+        settingsActions: bindActionCreators(settingsActions, dispatch),
         userActions: bindActionCreators(userActions, dispatch),
     };
 }
