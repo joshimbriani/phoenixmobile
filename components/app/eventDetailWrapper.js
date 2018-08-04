@@ -51,6 +51,9 @@ class EventDetailWrapper extends React.Component {
                 <MenuOption onSelect={navigation.state.params.loadEvent}>
                     <Text>Refresh</Text>
                 </MenuOption>
+                <MenuOption onSelect={navigation.state.params.reportEvent}>
+                    <Text>Report</Text>
+                </MenuOption>
             </MenuOptions>
         </Menu>
     });
@@ -74,7 +77,7 @@ class EventDetailWrapper extends React.Component {
         this.loadEvent = this.loadEvent.bind(this);
         this.markUserAsGoing = this.markUserAsGoing.bind(this);
         this.markUserAsInterested = this.markUserAsInterested.bind(this);
-
+        this.reportEvent = this.reportEvent.bind(this);
     }  
 
     _handleIndexChange = index => this.setState({ index });
@@ -104,7 +107,7 @@ class EventDetailWrapper extends React.Component {
 
     componentDidMount() {
         this.loadEvent();
-        this.props.navigation.setParams({ markUserAsInterested: this.markUserAsInterested, markUserAsGoing: this.markUserAsGoing, loadEvent: this.loadEvent, userID: this.props.user.id });
+        this.props.navigation.setParams({ markUserAsInterested: this.markUserAsInterested, markUserAsGoing: this.markUserAsGoing, loadEvent: this.loadEvent, userID: this.props.user.id, reportEvent: this.reportEvent });
 
         if (!this.props.navigation.state.params.color) {
             this.props.navigation.setParams({color: this.state.color});
@@ -124,6 +127,21 @@ class EventDetailWrapper extends React.Component {
                 initialLayout={initialLayout}
             />
         )
+    }
+
+    reportEvent() {
+        fetch(getURLForPlatform() + "api/v1/events/" + this.props.navigation.state.params.id + "/report/", {
+            headers: {
+                Authorization: "Token " + this.props.token
+            },
+            method: 'PUT',
+        })
+            .then(response => response.json())
+            .then(responseObj => {
+                if (responseObj["success"] !== true) {
+                    console.log("Bad report.")
+                }
+            });
     }
 
     markUserAsInterested() {

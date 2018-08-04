@@ -59,7 +59,14 @@ class ThreadsView extends React.Component {
     }
 
     generateUserImage(users) {
-        return users[0].profilePicture
+        var usersCopy = users.slice();
+        for (var i = usersCopy.length - 1; i >= 0; i--) {
+            if (usersCopy[i].id === this.props.user.id) {
+                usersCopy.splice(i, 1);
+                break;
+            }
+        }
+        return usersCopy[0].profilePicture
     }
 
     getUserInvolvementLevel(userGoing, userInvolved) {

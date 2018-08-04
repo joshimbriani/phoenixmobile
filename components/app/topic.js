@@ -41,6 +41,9 @@ class Topic extends React.Component {
                             <MenuOption onSelect={() => navigation.navigate('Filter')}>
                                 <Text>Filter</Text>
                             </MenuOption>
+                            <MenuOption onSelect={() => navigation.state.params.reportTopic()}>
+                                <Text>Report</Text>
+                            </MenuOption>
                         </MenuOptions>
                     </Menu>
     });
@@ -54,13 +57,14 @@ class Topic extends React.Component {
         }
 
         this.toggleTopic = this.toggleTopic.bind(this);
+        this.reportTopic = this.reportTopic.bind(this);
     }
 
     async componentDidMount() {
         this.props.userActions.loadUser(this.props.token)
 
         this.props.colorActions.changeColor(this.props.navigation.state.params.color);
-        this.props.navigation.setParams({ toggleTopic: this.toggleTopic, followingTopics: this.props.user.followingTopics, topicID: this.props.navigation.state.params.id, userID: this.props.user.id });
+        this.props.navigation.setParams({ toggleTopic: this.toggleTopic, followingTopics: this.props.user.followingTopics, topicID: this.props.navigation.state.params.id, userID: this.props.user.id, reportTopic: this.reportTopic });
         
         var url = getURLForPlatform() + "api/v1/events/search?topic=" + this.props.navigation.state.params.id;
         if (Platform.OS === 'android') {
@@ -113,6 +117,21 @@ class Topic extends React.Component {
                     this.props.userActions.loadUser(this.props.token);
                 }
             })
+    }
+
+    reportTopic() {
+        fetch(getURLForPlatform() + "api/v1/topic/" + this.props.navigation.state.params.id + "/report/", {
+            headers: {
+                Authorization: "Token " + this.props.token
+            },
+            method: 'PUT',
+        })
+            .then(response => response.json())
+            .then(responseObj => {
+                if (responseObj["success"] !== true) {
+                    console.log("Bad report.")
+                }
+            });
     }
 
     render() {

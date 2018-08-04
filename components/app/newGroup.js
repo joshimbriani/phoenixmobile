@@ -11,6 +11,7 @@ import { materialColors } from '../utils/styleutils';
 import { styles } from '../../assets/styles';
 import HideableView from '../utils/hideableView';
 import { CachedImage } from 'react-native-cached-image';
+import debounce from 'lodash/debounce';
 
 class NewGroup extends React.Component{
     static navigationOptions = ({ navigation }) => ({
@@ -168,8 +169,8 @@ class NewGroup extends React.Component{
         }
     }
 
-    loadUsers(query) {
-        fetch(getURLForPlatform() + "api/v1/user/search/?username=" + query + '&relationship=true', {
+    loadUsers = debounce((query) => {
+        fetch(getURLForPlatform() + "api/v1/user/search/?username=" + query + '&status=1', {
             headers: {
                 Authorization: "Token " + this.props.token
             },
@@ -178,7 +179,7 @@ class NewGroup extends React.Component{
         .then(responseObj => {
             this.setState({users: responseObj["users"]});
         });
-    }
+    })
 
     userListToString(users) {
         var userListString = "";

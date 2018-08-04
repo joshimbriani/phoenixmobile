@@ -1,11 +1,14 @@
 import React from 'react';
 import { FlatList, TouchableOpacity, View, Text } from 'react-native';
+import { Content, Form, Item, Input, Label } from 'native-base';
 import { connect } from 'react-redux';
 import { CachedImage } from 'react-native-cached-image';
 import * as userActions from '../../redux/actions/user';
 import Modal from "react-native-modal";
 import { getURLForPlatform } from '../utils/networkUtils';
 import { bindActionCreators } from 'redux';
+import debounce from 'lodash/debounce';
+import PlatformIonicon from '../utils/platformIonicon';
 
 class BlockedUserSettings extends React.Component {
 
@@ -18,7 +21,9 @@ class BlockedUserSettings extends React.Component {
 
         this.state = {
             showUserModal: false,
-            selectedUser: -1
+            selectedUser: -1,
+            searchText: "",
+            filteredUsers: []
         }
     }
 
@@ -42,34 +47,115 @@ class BlockedUserSettings extends React.Component {
         </View>
     );
 
-    unblockUser(userToUnblock) {
+    renderAddBlock = ({ item }) => (
+        <View>
+            <View style={{ flexDirection: 'row', height: 75, backgroundColor: 'white', borderBottomWidth: 1, }}>
+                <View style={{ paddingLeft: 20, justifyContent: 'center' }}>
+                    <CachedImage
+                        style={{ width: 50, height: 50, borderRadius: 30, borderWidth: 1, borderColor: '#fff' }}
+                        source={{ uri: item.profilePicture }}
+                    />
+                </View>
+                <View style={{ paddingLeft: 20, justifyContent: 'center', flex: 1 }}>
+                    <Text style={{ fontWeight: 'bold' }}>{item.username}</Text>
+                </View>
+                <View style={{justifyContent: 'center', alignItems: 'center'}}>
+                    <TouchableOpacity onPress={() => this.toggleBlock(item.id, 'block')}>
+                        <View style={{backgroundColor: '#F44336', aspectRatio: 1}}>
+                            <View style={{justifyContent: 'center', alignItems: 'center'}}>
+                                <PlatformIonicon
+                                    name={"close-circle"}
+                                    size={50} 
+                                    style={{ color: "white", alignItems: 'center', paddingLeft: 'auto' }}
+                                />
+                            </View>
+                        </View>
+                    </TouchableOpacity>
+                </View>
+            </View>
+        </View>
+    )
+
+
+    toggleBlock(user, action) {
         fetch(getURLForPlatform() + 'api/v1/user/' + this.props.user.id + '/block/', {
             headers: {
                 Authorization: "Token " + this.props.token
             },
             method: 'PUT',
             body: JSON.stringify({
-                'user': userToUnblock,
-                'action': 'unblock'
+                'user': user,
+                'action': action
             })
         }).then(request => request.json())
             .then(requestObject => {
                 if (requestObject["success"]) {
                     this.props.userActions.loadUser(this.props.token);
-                    this.setState({ showUserModal: false, selectedUser: -1 });
+                    if (action === 'unblock') {
+                        this.setState({ showUserModal: false, selectedUser: -1 });
+                    }
+                    if (action === 'block') {
+                        var users = this.state.filteredUsers.slice();
+                        for (var i = users.length - 1; i >= 0; i--) {
+                            if (users[i].id === user) {
+                                users.splice(i, 1);
+                            }
+                        }
+
+                        this.setState({filteredUsers: users})
+                    }
+                    
                 }
             })
     }
 
+    findUsers = debounce((text) => {
+        if (text === '') {
+            this.setState({ filteredUsers: [] });
+            return;
+        }
+        fetch(getURLForPlatform() + 'api/v1/user/search/?username=' + text + '&excludeStatus=4', {
+            headers: {
+                Authorization: "Token " + this.props.token
+            },
+        }).then(response => response.json())
+            .then(responseObject => {
+                this.setState({ filteredUsers: responseObject["users"] })
+            })
+    })
+
     render() {
         return (
             <View>
-                <FlatList
-                    data={this.props.user.blockedUsers}
-                    extraData={this.props}
-                    keyExtractor={this._keyExtractor}
-                    renderItem={this._renderItem}
-                />
+                <View style={{paddingBottom: 10}}>
+                    <Form>
+                        <Item>
+                            <Input placeholder="Search For Users to Block" onChangeText={(text) => {this.setState({searchText: text}); this.findUsers(text)}} />
+                        </Item>
+                    </Form>
+                </View>
+                <View style={{flex: 1}}>
+                    {!this.state.searchText && this.props.user.blockedUsers.length > 0 && <FlatList
+                        data={this.props.user.blockedUsers}
+                        extraData={this.props}
+                        keyExtractor={this._keyExtractor}
+                        renderItem={this._renderItem}
+                    />}
+                    {!this.state.searchText && this.props.user.blockedUsers.length <= 0 && <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+                        <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+                            <Text>You have no users blocked</Text>
+                        </View>
+                    </View>}
+                    {this.state.searchText.length > 0 && <FlatList
+                        data={this.state.filteredUsers}
+                        extraData={this.state}
+                        keyExtractor={this._keyExtractor}
+                        renderItem={this.renderAddBlock}
+                    />}
+                    {this.state.searchText.length > 0 && this.state.filteredUsers.length <= 0 && <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+                        <Text>No results</Text>
+                    </View>}
+                </View>
                 <Modal
                     isVisible={this.state.showUserModal}
                     backdropOpacity={0.5}
@@ -83,7 +169,7 @@ class BlockedUserSettings extends React.Component {
                             width: 324,
                             height: 50
                         }}>
-                            <TouchableOpacity onPress={() => this.unblockUser(this.state.selectedUser)}>
+                            <TouchableOpacity onPress={() => this.toggleBlock(this.state.selectedUser, 'unblock')}>
                                 <View style={{ height: 50, width: 324, paddingLeft: 10, flexDirection: 'row', alignItems: 'center' }}>
                                     <Text>Remove Block</Text>
                                 </View>

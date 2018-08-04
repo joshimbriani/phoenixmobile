@@ -407,7 +407,7 @@ class Profile extends React.Component {
                             </View>
                         </View>
                     </View>
-                    {this.props.user.pendingRequests && this.props.user.pendingRequests.length > 0 && <View>
+                    {this.props.user.pendingIncominRequests && this.props.user.pendingIncomingRequests.length > 0 && <View>
                         <View style={{ flexDirection: 'row', backgroundColor: '#2196F3', alignItems: 'center' }}>
                             <View style={{ flex: 1, padding: 20 }}>
                                 <Text style={{ fontWeight: 'bold', color: 'white' }}>Requests</Text>
@@ -416,7 +416,7 @@ class Profile extends React.Component {
                         <View style={{ backgroundColor: '#ecf0f1', padding: 10, flexDirection: 'row' }}>
                             <FlatList
                                 horizontal={true}
-                                data={this.props.user.pendingRequests}
+                                data={this.props.user.pendingIncomingRequests}
                                 extraData={this.props}
                                 keyExtractor={this._keyExtractor}
                                 renderItem={this._renderItem}
