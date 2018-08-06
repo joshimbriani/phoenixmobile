@@ -28,7 +28,6 @@ export default function settingsReducer(state = defaultState, action) {
                 notifications: defaultState.notifications
             })
         default:
-            console.log(state)
             return state
     }
 }

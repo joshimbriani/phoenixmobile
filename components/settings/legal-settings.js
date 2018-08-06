@@ -137,14 +137,6 @@ const thirdPartyLibs = [{
     "link": "https://github.com/root-two/react-native-drawer",
     "license": "MIT"
 }, {
-    "name": "react-native-gesture-handler",
-    "link": "https://github.com/kmagiera/react-native-gesture-handler",
-    "license": "MIT"
-}, {
-    "name": "react-native-google-places",
-    "link": "https://github.com/tolu360/react-native-google-places",
-    "license": "MIT"
-}, {
     "name": "react-native-image-picker",
     "link": "https://github.com/react-community/react-native-image-picker",
     "license": "MIT"

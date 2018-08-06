@@ -182,7 +182,6 @@ class EventDetailPeople extends React.Component {
             return;
         }
         if (addUserToContacts) {
-            console.log("Adding user to contacts")
             fetch(getURLForPlatform() + 'api/v1/user/' + this.props.user.id + '/requests/', {
                 headers: {
                     Authorization: "Token " + this.props.token
@@ -200,9 +199,6 @@ class EventDetailPeople extends React.Component {
                     }
                 })
         } else if (removeUserFromContacts) {
-            console.log("Removing user from contacts or canceling request")
-            console.log(getURLForPlatform() + 'api/v1/user/' + this.props.user.id + '/unfriend/')
-            console.log(this.props.token, userToAdd)
             fetch(getURLForPlatform() + 'api/v1/user/' + this.props.user.id + '/unfriend/', {
                 headers: {
                     Authorization: "Token " + this.props.token
@@ -211,7 +207,7 @@ class EventDetailPeople extends React.Component {
                 body: JSON.stringify({
                     'user': userToAdd,
                 })
-            }).then(request => {console.log(request.body); return request.json();})
+            }).then(request => request.json())
                 .then(requestObject => {
                     if (requestObject["success"]) {
                         this.props.userActions.loadUser(this.props.token);
@@ -220,8 +216,6 @@ class EventDetailPeople extends React.Component {
                     }
                 })
         } else if (acceptUserRequest) {
-            console.log("Accepting user request")
-            console.log(getURLForPlatform() + 'api/v1/user/' + this.props.user.id + '/requests/')
             fetch(getURLForPlatform() + 'api/v1/user/' + this.props.user.id + '/requests/', {
                 headers: {
                     Authorization: "Token " + this.props.token
@@ -240,8 +234,6 @@ class EventDetailPeople extends React.Component {
                     }
                 })
         } else if (denyUserRequest) {
-            console.log("Denying user request")
-            console.log(getURLForPlatform() + 'api/v1/user/' + this.props.user.id + '/requests/')
             fetch(getURLForPlatform() + 'api/v1/user/' + this.props.user.id + '/requests/', {
                 headers: {
                     Authorization: "Token " + this.props.token

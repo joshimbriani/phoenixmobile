@@ -9,6 +9,7 @@ import * as userActions from '../../redux/actions/user';
 import PlatformIonicon from '../utils/platformIonicon';
 import { getURLForPlatform } from '../utils/networkUtils';
 import { styles } from '../../assets/styles';
+import firebase from 'react-native-firebase';
 
 class Home extends React.Component {
     constructor(props) {
@@ -18,7 +19,8 @@ class Home extends React.Component {
             data: [],
             searchQuery: "",
             refreshing: false,
-            GPSPermission: false
+            GPSPermission: false,
+            notificationsAllowed: false
         };
 
         this.changeValue = this.changeValue.bind(this);
@@ -41,10 +43,62 @@ class Home extends React.Component {
 
         navigator.geolocation.getCurrentPosition((position) => {
             console.log(position)
-          },
-          (error) => console.error(error.message),
-          Platform.OS === 'ios' ? { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 } : {},
+        },
+            (error) => console.error(error.message),
+            Platform.OS === 'ios' ? { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 } : {},
         );
+
+        firebase.messaging().requestPermission()
+            .then(() => {
+                // User has authorised  
+                this.setState({ notificationsAllowed: true })
+            })
+            .catch(error => {
+                // User has rejected permissions  
+            });
+
+        this.notificationDisplayedListener = firebase.notifications().onNotificationDisplayed((notification) => {
+            // Process your notification as required
+            // ANDROID: Remote notifications do not contain the channel ID. You will have to specify this manually if you'd like to re-display the notification.
+            console.log("On notifiaction displayed")
+            console.log(notification)
+
+            this.props.navigation.navigate('NewEvent', { topic: "" })
+        });
+
+        this.notificationListener = firebase.notifications().onNotification((notification) => {
+            // Process your notification as required
+            console.log("On Message");
+            const displaynotification = new firebase.notifications.Notification()
+                .setNotificationId('notificationId')
+                .setTitle(notification._body)
+                .setBody('My notification body')
+                .android.setChannelId('message')
+                .setData(notification.data);
+
+            firebase.notifications().displayNotification(displaynotification);
+        });
+
+        firebase.notifications().getInitialNotification().then((notification) => {
+            console.log("Initial")
+            console.log(notification)
+            if (notification)
+                this.props.navigation.navigate('NewEvent', { topic: "" })
+        })
+
+        this.openNotification = firebase.notifications().onNotificationOpened((notification) => {
+            console.log("User opened app")
+            console.log(notification)
+            this.props.navigation.navigate('NewEvent', { topic: "" });
+        });
+
+    }
+
+    componentWillUnmount() {
+        this.notificationDisplayedListener();
+        this.notificationListener();
+        //this.notificationOnStartup();
+        this.openNotification();
     }
 
     async checkUserPermissions() {
@@ -53,20 +107,20 @@ class Home extends React.Component {
                 const granted = await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION);
 
                 if (granted) {
-                    this.setState({GPSPermission: true})
+                    this.setState({ GPSPermission: true })
                 } else {
                     const grantedNow = await PermissionsAndroid.request(
                         PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
                         {
-                          'title': 'Koota',
-                          'message': 'Koota needs access to your GPS location ' +
-                                     'so you can find awesome things happening around you.'
+                            'title': 'Koota',
+                            'message': 'Koota needs access to your GPS location ' +
+                                'so you can find awesome things happening around you.'
                         }
-                      )
-                      if (grantedNow === PermissionsAndroid.RESULTS.GRANTED) {
+                    )
+                    if (grantedNow === PermissionsAndroid.RESULTS.GRANTED) {
                         console.warn("You can use the camera")
-                        this.setState({GPSPermission: true})
-                      }
+                        this.setState({ GPSPermission: true })
+                    }
                 }
 
             } catch (err) {

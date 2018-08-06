@@ -31,7 +31,6 @@ class NotificationSettings extends React.Component {
     }
 
     componentDidMount() {
-        console.log(this.props)
         this.setState({
             notificationUserActions: this.props.notificationSettings.notificationUserActions,
             notificationRecommendedEvents: this.props.notificationSettings.notificationRecommendedEvents,

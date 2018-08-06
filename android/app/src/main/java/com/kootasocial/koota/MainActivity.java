@@ -1,4 +1,4 @@
-package com.phoenixmobile;
+package com.kootasocial.koota;
 
 import com.facebook.react.ReactActivity;
 

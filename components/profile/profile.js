@@ -257,16 +257,14 @@ class Profile extends React.Component {
         };
 
         ImagePicker.showImagePicker(options, (response) => {
-            console.log("Here?")
             if (response.didCancel) {
                 return;
             }
             if (response.error) {
-                console.log("Errro")
+                console.log("Error")
                 return;
             }
 
-            //console.log(MD5(Base64.decode(response.data)))
             const date = new Date();
             const fileName = this.props.user.username + date.getFullYear() + date.getMonth() + date.getDate() + date.getHours() + date.getMinutes();
             fetch(getURLForPlatform() + 'api/v1/image/', {
@@ -277,7 +275,6 @@ class Profile extends React.Component {
                 })
             }).then(serverresponse => serverresponse.json())
                 .then(responseJSON => {
-                    console.log(responseJSON)
                     const url = responseJSON["url"];
 
                     const xhr = new XMLHttpRequest();

@@ -11,7 +11,6 @@ import { OfferContainer } from './offerContainer';
 import { REACT_SWIPER_BOTTOM_MARGIN } from '../utils/constants';
 import moment from 'moment';
 import debounce from 'lodash/debounce';
-import RNGooglePlaces from 'react-native-google-places';
 import { getCurrentLocation } from '../utils/otherUtils';
 
 const ITEMS_TO_VALIDATE = ["title", "description", "place", "datetime", "duration", "place"];
@@ -163,18 +162,15 @@ class NewEvent extends React.Component {
     }
 
     getPlaces = debounce((text) => {
-        var optionsItem = {
-            country: 'US'
-        }
+        var url = "https://maps.googleapis.com/maps/api/place/autocomplete/json?input=" + text + "&key=AIzaSyDUVAEJq3xQe6nTG4uaj00xcl-EkHp2oXQ";
 
         if (this.state.lat > -200 && this.state.long > -200) {
-            optionsItem["latitude"] = this.state.lat;
-            optionsItem["longitude"] = this.state.long;
-            optionsItem["radius"] = 25;
+            url += "&location=" + this.state.lat + "," + this.state.long + "&radius=25";
         }
 
-        RNGooglePlaces.getAutocompletePredictions(text, optionsItem)
-            .then((results) => { console.log(results); this.setState({ placePredictions: results }) })
+        fetch(url)
+            .then((results) => results.json())
+            .then((resultsJSON) => { this.setState({ placePredictions: resultsJSON["predictions"] }) })
             .catch((error) => console.log(error.message));
     }, 250);
 
@@ -193,13 +189,13 @@ class NewEvent extends React.Component {
         this._hideDateTimePicker();
     };
 
-    _keyExtractor = (item, index) => item.placeID;
+    _keyExtractor = (item, index) => item.id;
 
     _renderItem = ({ item }) => (
         <TouchableOpacity onPress={() => this.setState({place: item, placePredictions: [], placeSearchText: "" })}>
-            <View id={item.placeID} style={{borderBottomColor: '#333', borderBottomWidth: 1}}>
-                <Text style={{padding: 5}}>{item.primaryText}</Text>
-                <Text style={{padding: 5}}>{item.secondaryText}</Text>
+            <View id={item.id} style={{borderBottomColor: '#333', borderBottomWidth: 1}}>
+                <Text style={{padding: 5}}>{item.structured_formatting.main_text}</Text>
+                <Text style={{padding: 5}}>{item.structured_formatting.secondary_text}</Text>
             </View>
         </TouchableOpacity>
     );
@@ -249,8 +245,8 @@ class NewEvent extends React.Component {
     }
 
     placeDisplay() {
-        if (Object.keys(this.state.place).length > 0 && this.state.place.primaryText) {
-            return this.state.place.primaryText;
+        if (Object.keys(this.state.place).length > 0 && this.state.place.structured_formatting.main_text) {
+            return this.state.place.structured_formatting.main_text;
         } else {
             return this.state.placeSearchText;
         }
