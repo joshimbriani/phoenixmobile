@@ -1,5 +1,5 @@
 import React from 'react';
-import { Image, KeyboardAvoidingView, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { Image, KeyboardAvoidingView, StyleSheet, TouchableOpacity, View, Platform } from 'react-native';
 
 import { Button, Content, Form, Input, Item, Label, Text } from 'native-base';
 import { NavigationActions } from 'react-navigation';
@@ -172,7 +172,7 @@ class Register extends React.Component {
 
     render() {
         return (
-            <KeyboardAvoidingView style={styles.container} behavior="padding">
+            <KeyboardAvoidingView style={styles.container} behavior={Platform.OS === 'ios' ? "padding" : ""}>
                 {this.state.error.main !== "" && <View style={styles.errorBackground}>
                     <Text style={styles.errorText}>{this.state.error.main}</Text>
                 </View>}

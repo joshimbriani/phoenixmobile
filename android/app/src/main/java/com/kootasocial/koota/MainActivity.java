@@ -2,7 +2,7 @@ package com.kootasocial.koota;
 
 import com.facebook.react.ReactActivity;
 
-public class MainActivity extends ReactActivity {
+public class MainActivity extends AndroidBug5497Workaround {
 
     /**
      * Returns the name of the main component registered from JavaScript.

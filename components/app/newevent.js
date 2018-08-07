@@ -289,7 +289,7 @@ class NewEvent extends React.Component {
                     </View>
                 </View>
                 <View style={styles.flex1}>
-                    <KeyboardAvoidingView keyboardVerticalOffset={this.props.navigation ? 35 : 80} behavior="padding" style={styles.flex1}>
+                    <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? "padding" : ""} style={styles.flex1}>
                         <View style={styles.header}>
                             <Text style={styles.questionHeader}>Topics?</Text>
                             <View style={styles.tagline}>

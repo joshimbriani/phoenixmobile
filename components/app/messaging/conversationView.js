@@ -1,7 +1,7 @@
 import { connect } from 'react-redux';
 import React from 'react';
 import { styles } from '../../../assets/styles';
-import { BackHandler, DeviceEventEmitter, FlatList, Image, ScrollView, KeyboardAvoidingView, TextInput, TouchableOpacity, View } from 'react-native';
+import { BackHandler, DeviceEventEmitter, FlatList, Image, ScrollView, KeyboardAvoidingView, TextInput, TouchableOpacity, View, Platform } from 'react-native';
 import { ConversationHeader } from './conversationHeader';
 import { getURLForPlatform } from '../../utils/networkUtils';
 
@@ -125,7 +125,7 @@ class ConversationView extends React.Component {
                         }}
                     />
                 </ScrollView>
-                <KeyboardAvoidingView enabled keyboardVerticalOffset={this.props.navigation ? 75 : 120} behavior="padding">
+                <KeyboardAvoidingView enabled behavior={Platform.OS === 'ios' ? "padding" : ""}>
                     <View style={{ flexDirection: 'row', padding: 5, backgroundColor: '#f9f9f9' }}>
                         <TouchableOpacity
                             onPress={() => console.log("Pressed media button")}>
