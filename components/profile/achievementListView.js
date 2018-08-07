@@ -53,6 +53,7 @@ export class AchievementListView extends React.Component {
                         horizontal={false}
                         data={this.props.achievements.achievements}
                         renderItem={this._renderItem}
+                        listKey={(item, index) => 'E' + index.toString()}
                     />
                 </Collapsible>
             </View>

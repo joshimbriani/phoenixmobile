@@ -1,6 +1,6 @@
 import React from 'react';
 import { Container, Fab, Header, Item, Input, Icon, Button, Text } from 'native-base';
-import { Alert, Platform, RefreshControl, StyleSheet, TouchableHighlight, View, PermissionsAndroid } from 'react-native';
+import { Alert, Platform, RefreshControl, StyleSheet, TouchableHighlight, View, PermissionsAndroid, AsyncStorage } from 'react-native';
 import GridView from 'react-native-super-grid';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -10,6 +10,9 @@ import PlatformIonicon from '../utils/platformIonicon';
 import { getURLForPlatform } from '../utils/networkUtils';
 import { styles } from '../../assets/styles';
 import firebase from 'react-native-firebase';
+
+import { NavigationActions } from 'react-navigation';
+import { generateUserToString } from '../utils/textUtils';
 
 class Home extends React.Component {
     constructor(props) {
@@ -25,10 +28,12 @@ class Home extends React.Component {
 
         this.changeValue = this.changeValue.bind(this);
         this.checkUserPermissions = this.checkUserPermissions.bind(this);
+        this.reactToNotification = this.reactToNotification.bind(this);
+
     }
 
     async componentDidMount() {
-        this.props.userActions.loadUser(this.props.token);
+        await this.props.userActions.loadUser(this.props.token);
         this.props.colorActions.resetColor();
         fetch(getURLForPlatform() + "api/v1/user/", {
             headers: {
@@ -40,6 +45,23 @@ class Home extends React.Component {
             });
 
         await this.checkUserPermissions();
+
+        if (this.props.FCMToken !== this.props.user.FCMToken) {
+            fetch(getURLForPlatform() + "api/v1/user/" + this.props.user.id + "/", {
+                headers: {
+                    Authorization: "Token " + this.props.token
+                },
+                body: JSON.stringify({
+                    'FCMToken': this.props.FCMToken
+                }),
+                method: 'PUT'
+            }).then(response => response.json())
+                .then(responseObj => {
+                    if (!responseObj["update"]) {
+                        console.log("Bad Update")
+                    }
+                })
+        }
 
         navigator.geolocation.getCurrentPosition((position) => {
             console.log(position)
@@ -57,13 +79,32 @@ class Home extends React.Component {
                 // User has rejected permissions  
             });
 
+        firebase.notifications().getInitialNotification().then(async(notification) => {
+            console.log(notification)
+            const not = await AsyncStorage.getItem("notification")
+            console.log(not)
+            if (notification && notification.notification.notificationId !== not) {
+                const not = notification;
+          
+                var data = {}
+                data["type"] = notification.notification.data["type"]
+                data["event"] = notification.notification.data["event"]
+                data["group"] = notification.notification.data["group"]
+                data["threadID"] = notification.notification.data["threadID"]
+          
+                await AsyncStorage.setItem('notification', notification.notification.notificationId);
+                this.reactToNotification(data);
+                console.log("Here")
+            }
+          })
+
         this.notificationDisplayedListener = firebase.notifications().onNotificationDisplayed((notification) => {
             // Process your notification as required
             // ANDROID: Remote notifications do not contain the channel ID. You will have to specify this manually if you'd like to re-display the notification.
             console.log("On notifiaction displayed")
             console.log(notification)
 
-            this.props.navigation.navigate('NewEvent', { topic: "" })
+            //this.props.navigation.navigate('NewEvent', { topic: "" })
         });
 
         this.notificationListener = firebase.notifications().onNotification((notification) => {
@@ -73,32 +114,78 @@ class Home extends React.Component {
                 .setNotificationId('notificationId')
                 .setTitle(notification._body)
                 .setBody('My notification body')
-                .android.setChannelId('message')
+                .android.setChannelId('messages')
                 .setData(notification.data);
 
             firebase.notifications().displayNotification(displaynotification);
         });
 
-        firebase.notifications().getInitialNotification().then((notification) => {
-            console.log("Initial")
-            console.log(notification)
-            if (notification)
-                this.props.navigation.navigate('NewEvent', { topic: "" })
-        })
-
-        this.openNotification = firebase.notifications().onNotificationOpened((notification) => {
+        this.openNotification = firebase.notifications().onNotificationOpened(async (notification) => {
             console.log("User opened app")
             console.log(notification)
-            this.props.navigation.navigate('NewEvent', { topic: "" });
+            var data = {}
+            data["type"] = notification.notification.data["type"]
+            data["event"] = notification.notification.data["event"]
+            data["group"] = notification.notification.data["group"]
+            data["threadID"] = notification.notification.data["threadID"]
+            const not = await AsyncStorage.getItem("notificationOpened");
+            if (not !== notification.notification.notificationId) {
+                await AsyncStorage.setItem('notificationOpened', notification.notification.notificationId);
+                this.reactToNotification(data)
+            }
+            
         });
 
     }
 
     componentWillUnmount() {
-        this.notificationDisplayedListener();
-        this.notificationListener();
+        //this.notificationDisplayedListener();
+        //this.notificationListener();
         //this.notificationOnStartup();
-        this.openNotification();
+        //this.openNotification();
+    }
+
+    reactToNotification(data) {
+        const type = data["type"];
+        if (type === "m") {
+            const event = data["event"];
+            const group = data["group"];
+            if (event) {
+                fetch(getURLForPlatform() + "api/v1/events/" + event + "/", {
+                    headers: {
+                        Authorization: "Token " + this.props.token
+                    }
+                }).then(response => response.json())
+                    .then(responseObj => {
+                        var thread = {};
+                        const threadID = parseInt(data["threadID"]);
+                        for (var i = 0; i < responseObj["threads"].length; i++) {
+                            if (responseObj["threads"][i].id === threadID) {
+                                thread = responseObj["threads"][i]
+                            }
+                        }
+                        this.props.navigation.dispatch({
+                            index: 2,
+                            type: 'Navigation/RESET',
+                            actions: [
+                                NavigationActions.navigate({ routeName: 'Home' }),
+                                NavigationActions.navigate({ routeName: 'EventDetailWrapper', params: { event: responseObj["title"], id: responseObj["id"], goToMessages: true } }),
+                                NavigationActions.navigate({ routeName: 'ConversationView', params: { newConvo: false, eventName: responseObj["title"], thread: thread, color: '#ffffff', userString: generateUserToString(this.props.user.id, thread.users, responseObj["userBy"]["username"]) } })
+                            ]
+                        })
+                    })
+            } else if (group) {
+                this.props.navigation.navigate('GroupWrapper', { groupID: group, goToMessages: true });
+            }
+        } else if (type === "s") {
+
+        } else if (type === "o") {
+
+        } else if (type === "y") {
+
+        } else if (type === "e") {
+
+        }
     }
 
     async checkUserPermissions() {
@@ -227,7 +314,9 @@ class Home extends React.Component {
 function mapStateToProps(state) {
     return {
         color: state.backgroundColorReducer.color,
-        token: state.tokenReducer.token
+        token: state.tokenReducer.token,
+        FCMToken: state.tokenReducer.FCMToken,
+        user: state.userReducer.user
     };
 }
 

@@ -1,4 +1,7 @@
 export function getComplementaryColor(color) {
+    if (!color) {
+        return '#ffffff'
+    }
     var c = color.slice(1),
         i = parseInt(c, 16),
         v = ((1 << 4 * c.length) - 1 - i).toString(16);

@@ -69,7 +69,7 @@ class EventDetailWrapper extends React.Component {
 
         this.state = {
             eventData: {},
-            index: 0,
+            index: this.props.navigation.state.params.goToMessages ? 3 : 0,
             routes: routes,
             color: getMaterialColor()
         }

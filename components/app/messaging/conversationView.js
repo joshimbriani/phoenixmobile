@@ -66,7 +66,10 @@ class ConversationView extends React.Component {
 
     componentDidMount() {
         setTimeout(() => {
-            this.scrollView.scrollToEnd({animated: false})
+            if (this.scrollView) {
+                this.scrollView.scrollToEnd({animated: false})
+            }
+            
         }, 150);
 
         BackHandler.addEventListener('hardwareBackPress', this.handleBackPress)

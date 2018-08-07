@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, FlatList, View } from 'react-native';
+import { StyleSheet, Text, FlatList, View, AsyncStorage } from 'react-native';
 import { Provider, connect } from 'react-redux';
 import NavContainer from './components/subviews/navcontainer'
 import configureStore from './redux/store'
@@ -7,6 +7,8 @@ import * as colorActions from './redux/actions/backgroundColor'
 import Index from './components/app/index';
 import { PersistGate } from 'redux-persist/es/integration/react';
 import { MenuProvider } from 'react-native-popup-menu';
+
+import firebase from 'react-native-firebase'
 
 const { persistor, store } = configureStore();
 
