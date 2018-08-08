@@ -15,8 +15,8 @@ export function listsEqual(a, b) {
 }
 
 export function getCurrentLocation() {
-  const locationOptions = Platform.OS === 'android' ? null :
-    { enableHighAccuracy: true, timeout: 100000, maximumAge: 1000 };
+  const locationOptions = Platform.OS === 'android' ? {timeout: 50000} :
+    { enableHighAccuracy: true, timeout: 100000 };
 
   return new Promise((resolve, reject) => {
     navigator.geolocation.getCurrentPosition((position) => {console.log(position); resolve(position.coords)}, ({ code, message }) =>

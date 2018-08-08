@@ -67,7 +67,7 @@ class Home extends React.Component {
             console.log(position)
         },
             (error) => console.error(error.message),
-            Platform.OS === 'ios' ? { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 } : {},
+            Platform.OS === 'ios' ? { enableHighAccuracy: true, timeout: 20000 } : {timeout: 50000},
         );
 
         firebase.messaging().requestPermission()
@@ -279,6 +279,7 @@ class Home extends React.Component {
                         />
                     }
                     renderItem={item => {
+                        console.log(item);
                         return (
                             <TouchableHighlight onPress={() => { this.routeToTopic(item) }}>
                                 <View
