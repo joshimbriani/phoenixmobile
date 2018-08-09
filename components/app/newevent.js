@@ -45,7 +45,9 @@ class NewEvent extends React.Component {
             lat: -200,
             long: -200,
             placeSearchText: "",
-            place: {}
+            place: {},
+            durationMeasure: "minutes",
+            duration: 60
         }
         this.onChange = this.onChange.bind(this);
         this.formIsValid = this.formIsValid.bind(this);
@@ -65,7 +67,7 @@ class NewEvent extends React.Component {
                 this.setState({ lat: coordinates.latitude, long: coordinates.longitude });
             }
         } else if (Platform.OS === 'ios') {
-            
+
         }
     }
 
@@ -135,6 +137,12 @@ class NewEvent extends React.Component {
     submitForm() {
         // TODO: Need to give error messages
         if (this.state.formIsValid) {
+            var duration = this.state.duration;
+            if (this.state.durationMeasure === 'hours') {
+                duration *= 60;
+            } else if (this.state.durationMeasure === 'days') {
+                duration = duration * 60 * 24;
+            }
             fetch(getURLForPlatform() + "api/v1/events/", {
                 method: 'POST',
                 headers: {
@@ -150,7 +158,8 @@ class NewEvent extends React.Component {
                     'capacity': this.state.amount,
                     'datetime': this.state.datetime,
                     'topics': this.state.topics.map((topic) => topic.id),
-                    'offers': this.state.selectedOffers
+                    'offers': this.state.selectedOffers,
+                    'duration': duration
                 })
             }).then(response => {
                 if (response.ok) {
@@ -192,10 +201,10 @@ class NewEvent extends React.Component {
     _keyExtractor = (item, index) => item.id;
 
     _renderItem = ({ item }) => (
-        <TouchableOpacity onPress={() => this.setState({place: item, placePredictions: [], placeSearchText: "" })}>
-            <View id={item.id} style={{borderBottomColor: '#333', borderBottomWidth: 1}}>
-                <Text style={{padding: 5}}>{item.structured_formatting.main_text}</Text>
-                <Text style={{padding: 5}}>{item.structured_formatting.secondary_text}</Text>
+        <TouchableOpacity onPress={() => this.setState({ place: item, placePredictions: [], placeSearchText: "" })}>
+            <View id={item.id} style={{ borderBottomColor: '#333', borderBottomWidth: 1 }}>
+                <Text style={{ padding: 5 }}>{item.structured_formatting.main_text}</Text>
+                <Text style={{ padding: 5 }}>{item.structured_formatting.secondary_text}</Text>
             </View>
         </TouchableOpacity>
     );
@@ -227,32 +236,40 @@ class NewEvent extends React.Component {
             });
     }
 
-    addToEvent(offerID) {
+    addToEvent(offer) {
         var offers = this.state.selectedOffers.slice();
-        if (offers.indexOf(offerID) === -1) {
-            offers.push(offerID);
-            this.setState({ selectedOffers: offers });
+        if (offers.indexOf(offer.id) === -1) {
+            offers.push(offer.id);
+            this.setState({ selectedOffers: offers, place: offer.place });
         }
     }
 
     removeFromEvent(offerID) {
         var offers = this.state.selectedOffers.slice();
-        const index = offers.indexOf(offerID)
+        const index = offers.indexOf(offerID);
         if (index !== -1) {
             offers.splice(index, 1);
-            this.setState({ selectedOffers: offers });
+            this.setState({ selectedOffers: offers, place: {} });
         }
     }
 
     placeDisplay() {
-        if (Object.keys(this.state.place).length > 0 && this.state.place.structured_formatting.main_text) {
+        if (Object.keys(this.state.place).length > 0 && this.state.place.structured_formatting && this.state.place.structured_formatting.main_text) {
             return this.state.place.structured_formatting.main_text;
+        } else if (Object.keys(this.state.place).length > 0 && this.state.place.placeDetails) {
+            return this.state.place.name;
         } else {
             return this.state.placeSearchText;
         }
     }
 
     render() {
+        var duration = this.state.duration;
+        if (this.state.durationMeasure === 'hours') {
+            duration *= 60;
+        } else if (this.state.durationMeasure === 'days') {
+            duration = duration * 60 * 24;
+        }
         return (
             <Swiper nextButton={<Text>&gt;</Text>} buttonWrapperStyle={{ alignItems: 'flex-end' }} prevButton={<Text>&lt;</Text>} style={styles.wrapper} showsButtons={true} loop={false} removeClippedSubviews={false} >
                 <View style={styles.flex1}>
@@ -289,7 +306,7 @@ class NewEvent extends React.Component {
                     </View>
                 </View>
                 <View style={styles.flex1}>
-                    <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? "padding" : ""} style={styles.flex1}>
+                    <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? "padding" : null} style={styles.flex1}>
                         <View style={styles.header}>
                             <Text style={styles.questionHeader}>Topics?</Text>
                             <View style={styles.tagline}>
@@ -363,7 +380,7 @@ class NewEvent extends React.Component {
                             <Input name="place" value={this.placeDisplay()} onChangeText={(text) => { this.setState({ placeSearchText: text, place: {} }); this.getPlaces(text) }} />
                         </Item>
                     </Form>
-                    <View style={{marginBottom: REACT_SWIPER_BOTTOM_MARGIN, flex: 1, backgroundColor: 'white'}}>
+                    <View style={{ marginBottom: REACT_SWIPER_BOTTOM_MARGIN, flex: 1, backgroundColor: 'white' }}>
                         <FlatList
                             data={this.state.placePredictions}
                             extraData={this.state}
@@ -392,13 +409,22 @@ class NewEvent extends React.Component {
                             </Button>
                         </Form>
                     </View>
-                    <View style={{ flex: 1 }}>
-                        <Form>
-                            <Item floatingLabel>
-                                <Label>Duration</Label>
-                                <Input name="place" onChangeText={(text) => this.onChange("duration", text)} />
-                            </Item>
-                        </Form>
+                    <View style={{ flex: 1, flexDirection: 'row' }}>
+                        <View style={{ flex: 3, paddingTop: 5 }}>
+                            <Form>
+                                <Item floatingLabel>
+                                    <Label>Duration</Label>
+                                    <Input name="duration" keyboardType="numeric" value={this.state.duration.toString()} onChangeText={(text) => this.onChange("duration", text)} />
+                                </Item>
+                            </Form>
+                        </View>
+                        <View style={{ flex: 2, marginTop: 45 }}>
+                            <Picker mode="dropdown" selectedValue={this.state.durationMeasure} onValueChange={(item) => this.setState({ durationMeasure: item })}>
+                                <Picker.Item label="Minutes" value="minutes" />
+                                <Picker.Item label="Hours" value="hours" />
+                                <Picker.Item label="Days" value="days" />
+                            </Picker>
+                        </View>
                     </View>
                     <DateTimePicker
                         isVisible={this.state.isDateTimePickerVisible}

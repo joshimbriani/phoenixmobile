@@ -1,22 +1,19 @@
-import React, { PureComponent } from 'react';
-import { Text, View } from 'react-native';
+import React from 'react';
+import { Text, View, ScrollView } from 'react-native';
 import { DrawerItems } from 'react-navigation';
-import PlatformIonicon from '../utils/platformIonicon';
-import * as userActions from '../../redux/actions/user';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { styles } from '../../assets/styles';
+import { CachedImage } from 'react-native-cached-image';
 
 class SideDrawer extends React.Component {
     render() {
         return (
-            <View style={{ elevation: 10 }}>
+            <ScrollView style={{ elevation: 10 }}>
                 <View style={{ height: 200, backgroundColor: '#6ABFA0' }}>
                     <View style={{ marginTop: 50, alignItems: 'center' }}>
-                        <PlatformIonicon
-                            name="contact"
-                            size={100}
-                            style={{ color: "white" }}
+                        <CachedImage
+                            style={{ width: 75, height: 75, borderRadius: 38, borderWidth: 1, borderColor: '#c0392b' }}
+                            source={{ uri: this.props.user.profilePicture }}
                         />
                         <Text style={{ fontSize: 30, color: '#fff' }}>
                             {this.props.user.username}
@@ -24,7 +21,7 @@ class SideDrawer extends React.Component {
                     </View>
                 </View>
                 <DrawerItems {...this.props} />
-            </View>
+            </ScrollView>
         )
     }
 }
@@ -37,7 +34,7 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
     return {
-        userActions: bindActionCreators(userActions, dispatch)
+        
     };
 }
 

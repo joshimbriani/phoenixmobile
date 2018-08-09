@@ -3,6 +3,7 @@ import { View, Image, Text, Dimensions } from 'react-native';
 import PropTypes from 'prop-types';
 import CheckBox from 'react-native-check-box'
 import { CachedImage } from 'react-native-cached-image';
+var parseGooglePlace = require('parse-google-place')
 
 import PlatformIonicon from '../utils/platformIonicon';
 
@@ -17,6 +18,10 @@ export class OfferContainer extends React.Component {
 
     render() {
         const width = Dimensions.get('window').width;
+        var address = {};
+        if (this.props.offer && this.props.offer.place && this.props.offer.place.placeDetails.address) {
+            address = parseGooglePlace({"address_components": JSON.parse(this.props.offer.place.placeDetails.address)});
+        }
         if (Object.keys(this.props.offer).length > 0) {
             return (
                 <View key={this.props.index} style={{flexDirection: 'row', shadowRadius: 10, shadowOpacity: 1, shadowColor: 'black', elevation: 2, backgroundColor: 'white', padding: 5, marginBottom: 5}}>
@@ -29,9 +34,9 @@ export class OfferContainer extends React.Component {
                     <View style={{width: width - 185}}>
                         {this.props.offer.adType === "OF" && <Text style={{ fontWeight: 'bold' }} numberOfLines={2}>{this.props.offer.name}</Text>}
                         <Text numberOfLines={1}>{this.props.offer.place.name}</Text>
-                        <Text numberOfLines={1}>{this.props.offer.place.addressStreet}</Text>
+                        <Text numberOfLines={1}>{this.props.offer.place.addressStreet || (address.streetNumber + address.streetName)}</Text>
                         {this.props.offer.place.addressUnit && this.props.offer.place.addressUnit.length > 0 && <Text numberOfLines={1}>{this.props.offer.place.addressUnit}</Text>}
-                        <Text numberOfLines={1}>{this.props.offer.place.addressState}</Text>
+                        <Text numberOfLines={1}>{this.props.offer.place.addressState || address.city + ", " + address.stateShort + " " + address.zipCode}</Text>
                         {this.props.offer.adType === "IN" && <Text numberOfLines={1}>{this.props.offer.tagLine}</Text>}
                     </View>
                     {this.props.addable && <CheckBox
@@ -39,7 +44,7 @@ export class OfferContainer extends React.Component {
                         onClick={()=> {
                             if (!this.state.checked) {
                                 // It wasn't checked but now it is
-                                this.props.addToEvent(this.props.offer.id);
+                                this.props.addToEvent(this.props.offer);
                             } else {
                                 this.props.removeFromEvent(this.props.offer.id);
                             }

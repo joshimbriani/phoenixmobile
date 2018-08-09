@@ -11,6 +11,12 @@ import { CachedImage } from 'react-native-cached-image';
 // Alternate between colors for threads?
 
 class ThreadsView extends React.Component {
+
+    constructor(props) {
+        super(props);
+
+        this.getUserInvolvementLevel = this.getUserInvolvementLevel.bind(this);
+    }
     _keyExtractor = (item, index) => item.id;
 
     render() {
@@ -46,7 +52,7 @@ class ThreadsView extends React.Component {
                 </View>
             )
         } else {
-            const invLevel = this.getUserInvolvementLevel(this.props.userGoing, this.props.userInterested);
+            const invLevel = this.getUserInvolvementLevel(this.props.userGoing, this.props.userInterested, this.props.creator);
             return (
                 <View style={{padding: 5}}>
                     <Text>No messages found. Send a new message by pressing the add button down below.</Text>
@@ -69,13 +75,18 @@ class ThreadsView extends React.Component {
         return usersCopy[0].profilePicture
     }
 
-    getUserInvolvementLevel(userGoing, userInvolved) {
+    getUserInvolvementLevel(userGoing, userInvolved, creator) {
+        console.log(creator)
         if (userGoing) {
             return ['Going', 'the event organizer and other interested or going users.', '']
         }
 
         if (userInvolved) {
             return ['Interested', 'the event organizer and other interested or going users.', '']
+        }
+
+        if (creator === this.props.user.username) {
+            return ['Event Organizer', 'interested and going users.', '']
         }
 
         return ['Not Interested or Going', 'the event organizer.', 'Mark yourself as interested or going to message other users!']

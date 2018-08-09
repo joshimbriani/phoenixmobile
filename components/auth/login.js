@@ -132,7 +132,7 @@ class Login extends React.Component {
 
     render() {
         return (
-            <KeyboardAvoidingView style={styles.container} behavior={Platform.OS === 'ios' ? "padding" : ""}>
+            <KeyboardAvoidingView style={styles.container} behavior={Platform.OS === 'ios' ? "padding" : null}>
                 {this.state.error.main !== "" && <View style={styles.errorBackground}>
                     <Text style={styles.errorText}>{this.state.error.main}</Text>
                 </View>}
@@ -146,7 +146,7 @@ class Login extends React.Component {
                         />
                     </View>
                     <View style={styles.sloganContainer}>
-                        <Text style={styles.slogan}>Curing Loneliness</Text>
+                        <Text style={styles.slogan}>for friends</Text>
                     </View>
                 </View>
                 <View style={styles.inputContainer}>

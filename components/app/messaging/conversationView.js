@@ -125,7 +125,7 @@ class ConversationView extends React.Component {
                         }}
                     />
                 </ScrollView>
-                <KeyboardAvoidingView enabled behavior={Platform.OS === 'ios' ? "padding" : ""}>
+                <KeyboardAvoidingView enabled behavior={Platform.OS === 'ios' ? "padding" : null}>
                     <View style={{ flexDirection: 'row', padding: 5, backgroundColor: '#f9f9f9' }}>
                         <TouchableOpacity
                             onPress={() => console.log("Pressed media button")}>

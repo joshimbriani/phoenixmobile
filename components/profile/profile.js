@@ -404,7 +404,7 @@ class Profile extends React.Component {
                             </View>
                         </View>
                     </View>
-                    {this.props.user.pendingIncominRequests && this.props.user.pendingIncomingRequests.length > 0 && <View>
+                    {this.props.user.pendingIncomingRequests && this.props.user.pendingIncomingRequests.length > 0 && <View>
                         <View style={{ flexDirection: 'row', backgroundColor: '#2196F3', alignItems: 'center' }}>
                             <View style={{ flex: 1, padding: 20 }}>
                                 <Text style={{ fontWeight: 'bold', color: 'white' }}>Requests</Text>

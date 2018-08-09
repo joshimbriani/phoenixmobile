@@ -172,7 +172,7 @@ class Register extends React.Component {
 
     render() {
         return (
-            <KeyboardAvoidingView style={styles.container} behavior={Platform.OS === 'ios' ? "padding" : ""}>
+            <KeyboardAvoidingView style={styles.container} behavior={Platform.OS === 'ios' ? "padding" : null}>
                 {this.state.error.main !== "" && <View style={styles.errorBackground}>
                     <Text style={styles.errorText}>{this.state.error.main}</Text>
                 </View>}

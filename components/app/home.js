@@ -260,9 +260,20 @@ class Home extends React.Component {
                 <Header searchBar rounded>
                     <Item>
                         <Icon name="ios-search" />
-                        <Input placeholder="What Do You Wanna Do?" onChangeText={(text) => this.changeValue(text)} onSubmitEditing={() => { this.props.navigation.navigate('Search', { query: this.state.searchQuery }) }} />
+                        <Input 
+                            placeholder="What Do You Wanna Do?" 
+                            onChangeText={(text) => this.changeValue(text)} 
+                            onSubmitEditing={() => { 
+                                if (this.state.searchQuery.length > 0) {
+                                    this.props.navigation.navigate('Search', { query: this.state.searchQuery }); 
+                                }
+                            }} />
                     </Item>
-                    <Button transparent onPress={() => this.props.navigation.navigate('Search', { query: this.state.searchQuery })}>
+                    <Button transparent onPress={() => {
+                        if (this.state.searchQuery.length > 0) { 
+                            this.props.navigation.navigate('Search', { query: this.state.searchQuery })}
+                        }
+                        }>
                         <Text>Search</Text>
                     </Button>
                 </Header>
