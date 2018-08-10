@@ -1,22 +1,30 @@
 PODS:
-  - boost (1.59.0):
-    - boost/graph-includes (= 1.59.0)
-    - boost/math-includes (= 1.59.0)
-    - boost/numeric-includes (= 1.59.0)
-    - boost/pointer_cast-includes (= 1.59.0)
-    - boost/preprocessor-includes (= 1.59.0)
-    - boost/shared_ptr-includes (= 1.59.0)
-    - boost/string_algorithms-includes (= 1.59.0)
-  - boost/graph-includes (1.59.0)
-  - boost/math-includes (1.59.0)
-  - boost/numeric-includes (1.59.0)
-  - boost/pointer_cast-includes (1.59.0)
-  - boost/preprocessor-includes (1.59.0)
-  - boost/shared_ptr-includes (1.59.0)
-  - boost/string_algorithms-includes (1.59.0)
+  - boost-for-react-native (1.63.0)
   - DoubleConversion (1.1.5)
+  - Firebase/Core (5.3.0):
+    - Firebase/CoreOnly
+    - FirebaseAnalytics (= 5.0.1)
+  - Firebase/CoreOnly (5.3.0):
+    - FirebaseCore (= 5.0.4)
+  - Firebase/Messaging (5.3.0):
+    - Firebase/CoreOnly
+    - FirebaseMessaging (= 3.0.2)
+  - FirebaseAnalytics (5.0.1):
+    - FirebaseCore (~> 5.0)
+    - FirebaseInstanceID (~> 3.0)
+    - "GoogleToolboxForMac/NSData+zlib (~> 2.1)"
+    - nanopb (~> 0.3)
+  - FirebaseCore (5.0.4):
+    - "GoogleToolboxForMac/NSData+zlib (~> 2.1)"
+  - FirebaseInstanceID (3.1.1):
+    - FirebaseCore (~> 5.0)
+  - FirebaseMessaging (3.0.2):
+    - FirebaseCore (~> 5.0)
+    - FirebaseInstanceID (~> 3.0)
+    - GoogleToolboxForMac/Logger (~> 2.1)
+    - Protobuf (~> 3.1)
   - Folly (2016.09.26.00):
-    - boost
+    - boost-for-react-native
     - DoubleConversion
     - GLog
   - GLog (0.3.4)
@@ -46,61 +54,82 @@ PODS:
     - GooglePlaces (= 2.5.0)
   - GooglePlaces (2.5.0):
     - GoogleMaps/Base (= 2.5.0)
-  - React (0.51.1):
-    - React/Core (= 0.51.1)
+  - GoogleToolboxForMac/Defines (2.1.4)
+  - GoogleToolboxForMac/Logger (2.1.4):
+    - GoogleToolboxForMac/Defines (= 2.1.4)
+  - "GoogleToolboxForMac/NSData+zlib (2.1.4)":
+    - GoogleToolboxForMac/Defines (= 2.1.4)
+  - nanopb (0.3.8):
+    - nanopb/decode (= 0.3.8)
+    - nanopb/encode (= 0.3.8)
+  - nanopb/decode (0.3.8)
+  - nanopb/encode (0.3.8)
+  - Protobuf (3.6.1)
+  - React (0.53.3):
+    - React/Core (= 0.53.3)
   - react-native-google-maps (0.21.0):
     - Google-Maps-iOS-Utils (= 2.1.0)
     - GoogleMaps (= 2.5.0)
     - React
+  - react-native-image-picker (0.14.3):
+    - React
   - react-native-maps (0.21.0):
     - React
-  - React/Core (0.51.1):
-    - yoga (= 0.51.1.React)
-  - React/CxxBridge (0.51.1):
+  - React/Core (0.53.3):
+    - yoga (= 0.53.3.React)
+  - React/CxxBridge (0.53.3):
     - Folly (= 2016.09.26.00)
     - React/Core
     - React/cxxreact
-  - React/cxxreact (0.51.1):
-    - boost
+  - React/cxxreact (0.53.3):
+    - boost-for-react-native (= 1.63.0)
     - Folly (= 2016.09.26.00)
     - React/jschelpers
-  - React/DevSupport (0.51.1):
+    - React/jsinspector
+  - React/DevSupport (0.53.3):
     - React/Core
     - React/RCTWebSocket
-  - React/fishhook (0.51.1)
-  - React/jschelpers (0.51.1):
+  - React/fishhook (0.53.3)
+  - React/jschelpers (0.53.3):
     - Folly (= 2016.09.26.00)
     - React/PrivateDatabase
-  - React/PrivateDatabase (0.51.1)
-  - React/RCTActionSheet (0.51.1):
+  - React/jsinspector (0.53.3)
+  - React/PrivateDatabase (0.53.3)
+  - React/RCTActionSheet (0.53.3):
     - React/Core
-  - React/RCTAnimation (0.51.1):
+  - React/RCTAnimation (0.53.3):
     - React/Core
-  - React/RCTBlob (0.51.1):
+  - React/RCTBlob (0.53.3):
     - React/Core
-  - React/RCTGeolocation (0.51.1):
+  - React/RCTGeolocation (0.53.3):
     - React/Core
-  - React/RCTImage (0.51.1):
+  - React/RCTImage (0.53.3):
     - React/Core
     - React/RCTNetwork
-  - React/RCTLinkingIOS (0.51.1):
+  - React/RCTLinkingIOS (0.53.3):
     - React/Core
-  - React/RCTNetwork (0.51.1):
+  - React/RCTNetwork (0.53.3):
     - React/Core
-  - React/RCTSettings (0.51.1):
+  - React/RCTSettings (0.53.3):
     - React/Core
-  - React/RCTText (0.51.1):
+  - React/RCTText (0.53.3):
     - React/Core
-  - React/RCTVibration (0.51.1):
+  - React/RCTVibration (0.53.3):
     - React/Core
-  - React/RCTWebSocket (0.51.1):
+  - React/RCTWebSocket (0.53.3):
     - React/Core
     - React/fishhook
     - React/RCTBlob
-  - yoga (0.51.1.React)
+  - rn-fetch-blob (0.10.6):
+    - React/Core
+  - RNVectorIcons (5.0.0):
+    - React
+  - yoga (0.53.3.React)
 
 DEPENDENCIES:
   - DoubleConversion (from `../node_modules/react-native/third-party-podspecs/DoubleConversion.podspec`)
+  - Firebase/Core (~> 5.3.0)
+  - Firebase/Messaging (~> 5.3.0)
   - Folly (from `../node_modules/react-native/third-party-podspecs/Folly.podspec`)
   - GLog (from `../node_modules/react-native/third-party-podspecs/GLog.podspec`)
   - Google-Maps-iOS-Utils
@@ -108,6 +137,7 @@ DEPENDENCIES:
   - GooglePlacePicker
   - GooglePlaces
   - react-native-google-maps (from `../node_modules/react-native-maps`)
+  - react-native-image-picker (from `../node_modules/react-native-image-picker`)
   - react-native-maps (from `../node_modules/react-native-maps`)
   - React/Core (from `../node_modules/react-native`)
   - React/CxxBridge (from `../node_modules/react-native`)
@@ -122,15 +152,25 @@ DEPENDENCIES:
   - React/RCTText (from `../node_modules/react-native`)
   - React/RCTVibration (from `../node_modules/react-native`)
   - React/RCTWebSocket (from `../node_modules/react-native`)
+  - rn-fetch-blob (from `../node_modules/rn-fetch-blob`)
+  - RNVectorIcons (from `../node_modules/react-native-vector-icons`)
   - yoga (from `../node_modules/react-native/ReactCommon/yoga/yoga.podspec`)
 
 SPEC REPOS:
   https://github.com/cocoapods/specs.git:
-    - boost
+    - boost-for-react-native
+    - Firebase
+    - FirebaseAnalytics
+    - FirebaseCore
+    - FirebaseInstanceID
+    - FirebaseMessaging
     - Google-Maps-iOS-Utils
     - GoogleMaps
     - GooglePlacePicker
     - GooglePlaces
+    - GoogleToolboxForMac
+    - nanopb
+    - Protobuf
 
 EXTERNAL SOURCES:
   DoubleConversion:
@@ -143,25 +183,42 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native"
   react-native-google-maps:
     :path: "../node_modules/react-native-maps"
+  react-native-image-picker:
+    :path: "../node_modules/react-native-image-picker"
   react-native-maps:
     :path: "../node_modules/react-native-maps"
+  rn-fetch-blob:
+    :path: "../node_modules/rn-fetch-blob"
+  RNVectorIcons:
+    :path: "../node_modules/react-native-vector-icons"
   yoga:
     :path: "../node_modules/react-native/ReactCommon/yoga/yoga.podspec"
 
 SPEC CHECKSUMS:
-  boost: 30a15ffb6d9aa4646dd3caffc960753f4cb4ca4e
+  boost-for-react-native: 39c7adb57c4e60d6c5479dd8623128eb5b3f0f2c
   DoubleConversion: ebb6747c5b66026ad4f97b789c3ceac6f18e57a6
-  Folly: b7255b29f1d693c375d642d0f04f0592181156d9
-  GLog: 3e4e4ae9746ce6bf6e9420c7fc1e08ad59c8ba1a
+  Firebase: 68afeeb05461db02d7c9e3215cda28068670f4aa
+  FirebaseAnalytics: b3628aea54c50464c32c393fb2ea032566e7ecc2
+  FirebaseCore: 62f1b792a49bb9e8b4073f24606d2c93ffc352f0
+  FirebaseInstanceID: f3f0657372592ecdfdfe2cac604a5a75758376a6
+  FirebaseMessaging: 6894b8fe0a0cf26c3b13dad729f1131654ae0bdb
+  Folly: 0e765a0b56a1bf180dcbd51ee178cd3a1e2ab986
+  GLog: ed471a3ad6ad53eefb343a530f15dad283e5ef51
   Google-Maps-iOS-Utils: c32891ff472eaaa1fca032beedafa1a013af7875
   GoogleMaps: c087b8e5dfe87ca6ebf59adb9b4894a4146bec4f
   GooglePlacePicker: 1573e644ab54564d95c2643edc0f29091609e966
   GooglePlaces: dd70d9d71ea1c7944846afe67de3712c99b30a77
-  React: 541ba768b9855e10cdc76f55427a5cd0653ca806
+  GoogleToolboxForMac: 91c824d21e85b31c2aae9bb011c5027c9b4e738f
+  nanopb: 5601e6bca2dbf1ed831b519092ec110f66982ca3
+  Protobuf: 1eb9700044745f00181c136ef21b8ff3ad5a0fd5
+  React: af66244a7d630be2aef03b4ddfe3570e4eff39fc
   react-native-google-maps: 2cfe3b01f8422c7dae51d8764139fd70f888cfce
+  react-native-image-picker: b303e31c3c4ada1d7cb1342423d328d2efb07fb3
   react-native-maps: 066c2afcc89e18726377bcc685315f989ca22449
-  yoga: 17521bbb0dd54a47c0b3ac43253e78cdac7488e0
+  rn-fetch-blob: 76a8f798dae965bbcd146a2438f2e1d381c91ae3
+  RNVectorIcons: c0dbfbf6068fefa240c37b0f71bd03b45dddac44
+  yoga: 55da126afc384965b96bff46652464373b330add
 
-PODFILE CHECKSUM: 3cd490060680825be77f9a2f128f920d98de985f
+PODFILE CHECKSUM: 97bebd74498dec9a099e708d65b82dd02f2f0efc
 
 COCOAPODS: 1.5.3
