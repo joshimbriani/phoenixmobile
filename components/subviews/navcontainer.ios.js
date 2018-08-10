@@ -62,17 +62,17 @@ const MainNavContainer = TabNavigator({
 });
 
 const LoginWrapper = StackNavigator({
-    Register: {
-        screen: Register,
-        navigationOptions: ({ navigation }) => ({
-            title: 'Register',
-            header: null
-        })
-    },
     Login: {
         screen: Login,
         navigationOptions: ({ navigation }) => ({
             title: 'Login',
+            header: null
+        })
+    },
+    Register: {
+        screen: Register,
+        navigationOptions: ({ navigation }) => ({
+            title: 'Register',
             header: null
         })
     },
