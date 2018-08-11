@@ -176,11 +176,11 @@ class Home extends React.Component {
     }
 
     componentWillUnmount() {
-        this.notificationDisplayedListener();
-        this.notificationListener();
+        //this.notificationDisplayedListener();
+        //this.notificationListener();
         //this.notificationOnStartup();
-        this.openNotification();
-        this.messageListener();
+        //this.openNotification();
+        //this.messageListener();
     }
 
     reactToNotification(data) {
