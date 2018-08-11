@@ -139,6 +139,40 @@ class Home extends React.Component {
 
         });
 
+        this.messageListener = firebase.messaging().onMessage(async (message) => {
+            var notification = new firebase.notifications.Notification()
+                .setTitle(message.data["title"])
+                .setNotificationId(makeid())
+                .setBody(message.data["body"]);
+
+            if (message.data["type"] === 'm') {
+                notification.setSubtitle("Message")
+                    .android.setChannelId("messages")
+                    .setData({
+                        type: message.data["type"],
+                        event: message.data["event"],
+                        group: message.data["group"],
+                        threadID: message.data["threadID"]
+                    });
+            } else if (message.data["type"] === 's') {
+                notification.setSubtitle("Suggested Event")
+                    .android.setChannelId("suggestedEvent");
+            } else if (message.data["type"] === 'o') {
+                notification.setSubtitle("Hot Offer")
+                    .android.setChannelId("promotedOffer");
+            } else if (message.data["type"] === 'y') {
+                notification.setSubtitle("Your Event Update")
+                    .android.setChannelId("yourEventUpdates");
+            } else if (message.data["type"] === 'e') {
+                notification.setSubtitle("Event Update")
+                    .android.setChannelId("eventUpdates");
+            } else {
+                notification.android.setChannelId("default");
+            }
+
+            firebase.notifications().displayNotification(notification);
+        })
+
     }
 
     componentWillUnmount() {
@@ -146,6 +180,7 @@ class Home extends React.Component {
         this.notificationListener();
         //this.notificationOnStartup();
         this.openNotification();
+        this.messageListener();
     }
 
     reactToNotification(data) {
@@ -197,13 +232,13 @@ class Home extends React.Component {
                     index: 0,
                     key: null,
                     actions: [
-                        NavigationActions.navigate({ routeName: 'Main', action: StackActions.push({ routeName: 'GroupWrapper', params: {groupID: group, goToMessages: true }  }), }),
+                        NavigationActions.navigate({ routeName: 'Main', action: StackActions.push({ routeName: 'GroupWrapper', params: { groupID: group, goToMessages: true } }), }),
                         //NavigationActions.navigate({ routeName: 'GroupsList' }),
                         //NavigationActions.navigate({ routeName: 'GroupWrapper', params: {groupID: group, goToMessages: true }})
                     ]
                 })
                 this.props.navigation.dispatch(resetAction);
-                const goToThreadAction = NavigationActions.navigate({ routeName: 'GroupWrapper', params: {groupID: group, goToMessages: true }});
+                const goToThreadAction = NavigationActions.navigate({ routeName: 'GroupWrapper', params: { groupID: group, goToMessages: true } });
                 //this.props.navigation.dispatch(goToThreadAction);
             }
         } else if (type === "s") {
@@ -250,15 +285,15 @@ class Home extends React.Component {
     static navigationOptions = (Platform.OS === 'android') ? ({ navigation }) => ({
         title: 'Home',
         headerLeft: <Icon
-                style={{ paddingLeft: 10 }}
-                size={35}
-                onPress={() => navigation.openDrawer()}
-                name="md-menu"
-            />
+            style={{ paddingLeft: 10 }}
+            size={35}
+            onPress={() => navigation.openDrawer()}
+            name="md-menu"
+        />
     }) : ({ navigation }) => ({
-            title: 'Home',
-            headerStyle: { paddingTop: -22, }
-        });
+        title: 'Home',
+        headerStyle: { paddingTop: -22, }
+    });
 
     changeValue(text) {
         this.setState({ searchQuery: text });
@@ -289,7 +324,7 @@ class Home extends React.Component {
             <Container>
                 <Header searchBar rounded>
                     <Item>
-                        <PlatformIonicon name="search" size={30} style={{marginLeft: 5}} />
+                        <PlatformIonicon name="search" size={30} style={{ marginLeft: 5 }} />
                         <Input
                             placeholder="What Do You Wanna Do?"
                             onChangeText={(text) => this.changeValue(text)}
@@ -374,3 +409,12 @@ export default connect(
     mapDispatchToProps
 )(Home);
 
+function makeid() {
+    var text = "";
+    var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  
+    for (var i = 0; i < 5; i++)
+      text += possible.charAt(Math.floor(Math.random() * possible.length));
+  
+    return text;
+  }
