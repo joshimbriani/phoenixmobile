@@ -32,10 +32,10 @@ class ThreadsView extends React.Component {
                             <TouchableOpacity
                                 onPress={() => this.props.navigation.navigate('ConversationView', { newConvo: false, thread: item, eventName: this.props.eventName, color: this.props.color, userString: generateUserToString(this.props.user.id, item.users, this.props.creator) })}>
                                 <View style={{flexDirection: 'row', marginTop: 10, paddingRight: 10, paddingLeft: 10, paddingBottom: 10, borderBottomWidth: 0.5, borderColor: '#000'}}>
-                                    <View style={{ justifyContent: 'center'}}>
+                                    <View style={{ justifyContent: 'center', margin: 5}}>
                                         <CachedImage
                                             source={{uri: this.generateUserImage(item.users)}}
-                                            style={{borderRadius:30, borderWidth: 1, borderColor: '#fff', width: 60, height: 60}}
+                                            style={{borderRadius:30, width: 60, height: 60}}
                                         />
                                     </View>
                                     <View style={{flex: 1, justifyContent: 'center', paddingLeft: 15}}>

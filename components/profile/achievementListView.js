@@ -18,10 +18,10 @@ export class AchievementListView extends React.Component {
     _keyExtractor = (item, index) => item.id;
 
     _renderItem = ({item, index}) => (
-        <View key={index} style={{alignItems: 'center', padding: 10}}>
+        <View key={index} style={{alignItems: 'center', padding: 10, margin: 5}}>
             <CachedImage 
                 key={index}
-                style={{ margin: 5, width: 50, height: 50, borderRadius:30, borderWidth: 1, borderColor: '#fff' }}
+                style={{ width: 50, height: 50, borderRadius:25 }}
                 source={{ uri: (item.icon || 'http://via.placeholder.com/200x200') }}
             />
             <Text>{item.title}</Text>

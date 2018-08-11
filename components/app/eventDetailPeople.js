@@ -49,7 +49,7 @@ class EventDetailPeople extends React.Component {
                         <TouchableOpacity onLongPress={() => this.setState({ userOptionModalVisible: true, selectedUser: this.props.event.userBy.id })}>
                             <View style={{ flexDirection: 'row', alignItems: 'center', paddingTop: 5 }}>
                                 <CachedImage
-                                    style={{ width: 50, height: 50, borderRadius: 30, borderWidth: 1, borderColor: '#fff' }}
+                                    style={{ margin: 0, width: 50, height: 50, borderRadius: 25 }}
                                     source={{ uri: this.props.event.userBy.profilePicture }}
                                 />
                                 <Text style={{ paddingLeft: 20 }}>{this.props.event.userBy.username}</Text>
@@ -62,11 +62,13 @@ class EventDetailPeople extends React.Component {
                             {this.props.event.going.map((user, index) => {
                                 return (
                                     <TouchableOpacity onLongPress={() => this.setState({ userOptionModalVisible: true, selectedUser: user.id })}>
-                                        <CachedImage
-                                            key={index}
-                                            style={{ margin: 5, width: 50, height: 50, borderRadius: 30, borderWidth: 1, borderColor: '#fff' }}
-                                            source={{ uri: user.profilePicture }}
-                                        />
+                                        <View style={{margin: 5}}>
+                                            <CachedImage
+                                                key={index}
+                                                style={{ width: 50, height: 50, borderRadius: 25 }}
+                                                source={{ uri: user.profilePicture }}
+                                            />
+                                        </View>
                                     </TouchableOpacity>
                                 )
                             })}
@@ -82,11 +84,13 @@ class EventDetailPeople extends React.Component {
                             {this.props.event.interested.map((user, index) => {
                                 return (
                                     <TouchableOpacity onLongPress={() => this.setState({ userOptionModalVisible: true, selectedUser: user.id })}>
-                                        <CachedImage
-                                            key={index}
-                                            style={{ margin: 5, width: 50, height: 50, borderRadius: 30, borderWidth: 1, borderColor: '#fff' }}
-                                            source={{ uri: user.profilePicture }}
-                                        />
+                                        <View style={{margin: 5}}>
+                                            <CachedImage
+                                                key={index}
+                                                style={{ width: 50, height: 50, borderRadius: 25 }}
+                                                source={{ uri: user.profilePicture }}
+                                            />
+                                        </View>
                                     </TouchableOpacity>
                                 )
                             })}

@@ -21,11 +21,11 @@ export class Bubble extends React.Component {
             <View style={{ marginRight: this.props.isUserSender ? 0 : 20, marginLeft: this.props.isUserSender ? 10 : 0 }}>
                 <TouchableOpacity
                     onPress={this.toggleHiddenInfo}>
-                    <View style={{ backgroundColor: this.props.isUserSender ? '#ecf0f1' : '#3498db', padding: 15, borderRadius: 20, borderWidth: 1, borderColor: this.props.isUserSender ? '#ecf0f1' : '#3498db' }}>
+                    <View style={{ backgroundColor: this.props.isUserSender ? '#ecf0f1' : '#3498db', padding: 10, borderRadius: 20, borderWidth: 1, borderColor: this.props.isUserSender ? '#ecf0f1' : '#3498db' }}>
                         <Text style={{ fontSize: 17, overflow: 'hidden' }}>{this.props.message}</Text>
                     </View>
                 </TouchableOpacity>
-                <HideableView hide={this.state.hidden} style={{ flexDirection: 'row' }}>
+                <HideableView hide={this.state.hidden} style={{ flexDirection: 'row', paddingLeft: 10 }}>
                     <Text style={{ fontSize: 10, paddingRight: 10 }}>{this.props.username}</Text>
                     <Text style={{ fontSize: 10, alignContent: 'flex-end', justifyContent: 'flex-end' }}>{this.props.sendDate}</Text>
                 </HideableView>

@@ -19,7 +19,12 @@ export class UserRow extends React.Component {
                 return (
                     <TouchableOpacity onPress={this.selectRow}>
                         <View style={{flexDirection: 'row'}}>
-                            <CachedImage style={{ width: 50, height: 50, borderRadius:30, borderWidth: 1, borderColor: '#fff', marginRight: 10 }} source={{ uri: this.props.user.profilePicture }} />
+                            <View style={{marginRight: 10}}>
+                                <CachedImage 
+                                    style={{ width: 50, height: 50, borderRadius:25 }} 
+                                    source={{ uri: this.props.user.profilePicture }} 
+                                />
+                            </View>
                             <Text style={{ fontSize: 15, color: 'black', alignSelf: 'center' }} key={(this.props.section || '') + this.props.user.id}>{this.props.user.username}</Text>
                         </View>
                     </TouchableOpacity>

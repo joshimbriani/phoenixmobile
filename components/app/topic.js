@@ -61,12 +61,13 @@ class Topic extends React.Component {
     }
 
     async componentDidMount() {
+        console.log("Here")
         this.props.userActions.loadUser(this.props.token)
 
         this.props.colorActions.changeColor(this.props.navigation.state.params.color);
         this.props.navigation.setParams({ toggleTopic: this.toggleTopic, followingTopics: this.props.user.followingTopics, topicID: this.props.navigation.state.params.id, userID: this.props.user.id, reportTopic: this.reportTopic });
         
-        var url = getURLForPlatform() + "api/v1/events/search?topic=" + this.props.navigation.state.params.id;
+        var url = getURLForPlatform() + "api/v1/events/search/?topic=" + this.props.navigation.state.params.id;
         if (Platform.OS === 'android') {
             const granted = await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION);
             if (granted) {

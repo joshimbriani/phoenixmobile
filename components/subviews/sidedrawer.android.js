@@ -12,7 +12,7 @@ class SideDrawer extends React.Component {
                 <View style={{ height: 200, backgroundColor: '#6ABFA0' }}>
                     <View style={{ marginTop: 50, alignItems: 'center' }}>
                         <CachedImage
-                            style={{ width: 75, height: 75, borderRadius: 38, borderWidth: 1, borderColor: '#c0392b' }}
+                            style={{ width: 75, height: 75, borderRadius: 38 }}
                             source={{ uri: this.props.user.profilePicture }}
                         />
                         <Text style={{ fontSize: 30, color: '#fff' }}>

@@ -264,6 +264,7 @@ class NewEvent extends React.Component {
     }
 
     render() {
+        console.log(this.state.offers && this.state.offers.length > 0)
         var duration = this.state.duration;
         if (this.state.durationMeasure === 'hours') {
             duration *= 60;
@@ -272,7 +273,7 @@ class NewEvent extends React.Component {
         }
         return (
             <Swiper nextButton={<Text>&gt;</Text>} buttonWrapperStyle={{ alignItems: 'flex-end' }} prevButton={<Text>&lt;</Text>} style={styles.wrapper} showsButtons={true} loop={false} removeClippedSubviews={false} >
-                <View style={styles.flex1}>
+                <View style={styles.flex1} key={1}>
                     <View style={styles.header}>
                         <Text style={styles.questionHeader}>What?</Text>
                         <View style={styles.tagline}>
@@ -305,8 +306,8 @@ class NewEvent extends React.Component {
                         </Content>
                     </View>
                 </View>
-                <View style={styles.flex1}>
-                    <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? "padding" : null} style={styles.flex1}>
+                <View style={styles.flex1} key={2}>
+                    <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? "padding" : null} style={styles.flex1} keyboardVerticalOffset={Platform.OS === 'ios' ? 20 : 0}>
                         <View style={styles.header}>
                             <Text style={styles.questionHeader}>Topics?</Text>
                             <View style={styles.tagline}>
@@ -333,7 +334,7 @@ class NewEvent extends React.Component {
                             <View style={{ marginBottom: REACT_SWIPER_BOTTOM_MARGIN }}>
                                 <Form style={{ flexDirection: 'row' }}>
                                     <View style={{ flex: 1, paddingLeft: 10 }}>
-                                        <Input placeholder="Add Extra Topics Here" name="topic" value={this.state.topic} onChangeText={(text) => this.setState({ "topic": text })} />
+                                        <Input placeholder="Type Extra Topics Here" name="topic" value={this.state.topic} onChangeText={(text) => this.setState({ "topic": text })} />
                                     </View>
                                     <View style={{ paddingRight: 10 }}>
                                         <Button title="Add" accessibilityLabel="Press this button to add a new topic." onPress={() => this.addTopic()}>
@@ -354,19 +355,16 @@ class NewEvent extends React.Component {
                         </View>
                     </View>
                     <View style={{ flex: 1, flexDirection: "row", flexWrap: "wrap", alignSelf: "stretch" }}>
-                        {this.state.offers && this.state.offers.length > 0 && <ScrollView style={styles.offerScrollContainer}>
+                        <ScrollView style={styles.offerScrollContainer}>
                             {this.state.offers.map((offer, index) => {
                                 return (
                                     <OfferContainer index={index} offer={offer} addable={true} addToEvent={this.addToEvent} removeFromEvent={this.removeFromEvent} />
                                 )
                             })}
                         </ScrollView>
-                        }
-
-                        {this.state.offers && this.state.offers.length < 1 && <View style={{ flex: 1, justifyContent: 'center', alignSelf: 'center', padding: 10 }}><Text>There are no offers for your event so far! Either add some more detail or add some extra topics and see if you can find some!</Text></View>}
                     </View>
                 </View>
-                <View style={styles.flex1}>
+                <View style={styles.flex1} key={this.state.offers && this.state.offers.length > 0 ? 4 : 3}>
                     <View style={styles.header}>
                         <Text style={styles.questionHeader}>Where?</Text>
                         <View style={styles.tagline}>
@@ -389,7 +387,7 @@ class NewEvent extends React.Component {
                         />
                     </View>
                 </View>
-                <View style={styles.flex1}>
+                <View style={styles.flex1} key={this.state.offers && this.state.offers.length > 0 ? 5 : 4}>
                     <View style={styles.header}>
                         <Text style={styles.questionHeader}>When?</Text>
                         <View style={styles.tagline}>
@@ -418,7 +416,7 @@ class NewEvent extends React.Component {
                                 </Item>
                             </Form>
                         </View>
-                        <View style={{ flex: 2, marginTop: 45 }}>
+                        <View style={{ flex: 2, marginTop:  Platform.OS === 'ios' ? -60 : 45 }}>
                             <Picker mode="dropdown" selectedValue={this.state.durationMeasure} onValueChange={(item) => this.setState({ durationMeasure: item })}>
                                 <Picker.Item label="Minutes" value="minutes" />
                                 <Picker.Item label="Hours" value="hours" />
@@ -435,7 +433,7 @@ class NewEvent extends React.Component {
                         mode="datetime"
                     />
                 </View>
-                <View style={styles.flex1}>
+                <View style={styles.flex1} key={this.state.offers && this.state.offers.length > 0 ? 6 : 5}>
                     <View style={styles.header}>
                         <Text style={styles.questionHeader}>Who?</Text>
                         <View style={styles.tagline}>

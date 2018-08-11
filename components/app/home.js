@@ -74,13 +74,16 @@ class Home extends React.Component {
         firebase.messaging().requestPermission()
             .then(() => {
                 // User has authorised  
+                console.log("User has permission")
                 this.setState({ notificationsAllowed: true })
             })
             .catch(error => {
                 // User has rejected permissions  
+                console.log("User rejected notification")
             });
 
         firebase.notifications().getInitialNotification().then(async (notification) => {
+            console.log("On notification")
             console.log(notification)
             const not = await AsyncStorage.getItem("notification")
             console.log(not)
@@ -139,10 +142,10 @@ class Home extends React.Component {
     }
 
     componentWillUnmount() {
-        //this.notificationDisplayedListener();
-        //this.notificationListener();
+        this.notificationDisplayedListener();
+        this.notificationListener();
         //this.notificationOnStartup();
-        //this.openNotification();
+        this.openNotification();
     }
 
     reactToNotification(data) {
@@ -318,7 +321,6 @@ class Home extends React.Component {
                         />
                     }
                     renderItem={item => {
-                        console.log(item);
                         return (
                             <TouchableHighlight onPress={() => { this.routeToTopic(item) }}>
                                 <View

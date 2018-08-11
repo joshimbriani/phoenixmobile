@@ -8,6 +8,7 @@ import GroupsMessage from './groupsMessage';
 import GroupsDetails from './groupsDetails';
 import { GroupHeader } from './groupHeader';
 import { getURLForPlatform } from '../utils/networkUtils';
+import { HeaderBackButton } from 'react-navigation';
 
 import {styles} from '../../assets/styles';
 
@@ -19,7 +20,7 @@ const initialLayout = {
 class GroupWrapper extends React.Component{
     static navigationOptions = ({ navigation }) => ({
         title: navigation.state.params.groupName || "Loading...",
-        headerLeft: <PlatformIonicon name={'arrow-back'} size={24} style={{overflow: 'hidden', margin: 16, transform: [{'scaleX': 1}]}} onPress={ () => { if (navigation.state.params.backKey) { navigation.goBack(navigation.state.params.backKey) } else {navigation.goBack()} }} />,
+        headerLeft: <HeaderBackButton onPress={() => { if (navigation.state.params.backKey) { navigation.goBack(navigation.state.params.backKey) } else { navigation.goBack() } }} />,
         headerRight: <GroupHeader index={navigation.state.params.index} editing={navigation.state.params.editing} saveEdits={navigation.state.params.saveEdits} cancelEditing={navigation.state.params.cancelEditing} edit={navigation.state.params.edit} />
     });
 

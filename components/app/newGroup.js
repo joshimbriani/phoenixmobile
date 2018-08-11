@@ -45,7 +45,7 @@ class NewGroup extends React.Component{
                     <View style={{flexDirection: 'row', flex: 1}}>
                         <View style={{paddingRight: 10}}>
                             <CachedImage
-                                style={{ width: 50, height: 50, borderRadius:30, borderWidth: 1, borderColor: '#fff' }}
+                                style={{ width: 50, height: 50, borderRadius:25 }}
                                 source={{ uri: item.profilePicture }}
                             />
                         </View>

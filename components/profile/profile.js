@@ -49,9 +49,9 @@ class Profile extends React.Component {
     _keyExtractor = (item, index) => item.id;
 
     _renderItem = ({ item }) => (
-        <View style={{ width: 150, justifyContent: 'center', alignItems: 'center', shadowRadius: 10, shadowOpacity: 1, shadowColor: 'black', elevation: 2, backgroundColor: 'white', margin: 10, padding: 5 }}>
+        <View style={{ width: 150, justifyContent: 'center', alignItems: 'center', shadowRadius: 2, shadowOpacity: 1, shadowColor: 'black', elevation: 2, backgroundColor: 'white', margin: 10, padding: 5 }}>
             <CachedImage
-                style={{ width: 50, height: 50, borderRadius: 25, borderWidth: 1, borderColor: '#ecf0f1' }}
+                style={{ width: 50, height: 50, borderRadius: 25 }}
                 source={{ uri: item.profilePicture }}
             />
             <Text>{item.username}</Text>
@@ -82,7 +82,7 @@ class Profile extends React.Component {
                 <View style={{ borderBottomWidth: 1, flexDirection: 'row' }}>
                     <View style={{ padding: 10 }}>
                         <CachedImage
-                            style={{ width: 50, height: 50, borderRadius: 25, borderWidth: 1, borderColor: '#ecf0f1' }}
+                            style={{ width: 50, height: 50, borderRadius: 25 }}
                             source={{ uri: item.profilePicture }}
                         />
                     </View>
@@ -197,6 +197,9 @@ class Profile extends React.Component {
     );
 
     filterFriends(text, newFriend) {
+        if (!this.props.user.friends) {
+            return;
+        }
         var filteredFriends = this.props.user.friends.slice();
         if (Object.keys(newFriend).length > 0 && filteredFriends.map((friend) => friend.id).indexOf(newFriend.id) === -1) {
             filteredFriends.push(newFriend);
@@ -309,7 +312,7 @@ class Profile extends React.Component {
                         <View style={{ justifyContent: 'center', alignItems: 'center', backgroundColor: '#c0392b', height: 175 }}>
                             <TouchableOpacity onLongPress={() => this.setState({ profilePictureModalVisible: true })}>
                                 <CachedImage
-                                    style={{ width: 75, height: 75, borderRadius: 38, borderWidth: 1, borderColor: '#c0392b' }}
+                                    style={{ width: 75, height: 75, borderRadius: 38 }}
                                     source={{ uri: this.props.user.profilePicture }}
                                 />
                             </TouchableOpacity>
@@ -320,7 +323,7 @@ class Profile extends React.Component {
                         <View style={{ justifyContent: 'center', alignItems: 'center', backgroundColor: '#c0392b', height: 175 }}>
                             <TouchableOpacity onPress={() => this.changeProfilePicture()}>
                                 <CachedImage
-                                    style={{ width: 75, height: 75, borderRadius: 38, borderWidth: 1, borderColor: '#c0392b' }}
+                                    style={{ width: 75, height: 75, borderRadius: 38 }}
                                     source={{ uri: this.props.user.profilePicture }}
                                 />
                             </TouchableOpacity>

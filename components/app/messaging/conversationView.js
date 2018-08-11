@@ -1,9 +1,10 @@
 import { connect } from 'react-redux';
 import React from 'react';
 import { styles } from '../../../assets/styles';
-import { BackHandler, DeviceEventEmitter, FlatList, Image, ScrollView, KeyboardAvoidingView, TextInput, TouchableOpacity, View, Platform } from 'react-native';
+import { BackHandler, DeviceEventEmitter, FlatList, Text, ScrollView, KeyboardAvoidingView, TextInput, TouchableOpacity, View, Platform } from 'react-native';
 import { ConversationHeader } from './conversationHeader';
 import { getURLForPlatform } from '../../utils/networkUtils';
+import { HeaderBackButton } from 'react-navigation';
 
 import { getDateStringForMessage } from '../../utils/textUtils';
 import PlatformIonicon from '../../utils/platformIonicon';
@@ -11,6 +12,12 @@ import { Bubble } from './bubble';
 import { getMaterialColor } from '../../utils/styleutils';
 
 import { CachedImage } from 'react-native-cached-image';
+import {
+    Menu,
+    MenuTrigger,
+    MenuOptions,
+    MenuOption
+} from 'react-native-popup-menu';
 
 // Probably want to switch to https://github.com/APSL/react-native-keyboard-aware-scroll-view at some point
 
@@ -21,8 +28,24 @@ import { CachedImage } from 'react-native-cached-image';
 class ConversationView extends React.Component {
     static navigationOptions = ({ navigation }) => ({
         headerTitle: <ConversationHeader users={navigation.state.params.userString} eventName={navigation.state.params.eventName} />,
-        headerStyle: { backgroundColor: typeof(jsVar) == 'undefined' ? getMaterialColor() : '#' + navigation.state.params.color },
-        headerLeft: <PlatformIonicon name={'arrow-back'} size={24} style={{overflow: 'hidden', margin: 16, transform: [{'scaleX': 1}]}} onPress={ () => { if (navigation.state.params.backKey) { navigation.goBack(navigation.state.params.backKey) } else {navigation.goBack()} }} />,
+        headerStyle: { backgroundColor: typeof (jsVar) == 'undefined' ? getMaterialColor() : '#' + navigation.state.params.color },
+        headerLeft: <HeaderBackButton onPress={() => { if (navigation.state.params.backKey) { navigation.goBack(navigation.state.params.backKey) } else { navigation.goBack() } }} />,
+        headerRight: <View style={{paddingRight: 10}}>
+            <Menu>
+                <MenuTrigger>
+                    <PlatformIonicon
+                        name={'more'}
+                        size={30}
+                        style={{ color: "white" }}
+                    />
+                </MenuTrigger>
+                <MenuOptions optionsContainerStyle={{ marginTop: 30 }}>
+                    <MenuOption onSelect={() => console.log("refresh")}>
+                        <Text>Refresh</Text>
+                    </MenuOption>
+                </MenuOptions>
+            </Menu>
+        </View>
     });
 
     constructor(props) {
@@ -37,7 +60,7 @@ class ConversationView extends React.Component {
                 messages: [],
                 threadID: '',
                 users: [
-                    {id: this.props.user.id, username: this.props.user.username, profilePicture: this.props.user.profilePicture}
+                    { id: this.props.user.id, username: this.props.user.username, profilePicture: this.props.user.profilePicture }
                 ]
             }
         } else {
@@ -67,25 +90,25 @@ class ConversationView extends React.Component {
     componentDidMount() {
         setTimeout(() => {
             if (this.scrollView) {
-                this.scrollView.scrollToEnd({animated: false})
+                this.scrollView.scrollToEnd({ animated: false })
             }
-            
+
         }, 150);
 
         BackHandler.addEventListener('hardwareBackPress', this.handleBackPress)
     }
 
     componentWillUnmount() {
-        DeviceEventEmitter.emit('refresh',  {});
+        DeviceEventEmitter.emit('refresh', {});
         BackHandler.removeEventListener('hardwareBackPress', this.handleBackPress);
     }
 
     render() {
         return (
-            <View style={[styles.flex1]} >
+            <View style={[styles.flex1, { backgroundColor: '#DCDCDC' }]} >
                 <ScrollView
                     ref={scrollView => { this.scrollView = scrollView; }}
-                    style={{ flex: 1, flexGrow: 1, padding: 10, backgroundColor: '#DCDCDC' }}>
+                    style={{ flex: 1, flexGrow: 1, margin: 10, backgroundColor: '#DCDCDC' }}>
                     <FlatList
                         data={this.state.messages}
                         keyExtractor={this._keyExtractor}
@@ -94,16 +117,16 @@ class ConversationView extends React.Component {
                         renderItem={({ item, separators }) => {
                             if (item.fromUser !== this.props.user.id) {
                                 return (
-                                    <View style={[styles.flex1, { flexDirection: 'row', alignContent: 'flex-end', marginTop: 5, marginBottom: 5 }]}>
-                                        <View style={{justifyContent: 'flex-end'}}>
+                                    <View style={[styles.flex1, { flexDirection: 'row', alignContent: 'flex-end', marginTop: 5, marginBottom: 10 }]}>
+                                        <View style={{ justifyContent: 'flex-end', margin: 1 }}>
                                             <CachedImage
                                                 source={{ uri: this.getProfilePictureFromMessage(item.fromUser, this.state.users) }}
-                                                style={{ borderRadius: 25, borderWidth: 1, borderColor: '#fff', width: 20, height: 20 }}
+                                                style={{ borderRadius: 10, width: 20, height: 20 }}
                                             />
                                         </View>
                                         <Bubble
-                                            isUserSender={item.fromUser === this.props.user.id} 
-                                            message={item.content} 
+                                            isUserSender={item.fromUser === this.props.user.id}
+                                            message={item.content}
                                             username={this.getUsernameFromMessage(item.fromUser, this.state.users)}
                                             sendDate={getDateStringForMessage(new Date(item.sentDate))}
                                         />
@@ -111,11 +134,11 @@ class ConversationView extends React.Component {
                                 )
                             } else {
                                 return (
-                                    <View style={[styles.flex1, { flexDirection: 'row', alignContent: 'flex-end', marginTop: 5, marginBottom: 5 }]}>
-                                        <View style={{flex: 1}}></View>
-                                        <Bubble 
-                                            isUserSender={item.fromUser === this.props.user.id} 
-                                            message={item.content} 
+                                    <View style={[styles.flex1, { flexDirection: 'row', alignContent: 'flex-end', marginTop: 5, marginBottom: 10 }]}>
+                                        <View style={{ flex: 1 }}></View>
+                                        <Bubble
+                                            isUserSender={item.fromUser === this.props.user.id}
+                                            message={item.content}
                                             username={this.getUsernameFromMessage(item.fromUser, this.state.users)}
                                             sendDate={getDateStringForMessage(new Date(item.sentDate))}
                                         />
@@ -125,7 +148,7 @@ class ConversationView extends React.Component {
                         }}
                     />
                 </ScrollView>
-                <KeyboardAvoidingView enabled behavior={Platform.OS === 'ios' ? "padding" : null}>
+                <KeyboardAvoidingView enabled behavior={Platform.OS === 'ios' ? "padding" : null} keyboardVerticalOffset={Platform.OS === 'ios' ? 110 : 0}>
                     <View style={{ flexDirection: 'row', padding: 5, backgroundColor: '#f9f9f9' }}>
                         <TouchableOpacity
                             onPress={() => console.log("Pressed media button")}>
@@ -137,16 +160,16 @@ class ConversationView extends React.Component {
                                 />
                             </View>
                         </TouchableOpacity>
-                        <View style={{ flexDirection: 'row', flex: 1 }}>
+                        <View style={{ flexDirection: 'row', flex: 1, alignContent: 'center', alignItems: 'center', alignSelf: 'center' }}>
                             <TextInput
                                 value={this.state.messageContent}
-                                style={{ flex: 1 }}
+                                style={{ flex: 1, borderBottomColor: 'black', borderBottomWidth: 1 }}
                                 height={40}
                                 onChangeText={(messageContent) => this.setState({ messageContent })}
                             />
                             <TouchableOpacity
                                 onPress={this.sendMessage}>
-                                <View style={{ paddingLeft: 10, alignContent: 'center' }}>
+                                <View style={{ paddingLeft: 10, paddingRight: 5, alignContent: 'center', alignItems: 'center', alignSelf: 'center' }}>
                                     <PlatformIonicon
                                         name={'send'}
                                         size={30}
@@ -162,9 +185,8 @@ class ConversationView extends React.Component {
     }
 
     handleBackPress() {
-        if (this.props.navigation.state.params.backKey) 
-        { 
-            this.props.navigation.goBack(this.props.navigation.state.params.backKey) 
+        if (this.props.navigation.state.params.backKey) {
+            this.props.navigation.goBack(this.props.navigation.state.params.backKey)
         } else {
             this.props.navigation.goBack()
         }
@@ -204,7 +226,7 @@ class ConversationView extends React.Component {
                 users: this.props.navigation.state.params.toUsers
             }
         } else {
-            
+
             var messageBody = {
                 from: this.props.user.id,
                 sentDate: new Date(),
@@ -222,10 +244,10 @@ class ConversationView extends React.Component {
             body: JSON.stringify(messageBody),
         }).then(response => response.json())
             .then(responseJSON => {
-                this.setState({messageContent: ""})
+                this.setState({ messageContent: "" })
 
                 if (this.state.threadID === '') {
-                    this.setState({threadID: responseJSON['threadID']})
+                    this.setState({ threadID: responseJSON['threadID'] })
                 }
             })
 
@@ -234,9 +256,9 @@ class ConversationView extends React.Component {
         var messages = this.state.messages;
         messages.push(messageBody);
 
-        this.setState({messages: messages});
+        this.setState({ messages: messages });
         setTimeout(() => {
-            this.scrollView.scrollToEnd({animated: true})
+            this.scrollView.scrollToEnd({ animated: true })
         }, 150);
     }
 }

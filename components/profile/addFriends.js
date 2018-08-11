@@ -42,7 +42,7 @@ class AddFriends extends React.Component {
         <View style={{ borderBottomWidth: 1, flexDirection: 'row' }}>
             <View style={{ padding: 10 }}>
                 <CachedImage
-                    style={{ width: 50, height: 50, borderRadius: 25, borderWidth: 1, borderColor: '#ecf0f1' }}
+                    style={{ width: 50, height: 50, borderRadius: 25 }}
                     source={{ uri: item.profilePicture }}
                 />
             </View>
