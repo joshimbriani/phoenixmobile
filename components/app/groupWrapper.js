@@ -45,6 +45,7 @@ class GroupWrapper extends React.Component{
         this.cancelEditing = this.cancelEditing.bind(this);
         this.saveEdits = this.saveEdits.bind(this);
         this.setGroupParams = this.setGroupParams.bind(this);
+        this.loadGroup = this.loadGroup.bind(this);
 
         this.props.navigation.setParams({ index: 0, editing: false, saveEdits: this.saveEdits, cancelEditing: this.cancelEditing, edit: this.edit });
     }

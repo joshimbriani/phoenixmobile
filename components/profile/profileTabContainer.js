@@ -11,20 +11,22 @@ import MyEvents from './myEvents';
 import * as achievementActions from '../../redux/actions/achievements';
 import * as userActions from '../../redux/actions/user';
 import { styles } from '../../assets/styles';
+import Icon from 'react-native-vector-icons/Ionicons';
 
 const initialLayout = {
     height: 0,
     width: Dimensions.get('window').width,
-  };
+};
 
 class ProfileTabContainer extends React.Component {
     static navigationOptions = (Platform.OS === 'android') ? ({ navigation }) => ({
         title: 'My Koota',
-        headerLeft: <PlatformIonicon
-            name="menu"
+        headerLeft: <Icon
             style={{ paddingLeft: 10 }}
             size={35}
-            onPress={() => navigation.navigate('DrawerOpen')} />
+            onPress={() => navigation.openDrawer()}
+            name="md-menu"
+        />
     }) : ({ navigation }) => ({
         title: 'My Koota',
         headerStyle: { paddingTop: -22, }
@@ -34,7 +36,7 @@ class ProfileTabContainer extends React.Component {
         index: 0,
         routes: [
             { key: 'profile', title: 'My Profile' },
-            { key: 'myEvents', title: 'My Events'},
+            { key: 'myEvents', title: 'My Events' },
             { key: 'achievements', title: 'Achievements' },
         ],
     };
@@ -51,7 +53,7 @@ class ProfileTabContainer extends React.Component {
         }
     }
 
-    _renderHeader = props => <TabBar labelStyle={{fontSize: 11}} {...props} />;
+    _renderHeader = props => <TabBar labelStyle={{ fontSize: 11 }} {...props} />;
 
     _renderScene = ({ route }) => {
         switch (route.key) {

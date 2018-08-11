@@ -7,7 +7,7 @@ import { bindActionCreators } from 'redux';
 import * as colorActions from '../../redux/actions/backgroundColor';
 import * as userActions from '../../redux/actions/user';
 import SettingsList from 'react-native-settings-list';
-import { NavigationActions } from 'react-navigation';
+import { StackActions, NavigationActions } from 'react-navigation';
 
 class ProfileSettings extends React.Component {
 
@@ -17,7 +17,7 @@ class ProfileSettings extends React.Component {
             name="menu"
             style={{ paddingLeft: 10 }}
             size={35}
-            onPress={() => navigation.navigate('DrawerOpen')} />
+            onPress={() => navigation.openDrawer()} />
     }) : ({ navigation }) => ({
         title: 'Settings',
         headerStyle: { paddingTop: -22, }
@@ -154,7 +154,7 @@ class ProfileSettings extends React.Component {
     }
 
     resetNavigation(targetRoute) {
-        const resetAction = NavigationActions.reset({
+        const resetAction = StackActions.reset({
             index: 0,
             key: null,
             actions: [

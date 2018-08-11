@@ -2,7 +2,7 @@ import React from 'react';
 import { Image, KeyboardAvoidingView, Platform, TouchableOpacity, View } from 'react-native';
 
 import { Button, Content, Form, Input, Item, Label, Text } from 'native-base';
-import { NavigationActions } from 'react-navigation';
+import { StackActions, NavigationActions } from 'react-navigation';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
@@ -120,7 +120,7 @@ class Login extends React.Component {
     }
 
     goToScreenAndErasePreviousScreens(targetRoute) {
-        const resetAction = NavigationActions.reset({
+        const resetAction = StackActions.reset({
             index: 0,
             actions: [
                 NavigationActions.navigate({ routeName: targetRoute }),

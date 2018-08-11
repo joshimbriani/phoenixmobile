@@ -3,17 +3,19 @@ import { connect } from 'react-redux';
 import { Platform, Text, FlatList, View, TouchableOpacity, RefreshControl, DeviceEventEmitter } from 'react-native';
 import PlatformIonicon from '../utils/platformIonicon';
 import { getURLForPlatform } from '../utils/networkUtils';
+import Icon from 'react-native-vector-icons/Ionicons';
 
 import { Fab } from 'native-base';
 
-class GroupsList extends React.Component{
+class GroupsList extends React.Component {
     static navigationOptions = (Platform.OS === 'android') ? ({ navigation }) => ({
         title: 'Groups',
-        headerLeft: <PlatformIonicon
-            name="menu"
+        headerLeft: <Icon
             style={{ paddingLeft: 10 }}
             size={35}
-            onPress={() => navigation.navigate('DrawerOpen')} />
+            onPress={() => navigation.openDrawer()}
+            name="md-menu"
+        />
     }) : ({ navigation }) => ({
         title: 'Groups',
         headerStyle: { paddingTop: -22, }
@@ -27,46 +29,47 @@ class GroupsList extends React.Component{
             refreshing: false
         }
 
-    }  
+    }
 
     componentDidMount() {
         this.loadGroups();
 
-        DeviceEventEmitter.addListener('refresh', (e)=>{ this.loadGroups() })
+        DeviceEventEmitter.addListener('refresh', (e) => { this.loadGroups() })
     }
 
     _keyExtractor = (item, index) => item.id;
 
-    _renderItem = ({item, index}) => {
+    _renderItem = ({ item, index }) => {
         return (
-        <TouchableOpacity onPress={() => this.props.navigation.navigate('GroupWrapper', {groupID: item.id})}>
-            <View key={index} style={{flexDirection: 'row', height: 75, borderBottomWidth: 1}}>
-                <View style={{justifyContent: 'center', paddingRight: 10, paddingLeft: 10}}>
-                    <View style={{backgroundColor: item.color, height: 50, aspectRatio: 1, borderRadius: 50}}></View>
+            <TouchableOpacity onPress={() => this.props.navigation.navigate('GroupWrapper', { groupID: item.id })}>
+                <View key={index} style={{ flexDirection: 'row', height: 75, borderBottomWidth: 1 }}>
+                    <View style={{ justifyContent: 'center', paddingRight: 10, paddingLeft: 10 }}>
+                        <View style={{ backgroundColor: item.color, height: 50, aspectRatio: 1, borderRadius: 50 }}></View>
+                    </View>
+                    <View style={{ justifyContent: 'center', flex: 1 }}>
+                        <Text style={{ fontWeight: 'bold' }}>{item.name}</Text>
+                    </View>
+                    <View style={{ justifyContent: 'center', paddingRight: 5 }}>
+                        <PlatformIonicon
+                            name={"arrow-dropright"}
+                            size={50}
+                            style={{ color: "black" }}
+                        />
+                    </View>
                 </View>
-                <View style={{justifyContent: 'center', flex: 1}}>
-                    <Text style={{fontWeight: 'bold'}}>{item.name}</Text>
-                </View>
-                <View style={{justifyContent: 'center', paddingRight: 5}}>
-                    <PlatformIonicon
-                        name={"arrow-dropright"}
-                        size={50}
-                        style={{color: "black"}}
-                    />
-                </View>
-            </View>
-        </TouchableOpacity>
-    )}
+            </TouchableOpacity>
+        )
+    }
 
     _onRefresh = () => {
-        this.setState({refreshing: true})
+        this.setState({ refreshing: true })
         this.loadGroups();
     }
 
     render() {
         // TODO: Pass the groupID through the GroupWrapper
         return (
-            <View style={{flex: 1}}>
+            <View style={{ flex: 1 }}>
                 <FlatList
                     data={this.state.groups}
                     extraData={this.state}
@@ -84,12 +87,12 @@ class GroupsList extends React.Component{
                     containerStyle={{}}
                     style={{ backgroundColor: '#e84118' }}
                     position="bottomRight"
-                    onPress={() => this.props.navigation.navigate('NewGroup', { })}>
-                        <PlatformIonicon
-                            name={"add"}
-                            size={50} //this doesn't adjust the size...?
-                            style={{ color: "white" }}
-                        />
+                    onPress={() => this.props.navigation.navigate('NewGroup', {})}>
+                    <PlatformIonicon
+                        name={"add"}
+                        size={50} //this doesn't adjust the size...?
+                        style={{ color: "white" }}
+                    />
                 </Fab>
             </View>
         )
@@ -103,7 +106,7 @@ class GroupsList extends React.Component{
         })
             .then(response => response.json())
             .then(responseObj => {
-                this.setState({groups: responseObj["groups"], refreshing: false})
+                this.setState({ groups: responseObj["groups"], refreshing: false })
             });
     }
 }
@@ -116,7 +119,7 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
     return {
-        
+
     };
 }
 

@@ -74,7 +74,6 @@ class NewGroup extends React.Component{
     };
 
     render() {
-        // TODO: Pass the groupID through the GroupWrapper
         return (
             <Swiper nextButton={<Text>&gt;</Text>} buttonWrapperStyle={{alignItems: 'flex-end'}} prevButton={<Text>&lt;</Text>} style={styles.wrapper} showsButtons={true} loop={false} removeClippedSubviews={false} >
                 <View style={styles.flex1}>
@@ -170,6 +169,7 @@ class NewGroup extends React.Component{
     }
 
     loadUsers = debounce((query) => {
+        console.log("Token " + this.props.token)
         fetch(getURLForPlatform() + "api/v1/user/search/?username=" + query + '&status=1', {
             headers: {
                 Authorization: "Token " + this.props.token
@@ -177,6 +177,7 @@ class NewGroup extends React.Component{
         })
         .then(response => response.json())
         .then(responseObj => {
+            console.log(responseObj)
             this.setState({users: responseObj["users"]});
         });
     })

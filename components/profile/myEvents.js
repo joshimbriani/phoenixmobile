@@ -22,7 +22,7 @@ class MyEvents extends React.Component {
             name="menu"
             style={{ paddingLeft: 10 }}
             size={35}
-            onPress={() => navigation.navigate('DrawerOpen')} />
+            onPress={() => navigation.openDrawer()} />
     }) : ({ navigation }) => ({
         title: 'My Events',
         headerStyle: { paddingTop: -22, }

@@ -27,11 +27,11 @@ class BlockedUserSettings extends React.Component {
         }
     }
 
-    _keyExtractor = (item, index) => item.id;
+    _keyExtractor = (item, index) => item.id.toString();
 
-    _renderItem = ({ item }) => (
-        <View>
-            <TouchableOpacity onPress={() => this.setState({ showUserModal: true, selectedUser: item.id }) }>
+    _renderItem = (item) => {
+        return (
+            <TouchableOpacity style={{ height: 75 }} onLongPress={() => this.setState({ showUserModal: true, selectedUser: item.id })} onPress={() => this.setState({ showUserModal: true, selectedUser: item.id })}>
                 <View style={{ flexDirection: 'row', height: 75, backgroundColor: 'white', borderBottomWidth: 1, }}>
                     <View style={{ paddingLeft: 20, justifyContent: 'center' }}>
                         <CachedImage
@@ -44,34 +44,32 @@ class BlockedUserSettings extends React.Component {
                     </View>
                 </View>
             </TouchableOpacity>
-        </View>
-    );
+        )
+    };
 
-    renderAddBlock = ({ item }) => (
-        <View>
-            <View style={{ flexDirection: 'row', height: 75, backgroundColor: 'white', borderBottomWidth: 1, }}>
-                <View style={{ paddingLeft: 20, justifyContent: 'center' }}>
-                    <CachedImage
-                        style={{ width: 50, height: 50, borderRadius: 30, borderWidth: 1, borderColor: '#fff' }}
-                        source={{ uri: item.profilePicture }}
-                    />
-                </View>
-                <View style={{ paddingLeft: 20, justifyContent: 'center', flex: 1 }}>
-                    <Text style={{ fontWeight: 'bold' }}>{item.username}</Text>
-                </View>
-                <View style={{justifyContent: 'center', alignItems: 'center'}}>
-                    <TouchableOpacity onPress={() => this.toggleBlock(item.id, 'block')}>
-                        <View style={{backgroundColor: '#F44336', aspectRatio: 1}}>
-                            <View style={{justifyContent: 'center', alignItems: 'center'}}>
-                                <PlatformIonicon
-                                    name={"close-circle"}
-                                    size={50} 
-                                    style={{ color: "white", alignItems: 'center', paddingLeft: 'auto' }}
-                                />
-                            </View>
+    renderAddBlock = (item) => (
+        <View style={{ flexDirection: 'row', height: 75, backgroundColor: 'white', borderBottomWidth: 1, }}>
+            <View style={{ paddingLeft: 20, justifyContent: 'center' }}>
+                <CachedImage
+                    style={{ width: 50, height: 50, borderRadius: 30, borderWidth: 1, borderColor: '#fff' }}
+                    source={{ uri: item.profilePicture }}
+                />
+            </View>
+            <View style={{ paddingLeft: 20, justifyContent: 'center', flex: 1 }}>
+                <Text style={{ fontWeight: 'bold' }}>{item.username}</Text>
+            </View>
+            <View style={{ justifyContent: 'center', alignItems: 'center' }}>
+                <TouchableOpacity onPress={() => this.toggleBlock(item.id, 'block')}>
+                    <View style={{ backgroundColor: '#F44336', aspectRatio: 1 }}>
+                        <View style={{ justifyContent: 'center', alignItems: 'center' }}>
+                            <PlatformIonicon
+                                name={"close-circle"}
+                                size={50}
+                                style={{ color: "white", alignItems: 'center', paddingLeft: 'auto' }}
+                            />
                         </View>
-                    </TouchableOpacity>
-                </View>
+                    </View>
+                </TouchableOpacity>
             </View>
         </View>
     )
@@ -102,9 +100,9 @@ class BlockedUserSettings extends React.Component {
                             }
                         }
 
-                        this.setState({filteredUsers: users})
+                        this.setState({ filteredUsers: users })
                     }
-                    
+
                 }
             })
     }
@@ -124,35 +122,33 @@ class BlockedUserSettings extends React.Component {
             })
     })
 
+    componentDidMount() {
+        this.props.userActions.loadUser(this.props.token);
+    }
+
     render() {
         return (
             <View>
-                <View style={{paddingBottom: 10}}>
+                <View style={{ paddingBottom: 10 }}>
                     <Form>
                         <Item>
-                            <Input placeholder="Search For Users to Block" onChangeText={(text) => {this.setState({searchText: text}); this.findUsers(text)}} />
+                            <Input placeholder="Search For Users to Block" onChangeText={(text) => { this.setState({ searchText: text }); this.findUsers(text) }} />
                         </Item>
                     </Form>
                 </View>
-                <View style={{flex: 1}}>
-                    {!this.state.searchText && this.props.user.blockedUsers.length > 0 && <FlatList
-                        data={this.props.user.blockedUsers}
-                        extraData={this.props}
-                        keyExtractor={this._keyExtractor}
-                        renderItem={this._renderItem}
-                    />}
-                    {!this.state.searchText && this.props.user.blockedUsers.length <= 0 && <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-                        <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+                <View style={{ flex: 1 }}>
+                    {!this.state.searchText && this.props.user.blockedUsers.length > 0 && this.props.user.blockedUsers.map((user, index) => {
+                        return this._renderItem(user)
+                    })}
+                    {!this.state.searchText && this.props.user.blockedUsers.length <= 0 && <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
                             <Text>You have no users blocked</Text>
                         </View>
                     </View>}
-                    {this.state.searchText.length > 0 && <FlatList
-                        data={this.state.filteredUsers}
-                        extraData={this.state}
-                        keyExtractor={this._keyExtractor}
-                        renderItem={this.renderAddBlock}
-                    />}
-                    {this.state.searchText.length > 0 && this.state.filteredUsers.length <= 0 && <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+                    {this.state.searchText.length > 0 && this.state.filteredUsers.map((user, index) => {
+                        return this.renderAddBlock(user)
+                    })}
+                    {this.state.searchText.length > 0 && this.state.filteredUsers.length <= 0 && <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
                         <Text>No results</Text>
                     </View>}
                 </View>

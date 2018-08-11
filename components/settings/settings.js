@@ -6,27 +6,29 @@ import { bindActionCreators } from 'redux';
 import * as userActions from '../../redux/actions/user';
 import * as settingsActions from '../../redux/actions/settings';
 import SettingsList from 'react-native-settings-list';
-import { NavigationActions } from 'react-navigation';
+import { StackActions, NavigationActions } from 'react-navigation';
 import { styles } from '../../assets/styles';
 import Modal from "react-native-modal";
+import Icon from 'react-native-vector-icons/Ionicons';
 
 class Settings extends React.Component {
 
     static navigationOptions = (Platform.OS === 'android') ? ({ navigation }) => ({
         title: 'Settings',
-        headerLeft: <PlatformIonicon
-            name="menu"
+        headerLeft: <Icon
             style={{ paddingLeft: 10 }}
             size={35}
-            onPress={() => navigation.navigate('DrawerOpen')} />
+            onPress={() => navigation.openDrawer()}
+            name="md-menu"
+        />
     }) : ({ navigation }) => ({
         title: 'Settings',
     });
 
     constructor(props) {
         super(props);
-        this.state = { 
-            distMeasureModalVisible: false 
+        this.state = {
+            distMeasureModalVisible: false
         };
 
         this.logout = this.logout.bind(this);
@@ -75,42 +77,7 @@ class Settings extends React.Component {
                             title='Distance Measure'
                             onPress={() => this.setState({ distMeasureModalVisible: true })}
                         />
-                        <Modal
-                            isVisible={this.state.distMeasureModalVisible}
-                            backdropOpacity={0.5}
-                            onBackButtonPress={() => this.setState({ distMeasureModalVisible: false })}
-                            onBackdropPress={() => this.setState({ distMeasureModalVisible: false })}>
-                            <View style={{
-                                borderColor: "rgba(0, 0, 0, 0.1)",
-                                backgroundColor: "white",
-                            }}>
-                                <View style={{
-                                    width: 324,
-                                    height: 100
-                                }}>
-                                    <TouchableOpacity onPress={() => this.props.settingsActions.saveDistanceMeasure('mi')}>
-                                        <View style={{ height: 50, width: 324, borderBottomWidth: 1, borderBottomColor: '#000', justifyContent: 'flex-start', paddingLeft: 10, flexDirection: 'row', alignItems: 'center' }}>
-                                            {this.props.distanceMeasure === 'mi' && <PlatformIonicon
-                                                name='checkmark'
-                                                size={30}
-                                                style={{ paddingRight: 10, paddingLeft: 10 }}
-                                            />}
-                                            <Text>Miles</Text>
-                                        </View>
-                                    </TouchableOpacity>
-                                    <TouchableOpacity onPress={() => this.props.settingsActions.saveDistanceMeasure('km')}>
-                                        <View style={{ height: 50, width: 324, justifyContent: 'flex-start', paddingLeft: 10, flexDirection: 'row', alignItems: 'center' }}>
-                                            {this.props.distanceMeasure === 'km' && <PlatformIonicon
-                                                name='checkmark'
-                                                size={30}
-                                                style={{ paddingRight: 10, paddingLeft: 10 }}
-                                            />}
-                                            <Text>Kilometers</Text>
-                                        </View>
-                                    </TouchableOpacity>
-                                </View>
-                            </View>
-                        </Modal>
+
 
                         <SettingsList.Header headerStyle={{ marginTop: 15 }} />
 
@@ -172,7 +139,7 @@ class Settings extends React.Component {
     }
 
     resetNavigation(targetRoute) {
-        const resetAction = NavigationActions.reset({
+        const resetAction = StackActions.reset({
             index: 0,
             key: null,
             actions: [

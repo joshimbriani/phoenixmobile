@@ -2,7 +2,7 @@ import React from 'react';
 import { Image, KeyboardAvoidingView, StyleSheet, TouchableOpacity, View, Platform } from 'react-native';
 
 import { Button, Content, Form, Input, Item, Label, Text } from 'native-base';
-import { NavigationActions } from 'react-navigation';
+import { StackActions, NavigationActions } from 'react-navigation';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
@@ -35,7 +35,7 @@ class Register extends React.Component {
     }
 
     componentDidMount() {
-        /*const resetAction = NavigationActions.reset({
+        /*const resetAction = StackActions.reset({
             index: 0,
             actions: [
                 NavigationActions.navigate({ routeName: 'Register' })
@@ -160,7 +160,7 @@ class Register extends React.Component {
     }
 
     goToScreenAndErasePreviousScreens(targetRoute) {
-        const resetAction = NavigationActions.reset({
+        const resetAction = StackActions.reset({
             index: 0,
             actions: [
                 NavigationActions.navigate({ routeName: targetRoute }),

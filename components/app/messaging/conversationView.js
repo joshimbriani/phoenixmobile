@@ -85,7 +85,7 @@ class ConversationView extends React.Component {
             <View style={[styles.flex1]} >
                 <ScrollView
                     ref={scrollView => { this.scrollView = scrollView; }}
-                    style={{ flex: 1, flexGrow: 1 }}>
+                    style={{ flex: 1, flexGrow: 1, padding: 10, backgroundColor: '#DCDCDC' }}>
                     <FlatList
                         data={this.state.messages}
                         keyExtractor={this._keyExtractor}
@@ -101,7 +101,7 @@ class ConversationView extends React.Component {
                                                 style={{ borderRadius: 25, borderWidth: 1, borderColor: '#fff', width: 20, height: 20 }}
                                             />
                                         </View>
-                                        <Bubble 
+                                        <Bubble
                                             isUserSender={item.fromUser === this.props.user.id} 
                                             message={item.content} 
                                             username={this.getUsernameFromMessage(item.fromUser, this.state.users)}

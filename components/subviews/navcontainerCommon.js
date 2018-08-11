@@ -67,7 +67,7 @@ export const HomeStack = StackNavigator({
                 name="menu"
                 style={{paddingLeft: 10}}
                 size={35}
-                onPress={() => navigation.navigate('DrawerOpen')} />
+                onPress={() => navigation.openDrawer()} />
         })
     },
     ConversationView: {

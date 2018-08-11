@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, Image, Button, TextInput, ToastAndroid, TouchableOpacity, FlatList } from 'react-native';
+import { View, Text, Image, Button, TextInput, ToastAndroid, TouchableOpacity, FlatList, RefreshControl } from 'react-native';
 import PlatformIonicon from '../utils/platformIonicon';
 import * as userActions from '../../redux/actions/user';
 import { getURLForPlatform } from '../utils/networkUtils';
@@ -27,6 +27,8 @@ class Profile extends React.Component {
             filterString: "",
             userModalVisible: false,
             profilePictureModalVisible: false,
+            selectedUser: -1,
+            refreshing: false
         }
 
         this.editUser = this.editUser.bind(this);
@@ -34,6 +36,7 @@ class Profile extends React.Component {
         this.denyRequest = this.denyRequest.bind(this);
         this.filterFriends = this.filterFriends.bind(this);
         this.removeUserFromFilteredUsers = this.removeUserFromFilteredUsers.bind(this);
+        this._onRefresh = this._onRefresh.bind(this);
     }
 
     componentDidMount() {
@@ -75,7 +78,7 @@ class Profile extends React.Component {
 
     renderFriends = ({ item }) => {
         return (
-            <TouchableOpacity onLongPress={() => this.setState({ userModalVisible: true })}>
+            <TouchableOpacity onLongPress={() => this.setState({ userModalVisible: true, selectedUser: item.id })}>
                 <View style={{ borderBottomWidth: 1, flexDirection: 'row' }}>
                     <View style={{ padding: 10 }}>
                         <CachedImage
@@ -86,38 +89,15 @@ class Profile extends React.Component {
                     <View style={{ justifyContent: 'center' }}>
                         <Text style={{ margin: 10 }}>{item.username}</Text>
                     </View>
-                    <Modal
-                        isVisible={this.state.userModalVisible}
-                        backdropOpacity={0.5}
-                        onBackButtonPress={() => this.setState({ userModalVisible: false })}
-                        onBackdropPress={() => this.setState({ userModalVisible: false })}>
-                        <View style={{
-                            borderColor: "rgba(0, 0, 0, 0.1)",
-                            backgroundColor: "white",
-                        }}>
-                            <View style={{
-                                width: 324,
-                                height: 100
-                            }}>
-                                <TouchableOpacity onPress={() => this.unfriendUser(item.id)}>
-                                    <View style={{ height: 50, width: 324, borderBottomWidth: 1, borderBottomColor: '#000', justifyContent: 'center', paddingLeft: 10 }}>
-                                        <Text>Unfriend User</Text>
-                                    </View>
-                                </TouchableOpacity>
-                                <TouchableOpacity onPress={() => this.blockUser(item.id)}>
-                                    <View style={{ height: 50, width: 324, justifyContent: 'center', paddingLeft: 10 }}>
-                                        <Text>Block User</Text>
-                                    </View>
-                                </TouchableOpacity>
-                            </View>
-                        </View>
-                    </Modal>
                 </View>
             </TouchableOpacity>
         )
     }
 
     unfriendUser(userID) {
+        if (userID === -1) {
+            this.setState({ userModalVisible: false });
+        }
         fetch(getURLForPlatform() + 'api/v1/user/' + this.props.user.id + '/unfriend/', {
             headers: {
                 Authorization: "Token " + this.props.token
@@ -131,12 +111,15 @@ class Profile extends React.Component {
                 if (requestObject["success"]) {
                     this.props.userActions.loadUser(this.props.token);
                     this.removeUserFromFilteredUsers(userID);
-                    this.setState({ userModalVisible: false });
+                    this.setState({ userModalVisible: false, selectedUser: -1 });
                 }
             })
     }
 
     blockUser(userID) {
+        if (userID === -1) {
+            this.setState({ userModalVisible: false });
+        }
         fetch(getURLForPlatform() + 'api/v1/user/' + this.props.user.id + '/block/', {
             headers: {
                 Authorization: "Token " + this.props.token
@@ -151,7 +134,7 @@ class Profile extends React.Component {
                 if (requestObject["success"]) {
                     this.props.userActions.loadUser(this.props.token);
                     this.removeUserFromFilteredUsers(userID);
-                    this.setState({ userModalVisible: false });
+                    this.setState({ userModalVisible: false, selectedUser: -1 });
                 }
             })
     }
@@ -294,7 +277,7 @@ class Profile extends React.Component {
                                 }).then(editUserResponse => {
                                     if (editUserResponse.status === 200) {
                                         this.props.userActions.loadUser(this.props.token);
-                                        this.setState({profilePictureModalVisible: false})
+                                        this.setState({ profilePictureModalVisible: false })
                                     }
                                 })
                             }
@@ -306,10 +289,21 @@ class Profile extends React.Component {
         })
     }
 
+    _onRefresh() {
+        this.props.userActions.loadUser(this.props.token);
+    }
+
     render() {
         const date = new Date(this.props.user.created);
         return (
-            <KeyboardAwareScrollView >
+            <KeyboardAwareScrollView
+                refreshControl={
+                    <RefreshControl
+                        refreshing={this.state.refreshing}
+                        onRefresh={this._onRefresh}
+                    />
+                }
+            >
                 <View style={{ flex: 1 }}>
                     <HideableView hide={this.state.editingDetails}>
                         <View style={{ justifyContent: 'center', alignItems: 'center', backgroundColor: '#c0392b', height: 175 }}>
@@ -349,6 +343,32 @@ class Profile extends React.Component {
                                 <TouchableOpacity onPress={() => this.changeProfilePicture()}>
                                     <View style={{ height: 50, width: 324, borderBottomWidth: 1, borderBottomColor: '#000', justifyContent: 'center', paddingLeft: 10 }}>
                                         <Text>Change Profile Picture</Text>
+                                    </View>
+                                </TouchableOpacity>
+                            </View>
+                        </View>
+                    </Modal>
+                    <Modal
+                        isVisible={this.state.userModalVisible}
+                        backdropOpacity={0.5}
+                        onBackButtonPress={() => this.setState({ userModalVisible: false, selectedUser: -1 })}
+                        onBackdropPress={() => this.setState({ userModalVisible: false, selectedUser: -1 })}>
+                        <View style={{
+                            borderColor: "rgba(0, 0, 0, 0.1)",
+                            backgroundColor: "white",
+                        }}>
+                            <View style={{
+                                width: 324,
+                                height: 100
+                            }}>
+                                <TouchableOpacity onPress={() => this.unfriendUser(this.state.selectedUser)}>
+                                    <View style={{ height: 50, width: 324, borderBottomWidth: 1, borderBottomColor: '#000', justifyContent: 'center', paddingLeft: 10 }}>
+                                        <Text>Unfriend User</Text>
+                                    </View>
+                                </TouchableOpacity>
+                                <TouchableOpacity onPress={() => this.blockUser(this.state.selectedUser)}>
+                                    <View style={{ height: 50, width: 324, justifyContent: 'center', paddingLeft: 10 }}>
+                                        <Text>Block User</Text>
                                     </View>
                                 </TouchableOpacity>
                             </View>

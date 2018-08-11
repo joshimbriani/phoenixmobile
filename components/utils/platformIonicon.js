@@ -30,7 +30,7 @@ export default class PlatformIonicon extends React.Component {
     }
 
     nameForPlatform(platform, name) {
-        return platform + "-" + name;
+        return platform + "-" + (name || "menu");
     }
 }
 

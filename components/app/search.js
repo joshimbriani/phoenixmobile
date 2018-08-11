@@ -6,11 +6,11 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import * as colorActions from '../../redux/actions/backgroundColor';
 import PlatformIonicon from '../utils/platformIonicon';
-import {getURLForPlatform} from '../utils/networkUtils';
+import { getURLForPlatform } from '../utils/networkUtils';
 import { styles } from '../../assets/styles';
 
 import { getMaterialColor } from '../utils/styleutils';
-
+import { getDayOfWeekFromDayNumber, getMonthNameFromMonthNumber } from '../utils/datetimeUtils';
 
 class Search extends React.Component {
     state = {
@@ -39,11 +39,12 @@ class Search extends React.Component {
         if (section.data.length > 0) {
             return <ListItem itemDivider><Text>{section.title}</Text></ListItem>
         } else {
+            return null
             return (<View>
-                        <ListItem itemDivider><Text>{section.title}</Text></ListItem>
-                        <ListItem><Text>No Results</Text></ListItem>
-                    </View>
-                    )
+                <ListItem itemDivider><Text>{section.title}</Text></ListItem>
+                <View><Text>No Results</Text></View>
+            </View>
+            )
         }
     }
 
@@ -51,7 +52,7 @@ class Search extends React.Component {
         return (
             <Container>
                 <SectionList
-                    renderItem={({item, section}) => {
+                    renderItem={({ item, section }) => {
                         if (section.title === "Topics") {
                             return (
                                 <TouchableHighlight onPress={() => { this.props.navigation.navigate('Topic', { topic: item.name, id: item.id, color: item.color.substring(0) }) }}>
@@ -69,11 +70,22 @@ class Search extends React.Component {
                             )
                         }
                         if (section.title === "Events") {
+                            const date = new Date(item.created)
                             const color = getMaterialColor();
                             return (
                                 <TouchableHighlight onPress={() => { this.props.navigation.navigate('EventDetailWrapper', { event: item.title, id: item.id, color: color }) }}>
-                                    <View key={item.id} style={[styles.listitem, {backgroundColor: color}]}>
-                                        <Text style={styles.itemText}>{item.title}</Text>
+                                    <View key={item.id} style={[styles.listitem, { backgroundColor: color, justifyContent: 'center', alignItems: 'center' }]}>
+                                        <View style={{ padding: 5 }}>
+                                            <Text style={[styles.itemText, { fontSize: 25, fontWeight: 'bold' }]}>{item.title}</Text>
+                                        </View>
+                                        <View style={{ padding: 5 }}>
+                                            <Text style={{ color: 'white' }} numberOfLines={2}>{item.description}</Text>
+                                        </View>
+                                        <View style={{ padding: 5 }}>
+                                            <Text style={{ color: 'white' }}>
+                                                {getDayOfWeekFromDayNumber(date.getDay())} {getMonthNameFromMonthNumber(date.getMonth())} {date.getDate()}, {date.getFullYear()} @ {(date.getHours() % 12) + ':' + (date.getMinutes() < 10 ? ('0' + date.getMinutes()) : date.getMinutes()) + (date.getHours() < 12 ? 'AM' : 'PM')}
+                                            </Text>
+                                        </View>
                                     </View>
                                 </TouchableHighlight>
                             )
@@ -86,7 +98,7 @@ class Search extends React.Component {
                             )
                         }
                     }}
-                    renderSectionHeader={({section}) => this.renderEmptySections(section)}
+                    renderSectionHeader={({ section }) => this.renderEmptySections(section)}
                     sections={this.state.data}
                     keyExtractor={(item, index) => index} />
             </Container>

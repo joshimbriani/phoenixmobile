@@ -20,7 +20,7 @@ class EventDetailDetails extends React.Component {
                         <View style={[styles.eventDetailHeader, { backgroundColor: getComplementaryColor(this.props.color) }]} >
                             <Text style={styles.eventDetailHeading}>{this.props.event.title}</Text>
                             <Text style={styles.eventDetailSubHeading}>{getDayOfWeekFromDayNumber(date.getDay())} {getMonthNameFromMonthNumber(date.getMonth())} {date.getDate()}, {date.getFullYear()} @ {(date.getHours() % 12) + ':' + (date.getMinutes() < 10 ? ('0' + date.getMinutes()) : date.getMinutes()) + (date.getHours() < 12 ? 'AM' : 'PM')}</Text>
-                            <View style={{flexDirection: 'row'}}>
+                            <ScrollView horizontal={true}>
                                 {this.props.event.topics && this.props.event.topics.map((topic, index) => {
                                     return (
                                         <TouchableOpacity
@@ -33,7 +33,7 @@ class EventDetailDetails extends React.Component {
                                         </TouchableOpacity>
                                     )
                                 })}
-                            </View>
+                            </ScrollView>
                         </View>
                         <View style={styles.eventDetailBody}>
                             <View>

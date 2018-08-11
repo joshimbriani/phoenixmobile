@@ -1,5 +1,5 @@
 import React from 'react';
-import { Container, Fab, Header, Item, Input, Icon, Button, Text } from 'native-base';
+import { Container, Fab, Header, Item, Input, Button, Text } from 'native-base';
 import { Alert, Platform, RefreshControl, StyleSheet, TouchableHighlight, View, PermissionsAndroid, AsyncStorage } from 'react-native';
 import GridView from 'react-native-super-grid';
 import { connect } from 'react-redux';
@@ -10,8 +10,9 @@ import PlatformIonicon from '../utils/platformIonicon';
 import { getURLForPlatform } from '../utils/networkUtils';
 import { styles } from '../../assets/styles';
 import firebase from 'react-native-firebase';
+import Icon from 'react-native-vector-icons/Ionicons';
 
-import { NavigationActions } from 'react-navigation';
+import { StackActions, NavigationActions } from 'react-navigation';
 import { generateUserToString } from '../utils/textUtils';
 
 class Home extends React.Component {
@@ -67,7 +68,7 @@ class Home extends React.Component {
             console.log(position)
         },
             (error) => console.error(error.message),
-            Platform.OS === 'ios' ? { enableHighAccuracy: true, timeout: 20000 } : {timeout: 50000},
+            Platform.OS === 'ios' ? { enableHighAccuracy: true, timeout: 20000 } : { timeout: 50000 },
         );
 
         firebase.messaging().requestPermission()
@@ -79,30 +80,29 @@ class Home extends React.Component {
                 // User has rejected permissions  
             });
 
-        firebase.notifications().getInitialNotification().then(async(notification) => {
+        firebase.notifications().getInitialNotification().then(async (notification) => {
             console.log(notification)
             const not = await AsyncStorage.getItem("notification")
             console.log(not)
             if (notification && notification.notification.notificationId !== not) {
                 const not = notification;
-          
+
                 var data = {}
                 data["type"] = notification.notification.data["type"]
                 data["event"] = notification.notification.data["event"]
                 data["group"] = notification.notification.data["group"]
                 data["threadID"] = notification.notification.data["threadID"]
-          
+
                 await AsyncStorage.setItem('notification', notification.notification.notificationId);
                 this.reactToNotification(data);
                 console.log("Here")
             }
-          })
+        })
 
         this.notificationDisplayedListener = firebase.notifications().onNotificationDisplayed((notification) => {
             // Process your notification as required
             // ANDROID: Remote notifications do not contain the channel ID. You will have to specify this manually if you'd like to re-display the notification.
             console.log("On notifiaction displayed")
-            console.log(notification)
 
             //this.props.navigation.navigate('NewEvent', { topic: "" })
         });
@@ -122,18 +122,18 @@ class Home extends React.Component {
 
         this.openNotification = firebase.notifications().onNotificationOpened(async (notification) => {
             console.log("User opened app")
-            console.log(notification)
             var data = {}
             data["type"] = notification.notification.data["type"]
             data["event"] = notification.notification.data["event"]
             data["group"] = notification.notification.data["group"]
             data["threadID"] = notification.notification.data["threadID"]
             const not = await AsyncStorage.getItem("notificationOpened");
+            console.log(not)
             if (not !== notification.notification.notificationId) {
                 await AsyncStorage.setItem('notificationOpened', notification.notification.notificationId);
                 this.reactToNotification(data)
             }
-            
+
         });
 
     }
@@ -146,6 +146,7 @@ class Home extends React.Component {
     }
 
     reactToNotification(data) {
+        console.log("Notification being acted on")
         const type = data["type"];
         if (type === "m") {
             const event = data["event"];
@@ -164,18 +165,43 @@ class Home extends React.Component {
                                 thread = responseObj["threads"][i]
                             }
                         }
-                        this.props.navigation.dispatch({
+                        const resetAction = StackActions.reset({
                             index: 2,
-                            type: 'Navigation/RESET',
+                            key: this.props.navigation.dangerouslyGetParent().state.key,
                             actions: [
                                 NavigationActions.navigate({ routeName: 'Home' }),
                                 NavigationActions.navigate({ routeName: 'EventDetailWrapper', params: { event: responseObj["title"], id: responseObj["id"], goToMessages: true } }),
                                 NavigationActions.navigate({ routeName: 'ConversationView', params: { newConvo: false, eventName: responseObj["title"], thread: thread, color: '#ffffff', userString: generateUserToString(this.props.user.id, thread.users, responseObj["userBy"]["username"]) } })
                             ]
                         })
+                        this.props.navigation.dispatch(resetAction);
                     })
             } else if (group) {
-                this.props.navigation.navigate('GroupWrapper', { groupID: group, goToMessages: true });
+                //this.props.navigation.push('GroupWrapper', { groupID: group, goToMessages: true });
+                /*this.props.navigation.dispatch({
+                    index: 2,
+                    key: null,
+                    type: StackActions.RESET,
+                    actions: [
+                        NavigationActions.navigate({ routeName: 'Main' }),
+                        NavigationActions.navigate({ routeName: 'GroupsList' }),
+                        NavigationActions.navigate({ routeName: 'GroupWrapper', params: {groupID: group, goToMessages: true }})
+                    ]
+                })*/
+                console.log(this.props.navigation);
+                console.log(this.props.navigation.state);
+                const resetAction = StackActions.reset({
+                    index: 0,
+                    key: null,
+                    actions: [
+                        NavigationActions.navigate({ routeName: 'Main', action: StackActions.push({ routeName: 'GroupWrapper', params: {groupID: group, goToMessages: true }  }), }),
+                        //NavigationActions.navigate({ routeName: 'GroupsList' }),
+                        //NavigationActions.navigate({ routeName: 'GroupWrapper', params: {groupID: group, goToMessages: true }})
+                    ]
+                })
+                this.props.navigation.dispatch(resetAction);
+                const goToThreadAction = NavigationActions.navigate({ routeName: 'GroupWrapper', params: {groupID: group, goToMessages: true }});
+                //this.props.navigation.dispatch(goToThreadAction);
             }
         } else if (type === "s") {
 
@@ -220,15 +246,16 @@ class Home extends React.Component {
 
     static navigationOptions = (Platform.OS === 'android') ? ({ navigation }) => ({
         title: 'Home',
-        headerLeft: <PlatformIonicon
-            name="menu"
-            style={{ paddingLeft: 10 }}
-            size={35}
-            onPress={() => navigation.navigate('DrawerOpen')} />
+        headerLeft: <Icon
+                style={{ paddingLeft: 10 }}
+                size={35}
+                onPress={() => navigation.openDrawer()}
+                name="md-menu"
+            />
     }) : ({ navigation }) => ({
-        title: 'Home',
-        headerStyle: { paddingTop: -22, }
-    });
+            title: 'Home',
+            headerStyle: { paddingTop: -22, }
+        });
 
     changeValue(text) {
         this.setState({ searchQuery: text });
@@ -259,21 +286,22 @@ class Home extends React.Component {
             <Container>
                 <Header searchBar rounded>
                     <Item>
-                        <Icon name="ios-search" />
-                        <Input 
-                            placeholder="What Do You Wanna Do?" 
-                            onChangeText={(text) => this.changeValue(text)} 
-                            onSubmitEditing={() => { 
+                        <PlatformIonicon name="search" size={30} style={{marginLeft: 5}} />
+                        <Input
+                            placeholder="What Do You Wanna Do?"
+                            onChangeText={(text) => this.changeValue(text)}
+                            onSubmitEditing={() => {
                                 if (this.state.searchQuery.length > 0) {
-                                    this.props.navigation.navigate('Search', { query: this.state.searchQuery }); 
+                                    this.props.navigation.navigate('Search', { query: this.state.searchQuery });
                                 }
                             }} />
                     </Item>
                     <Button transparent onPress={() => {
-                        if (this.state.searchQuery.length > 0) { 
-                            this.props.navigation.navigate('Search', { query: this.state.searchQuery })}
+                        if (this.state.searchQuery.length > 0) {
+                            this.props.navigation.navigate('Search', { query: this.state.searchQuery })
                         }
-                        }>
+                    }
+                    }>
                         <Text>Search</Text>
                     </Button>
                 </Header>
