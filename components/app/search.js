@@ -1,6 +1,6 @@
 import React from 'react';
 import { Container, Fab, Header, ListItem, Item, Input, Icon, Button, Text } from 'native-base';
-import { SectionList, StyleSheet, TouchableHighlight, View } from 'react-native';
+import { SectionList, StyleSheet, TouchableHighlight, View, TouchableOpacity } from 'react-native';
 import GridView from 'react-native-super-grid';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -78,7 +78,7 @@ class Search extends React.Component {
                                         <View style={{ padding: 5 }}>
                                             <Text style={[styles.itemText, { fontSize: 25, fontWeight: 'bold' }]}>{item.title}</Text>
                                         </View>
-                                        <View style={{ padding: 5 }}>
+                                        <View style={{ padding: 10 }}>
                                             <Text style={{ color: 'white' }} numberOfLines={2}>{item.description}</Text>
                                         </View>
                                         <View style={{ padding: 5 }}>
@@ -91,10 +91,18 @@ class Search extends React.Component {
                             )
                         }
                         if (section.title === "Offers") {
+                            const color = getMaterialColor();
                             return (
-                                <View key={item.id} style={[styles.listitem]}>
-                                    <Text style={styles.itemText}>{item.name}</Text>
-                                </View>
+                                <TouchableOpacity onPress={() => { console.log("Will create an event with this offer.") }}>
+                                    <View key={item.id} style={[styles.listitem, {backgroundColor: color, justifyContent: 'center', alignItems: 'center'}]}>
+                                        <View style={{ padding: 5 }}>
+                                            <Text style={[styles.itemText, { fontSize: 25, fontWeight: 'bold' }]}>{item.name}</Text>
+                                        </View>
+                                        <View style={{ padding: 10 }}>
+                                            <Text style={{ color: 'white' }} numberOfLines={2}>{item.description}</Text>
+                                        </View>
+                                    </View>
+                                </TouchableOpacity>
                             )
                         }
                     }}

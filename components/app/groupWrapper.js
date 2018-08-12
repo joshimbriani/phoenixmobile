@@ -77,6 +77,7 @@ class GroupWrapper extends React.Component{
             headers: {
                 Authorization: "Token " + this.props.token
             },
+            Authorization: 'Token ' + this.props.token,
         })
             .then(response => response.json())
             .then(responseObj => {
@@ -97,7 +98,7 @@ class GroupWrapper extends React.Component{
             case 'messages':
                 return <GroupsMessage group={this.state.group} navigation={this.props.navigation} />;
             case 'details':
-                return <GroupsDetails group={this.state.group} setGroupParams={this.setGroupParams} editing={this.state.editing} />;
+                return <GroupsDetails group={this.state.group} setGroupParams={this.setGroupParams} editing={this.state.editing} loadGroup={this.loadGroup} navigation={this.props.navigation} />;
             default:
                 return null;
         }

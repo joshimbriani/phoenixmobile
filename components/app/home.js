@@ -20,7 +20,6 @@ class Home extends React.Component {
         super(props);
         this.state = {
             active: false,
-            data: [],
             searchQuery: "",
             refreshing: false,
             GPSPermission: false,
@@ -36,15 +35,7 @@ class Home extends React.Component {
     async componentDidMount() {
         await this.props.userActions.loadUser(this.props.token);
         this.props.colorActions.resetColor();
-        fetch(getURLForPlatform() + "api/v1/user/", {
-            headers: {
-                Authorization: "Token " + this.props.token
-            }
-        }).then(response => response.json())
-            .then(responseObj => {
-                this.setState({ data: [{ id: -1, name: "IDK", color: "0097e6", icon: "help" }].concat('followingTopics' in responseObj ? responseObj['followingTopics'] : []) });
-            });
-
+        
         await this.checkUserPermissions();
 
         if (this.props.FCMToken !== this.props.user.FCMToken) {
@@ -83,10 +74,7 @@ class Home extends React.Component {
             });
 
         firebase.notifications().getInitialNotification().then(async (notification) => {
-            console.log("On notification")
-            console.log(notification)
             const not = await AsyncStorage.getItem("notification")
-            console.log(not)
             if (notification && notification.notification.notificationId !== not) {
                 const not = notification;
 
@@ -98,7 +86,6 @@ class Home extends React.Component {
 
                 await AsyncStorage.setItem('notification', notification.notification.notificationId);
                 this.reactToNotification(data);
-                console.log("Here")
             }
         })
 
@@ -106,13 +93,10 @@ class Home extends React.Component {
             // Process your notification as required
             // ANDROID: Remote notifications do not contain the channel ID. You will have to specify this manually if you'd like to re-display the notification.
             console.log("On notifiaction displayed")
-
-            //this.props.navigation.navigate('NewEvent', { topic: "" })
         });
 
         this.notificationListener = firebase.notifications().onNotification((notification) => {
             // Process your notification as required
-            console.log("On Message");
             const displaynotification = new firebase.notifications.Notification()
                 .setNotificationId('notificationId')
                 .setTitle(notification._body)
@@ -124,14 +108,12 @@ class Home extends React.Component {
         });
 
         this.openNotification = firebase.notifications().onNotificationOpened(async (notification) => {
-            console.log("User opened app")
             var data = {}
             data["type"] = notification.notification.data["type"]
             data["event"] = notification.notification.data["event"]
             data["group"] = notification.notification.data["group"]
             data["threadID"] = notification.notification.data["threadID"]
             const not = await AsyncStorage.getItem("notificationOpened");
-            console.log(not)
             if (not !== notification.notification.notificationId) {
                 await AsyncStorage.setItem('notificationOpened', notification.notification.notificationId);
                 this.reactToNotification(data)
@@ -215,31 +197,15 @@ class Home extends React.Component {
                         this.props.navigation.dispatch(resetAction);
                     })
             } else if (group) {
-                //this.props.navigation.push('GroupWrapper', { groupID: group, goToMessages: true });
-                /*this.props.navigation.dispatch({
-                    index: 2,
-                    key: null,
-                    type: StackActions.RESET,
-                    actions: [
-                        NavigationActions.navigate({ routeName: 'Main' }),
-                        NavigationActions.navigate({ routeName: 'GroupsList' }),
-                        NavigationActions.navigate({ routeName: 'GroupWrapper', params: {groupID: group, goToMessages: true }})
-                    ]
-                })*/
-                console.log(this.props.navigation);
-                console.log(this.props.navigation.state);
+                
                 const resetAction = StackActions.reset({
                     index: 0,
                     key: null,
                     actions: [
                         NavigationActions.navigate({ routeName: 'Main', action: StackActions.push({ routeName: 'GroupWrapper', params: { groupID: group, goToMessages: true } }), }),
-                        //NavigationActions.navigate({ routeName: 'GroupsList' }),
-                        //NavigationActions.navigate({ routeName: 'GroupWrapper', params: {groupID: group, goToMessages: true }})
                     ]
                 })
                 this.props.navigation.dispatch(resetAction);
-                const goToThreadAction = NavigationActions.navigate({ routeName: 'GroupWrapper', params: { groupID: group, goToMessages: true } });
-                //this.props.navigation.dispatch(goToThreadAction);
             }
         } else if (type === "s") {
 
@@ -309,14 +275,7 @@ class Home extends React.Component {
     }
 
     _onRefresh() {
-        fetch(getURLForPlatform() + "api/v1/user/", {
-            headers: {
-                Authorization: "Token " + this.props.token
-            }
-        }).then(response => response.json())
-            .then(responseObj => {
-                this.setState({ data: [{ id: -1, name: "IDK", color: "0097e6", icon: "help" }].concat('followingTopics' in responseObj ? responseObj['followingTopics'] : []) });
-            })
+        this.props.userActions.loadUser(this.props.token);
     }
 
     render() {
@@ -348,7 +307,7 @@ class Home extends React.Component {
                     style={styles.gridView}
                     itemWidth={150}
                     enableEmptySections
-                    items={this.state.data}
+                    items={[{ id: -1, name: "IDK", color: "0097e6", icon: "help" }].concat('followingTopics' in this.props.user ? this.props.user['followingTopics'] : [])}
                     refreshControl={
                         <RefreshControl
                             refreshing={this.state.refreshing}

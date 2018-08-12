@@ -2,7 +2,7 @@ import { connect } from 'react-redux';
 import React from 'react';
 import PropTypes from 'prop-types';
 import { styles } from '../../assets/styles';
-import { Text, View, TextInput } from 'react-native';
+import { Text, View, TextInput, TouchableOpacity, FlatList } from 'react-native';
 import { Content, Form, Item, Input, Label } from 'native-base';
 import ColorPicker from '../utils/ColorPicker';
 
@@ -33,12 +33,12 @@ class GroupsDetails extends React.Component {
     render() {
         if (Object.keys(this.props.group).length > 0) {
             return (
-                <View style={[styles.flex1, {padding: 10}]} >
-                    <View style={{flexDirection: 'row', height: 50}}>
-                        <View style={{flex: 1}}>
-                            <Text style={{fontWeight: 'bold'}}>Name</Text>
+                <View style={[styles.flex1]} >
+                    <View style={{ flexDirection: 'row', height: 50, padding: 10 }}>
+                        <View style={{ flex: 1 }}>
+                            <Text style={{ fontWeight: 'bold' }}>Name</Text>
                         </View>
-                        <View style={{flex: 3}}>
+                        <View style={{ flex: 3 }}>
                             <HideableView hide={!this.props.editing}>
                                 <TextInput
                                     value={this.state.name}
@@ -51,11 +51,11 @@ class GroupsDetails extends React.Component {
                             </HideableView>
                         </View>
                     </View>
-                    <View style={{flexDirection: 'row'}}>
-                        <View style={{flex: 1}}>
-                            <Text style={{fontWeight: 'bold'}}>Color</Text>
+                    <View style={{ flexDirection: 'row', padding: 10 }}>
+                        <View style={{ flex: 1 }}>
+                            <Text style={{ fontWeight: 'bold' }}>Color</Text>
                         </View>
-                        <View style={{flex: 3}}>
+                        <View style={{ flex: 3 }}>
                             <HideableView hide={!this.props.editing}>
                                 <ColorPicker
                                     colors={materialColors}
@@ -68,11 +68,11 @@ class GroupsDetails extends React.Component {
                             </HideableView>
                         </View>
                     </View>
-                    <View style={{flexDirection: 'row'}}>
-                        <View style={{flex: 1}}>
-                            <Text style={{fontWeight: 'bold'}}>Description</Text>
+                    <View style={{ flexDirection: 'row', padding: 10 }}>
+                        <View style={{ flex: 1 }}>
+                            <Text style={{ fontWeight: 'bold' }}>Description</Text>
                         </View>
-                        <View style={{flex: 3}}>
+                        <View style={{ flex: 3 }}>
                             <HideableView hide={!this.props.editing}>
                                 <TextInput
                                     name="description"
@@ -89,11 +89,40 @@ class GroupsDetails extends React.Component {
                                 <HideableView hide={!this.props.group.description.length <= 0}>
                                     <Text>This group has no description. Feel free to add one!</Text>
                                 </HideableView>
-                                <Text></Text>
                             </HideableView>
                         </View>
                     </View>
-                    
+                    <View>
+                        <View style={{ flexDirection: 'row', backgroundColor: this.state.color, alignItems: 'center' }}>
+                            <View style={{ flex: 1, padding: 20 }}>
+                                <Text style={{ fontWeight: 'bold', color: 'white' }}>Group Members</Text>
+                            </View>
+                            <View style={{ paddingRight: 20, flexDirection: 'row' }}>
+                                <TouchableOpacity onPress={() => this.props.navigation.navigate('AddToGroup', {loadGroup: this.props.loadGroup, group: this.props.group})}><PlatformIonicon
+                                    name={"add"}
+                                    size={30} //this doesn't adjust the size...?
+                                    style={{ color: "white" }}
+                                /></TouchableOpacity>
+                            </View>
+                        </View>
+                        <View style={{ backgroundColor: this.state.color }}>
+                            {this.state.searchFriends &&
+                                <View style={{ padding: 10 }}>
+                                    <Form>
+                                        <Item>
+                                            <Input value={this.state.filterString} placeholder="Filter Friends" onChangeText={(text) => { this.setState({ filterString: text }); this.filterFriends(text, {}) }} />
+                                        </Item>
+                                    </Form>
+                                </View>}
+                            <FlatList
+                                data={this.state.filteredFriends}
+                                extraData={this.state}
+                                keyExtractor={this._keyExtractor}
+                                renderItem={this.renderFriends}
+                                ListEmptyComponent={this.emptyFriendList}
+                            />
+                        </View>
+                    </View>
                 </View>
             )
         } else {
