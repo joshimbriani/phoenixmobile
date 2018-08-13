@@ -2,14 +2,18 @@ import { connect } from 'react-redux';
 import React from 'react';
 import PropTypes from 'prop-types';
 import { styles } from '../../assets/styles';
-import { Text, View, TextInput, TouchableOpacity, FlatList } from 'react-native';
-import { Content, Form, Item, Input, Label } from 'native-base';
+import { Text, View, TextInput, TouchableOpacity, FlatList, Button, ScrollView } from 'react-native';
 import ColorPicker from '../utils/ColorPicker';
+import { CachedImage } from 'react-native-cached-image';
+import { bindActionCreators } from 'redux';
 
 import PlatformIonicon from '../utils/platformIonicon';
 import { materialColors } from '../utils/styleutils';
 import { getURLForPlatform } from '../utils/networkUtils';
 import HideableView from '../utils/hideableView';
+import * as userActions from '../../redux/actions/user';
+import { StackActions, NavigationActions } from 'react-navigation';
+import Modal from "react-native-modal";
 
 class GroupsDetails extends React.Component {
 
@@ -20,8 +24,12 @@ class GroupsDetails extends React.Component {
             editing: true,
             name: this.props.group.name,
             description: this.props.group.description,
-            color: this.props.group.color
+            color: this.props.group.color,
+            removeUserModalVisible: false,
+            selectedUser: -1
         }
+
+        this.renderFriends = this.renderFriends.bind(this);
     }
 
     componentDidUpdate(prevProps, prevState) {
@@ -30,10 +38,58 @@ class GroupsDetails extends React.Component {
         }
     }
 
+    _keyExtractor = (item, index) => item.id;
+
+    renderFriends = ({ item }) => (
+        <TouchableOpacity onLongPress={() => this.setState({ removeUserModalVisible: true, selectedUser: item.id })}>
+            <View style={{ borderBottomWidth: 1, flexDirection: 'row', backgroundColor: 'white' }}>
+                <View style={{ padding: 10 }}>
+                    <CachedImage
+                        style={{ width: 50, height: 50, borderRadius: 25 }}
+                        source={{ uri: item.profilePicture }}
+                    />
+                </View>
+                <View style={{ justifyContent: 'center', flex: 1 }}>
+                    <Text style={{ margin: 10 }}>{item.username}</Text>
+                </View>
+            </View>
+        </TouchableOpacity>
+    )
+
+    removeFromGroup(userID) {
+        fetch(getURLForPlatform() + 'api/v1/groups/' + this.props.group.id + '/users/', {
+            headers: {
+                Authorization: "Token " + this.props.token
+            },
+            method: 'DELETE',
+            body: JSON.stringify({
+                'user': userID
+            })
+        }).then(request => request.json())
+            .then(requestObject => {
+                if (requestObject["success"]) {
+                    this.setState({selectedUser: -1, removeUserModalVisible: false})
+                    if (userID === this.props.user.id) {
+                        this.props.userActions.loadUser(this.props.token);
+                        const resetAction = StackActions.reset({
+                            index: 0,
+                            key: null,
+                            actions: [
+                                NavigationActions.navigate({ routeName: 'Main', action: StackActions.push({ routeName: 'GroupsList' }), }),
+                            ]
+                        })
+                        this.props.navigation.dispatch(resetAction);
+                    } else {
+                        this.props.loadGroup();
+                    }
+                }
+            })
+    }
+
     render() {
         if (Object.keys(this.props.group).length > 0) {
             return (
-                <View style={[styles.flex1]} >
+                <ScrollView style={[styles.flex1]} >
                     <View style={{ flexDirection: 'row', height: 50, padding: 10 }}>
                         <View style={{ flex: 1 }}>
                             <Text style={{ fontWeight: 'bold' }}>Name</Text>
@@ -92,38 +148,60 @@ class GroupsDetails extends React.Component {
                             </HideableView>
                         </View>
                     </View>
-                    <View>
+                    <View style={{ flexDirection: 'row', padding: 10 }}>
+                        <View style={{ flex: 1 }}>
+                            <Button
+                                onPress={() => this.removeFromGroup(this.props.user.id)}
+                                title="Leave Group"
+                                color="#F44336"
+                                accessibilityLabel="Leave this group"
+                            />
+                        </View>
+                    </View>
+                    <View style={{ flex: 1 }}>
                         <View style={{ flexDirection: 'row', backgroundColor: this.state.color, alignItems: 'center' }}>
                             <View style={{ flex: 1, padding: 20 }}>
                                 <Text style={{ fontWeight: 'bold', color: 'white' }}>Group Members</Text>
                             </View>
                             <View style={{ paddingRight: 20, flexDirection: 'row' }}>
-                                <TouchableOpacity onPress={() => this.props.navigation.navigate('AddToGroup', {loadGroup: this.props.loadGroup, group: this.props.group})}><PlatformIonicon
+                                <TouchableOpacity onPress={() => this.props.navigation.navigate('AddToGroup', { loadGroup: this.props.loadGroup, group: this.props.group })}><PlatformIonicon
                                     name={"add"}
                                     size={30} //this doesn't adjust the size...?
                                     style={{ color: "white" }}
                                 /></TouchableOpacity>
                             </View>
                         </View>
-                        <View style={{ backgroundColor: this.state.color }}>
-                            {this.state.searchFriends &&
-                                <View style={{ padding: 10 }}>
-                                    <Form>
-                                        <Item>
-                                            <Input value={this.state.filterString} placeholder="Filter Friends" onChangeText={(text) => { this.setState({ filterString: text }); this.filterFriends(text, {}) }} />
-                                        </Item>
-                                    </Form>
-                                </View>}
-                            <FlatList
-                                data={this.state.filteredFriends}
-                                extraData={this.state}
-                                keyExtractor={this._keyExtractor}
-                                renderItem={this.renderFriends}
-                                ListEmptyComponent={this.emptyFriendList}
-                            />
-                        </View>
+
+                        <FlatList
+                            data={this.props.group.users}
+                            extraData={this.props}
+                            keyExtractor={this._keyExtractor}
+                            renderItem={this.renderFriends}
+                            ListEmptyComponent={this.emptyFriendList}
+                        />
                     </View>
-                </View>
+                    <Modal
+                        isVisible={this.state.removeUserModalVisible}
+                        backdropOpacity={0.5}
+                        onBackButtonPress={() => this.setState({ removeUserModalVisible: false, selectedUser: -1 })}
+                        onBackdropPress={() => this.setState({ removeUserModalVisible: false, selectedUser: -1 })}>
+                        <View style={{
+                            borderColor: "rgba(0, 0, 0, 0.1)",
+                            backgroundColor: "white",
+                        }}>
+                            <View style={{
+                                width: 324,
+                                height: 50
+                            }}>
+                                <TouchableOpacity onPress={() => this.removeFromGroup(this.state.selectedUser)}>
+                                    <View style={{ height: 50, width: 324, borderBottomWidth: 1, borderBottomColor: '#000', justifyContent: 'center', paddingLeft: 10 }}>
+                                        <Text>Remove from Group</Text>
+                                    </View>
+                                </TouchableOpacity>
+                            </View>
+                        </View>
+                    </Modal>
+                </ScrollView>
             )
         } else {
             return (
@@ -141,13 +219,14 @@ GroupsDetails.propTypes = {
 
 function mapStateToProps(state) {
     return {
-        user: state.userReducer.user
+        user: state.userReducer.user,
+        token: state.tokenReducer.token
     };
 }
 
 function mapDispatchToProps(dispatch) {
     return {
-
+        userActions: bindActionCreators(userActions, dispatch)
     };
 }
 

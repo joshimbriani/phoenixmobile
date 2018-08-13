@@ -236,6 +236,10 @@ class ConversationView extends React.Component {
             }
         }
 
+        if (this.props.groupID) {
+            messageBody["group"] = this.props.groupID;
+        }
+
         fetch(getURLForPlatform() + "api/v1/messages/", {
             method: 'POST',
             headers: {

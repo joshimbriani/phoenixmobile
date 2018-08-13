@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { Text, FlatList, View, Button, TextInput, TouchableOpacity, Image } from 'react-native';
+import { Text, FlatList, View, Button, TextInput, TouchableOpacity, ToastAndroid } from 'react-native';
 import PlatformIonicon from '../utils/platformIonicon';
 import { getURLForPlatform } from '../utils/networkUtils';
 import Swiper from 'react-native-swiper';
@@ -135,6 +135,10 @@ class NewGroup extends React.Component{
     toggleUser(user) {
         // If not in list
         if (!this.userInGroup(user)) {
+            if (this.state.groupUsers.length >= 200) {
+                ToastAndroid.show("Can't add more than 200 users to a group!", ToastAndroid.SHORT);
+                return;
+            }
             var groupUsers = this.state.groupUsers.slice();
             groupUsers.push(user);
             this.setState({ groupUsers: groupUsers, errors: "" });

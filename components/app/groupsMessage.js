@@ -21,6 +21,7 @@ class GroupsMessage extends React.Component {
                         color={this.props.group.color}
                         userString={generateUserToString(this.props.user.id, this.props.group.users, null)}
                         navigation={this.props.navigation}
+                        groupID={this.props.group.id}
                     />
                 </View>
             )

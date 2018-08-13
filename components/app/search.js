@@ -29,7 +29,11 @@ class Search extends React.Component {
 
     componentDidMount() {
         this.props.colorActions.resetColor();
-        fetch(getURLForPlatform() + "api/v1/search/?query=" + this.props.navigation.state.params.query).then(response => response.json())
+        fetch(getURLForPlatform() + "api/v1/search/?query=" + this.props.navigation.state.params.query, {
+            headers: {
+                Authorization: "Token " + this.props.token
+            },
+        }).then(response => response.json())
             .then(responseObj => {
                 this.setState({ data: responseObj });
             })
@@ -70,7 +74,7 @@ class Search extends React.Component {
                             )
                         }
                         if (section.title === "Events") {
-                            const date = new Date(item.created)
+                            const date = new Date(item.datetime)
                             const color = getMaterialColor();
                             return (
                                 <TouchableHighlight onPress={() => { this.props.navigation.navigate('EventDetailWrapper', { event: item.title, id: item.id, color: color }) }}>
@@ -116,7 +120,8 @@ class Search extends React.Component {
 
 function mapStateToProps(state) {
     return {
-        color: state.backgroundColorReducer.color
+        color: state.backgroundColorReducer.color,
+        token: state.tokenReducer.token
     };
 }
 

@@ -1,5 +1,5 @@
 import React from 'react';
-import { FlatList, View, Dimensions, Text, Button } from 'react-native';
+import { FlatList, View, Dimensions, Text, Button, ToastAndroid } from 'react-native';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { Input, Form, Item } from 'native-base';
@@ -24,7 +24,8 @@ class AddToGroup extends React.Component {
 
         this.state = {
             filteredUsers: [],
-            searchText: ""
+            searchText: "",
+            addedUsers: this.props.navigation.state.params.group.users
         }
         this.findFriends = this.findFriends.bind(this);
         this.addToGroup = this.addToGroup.bind(this);
@@ -55,8 +56,10 @@ class AddToGroup extends React.Component {
     )
 
     addToGroup(userID) {
-        console.log("Test")
-        console.log(this.props.navigation.state.params)
+        if (this.state.addedUsers.length >= 200) {
+            ToastAndroid.show("Can't add more than 200 users to a group!", ToastAndroid.SHORT);
+            return
+        }
         fetch(getURLForPlatform() + 'api/v1/groups/' + this.props.navigation.state.params.group.id + '/users/', {
             headers: {
                 Authorization: "Token " + this.props.token
@@ -68,8 +71,12 @@ class AddToGroup extends React.Component {
         }).then(request => request.json())
         .then(requestObject => {
             if (requestObject["success"]) {
-                this.findFriends(this.state.searchText);
+                ToastAndroid.show('User added to group!', ToastAndroid.SHORT);
+                var users = this.state.addedUsers.slice();
+                users.push({id: userID});
+                this.setState({addedUsers: users});
                 this.props.navigation.state.params.loadGroup();
+                this.findFriends(this.state.searchText);
             }
         })
     }
@@ -85,12 +92,17 @@ class AddToGroup extends React.Component {
             },
         }).then(response => response.json())
             .then(responseObject => {
-                /*var users = responseObject["users"];
-                const usersInGroup = this.props.navigation.state.params.group.users.map((user) => user.id);
+                var users = responseObject["users"];
+                const usersInGroup = this.state.addedUsers.map((user) => user.id);
                 for (var i = users.length - 1; i >= 0; i--) {
-                    if (usersInGroup.index)
-                }*/
-                this.setState({ filteredUsers: responseObject["users"] })
+                    console.log(usersInGroup)
+                    console.log(users[i].id)
+                    if (usersInGroup.indexOf(users[i].id) > -1) {
+                        users.splice(i);
+                    }
+                }
+                console.log(users)
+                this.setState({ filteredUsers: users })
             })
     }
 

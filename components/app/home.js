@@ -1,6 +1,6 @@
 import React from 'react';
 import { Container, Fab, Header, Item, Input, Button, Text } from 'native-base';
-import { Alert, Platform, RefreshControl, StyleSheet, TouchableHighlight, View, PermissionsAndroid, AsyncStorage } from 'react-native';
+import { Platform, RefreshControl, TouchableHighlight, View, PermissionsAndroid, AsyncStorage } from 'react-native';
 import GridView from 'react-native-super-grid';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -74,8 +74,9 @@ class Home extends React.Component {
             });
 
         firebase.notifications().getInitialNotification().then(async (notification) => {
+            console.log("Got notification")
             const not = await AsyncStorage.getItem("notification")
-            if (notification && notification.notification.notificationId !== not) {
+            if (notification && notification.notification.data["randomID"] !== not) {
                 const not = notification;
 
                 var data = {}
@@ -84,7 +85,7 @@ class Home extends React.Component {
                 data["group"] = notification.notification.data["group"]
                 data["threadID"] = notification.notification.data["threadID"]
 
-                await AsyncStorage.setItem('notification', notification.notification.notificationId);
+                await AsyncStorage.setItem('notification', notification.notification.data["randomID"]);
                 this.reactToNotification(data);
             }
         })
@@ -108,14 +109,19 @@ class Home extends React.Component {
         });
 
         this.openNotification = firebase.notifications().onNotificationOpened(async (notification) => {
+            console.log("Got notification")
             var data = {}
             data["type"] = notification.notification.data["type"]
             data["event"] = notification.notification.data["event"]
             data["group"] = notification.notification.data["group"]
             data["threadID"] = notification.notification.data["threadID"]
             const not = await AsyncStorage.getItem("notificationOpened");
-            if (not !== notification.notification.notificationId) {
-                await AsyncStorage.setItem('notificationOpened', notification.notification.notificationId);
+            console.log(not, notification.notification.data["randomID"])
+            console.log(notification.notification.data)
+            if (not !== notification.notification.data["randomID"]) {
+                console.log("Test")
+                await AsyncStorage.setItem('notificationOpened', notification.notification.data["randomID"]);
+                console.log("Test")
                 this.reactToNotification(data)
             }
 

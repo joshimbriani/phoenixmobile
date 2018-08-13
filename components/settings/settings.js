@@ -10,6 +10,7 @@ import { StackActions, NavigationActions } from 'react-navigation';
 import { styles } from '../../assets/styles';
 import Modal from "react-native-modal";
 import Icon from 'react-native-vector-icons/Ionicons';
+import { getURLForPlatform } from '../utils/networkUtils';
 
 class Settings extends React.Component {
 
@@ -135,7 +136,23 @@ class Settings extends React.Component {
     }
 
     logout() {
-        this.props.userActions.logout(this.props.token);
+        fetch(getURLForPlatform() + "api/v1/user/" + this.props.user.id + "/", {
+            headers: {
+                Authorization: "Token " + this.props.token
+            },
+            body: JSON.stringify({
+                'FCMToken': ''
+            }),
+            method: 'PUT'
+        }).then(response => response.json())
+            .then(responseObj => {
+                if (!responseObj["update"]) {
+                    console.log("Bad Update")
+                } else {
+                    this.props.userActions.logout(this.props.token);
+                }
+            })
+        
     }
 
     resetNavigation(targetRoute) {

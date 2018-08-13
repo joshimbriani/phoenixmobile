@@ -1,17 +1,11 @@
 import React from 'react';
-import { Alert, Platform, StatusBar, FlatList, StyleSheet, TouchableOpacity, View, Dimensions, Image, Text, Button } from 'react-native';
-import PlatformIonicon from '../utils/platformIonicon';
-import { TabViewAnimated, TabBar, SceneMap } from 'react-native-tab-view';
+import { FlatList, View, Dimensions, Text, Button } from 'react-native';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { Input, Form, Item } from 'native-base';
 
-import Profile from './profile';
-import Achievements from './achievements';
-import MyEvents from './myEvents';
 import * as achievementActions from '../../redux/actions/achievements';
 import * as userActions from '../../redux/actions/user';
-import { styles } from '../../assets/styles';
 import { getURLForPlatform } from '../utils/networkUtils';
 import { CachedImage } from 'react-native-cached-image';
 

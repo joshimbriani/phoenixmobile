@@ -84,7 +84,7 @@ class Login extends React.Component {
         Response.json returns a promise. We need to have it in a then.
     */
     sendLoginRequest() {
-        fetch(getURLForPlatform() + "rest_auth/login/", {
+        fetch(getURLForPlatform() + "api/v1/rest_auth/login/", {
             method: 'POST',
             headers: {
                 'Accept': 'application/json',

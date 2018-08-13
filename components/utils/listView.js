@@ -16,7 +16,7 @@ export class KootaListView extends React.Component {
                 keyExtractor={(item, index) => index}
                 style={styles.listView}
                 renderItem={({ item, index }) => {
-                    const date = new Date(item.created)
+                    const date = new Date(item.datetime)
                     return (
                         <TouchableHighlight onPress={() => { this.props.pressCallback(item) }}>
                             <View key={item.id} style={[styles.listitem, {backgroundColor: materialColors[index % getMaterialColorLength], justifyContent: 'center', alignItems: 'center'}]} >

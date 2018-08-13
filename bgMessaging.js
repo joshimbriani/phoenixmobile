@@ -7,7 +7,7 @@ export default async (message) => {
         .android.setColor('#0097E6')
         .android.setSmallIcon('notif')
         .setTitle(message.data["title"])
-        .setNotificationId(makeid())
+        .setNotificationId(makeid(message.data))
         .setBody(message.data["body"]);
     
         if (message.data["type"] === 'm') {
@@ -17,7 +17,8 @@ export default async (message) => {
                 type: message.data["type"],
                 event: message.data["event"],
                 group: message.data["group"],
-                threadID: message.data["threadID"]
+                threadID: message.data["threadID"],
+                randomID: message.data["randomID"]
             });
         } else if (message.data["type"] === 's') {
             notification.setSubtitle("Suggested Event")
@@ -40,12 +41,11 @@ export default async (message) => {
     return Promise.resolve();
 }
 
-function makeid() {
-    var text = "";
-    var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-  
-    for (var i = 0; i < 5; i++)
-      text += possible.charAt(Math.floor(Math.random() * possible.length));
-  
-    return text;
+function makeid(data) {
+    var id = data["type"];
+    if (data["type"] === 'm') {
+        id += data["group"] ? "group" + data["group"] : "event" + data["event"];
+    }
+
+    return id;
   }
