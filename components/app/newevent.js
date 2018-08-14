@@ -4,14 +4,16 @@ import { ScrollView, View, Picker, ToastAndroid, KeyboardAvoidingView, Platform,
 import PlatformIonicon from '../utils/platformIonicon';
 import { connect } from 'react-redux';
 import Swiper from 'react-native-swiper';
-import DateTimePicker from 'react-native-modal-datetime-picker';
 import { getURLForPlatform } from '../utils/networkUtils';
 import { styles } from '../../assets/styles';
-import { OfferContainer } from './offerContainer';
 import { REACT_SWIPER_BOTTOM_MARGIN } from '../utils/constants';
-import moment from 'moment';
-import debounce from 'lodash/debounce';
 import { getCurrentLocation } from '../utils/otherUtils';
+import { TopicsNewEvent } from './newEvent/topicsNewEvent';
+import { TitleDescColorNewEvent } from './newEvent/titleDescColorNewEvent';
+import { DatetimeDurationNewEvent } from './newEvent/datetimeDurationNewEvent';
+import { PlaceNewEvent } from './newEvent/placeNewEvent';
+import { PeopleNewEvent } from './newEvent/peopleNewEvent';
+import { OffersNewEvent } from './newEvent/offersNewEvent';
 
 const ITEMS_TO_VALIDATE = ["title", "description", "place", "datetime", "duration", "place"];
 
@@ -28,11 +30,17 @@ class NewEvent extends React.Component {
 
     constructor(props) {
         super(props);
+        var text = "";
+        var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+      
+        for (var i = 0; i < 5; i++)
+          text += possible.charAt(Math.floor(Math.random() * possible.length));
+              
         this.state = {
             title: "",
             description: "",
             restrictToGender: false,
-            amount: "",
+            amount: 5,
             place: "",
             datetime: "",
             formIsValid: false,
@@ -47,7 +55,9 @@ class NewEvent extends React.Component {
             placeSearchText: "",
             place: {},
             durationMeasure: "minutes",
-            duration: 60
+            duration: 60,
+            color: '#1abc9c',
+            session: text
         }
         this.onChange = this.onChange.bind(this);
         this.formIsValid = this.formIsValid.bind(this);
@@ -56,7 +66,9 @@ class NewEvent extends React.Component {
         this.removeTopic = this.removeTopic.bind(this);
         this.addToEvent = this.addToEvent.bind(this);
         this.removeFromEvent = this.removeFromEvent.bind(this);
-        this.placeDisplay = this.placeDisplay.bind(this);
+        this.addTopic = this.addTopic.bind(this);
+        this.fetchTopicsFromDescription = this.fetchTopicsFromDescription.bind(this);
+        this.inviteFriends = this.inviteFriends.bind(this);
     }
 
     async componentDidMount() {
@@ -69,6 +81,10 @@ class NewEvent extends React.Component {
         } else if (Platform.OS === 'ios') {
 
         }
+    }
+
+    inviteFriends() {
+        console.log("Test")
     }
 
     // Todo: Need to decide what to do with objects thst don't exist on the DB. Right now
@@ -136,6 +152,7 @@ class NewEvent extends React.Component {
 
     submitForm() {
         // TODO: Need to give error messages
+        console.log("Submit form")
         if (this.state.formIsValid) {
             var duration = this.state.duration;
             if (this.state.durationMeasure === 'hours') {
@@ -170,58 +187,22 @@ class NewEvent extends React.Component {
         }
     }
 
-    getPlaces = debounce((text) => {
-        var url = "https://maps.googleapis.com/maps/api/place/autocomplete/json?input=" + text + "&key=AIzaSyDUVAEJq3xQe6nTG4uaj00xcl-EkHp2oXQ";
-
-        if (this.state.lat > -200 && this.state.long > -200) {
-            url += "&location=" + this.state.lat + "," + this.state.long + "&radius=25";
-        }
-
-        fetch(url)
-            .then((results) => results.json())
-            .then((resultsJSON) => { this.setState({ placePredictions: resultsJSON["predictions"] }) })
-            .catch((error) => console.log(error.message));
-    }, 250);
-
-    _showDateTimePicker = () => this.setState({ isDateTimePickerVisible: true });
-
-    _hideDateTimePicker = () => this.setState({ isDateTimePickerVisible: false });
-
-    _handleDatePicked = (date) => {
-        if (date - (new Date()) < 0) {
-            // They picked a time in the past
-            // Probably want to give an error message
-            // TODO: Error message
-        } else {
-            this.setState({ datetime: date });
-        }
-        this._hideDateTimePicker();
-    };
-
-    _keyExtractor = (item, index) => item.id;
-
-    _renderItem = ({ item }) => (
-        <TouchableOpacity onPress={() => this.setState({ place: item, placePredictions: [], placeSearchText: "" })}>
-            <View id={item.id} style={{ borderBottomColor: '#333', borderBottomWidth: 1 }}>
-                <Text style={{ padding: 5 }}>{item.structured_formatting.main_text}</Text>
-                <Text style={{ padding: 5 }}>{item.structured_formatting.secondary_text}</Text>
-            </View>
-        </TouchableOpacity>
-    );
-
-
     removeTopic(index) {
         var topics = this.state.topics.slice();
         topics.splice(index, 1);
         this.setState({ topics: topics }, this.fetchOffersFromTopics);
     }
 
-    addTopic() {
-        if (this.state.topic.length < 1) {
+    addTopic(topic) {
+        if (topic.length < 1) {
             return;
         }
 
-        fetch(getURLForPlatform() + "api/v1/topics/getorcreate/?word=" + this.state.topic, {
+        if (this.state.topics.map((topic) => topic.name.toLowerCase()).indexOf(topic.toLowerCase()) > -1) {
+            return;
+        }
+
+        fetch(getURLForPlatform() + "api/v1/topics/getorcreate/?word=" + topic, {
             method: 'PUT',
             headers: {
                 'Accept': 'application/json',
@@ -232,7 +213,7 @@ class NewEvent extends React.Component {
             .then(responseJSON => {
                 var topics = this.state.topics.slice();
                 topics.push(responseJSON)
-                this.setState({ topics: topics, topic: "" }, this.fetchOffersFromTopics);
+                this.setState({ topics: topics }, this.fetchOffersFromTopics);
             });
     }
 
@@ -253,18 +234,40 @@ class NewEvent extends React.Component {
         }
     }
 
-    placeDisplay() {
-        if (Object.keys(this.state.place).length > 0 && this.state.place.structured_formatting && this.state.place.structured_formatting.main_text) {
-            return this.state.place.structured_formatting.main_text;
-        } else if (Object.keys(this.state.place).length > 0 && this.state.place.placeDetails) {
-            return this.state.place.name;
-        } else {
-            return this.state.placeSearchText;
-        }
-    }
-
     render() {
-        console.log(this.state.offers && this.state.offers.length > 0)
+        console.log(this.state);
+        const NewEventArr = [
+            {
+                name: "Topics",
+                component: <TopicsNewEvent topics={this.state.topics} removeTopic={this.removeTopic} onChange={this.onChange} addTopic={this.addTopic} />,
+                condition: (args) => true
+            },
+            {
+                name: "Offers",
+                component: <OffersNewEvent addToEvent={this.addToEvent} removeFromEvent={this.removeFromEvent} offers={this.state.offers} />,
+                condition: (args) => args["offers"].length > 0
+            },
+            {
+                name: "TitleDescColor",
+                component: <TitleDescColorNewEvent onChange={this.onChange} fetchTopicsFromDescription={this.fetchTopicsFromDescription} color={this.state.color} />,
+                condition: (args) => true
+            },
+            {
+                name: "Place",
+                component: <PlaceNewEvent onChange={this.onChange} lat={this.state.lat} long={this.state.long} place={this.state.place} session={this.state.session} />,
+                condition: (args) => true
+            },
+            {
+                name: "DateTime",
+                component: <DatetimeDurationNewEvent onChange={this.onChange} datetime={this.state.datetime} duration={this.state.duration} durationMeasure={this.state.durationMeasure} />,
+                condition: (args) => true
+            },
+            {
+                name: "People",
+                component: <PeopleNewEvent onChange={this.onChange} inviteFriends={this.inviteFriends} submitForm={this.submitForm} restrictToGender={this.state.restrictToGender} />,
+                condition: (args) => true
+            }
+        ]
         var duration = this.state.duration;
         if (this.state.durationMeasure === 'hours') {
             duration *= 60;
@@ -273,199 +276,18 @@ class NewEvent extends React.Component {
         }
         return (
             <Swiper nextButton={<Text>&gt;</Text>} buttonWrapperStyle={{ alignItems: 'flex-end' }} prevButton={<Text>&lt;</Text>} style={styles.wrapper} showsButtons={true} loop={false} removeClippedSubviews={false} >
-                <View style={styles.flex1} key={1}>
-                    <View style={styles.header}>
-                        <Text style={styles.questionHeader}>What?</Text>
-                        <View style={styles.tagline}>
-                            <Text style={styles.taglineText}>Give us a short and a longer</Text>
-                            <Text style={styles.taglineText}>description of what you want to do!</Text>
-                        </View>
-                    </View>
-                    <View style={styles.formContainer}>
-                        <Content style={styles.flex1}>
-                            <Form>
-                                <Item stackedLabel>
-                                    <Label>Title</Label>
-                                    <Input
-                                        name="title"
-                                        onBlur={() => this.fetchTopicsFromDescription()}
-                                        onChangeText={(text) => this.onChange("title", text)}
-                                    />
-                                </Item>
-                                <Item stackedLabel last>
-                                    <Label>Full Description</Label>
-                                    <Input
-                                        name="description"
-                                        onBlur={() => this.fetchTopicsFromDescription()}
-                                        multiline={true}
-                                        numberOfLines={5}
-                                        onChangeText={(text) => this.onChange("description", text)}
-                                    />
-                                </Item>
-                            </Form>
-                        </Content>
-                    </View>
-                </View>
-                <View style={styles.flex1} key={2}>
-                    <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? "padding" : null} style={styles.flex1} keyboardVerticalOffset={Platform.OS === 'ios' ? 20 : 0}>
-                        <View style={styles.header}>
-                            <Text style={styles.questionHeader}>Topics?</Text>
-                            <View style={styles.tagline}>
-                                <Text style={styles.taglineText}>Which topics does</Text>
-                                <Text style={styles.taglineText}>your event fit?</Text>
-                            </View>
-                        </View>
-                        <View style={styles.formContainer}>
-                            <ScrollView>
-                                <View style={[styles.topicContainer, { flex: 3 }]}>
-                                    {this.state.topics && this.state.topics.length > 0 && this.state.topics.map((topic, index) =>
-                                        <View key={index} style={styles.topicBubble}>
-                                            <PlatformIonicon
-                                                name={'close-circle'}
-                                                size={30}
-                                                style={{ color: "white" }}
-                                                onPress={() => this.removeTopic(index)}
-                                            />
-                                            <Text style={{ color: 'white', paddingLeft: 5 }}>{topic.name}</Text>
-                                        </View>
-                                    )}
-                                </View>
-                            </ScrollView>
-                            <View style={{ marginBottom: REACT_SWIPER_BOTTOM_MARGIN }}>
-                                <Form style={{ flexDirection: 'row' }}>
-                                    <View style={{ flex: 1, paddingLeft: 10 }}>
-                                        <Input placeholder="Type Extra Topics Here" name="topic" value={this.state.topic} onChangeText={(text) => this.setState({ "topic": text })} />
-                                    </View>
-                                    <View style={{ paddingRight: 10 }}>
-                                        <Button title="Add" accessibilityLabel="Press this button to add a new topic." onPress={() => this.addTopic()}>
-                                            <Text>Add</Text>
-                                        </Button>
-                                    </View>
-                                </Form>
-                            </View>
-                        </View>
-                    </KeyboardAvoidingView>
-                </View>
-                <View style={styles.flex1}>
-                    <View style={styles.header}>
-                        <Text style={styles.questionHeader}>Offers?</Text>
-                        <View style={styles.tagline}>
-                            <Text style={styles.taglineText}>Do any of these standing</Text>
-                            <Text style={styles.taglineText}>offers apply to your event?</Text>
-                        </View>
-                    </View>
-                    <View style={{ flex: 1, flexDirection: "row", flexWrap: "wrap", alignSelf: "stretch" }}>
-                        <ScrollView style={styles.offerScrollContainer}>
-                            {this.state.offers.map((offer, index) => {
-                                return (
-                                    <OfferContainer index={index} offer={offer} addable={true} addToEvent={this.addToEvent} removeFromEvent={this.removeFromEvent} />
-                                )
-                            })}
-                        </ScrollView>
-                    </View>
-                </View>
-                <View style={styles.flex1} key={this.state.offers && this.state.offers.length > 0 ? 4 : 3}>
-                    <View style={styles.header}>
-                        <Text style={styles.questionHeader}>Where?</Text>
-                        <View style={styles.tagline}>
-                            <Text style={styles.taglineText}>Where is</Text>
-                            <Text style={styles.taglineText}>your event at?</Text>
-                        </View>
-                    </View>
-                    <Form>
-                        <Item floatingLabel>
-                            <Label>Place</Label>
-                            <Input name="place" value={this.placeDisplay()} onChangeText={(text) => { this.setState({ placeSearchText: text, place: {} }); this.getPlaces(text) }} />
-                        </Item>
-                    </Form>
-                    <View style={{ marginBottom: REACT_SWIPER_BOTTOM_MARGIN, flex: 1, backgroundColor: 'white' }}>
-                        <FlatList
-                            data={this.state.placePredictions}
-                            extraData={this.state}
-                            keyExtractor={this._keyExtractor}
-                            renderItem={this._renderItem}
-                        />
-                    </View>
-                </View>
-                <View style={styles.flex1} key={this.state.offers && this.state.offers.length > 0 ? 5 : 4}>
-                    <View style={styles.header}>
-                        <Text style={styles.questionHeader}>When?</Text>
-                        <View style={styles.tagline}>
-                            <Text style={styles.taglineText}>When do you want to have</Text>
-                            <Text style={styles.taglineText}>your event and how long</Text>
-                            <Text style={styles.taglineText}>will it last?</Text>
-                        </View>
-                    </View>
-                    <View style={{ flex: 1 }}>
-                        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-                            {typeof this.state.datetime !== "string" && <Text style={{ fontSize: 20, fontWeight: 'bold' }}>{moment(this.state.datetime.toISOString(), moment.ISO_8601).format('MMMM Do YYYY, h:mm:ss a')}</Text>}
-                            {this.state.datetime.length <= 0 && <Text>No Date Selected</Text>}
-                        </View>
-                        <Form style={{ marginBottom: REACT_SWIPER_BOTTOM_MARGIN, paddingLeft: 10 }}>
-                            <Button title="SetDateTime" accessibilityLabel="Press this button to set the date and time of your event!" onPress={this._showDateTimePicker}>
-                                <Text>Pick Date and Time</Text>
-                            </Button>
-                        </Form>
-                    </View>
-                    <View style={{ flex: 1, flexDirection: 'row' }}>
-                        <View style={{ flex: 3, paddingTop: 5 }}>
-                            <Form>
-                                <Item floatingLabel>
-                                    <Label>Duration</Label>
-                                    <Input name="duration" keyboardType="numeric" value={this.state.duration.toString()} onChangeText={(text) => this.onChange("duration", text)} />
-                                </Item>
-                            </Form>
-                        </View>
-                        <View style={{ flex: 2, marginTop:  Platform.OS === 'ios' ? -60 : 45 }}>
-                            <Picker mode="dropdown" selectedValue={this.state.durationMeasure} onValueChange={(item) => this.setState({ durationMeasure: item })}>
-                                <Picker.Item label="Minutes" value="minutes" />
-                                <Picker.Item label="Hours" value="hours" />
-                                <Picker.Item label="Days" value="days" />
-                            </Picker>
-                        </View>
-                    </View>
-                    <DateTimePicker
-                        isVisible={this.state.isDateTimePickerVisible}
-                        onConfirm={this._handleDatePicked}
-                        onCancel={this._hideDateTimePicker}
-                        minimumDate={new Date()}
-                        is24Hour={false}
-                        mode="datetime"
-                    />
-                </View>
-                <View style={styles.flex1} key={this.state.offers && this.state.offers.length > 0 ? 6 : 5}>
-                    <View style={styles.header}>
-                        <Text style={styles.questionHeader}>Who?</Text>
-                        <View style={styles.tagline}>
-                            <Text style={styles.taglineText}>How many people are</Text>
-                            <Text style={styles.taglineText}>you looking to join you?</Text>
-                        </View>
-                    </View>
-                    <Form style={{ flex: 1 }}>
-                        <Item floatingLabel>
-                            <Label>Amount of People</Label>
-                            <Input keyboardType="numeric" name="amount" onChangeText={(text) => this.onChange("amount", text)} />
-                        </Item>
-                        <View style={{ marginLeft: 10, marginRight: 10, marginTop: 10 }}>
-                            <Text>Restrict to the same gender?</Text>
-                            <Picker
-                                selectedValue={this.state.restrictToGender ? "true" : "false"}
-                                style={{ height: 50, width: 100 }}
-                                onValueChange={(itemValue, itemIndex) => this.setState({ restrictToGender: itemValue === "true" })}>
-                                <Picker.Item label="Yes" value="true" />
-                                <Picker.Item label="No" value="false" />
-                            </Picker>
-                        </View>
-                    </Form>
-                    <View style={{ flexDirection: 'row', marginBottom: REACT_SWIPER_BOTTOM_MARGIN }}>
-                        <Button title="Invite" accessibilityLabel="Invite friends to your event." onPress={this.inviteFriends} style={{ marginLeft: 10, marginRight: 10 }}>
-                            <Text>Invite Friends</Text>
-                        </Button>
-                        <Button title="Create" accessibilityLabel="Press this button to submit your information and create a new event." onPress={this.submitForm}>
-                            <Text>Submit</Text>
-                        </Button>
-                    </View>
-                </View>
+                {NewEventArr.filter((item) => {
+                    var args = {};
+                    if (item["name"] === "Offers") {
+                        args["offers"] = this.state.offers
+                    }
+                    if (item["condition"](args)) {
+                        return true;
+                    }
+                    return false;
+                }).map((item) => {
+                    return item["component"]
+                })}
             </Swiper>
         );
     }

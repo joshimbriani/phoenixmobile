@@ -53,7 +53,7 @@ class ProfileTabContainer extends React.Component {
         }
     }
 
-    _renderHeader = props => <TabBar labelStyle={{ fontSize: 11 }} {...props} />;
+    _renderHeader = props => <TabBar labelStyle={{ fontSize: 10 }} {...props} />;
 
     _renderScene = ({ route }) => {
         switch (route.key) {

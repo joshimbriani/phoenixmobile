@@ -17,6 +17,7 @@ export class OfferContainer extends React.Component {
     }
 
     render() {
+        console.log("Test");
         const width = Dimensions.get('window').width;
         var address = {};
         if (this.props.offer && this.props.offer.place && this.props.offer.place.placeDetails.address) {
@@ -24,8 +25,8 @@ export class OfferContainer extends React.Component {
         }
         if (Object.keys(this.props.offer).length > 0) {
             return (
-                <View key={this.props.index} style={{flexDirection: 'row', shadowRadius: 10, shadowOpacity: 1, shadowColor: 'black', elevation: 2, backgroundColor: 'white', padding: 5, marginBottom: 5}}>
-                    <View style={{paddingRight: 10}}>
+                <View key={this.props.index} style={{flexDirection: 'row', shadowRadius: 10, shadowOpacity: 1, shadowColor: 'black', elevation: 2, backgroundColor: 'white', padding: 5, marginBottom: 5, borderRadius: 5}}>
+                    <View style={{paddingRight: 10, alignSelf: 'center'}}>
                         <CachedImage
                             style={{ width: 100, height: 100 }}
                             source={{ uri: this.props.offer.icon }}

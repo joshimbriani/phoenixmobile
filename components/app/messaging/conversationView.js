@@ -163,7 +163,7 @@ class ConversationView extends React.Component {
                         <View style={{ flexDirection: 'row', flex: 1, alignContent: 'center', alignItems: 'center', alignSelf: 'center' }}>
                             <TextInput
                                 value={this.state.messageContent}
-                                style={{ flex: 1, borderBottomColor: 'black', borderBottomWidth: 1 }}
+                                style={{ flex: 1, borderBottomColor: Platform.OS === 'ios' ? 'black' : null, borderBottomWidth: 1 }}
                                 height={40}
                                 onChangeText={(messageContent) => this.setState({ messageContent })}
                             />
