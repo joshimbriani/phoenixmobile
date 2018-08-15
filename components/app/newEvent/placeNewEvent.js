@@ -58,18 +58,18 @@ export class PlaceNewEvent extends React.Component {
     );
 
     getPlaceDetails(item) {
-        console.log(item)
-        
+
         fetch('https://maps.googleapis.com/maps/api/place/details/json?placeid=' + item["place_id"] + '&fields=geometry&key=AIzaSyDUVAEJq3xQe6nTG4uaj00xcl-EkHp2oXQ&sessiontoken=' + this.props.session)
             .then((results) => results.json())
-            .then((resultsJSON) => {this.setState({geometryDetails: resultsJSON["result"]["geometry"]}); console.log(resultsJSON["result"]["geometry"])})
+            .then((resultsJSON) => { this.setState({ geometryDetails: resultsJSON["result"]["geometry"] }); console.log(resultsJSON["result"]["geometry"]) })
             .catch((error) => console.log(error.message));
-        
-        this.setState({ placePredictions: [], placeSearchText: "" }); 
+
+        this.setState({ placePredictions: [], placeSearchText: "" });
         this.props.onChange("place", item);
     }
 
     render() {
+        console.log(this.props.place)
         return (
             <View style={styles.flex1} >
                 <View style={{ backgroundColor: '#03A9F4', flexDirection: 'row' }}>
@@ -87,8 +87,11 @@ export class PlaceNewEvent extends React.Component {
                     </View>
                 </View>
                 <Form>
+                    {this.props.errors["place"].length > 0 && <View style={{marginTop: 5, backgroundColor: 'red', paddingHorizontal: 30, paddingVertical: 5, marginHorizontal: 30}}>
+                        <Text style={{color: 'white'}}>{this.props.errors["place"]}</Text>
+                    </View>}
                     <Item>
-                        <Input name="place" placeholder="Place" value={this.placeDisplay()} onChangeText={(text) => { this.setState({ placeSearchText: text }); this.getPlaces(text); this.props.onChange("place", {}) }} />
+                        <Input name="place" placeholder="Place" value={this.placeDisplay()} disabled={this.props.selectedOffers.length > 0} onChangeText={(text) => { this.setState({ placeSearchText: text }); this.getPlaces(text); this.props.onChange("place", {}) }} />
                     </Item>
                 </Form>
                 {this.state.placeSearchText.length > 0 && <View style={{ marginBottom: REACT_SWIPER_BOTTOM_MARGIN, flex: 1, backgroundColor: 'white' }}>
@@ -104,16 +107,16 @@ export class PlaceNewEvent extends React.Component {
                         provider={PROVIDER_GOOGLE}
                         style={styles.eventDetailPlaceMap}
                         region={{
-                            latitude: Object.keys(this.state.geometryDetails).length > 0 && this.state.geometryDetails.location ? this.state.geometryDetails.location.lat : this.props.lat,
-                            longitude: Object.keys(this.state.geometryDetails).length > 0 && this.state.geometryDetails.location ? this.state.geometryDetails.location.lng : this.props.long,
+                            latitude: this.props.place.placeDetails && this.props.place.placeDetails.latitude ? this.props.place.placeDetails.latitude : (Object.keys(this.state.geometryDetails).length > 0 && this.state.geometryDetails.location) ? this.state.geometryDetails.location.lat : this.props.lat,
+                            longitude: this.props.place.placeDetails && this.props.place.placeDetails.longitude ? this.props.place.placeDetails.longitude : (Object.keys(this.state.geometryDetails).length > 0 && this.state.geometryDetails.location) ? this.state.geometryDetails.location.lng : this.props.long,
                             latitudeDelta: 0.015,
                             longitudeDelta: 0.0121,
                         }}
                     >
                         <Marker
                             coordinate={{
-                                latitude: Object.keys(this.state.geometryDetails).length > 0 && this.state.geometryDetails.location ? this.state.geometryDetails.location.lat : this.props.lat,
-                                longitude: Object.keys(this.state.geometryDetails).length > 0 && this.state.geometryDetails.location ? this.state.geometryDetails.location.lng : this.props.long,
+                                latitude: this.props.place.placeDetails && this.props.place.placeDetails.latitude ? this.props.place.placeDetails.latitude : (Object.keys(this.state.geometryDetails).length > 0 && this.state.geometryDetails.location) ? this.state.geometryDetails.location.lat : this.props.lat,
+                                longitude: this.props.place.placeDetails && this.props.place.placeDetails.longitude ? this.props.place.placeDetails.longitude : (Object.keys(this.state.geometryDetails).length > 0 && this.state.geometryDetails.location) ? this.state.geometryDetails.location.lng : this.props.long,
                             }}
                             title="Your Current Location"
                         />

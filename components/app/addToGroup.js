@@ -95,13 +95,10 @@ class AddToGroup extends React.Component {
                 var users = responseObject["users"];
                 const usersInGroup = this.state.addedUsers.map((user) => user.id);
                 for (var i = users.length - 1; i >= 0; i--) {
-                    console.log(usersInGroup)
-                    console.log(users[i].id)
                     if (usersInGroup.indexOf(users[i].id) > -1) {
                         users.splice(i);
                     }
                 }
-                console.log(users)
                 this.setState({ filteredUsers: users })
             })
     }

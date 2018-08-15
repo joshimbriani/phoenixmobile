@@ -76,7 +76,6 @@ class ThreadsView extends React.Component {
     }
 
     getUserInvolvementLevel(userGoing, userInvolved, creator) {
-        console.log(creator)
         if (userGoing) {
             return ['Going', 'the event organizer and other interested or going users.', '']
         }

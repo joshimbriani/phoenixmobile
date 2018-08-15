@@ -75,10 +75,9 @@ class Search extends React.Component {
                         }
                         if (section.title === "Events") {
                             const date = new Date(item.datetime)
-                            const color = getMaterialColor();
                             return (
-                                <TouchableHighlight onPress={() => { this.props.navigation.navigate('EventDetailWrapper', { event: item.title, id: item.id, color: color }) }}>
-                                    <View key={item.id} style={[styles.listitem, { backgroundColor: color, justifyContent: 'center', alignItems: 'center' }]}>
+                                <TouchableHighlight onPress={() => { this.props.navigation.navigate('EventDetailWrapper', { event: item.title, id: item.id, color: item.color }) }}>
+                                    <View key={item.id} style={[styles.listitem, { backgroundColor: item.color, justifyContent: 'center', alignItems: 'center' }]}>
                                         <View style={{ padding: 5 }}>
                                             <Text style={[styles.itemText, { fontSize: 25, fontWeight: 'bold' }]}>{item.title}</Text>
                                         </View>

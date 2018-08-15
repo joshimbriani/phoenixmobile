@@ -1,7 +1,7 @@
 import React from 'react';
 
-import { Content, Form, Item, Input, Label, Button } from 'native-base';
-import { ScrollView, View, Picker, ToastAndroid, KeyboardAvoidingView, Platform, PermissionsAndroid, FlatList, TouchableOpacity, Text } from 'react-native';
+import { Content, Form, Item, Input, Label } from 'native-base';
+import { ScrollView, View, Dimensions, Text } from 'react-native';
 import PlatformIonicon from '../../utils/platformIonicon';
 import ColorPicker from '../../utils/ColorPicker';
 import { materialColors } from '../../utils/styleutils';
@@ -20,7 +20,7 @@ export class TitleDescColorNewEvent extends React.Component {
 
     render() {
         return (
-            <View style={styles.flex1}>
+            <ScrollView style={styles.flex1}>
                 <View style={{ backgroundColor: '#03A9F4', flexDirection: 'row' }}>
                     <View style={{ flex: 1, paddingLeft: 20, paddingVertical: 10, alignContent: 'center', alignSelf: 'center' }}>
                         <Text style={{ color: 'white', fontSize: 40, fontWeight: 'bold' }}>Details</Text>
@@ -39,10 +39,13 @@ export class TitleDescColorNewEvent extends React.Component {
                     <Content style={styles.flex1}>
                         <Form>
                             <Item stackedLabel>
+                                {this.props.errors["title"].length > 0 && <View style={{marginTop: 5, backgroundColor: 'red', paddingHorizontal: 30, paddingVertical: 5}}>
+                                    <Text style={{color: 'white'}}>{this.props.errors["title"]}</Text>
+                                </View>}
                                 <Label>Title</Label>
                                 <Input
                                     name="title"
-                                    onBlur={() => this.props.fetchTopicsFromDescription()}
+                                    //onBlur={() => this.props.fetchTopicsFromDescription()}
                                     onChangeText={(text) => this.props.onChange("title", text)}
                                 />
                             </Item>
@@ -51,15 +54,18 @@ export class TitleDescColorNewEvent extends React.Component {
                                 <ColorPicker
                                     colors={materialColors}
                                     selectedColor={this.props.color}
-                                    onSelect={(color) => this.props.onChange("color", color) }
+                                    onSelect={(color) => this.props.onChange("color", color)}
                                 />
                             </Item>
                             <Item stackedLabel last>
+                                {this.props.errors["description"].length > 0 && <View style={{marginTop: 5, backgroundColor: 'red', paddingHorizontal: 30, paddingVertical: 5}}>
+                                    <Text style={{color: 'white'}}>{this.props.errors["description"]}</Text>
+                                </View>}
                                 <Label>Full Description</Label>
                                 <Input
                                     name="description"
                                     placeholder="Tell us more about what you want to do!"
-                                    onBlur={() => this.props.fetchTopicsFromDescription()}
+                                    //onBlur={() => this.props.fetchTopicsFromDescription()}
                                     multiline={true}
                                     numberOfLines={5}
                                     onChangeText={(text) => this.props.onChange("description", text)}
@@ -68,7 +74,7 @@ export class TitleDescColorNewEvent extends React.Component {
                         </Form>
                     </Content>
                 </View>
-            </View>
+            </ScrollView>
         )
     }
 }

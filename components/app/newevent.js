@@ -15,7 +15,7 @@ import { PlaceNewEvent } from './newEvent/placeNewEvent';
 import { PeopleNewEvent } from './newEvent/peopleNewEvent';
 import { OffersNewEvent } from './newEvent/offersNewEvent';
 
-const ITEMS_TO_VALIDATE = ["title", "description", "place", "datetime", "duration", "place"];
+const ITEMS_TO_VALIDATE = ["title", "description", "place", "datetime", "duration", "amount", "eventPrivacy", "group"];
 
 class NewEvent extends React.Component {
 
@@ -32,15 +32,15 @@ class NewEvent extends React.Component {
         super(props);
         var text = "";
         var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-      
+
         for (var i = 0; i < 5; i++)
-          text += possible.charAt(Math.floor(Math.random() * possible.length));
-              
+            text += possible.charAt(Math.floor(Math.random() * possible.length));
+
         this.state = {
             title: "",
             description: "",
             restrictToGender: false,
-            amount: 5,
+            amount: "",
             place: "",
             datetime: "",
             formIsValid: false,
@@ -57,7 +57,22 @@ class NewEvent extends React.Component {
             durationMeasure: "minutes",
             duration: 60,
             color: '#1abc9c',
-            session: text
+            session: text,
+            eventPrivacy: 'public',
+            groups: [],
+            group: {},
+            invitedUsers: [],
+            errors: {
+                errors: [],
+                amount: "",
+                description: "",
+                title: "",
+                place: "",
+                group: "",
+                eventPrivacy: "",
+                duration: "",
+                datetime: ""
+            }
         }
         this.onChange = this.onChange.bind(this);
         this.formIsValid = this.formIsValid.bind(this);
@@ -69,6 +84,7 @@ class NewEvent extends React.Component {
         this.addTopic = this.addTopic.bind(this);
         this.fetchTopicsFromDescription = this.fetchTopicsFromDescription.bind(this);
         this.inviteFriends = this.inviteFriends.bind(this);
+        this.addUsersToInviteLists = this.addUsersToInviteLists.bind(this);
     }
 
     async componentDidMount() {
@@ -81,10 +97,32 @@ class NewEvent extends React.Component {
         } else if (Platform.OS === 'ios') {
 
         }
+
+        fetch(getURLForPlatform() + "api/v1/groups/", {
+            headers: {
+                Authorization: "Token " + this.props.token
+            },
+        })
+            .then(response => response.json())
+            .then(responseObj => {
+                this.setState({ groups: responseObj["groups"] })
+            });
     }
 
     inviteFriends() {
-        console.log("Test")
+        this.props.navigation.navigate('InviteUsers', { contacts: this.props.user.friends, addUsersToInviteLists: this.addUsersToInviteLists, invitedUsers: this.state.invitedUsers });
+    }
+
+    // Actually toggles users
+    addUsersToInviteLists(user) {
+        var invitedUsers = this.state.invitedUsers.slice();
+        if (invitedUsers.indexOf(user) > -1) {
+            invitedUsers.splice(invitedUsers.indexOf(user), 1)
+        } else {
+            invitedUsers.push(user);
+        }
+
+        this.setState({ invitedUsers: invitedUsers });
     }
 
     // Todo: Need to decide what to do with objects thst don't exist on the DB. Right now
@@ -107,7 +145,8 @@ class NewEvent extends React.Component {
     onChange(component, value) {
         var stateRepresentation = {};
         stateRepresentation[component] = value;
-        stateRepresentation["formIsValid"] = this.formIsValid();
+        //stateRepresentation["formIsValid"] = this.formIsValid();
+        //console.log(this.formIsValid())
         this.setState(stateRepresentation);
     }
 
@@ -142,18 +181,72 @@ class NewEvent extends React.Component {
     }
 
     formIsValid() {
-        for (var property in ITEMS_TO_VALIDATE) {
-            if (this.state[ITEMS_TO_VALIDATE[property]] === "" || this.state[ITEMS_TO_VALIDATE[property]] === {}) {
-                return false;
+        var valid = true;
+        var errors = Object.assign({}, this.state.errors);
+        for (var i = 0; i < ITEMS_TO_VALIDATE.length; i++) {
+            if (ITEMS_TO_VALIDATE[i] === "group") {
+                if (this.state.eventPrivacy === "group" && Object.keys(this.state.group).length < 1) {
+                    this.state.errors["group"] = "If you indicate that this event is limited to groups, you need to add a group!"
+                    errors.errors.push("Group")
+                    valid = false;
+                }
+            }
+            else if (this.state[ITEMS_TO_VALIDATE[i]] === "" || typeof this.state[ITEMS_TO_VALIDATE[i]] === 'undefined' || ((typeof this.state[ITEMS_TO_VALIDATE[i]] === "object" && !(this.state[ITEMS_TO_VALIDATE[i]] instanceof Date)) && Object.keys(this.state[ITEMS_TO_VALIDATE[i]]).length < 1)) {
+                
+                if (ITEMS_TO_VALIDATE[i] === 'amount') {
+                    errors["amount"] = "You need to have an event capacity!"
+                    errors.errors.push("Amount")
+                } else if (ITEMS_TO_VALIDATE[i] === 'description') {
+                    errors["description"] = "You need to add a description!"
+                    errors.errors.push("Description")
+                } else if (ITEMS_TO_VALIDATE[i] === 'title') {
+                    errors["title"] = "You need to have a title!"
+                    errors.errors.push("Title")
+                } else if (ITEMS_TO_VALIDATE[i] === 'place') {
+                    errors["place"] = "You need to add a place!"
+                    errors.errors.push("Place")
+                } else if (ITEMS_TO_VALIDATE[i] === 'eventPrivacy') {
+                    errors["eventPrivacy"] = "You need to set a privacy level for this event!"
+                    errors.errors.push("Event Privacy")
+                } else if (ITEMS_TO_VALIDATE[i] === 'duration') {
+                    errors["duration"] = "You need to set how long this event will take!"
+                    errors.errors.push("Duration")
+                } else if (ITEMS_TO_VALIDATE[i] === 'datetime') {
+                    errors["datetime"] = "You need to mark when this event is!"
+                    errors.errors.push("Event Date & Time")
+                }
+                
+
+                valid = false;
+            } else {
+                errors[ITEMS_TO_VALIDATE[i]] = ""
             }
         }
-        return true;
+        if (!valid) {
+            this.setState({ errors: errors });
+            return false;
+        }
+
+        this.setState({
+            errors: {
+                errors: [],
+                amount: "",
+                description: "",
+                title: "",
+                place: "",
+                group: "",
+                eventPrivacy: "",
+                duration: "",
+                datetime: ""
+            }
+        })
+        return valid;
     }
 
     submitForm() {
         // TODO: Need to give error messages
-        console.log("Submit form")
-        if (this.state.formIsValid) {
+        if (this.formIsValid()) {
+        //if (false) {
             var duration = this.state.duration;
             if (this.state.durationMeasure === 'hours') {
                 duration *= 60;
@@ -176,7 +269,11 @@ class NewEvent extends React.Component {
                     'datetime': this.state.datetime,
                     'topics': this.state.topics.map((topic) => topic.id),
                     'offers': this.state.selectedOffers,
-                    'duration': duration
+                    'duration': duration,
+                    'color': this.state.color,
+                    'privacy': this.state.eventPrivacy,
+                    'privacyGroup': Object.keys(this.state.group).length > 0 ? this.state.group.id : null,
+                    'invitedUsers': this.state.invitedUsers
                 })
             }).then(response => {
                 if (response.ok) {
@@ -235,7 +332,6 @@ class NewEvent extends React.Component {
     }
 
     render() {
-        console.log(this.state);
         const NewEventArr = [
             {
                 name: "Topics",
@@ -249,22 +345,22 @@ class NewEvent extends React.Component {
             },
             {
                 name: "TitleDescColor",
-                component: <TitleDescColorNewEvent onChange={this.onChange} fetchTopicsFromDescription={this.fetchTopicsFromDescription} color={this.state.color} />,
+                component: <TitleDescColorNewEvent onChange={this.onChange} fetchTopicsFromDescription={this.fetchTopicsFromDescription} color={this.state.color} errors={this.state.errors} />,
                 condition: (args) => true
             },
             {
                 name: "Place",
-                component: <PlaceNewEvent onChange={this.onChange} lat={this.state.lat} long={this.state.long} place={this.state.place} session={this.state.session} />,
+                component: <PlaceNewEvent onChange={this.onChange} lat={this.state.lat} long={this.state.long} place={this.state.place} session={this.state.session} selectedOffers={this.state.selectedOffers} errors={this.state.errors} />,
                 condition: (args) => true
             },
             {
                 name: "DateTime",
-                component: <DatetimeDurationNewEvent onChange={this.onChange} datetime={this.state.datetime} duration={this.state.duration} durationMeasure={this.state.durationMeasure} />,
+                component: <DatetimeDurationNewEvent onChange={this.onChange} datetime={this.state.datetime} duration={this.state.duration} durationMeasure={this.state.durationMeasure} errors={this.state.errors} />,
                 condition: (args) => true
             },
             {
                 name: "People",
-                component: <PeopleNewEvent onChange={this.onChange} inviteFriends={this.inviteFriends} submitForm={this.submitForm} restrictToGender={this.state.restrictToGender} />,
+                component: <PeopleNewEvent onChange={this.onChange} inviteFriends={this.inviteFriends} submitForm={this.submitForm} restrictToGender={this.state.restrictToGender} eventPrivacy={this.state.eventPrivacy} groups={this.state.groups} errors={this.state.errors} />,
                 condition: (args) => true
             }
         ]
@@ -274,6 +370,7 @@ class NewEvent extends React.Component {
         } else if (this.state.durationMeasure === 'days') {
             duration = duration * 60 * 24;
         }
+        console.log(this.state)
         return (
             <Swiper nextButton={<Text>&gt;</Text>} buttonWrapperStyle={{ alignItems: 'flex-end' }} prevButton={<Text>&lt;</Text>} style={styles.wrapper} showsButtons={true} loop={false} removeClippedSubviews={false} >
                 {NewEventArr.filter((item) => {
@@ -296,6 +393,7 @@ class NewEvent extends React.Component {
 function mapStateToProps(state) {
     return {
         token: state.tokenReducer.token,
+        user: state.userReducer.user
     };
 }
 

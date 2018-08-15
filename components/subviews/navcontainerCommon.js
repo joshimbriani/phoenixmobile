@@ -30,6 +30,7 @@ import GroupsList from '../app/groupsList';
 import NewGroup from '../app/newGroup';
 import AddFriends from '../profile/addFriends';
 import AddToGroup from '../app/addToGroup';
+import InviteUsers from '../app/newEvent/inviteUsers';
 import { styles } from '../../assets/styles';
 
 export const HomeStack = StackNavigator({
@@ -78,6 +79,10 @@ export const HomeStack = StackNavigator({
     NewMessage: {
         path: '/thread/new',
         screen: NewMessage
+    },
+    InviteUsers: {
+        path: '/newevent/inviteUsers',
+        screen: InviteUsers
     }
 });
 

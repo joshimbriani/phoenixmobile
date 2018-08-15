@@ -116,12 +116,8 @@ class Home extends React.Component {
             data["group"] = notification.notification.data["group"]
             data["threadID"] = notification.notification.data["threadID"]
             const not = await AsyncStorage.getItem("notificationOpened");
-            console.log(not, notification.notification.data["randomID"])
-            console.log(notification.notification.data)
             if (not !== notification.notification.data["randomID"]) {
-                console.log("Test")
                 await AsyncStorage.setItem('notificationOpened', notification.notification.data["randomID"]);
-                console.log("Test")
                 this.reactToNotification(data)
             }
 
@@ -313,7 +309,7 @@ class Home extends React.Component {
                     style={styles.gridView}
                     itemWidth={150}
                     enableEmptySections
-                    items={[{ id: -1, name: "IDK", color: "0097e6", icon: "help" }].concat('followingTopics' in this.props.user ? this.props.user['followingTopics'] : [])}
+                    items={[{ id: -1, name: "IDK", color: "0097e6", icon: "help" }].concat(this.props.user.followingTopics ? this.props.user['followingTopics'] : [])}
                     refreshControl={
                         <RefreshControl
                             refreshing={this.state.refreshing}
