@@ -186,8 +186,11 @@ class NewEvent extends React.Component {
         for (var i = 0; i < ITEMS_TO_VALIDATE.length; i++) {
             if (ITEMS_TO_VALIDATE[i] === "group") {
                 if (this.state.eventPrivacy === "group" && Object.keys(this.state.group).length < 1) {
-                    this.state.errors["group"] = "If you indicate that this event is limited to groups, you need to add a group!"
-                    errors.errors.push("Group")
+                    errors["group"] = "If you indicate that this event is limited to groups, you need to add a group!"
+                    if (errors.errors.indexOf("Group") === -1) {
+                        errors.errors.push("Group")
+                    }
+                    
                     valid = false;
                 }
             }
@@ -195,25 +198,39 @@ class NewEvent extends React.Component {
                 
                 if (ITEMS_TO_VALIDATE[i] === 'amount') {
                     errors["amount"] = "You need to have an event capacity!"
-                    errors.errors.push("Amount")
+                    if (errors.errors.indexOf("Amount") === -1) {
+                        errors.errors.push("Amount")
+                    }
                 } else if (ITEMS_TO_VALIDATE[i] === 'description') {
                     errors["description"] = "You need to add a description!"
-                    errors.errors.push("Description")
+                    if (errors.errors.indexOf("Description") === -1) {
+                        errors.errors.push("Description")
+                    }
                 } else if (ITEMS_TO_VALIDATE[i] === 'title') {
                     errors["title"] = "You need to have a title!"
-                    errors.errors.push("Title")
+                    if (errors.errors.indexOf("Title") === -1) {
+                        errors.errors.push("Title")
+                    }
                 } else if (ITEMS_TO_VALIDATE[i] === 'place') {
                     errors["place"] = "You need to add a place!"
-                    errors.errors.push("Place")
+                    if (errors.errors.indexOf("Place") === -1) {
+                        errors.errors.push("Place")
+                    }
                 } else if (ITEMS_TO_VALIDATE[i] === 'eventPrivacy') {
                     errors["eventPrivacy"] = "You need to set a privacy level for this event!"
-                    errors.errors.push("Event Privacy")
+                    if (errors.errors.indexOf("Event Privacy") === -1) {
+                        errors.errors.push("Event Privacy")
+                    }
                 } else if (ITEMS_TO_VALIDATE[i] === 'duration') {
                     errors["duration"] = "You need to set how long this event will take!"
-                    errors.errors.push("Duration")
+                    if (errors.errors.indexOf("Duration") === -1) {
+                        errors.errors.push("Duration")
+                    }
                 } else if (ITEMS_TO_VALIDATE[i] === 'datetime') {
                     errors["datetime"] = "You need to mark when this event is!"
-                    errors.errors.push("Event Date & Time")
+                    if (errors.errors.indexOf("Event Date & Time") === -1) {
+                        errors.errors.push("Event Date & Time")
+                    }
                 }
                 
 

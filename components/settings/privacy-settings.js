@@ -1,5 +1,5 @@
 import React from 'react';
-import { Alert, Platform, StyleSheet, TouchableHighlight, View, Text } from 'react-native';
+import { Alert, Platform, StyleSheet, TouchableHighlight, View, Text, ScrollView } from 'react-native';
 import PlatformIonicon from '../utils/platformIonicon';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -34,7 +34,7 @@ class PrivacySettings extends React.Component { // add a stack for each setting 
 
     render() {
         return (
-            <View>
+            <ScrollView>
                 <View>
                     <Text>Privacy Policy</Text>
                 </View>
@@ -151,7 +151,7 @@ By email: contact@kootasocial.com
 
                     </Text>
                 </View>
-            </View>
+            </ScrollView>
         );
     }
     onValueChange(value) {

@@ -97,7 +97,7 @@ export class PeopleNewEvent extends React.Component {
                                 <Text style={{ fontSize: 20, color: 'black' }}>There's room for </Text>
                             </View>
                             <View>
-                                <TextInput style={{ borderBottomWidth: Platform.OS === 'ios' ? 1 : 0, fontSize: 20 }} keyboardType="numeric" name="amount" onChangeText={(text) => this.props.onChange("amount", text ? parseInt(text) : "")} />
+                                <TextInput style={{ borderBottomWidth: Platform.OS === 'ios' ? 1 : 1, fontSize: 20, minWidth: 35 }} keyboardType="numeric" name="amount" onChangeText={(text) => this.props.onChange("amount", text ? parseInt(text) : "")} />
                             </View>
                             <View style={{ alignSelf: 'center' }}>
                                 <Text style={{ fontSize: 20, color: 'black' }}> people!</Text>

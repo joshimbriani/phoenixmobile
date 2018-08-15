@@ -173,7 +173,10 @@ class NewGroup extends React.Component{
     }
 
     loadUsers = debounce((query) => {
-        console.log("Token " + this.props.token)
+        if (query === '') {
+            this.setState({ users: [] });
+            return;
+        }
         fetch(getURLForPlatform() + "api/v1/user/search/?username=" + query + '&status=1', {
             headers: {
                 Authorization: "Token " + this.props.token

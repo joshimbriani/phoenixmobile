@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Content, Form, Item, Input, Label } from 'native-base';
+import { Content, Form, Item, Input, Label, Textarea } from 'native-base';
 import { ScrollView, View, Dimensions, Text, TouchableOpacity } from 'react-native';
 import PlatformIonicon from '../../utils/platformIonicon';
 import ColorPicker from '../../utils/ColorPicker';
@@ -73,12 +73,13 @@ export class TitleDescColorNewEvent extends React.Component {
                                     <Text style={{ color: 'white' }}>{this.props.errors["description"]}</Text>
                                 </View>}
                                 <Label>Full Description</Label>
-                                <Input
+                                <Textarea
+                                    style={{width: '90%'}}
                                     name="description"
                                     placeholder="Tell us more about what you want to do!"
                                     //onBlur={() => this.props.fetchTopicsFromDescription()}
-                                    multiline={true}
-                                    numberOfLines={5}
+                                    rowSpan={5}
+                                    bordered
                                     onChangeText={(text) => this.props.onChange("description", text)}
                                 />
                             </Item>
