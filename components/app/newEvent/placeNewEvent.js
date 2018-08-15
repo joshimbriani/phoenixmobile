@@ -6,7 +6,7 @@ import { REACT_SWIPER_BOTTOM_MARGIN } from '../../utils/constants';
 import debounce from 'lodash/debounce';
 import PlatformIonicon from '../../utils/platformIonicon';
 import MapView, { PROVIDER_GOOGLE, Marker } from 'react-native-maps';
-
+import Dialog from "react-native-dialog";
 import { styles } from '../../../assets/styles';
 
 export class PlaceNewEvent extends React.Component {
@@ -16,7 +16,8 @@ export class PlaceNewEvent extends React.Component {
         this.state = {
             placeSearchText: "",
             placePredictions: [],
-            geometryDetails: {}
+            geometryDetails: {},
+            showHelp: false
         }
 
         this.getPlaces = this.getPlaces.bind(this);
@@ -72,23 +73,32 @@ export class PlaceNewEvent extends React.Component {
         console.log(this.props.place)
         return (
             <View style={styles.flex1} >
+                <Dialog.Container visible={this.state.showHelp}>
+                    <Dialog.Title>Place Screen</Dialog.Title>
+                    <Dialog.Description>
+                        On this screen you can choose where your event will take place. If you choose an offer, your place will be not editable.
+                    </Dialog.Description>
+                    <Dialog.Button label="Got it!" onPress={() => this.setState({ showHelp: false })} />
+                </Dialog.Container>
                 <View style={{ backgroundColor: '#03A9F4', flexDirection: 'row' }}>
                     <View style={{ flex: 1, paddingLeft: 20, paddingVertical: 10, alignContent: 'center', alignSelf: 'center' }}>
                         <Text style={{ color: 'white', fontSize: 40, fontWeight: 'bold' }}>Place</Text>
                     </View>
                     <View style={{ alignSelf: 'center', padding: 10 }}>
                         <View style={{ backgroundColor: 'white', height: 35, width: 35, borderRadius: 20 }}>
-                            <PlatformIonicon
-                                name={"help"}
-                                size={30} //this doesn't adjust the size...?
-                                style={{ color: "#607D8B", justifyContent: 'center', alignSelf: 'center' }}
-                            />
+                            <TouchableOpacity onPress={() => this.setState({ showHelp: true })}>
+                                <PlatformIonicon
+                                    name={"help"}
+                                    size={30} //this doesn't adjust the size...?
+                                    style={{ color: "#607D8B", justifyContent: 'center', alignSelf: 'center' }}
+                                />
+                            </TouchableOpacity>
                         </View>
                     </View>
                 </View>
                 <Form>
-                    {this.props.errors["place"].length > 0 && <View style={{marginTop: 5, backgroundColor: 'red', paddingHorizontal: 30, paddingVertical: 5, marginHorizontal: 30}}>
-                        <Text style={{color: 'white'}}>{this.props.errors["place"]}</Text>
+                    {this.props.errors["place"].length > 0 && <View style={{ marginTop: 5, backgroundColor: 'red', paddingHorizontal: 30, paddingVertical: 5, marginHorizontal: 30 }}>
+                        <Text style={{ color: 'white' }}>{this.props.errors["place"]}</Text>
                     </View>}
                     <Item>
                         <Input name="place" placeholder="Place" value={this.placeDisplay()} disabled={this.props.selectedOffers.length > 0} onChangeText={(text) => { this.setState({ placeSearchText: text }); this.getPlaces(text); this.props.onChange("place", {}) }} />

@@ -7,22 +7,42 @@ import { styles } from '../../../assets/styles';
 import { REACT_SWIPER_BOTTOM_MARGIN } from '../../utils/constants';
 import PlatformIonicon from '../../utils/platformIonicon';
 import { Dropdown } from 'react-native-material-dropdown';
+import Dialog from "react-native-dialog";
 
 export class PeopleNewEvent extends React.Component {
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            showHelp: false
+        }
+    }
     render() {
         return (
             <ScrollView style={styles.flex1}>
+                <Dialog.Container visible={this.state.showHelp}>
+                    <Dialog.Title>People Screen</Dialog.Title>
+                    <Dialog.Description>
+                        On this screen you can select how many people you want to join you in your event.
+                        Public events can be seen by anyone, private events can only be seen by users you invite and group
+                        events are only open to the group of your choice.
+                        You can also choose here to only show this events to members of your gender.
+                    </Dialog.Description>
+                    <Dialog.Button label="Got it!" onPress={() => this.setState({ showHelp: false })} />
+                </Dialog.Container>
                 <View style={{ backgroundColor: '#03A9F4', flexDirection: 'row' }}>
                     <View style={{ flex: 1, paddingLeft: 20, paddingVertical: 10, alignContent: 'center', alignSelf: 'center' }}>
                         <Text style={{ color: 'white', fontSize: 40, fontWeight: 'bold' }}>People</Text>
                     </View>
                     <View style={{ alignSelf: 'center', padding: 10 }}>
                         <View style={{ backgroundColor: 'white', height: 35, width: 35, borderRadius: 20 }}>
-                            <PlatformIonicon
-                                name={"help"}
-                                size={30} //this doesn't adjust the size...?
-                                style={{ color: "#607D8B", justifyContent: 'center', alignSelf: 'center' }}
-                            />
+                            <TouchableOpacity onPress={() => this.setState({ showHelp: true })}>
+                                <PlatformIonicon
+                                    name={"help"}
+                                    size={30} //this doesn't adjust the size...?
+                                    style={{ color: "#607D8B", justifyContent: 'center', alignSelf: 'center' }}
+                                />
+                            </TouchableOpacity>
                         </View>
                     </View>
                 </View>
@@ -105,9 +125,9 @@ export class PeopleNewEvent extends React.Component {
                     </View>
                 </Form>
                 <View style={{ marginBottom: REACT_SWIPER_BOTTOM_MARGIN }}>
-                        {this.props.errors["errors"].length > 0 && <View style={{ margin: 10, backgroundColor: 'red', paddingHorizontal: 10, paddingVertical: 5 }}>
-                            <Text style={{ color: 'white' }}>{"There were errors with the following fields in your event: " + this.props.errors["errors"].join(', ')}</Text>
-                        </View>}
+                    {this.props.errors["errors"].length > 0 && <View style={{ margin: 10, backgroundColor: 'red', paddingHorizontal: 10, paddingVertical: 5 }}>
+                        <Text style={{ color: 'white' }}>{"There were errors with the following fields in your event: " + this.props.errors["errors"].join(', ')}</Text>
+                    </View>}
                     <View style={{ flexDirection: 'row' }}>
                         <Button title="Invite" accessibilityLabel="Invite friends to your event." onPress={() => this.props.inviteFriends()} style={{ marginLeft: 10, marginRight: 10, flex: 1, justifyContent: 'center' }}>
                             <Text style={{ color: 'white' }}>Invite Friends</Text>

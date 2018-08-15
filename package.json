@@ -32,6 +32,7 @@
     "react-native-cached-image": "github:fungilation/react-native-cached-image",
     "react-native-check-box": "^2.1.0",
     "react-native-collapsible": "^0.12.0",
+    "react-native-dialog": "^5.1.0",
     "react-native-drawer": "^2.5.0",
     "react-native-firebase": "^4.3.8",
     "react-native-gesture-handler": "^1.0.0-alpha.40",
