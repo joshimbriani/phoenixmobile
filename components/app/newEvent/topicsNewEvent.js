@@ -48,7 +48,7 @@ export class TopicsNewEvent extends React.Component {
                 </View>
                 <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? "padding" : null} style={styles.flex1} keyboardVerticalOffset={Platform.OS === 'ios' ? 20 : 0}>
                     <View style={styles.formContainer}>
-                        <ScrollView>
+                        <ScrollView keyboardShouldPersistTaps={'handled'}>
                             <View style={{ flex: 3 }}>
                                 {this.props.topics && this.props.topics.length > 0 && this.props.topics.map((topic, index) =>
                                     <View key={index} style={{ flexDirection: 'row', backgroundColor: '#' + topic.color, marginTop: 10, marginHorizontal: 10, borderRadius: 5 }}>

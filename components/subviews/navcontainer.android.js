@@ -6,6 +6,7 @@ import PlatformIonicon from '../utils/platformIonicon';
 import { HomeStack, ProfileStack, SettingsStack, GroupStack } from './navcontainerCommon';
 import Login from '../auth/login';
 import Register from '../auth/register';
+import RegisterDetails from '../auth/registerDetails';
 import { styles } from '../../assets/styles';
 
 const MainNavContainer = DrawerNavigator({
@@ -82,6 +83,9 @@ const LoginWrapper = StackNavigator({
             title: 'Login',
             header: null
         })
+    },
+    RegisterDetails: {
+        screen: RegisterDetails
     },
     Main: {
         screen: MainNavContainer

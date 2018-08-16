@@ -43,7 +43,7 @@ export class DatetimeDurationNewEvent extends React.Component {
     render() {
         return (
             <KeyboardAvoidingView enabled behavior={Platform.OS === 'ios' ? "padding" : null} keyboardVerticalOffset={Platform.OS === 'ios' ? 110 : 0} style={{flex: 1}}>
-                <ScrollView style={styles.flex1}>
+                <ScrollView style={styles.flex1} keyboardShouldPersistTaps={'handled'}>
                     <Dialog.Container visible={this.state.showHelp}>
                         <Dialog.Title>Topics Screen</Dialog.Title>
                         <Dialog.Description>

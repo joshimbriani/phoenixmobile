@@ -19,11 +19,17 @@ class Register extends React.Component {
             username: "",
             password: "",
             email: "",
+            age: "",
+            gender: "",
+            accept: false,
             error: {
                 main: "",
                 username: "",
                 email: "",
-                password: ""
+                password: "",
+                age: "",
+                gender: "",
+                accept: ""
             }
         }
 
@@ -32,18 +38,10 @@ class Register extends React.Component {
         this.goToScreenAndErasePreviousScreens = this.goToScreenAndErasePreviousScreens.bind(this);
         this.register = this.register.bind(this);
         this.parseRegisterSuccess = this.parseRegisterSuccess.bind(this); 
+        this.continueToRegistration = this.continueToRegistration.bind(this);
     }
 
-    componentDidMount() {
-        /*const resetAction = StackActions.reset({
-            index: 0,
-            actions: [
-                NavigationActions.navigate({ routeName: 'Register' })
-            ]
-          });
-          
-            this.props.navigation.dispatch(resetAction);*/
-          
+    componentDidMount() {          
           
         if (this.props.token) {
             if (this.props.navigation.state && this.props.navigation.state.params && this.props.navigation.state.params.stay) {
@@ -74,6 +72,15 @@ class Register extends React.Component {
                 errorState["email"] = "That's not a valid email!";
             }
         }
+        if (this.state.gender === "") {
+            errorState["gender"] = "You need to select your gender!"
+        }
+        if (this.state.age === "") {
+            errorState["age"] = "You need to select your age!"
+        }
+        if (this.state.accept === "") {
+            errorState["accept"] = "You need to accept our agreement!"
+        }
         // Eventually we might want to enforce password difficulty
         // We'd do that here
         this.setState({ error: errorState });
@@ -81,7 +88,7 @@ class Register extends React.Component {
 
     registrationIsValid() {
         this.setErrorUIState();
-        if (this.state.username === "" || this.state.password === "" || this.state.email === "") {
+        if (this.state.username === "" || this.state.password === "" || this.state.email === "" || this.state.gender === "" || this.state.age === "" || !this.state.accept) {
             return false;
         }
         if (this.state.password.length < 6) {
@@ -99,6 +106,10 @@ class Register extends React.Component {
             errorState["password"] = "";
         } else if (component === "email") {
             errorState["email"] = "";
+        } else if (component === "gender") {
+            errorState["gender"] = "";
+        } else if (component === "age") {
+            errorState["age"] = "";
         }
         return errorState;
     }
@@ -169,6 +180,10 @@ class Register extends React.Component {
         this.props.navigation.dispatch(resetAction);
     }
 
+    continueToRegistration() {
+        console.log("Here")
+        this.props.navigation.navigate('RegisterDetails', {onChange: this.onChange, submitForm: this.submitForm, age: this.state.age, gender: this.state.gender, error: this.state.error})
+    }
 
     render() {
         return (
@@ -210,31 +225,11 @@ class Register extends React.Component {
                     </Content>
                 </View>
                 <View style={styles.registerButtons}>
-                    <Button onPress={this.submitForm} style={styles.registerButton}>
+                    <Button onPress={this.continueToRegistration} style={styles.registerButton}>
                         <View style={styles.registerButtonContainer}>
-                            <Text style={styles.registerButtonText}>Register</Text>
+                            <Text style={styles.registerButtonText}>Continue Registration</Text>
                         </View>
                     </Button>
-                    <View style={styles.socialSeparator}>
-                        <Text style={styles.empty}>Or Register</Text>
-                        <Text style={styles.empty}>With</Text>
-                    </View>
-                    <TouchableOpacity onPress={this.submitForm} style={styles.socialIconOverlay}>
-                        <Image
-                            source={require('../../assets/images/icons/facebookicon.png')}
-                            style={styles.socialIcons}
-                            resizeMethod="resize"
-                            resizeMode="contain"
-                        />
-                    </TouchableOpacity>
-                    <TouchableOpacity onPress={this.submitForm} style={styles.socialIconOverlay}>
-                        <Image
-                            source={require('../../assets/images/icons/googleicon.png')}
-                            style={styles.socialIcons}
-                            resizeMethod="resize"
-                            resizeMode="contain"
-                        />
-                    </TouchableOpacity>
                 </View>
                 <View style={styles.loginLinks}>
                     <Text style={[styles.platformFont, styles.alreadyText]}>Already have an account?</Text>

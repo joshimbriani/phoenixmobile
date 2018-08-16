@@ -46,7 +46,7 @@ export class OffersNewEvent extends React.Component {
                     </View>
                 </View>
                 <View style={{ flex: 1, flexDirection: "row", flexWrap: "wrap", alignSelf: "stretch" }}>
-                    <ScrollView style={styles.offerScrollContainer}>
+                    <ScrollView style={styles.offerScrollContainer} keyboardShouldPersistTaps={'handled'}>
                         {this.props.offers.map((offer, index) => {
                             console.log(offer)
                             return (

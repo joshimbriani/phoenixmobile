@@ -19,7 +19,7 @@ export class PeopleNewEvent extends React.Component {
     }
     render() {
         return (
-            <ScrollView style={styles.flex1}>
+            <ScrollView style={styles.flex1} keyboardShouldPersistTaps={'handled'}>
                 <Dialog.Container visible={this.state.showHelp}>
                     <Dialog.Title>People Screen</Dialog.Title>
                     <Dialog.Description>

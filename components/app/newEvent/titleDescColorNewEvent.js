@@ -22,7 +22,7 @@ export class TitleDescColorNewEvent extends React.Component {
 
     render() {
         return (
-            <ScrollView style={styles.flex1}>
+            <ScrollView style={styles.flex1} keyboardShouldPersistTaps={'handled'}>
                 <Dialog.Container visible={this.state.showHelp}>
                     <Dialog.Title>Details Screen</Dialog.Title>
                     <Dialog.Description>
@@ -47,7 +47,7 @@ export class TitleDescColorNewEvent extends React.Component {
                     </View>
                 </View>
                 <View style={styles.formContainer}>
-                    <Content style={styles.flex1}>
+                    <Content style={styles.flex1} keyboardShouldPersistTaps={'handled'}>
                         <Form>
                             <Item stackedLabel>
                                 {this.props.errors["title"].length > 0 && <View style={{ marginTop: 5, backgroundColor: 'red', paddingHorizontal: 30, paddingVertical: 5 }}>

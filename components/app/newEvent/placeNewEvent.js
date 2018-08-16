@@ -70,7 +70,6 @@ export class PlaceNewEvent extends React.Component {
     }
 
     render() {
-        console.log(this.props.place)
         return (
             <View style={styles.flex1} >
                 <Dialog.Container visible={this.state.showHelp}>
@@ -110,6 +109,7 @@ export class PlaceNewEvent extends React.Component {
                         extraData={this.state}
                         keyExtractor={this._keyExtractor}
                         renderItem={this._renderItem}
+                        keyboardShouldPersistTaps={'handled'}
                     />
                 </View>}
                 {this.state.placeSearchText.length <= 0 && <View style={{ flex: 1, marginBottom: REACT_SWIPER_BOTTOM_MARGIN }}>

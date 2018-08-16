@@ -5,6 +5,7 @@ import {HomeStack, ProfileStack, SettingsStack, GroupStack} from './navcontainer
 import Login from '../auth/login';
 import Register from '../auth/register';
 import { styles } from '../../assets/styles';
+import RegisterDetails from '../auth/registerDetails';
 
 const MainNavContainer = TabNavigator({
     Home: {
@@ -75,6 +76,9 @@ const LoginWrapper = StackNavigator({
             title: 'Register',
             header: null
         })
+    },
+    RegisterDetails: {
+        screen: RegisterDetails
     },
     Main: {
         screen: MainNavContainer
