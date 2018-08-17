@@ -111,7 +111,7 @@ export const SettingsStack = createStackNavigator({
     PrivacySettings: {
         screen: PrivacySettings,
         navigationOptions: ({ navigation }) => ({
-            title: 'Privacy Settings',
+            title: 'Privacy Policy',
         })
     },
     RestrictedModeSettings: {

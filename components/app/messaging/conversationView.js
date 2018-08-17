@@ -61,7 +61,8 @@ class ConversationView extends React.Component {
                 threadID: '',
                 users: [
                     { id: this.props.user.id, username: this.props.user.username, profilePicture: this.props.user.profilePicture }
-                ]
+                ],
+                update: null
             }
         } else {
             if (this.props.navigation && this.props.navigation.state && this.props.navigation.state.params && this.props.navigation.state.params.thread) {
@@ -69,20 +70,24 @@ class ConversationView extends React.Component {
                     messageContent: "",
                     messages: this.props.navigation.state.params.thread.messages,
                     threadID: this.props.navigation.state.params.thread.id,
-                    users: this.props.navigation.state.params.thread.users
+                    users: this.props.navigation.state.params.thread.users,
+                    update: null
                 }
             } else if (this.props.thread) {
                 this.state = {
                     messageContent: "",
                     messages: this.props.thread.messages,
                     threadID: this.props.thread.id,
-                    users: this.props.thread.users
+                    users: this.props.thread.users,
+                    update: null
                 }
             }
         }
 
         this.sendMessage = this.sendMessage.bind(this);
         this.handleBackPress = this.handleBackPress.bind(this);
+        this.updateThread = this.updateThread.bind(this);
+
     }
 
     _keyExtractor = (item, index) => item.id;
@@ -95,9 +100,8 @@ class ConversationView extends React.Component {
 
         }, 150);
 
-        /*setTimeout(() => {
-
-        })*/
+        let timer = setInterval(this.updateThread, 15000);
+        this.setState({update: timer});
 
         BackHandler.addEventListener('hardwareBackPress', this.handleBackPress);
         this.keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', this._keyboardDidShow);
@@ -107,6 +111,23 @@ class ConversationView extends React.Component {
         DeviceEventEmitter.emit('refresh', {});
         BackHandler.removeEventListener('hardwareBackPress', this.handleBackPress);
         this.keyboardDidShowListener.remove();
+        this.clearInterval(this.state.update);
+    }
+
+    updateThread() {
+        if (this.state.threadID) {
+            fetch(getURLForPlatform() + "/api/v1/threads/" + this.state.threadID + "/")
+            .then(response => response.json())
+            .then(responseJSON => {
+                this.setState({messages: responseJSON["thread"]["messages"], users: responseJSON["thread"]["users"]});
+                setTimeout(() => {
+                    if (this.scrollView) {
+                        this.scrollView.scrollToEnd({ animated: false })
+                    }
+        
+                }, 300);
+            })
+        }
     }
 
     _keyboardDidShow() {

@@ -21,11 +21,11 @@ class Search extends React.Component {
 
     static navigationOptions = ({ navigation }) => ({
         title: "Search: " + navigation.state.params.query,
-        headerRight: <PlatformIonicon
+        /*headerRight: <PlatformIonicon
             name='funnel'
             style={{ paddingRight: 10 }}
             size={35}
-            onPress={() => navigation.navigate('Filter')} />
+            onPress={() => navigation.navigate('Filter')} />*/
     });
 
     componentDidMount() {

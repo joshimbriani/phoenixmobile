@@ -64,7 +64,7 @@ class Settings extends React.Component {
                             onPress={() => this.props.navigation.navigate("NotificationSettings", {})}
                         />
 
-                        <SettingsList.Header headerStyle={{ marginTop: 15 }} />
+                        {/*<SettingsList.Header headerStyle={{ marginTop: 15 }} />
                         <SettingsList.Item
                             icon={
                                 <PlatformIonicon
@@ -77,7 +77,7 @@ class Settings extends React.Component {
                             hasNavArrow={true}
                             title='Distance Measure'
                             onPress={() => this.setState({ distMeasureModalVisible: true })}
-                        />
+                        />*/}
 
 
                         <SettingsList.Header headerStyle={{ marginTop: 15 }} />

@@ -13,21 +13,12 @@ class AboutKootaSettings extends React.Component {
                 </View>
                 <View style={{ padding: 5 }}>
                     <Text style={{ color: 'black' }}>
-                        At graduation, Wes and Josh had an offhand conversation about what
-                        they wanted to do after graduation. Josh mentioned that he'd love
-                        to start a company at some point. After moving to their respective
-                        cities, Wes and Josh both found that making new friends out of
-                        school is way more difficult than in school. After looking back,
-                        we realized that we mostly got lucky making friends in school and
-                        we knew plenty of people that didn't have the same luck and
-                        dropped out or transferred because they never developed a social
-                        circle. We immediately started brainstorming how we could fix this
-                        and came up with the idea for Koota. After trying other apps that
-                        were suposed to help us make friends we were disappointed because
-                        the events were either too formal and rigid or the whole
-                        experience was treated like dating and was awkward as a result. So
-                        we built the tool that we wished we had when we moved into a new
-                        city or were in college!
+                    In line at our graduation ceremony, we had an offhand conversation about what we wanted to do in the world. Josh mentioned that he'd love to start a company and to create a better social platform. 
+                    After moving to new cities, we remembered how difficult making new friends is. Looking back, we realized that we got pretty lucky with our friends in school, and we knew plenty of people who didn't have the same luck. 
+                    Some of these people dropped out or transferred because they didn't find a social circle. Wes called Josh to see if he was still interested in this issue, and we started brainstorming how we could fix it. 
+                    After trying other apps that were supposed to help us make friends, we were disappointed because the events were either too formal and rigid, or the whole experience was treated like a dating app. 
+                    Instead, we built the tool that we wished we had!
+
                     </Text>
                 </View>
                 <View style={{ padding: 10 }}>
@@ -105,7 +96,7 @@ class AboutKootaSettings extends React.Component {
                                 <Text style={{ color: 'blue' }}
                                     onPress={() => Linking.openURL('http://joshimbriani.com')}>
                                     joshimbriani.com
-                                </Text>
+                                </Text>{' '}
                                 and my Twitter is{' '}
                                 <Text style={{ color: 'blue' }}
                                     onPress={() => Linking.openURL('https://twitter.com/joshimbriani')}>
