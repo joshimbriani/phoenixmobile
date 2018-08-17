@@ -1,7 +1,6 @@
 import React from 'react';
-import { Text, View, ScrollView, Linking } from 'react-native';
+import { Text, View, ScrollView, Linking, Image } from 'react-native';
 import { connect } from 'react-redux';
-import { CachedImage } from 'react-native-cached-image';
 
 class AboutKootaSettings extends React.Component {
 
@@ -29,11 +28,9 @@ class AboutKootaSettings extends React.Component {
                         <Text style={{ fontSize: 25, fontWeight: 'bold', color: 'black' }}>Wes Reynolds - CEO</Text>
                     </View>
                     <View style={{ alignItems: 'center' }}>
-                        <CachedImage
+                        <Image
                             source={require('../../assets/images/wes.png')}
                             style={{ width: 200, height: 200 }}
-                            ttl={60 * 60 * 24 * 3}
-                            fallbackSource={require('../../assets/images/KootaK.png')}
                         />
                     </View>
                     <View>
@@ -66,11 +63,9 @@ class AboutKootaSettings extends React.Component {
                     <View style={{ padding: 10 }}>
                         <Text style={{ fontSize: 25, fontWeight: 'bold', color: 'black' }}>Josh Imbriani - CTO</Text></View>
                     <View style={{ alignItems: 'center' }}>
-                        <CachedImage
+                        <Image
                             source={require('../../assets/images/josh.png')}
                             style={{ width: 200, height: 200 }}
-                            ttl={60 * 60 * 24 * 3}
-                            fallbackSource={require('../../assets/images/KootaK.png')}
                         />
                     </View>
                     <View>

@@ -1,5 +1,5 @@
 import React from 'react';
-import { View } from 'react-native';
+import { View, Platform } from 'react-native';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import NavContainer from '../subviews/navcontainer'
@@ -42,7 +42,7 @@ class Index extends React.Component {
 
     render() {
         return (
-            <View style={styles.container}>
+            <View style={[styles.container, {marginTop: Platform.OS === 'ios' ? 18 : 0}]}>
                 <NavContainer />
             </View>
         );

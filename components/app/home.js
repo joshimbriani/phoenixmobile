@@ -315,7 +315,8 @@ class Home extends React.Component {
                     itemWidth={150}
                     enableEmptySections
                     keyboardShouldPersistTaps={'handled'}
-                    items={[{ id: -1, name: "IDK", color: "0097e6", icon: "help" }].concat(this.props.user.followingTopics ? this.props.user['followingTopics'] : [])}
+                    //items={[{ id: -1, name: "IDK", color: "0097e6", icon: "help" }].concat(this.props.user.followingTopics ? this.props.user['followingTopics'] : [])}
+                    items={this.props.user.followingTopics ? this.props.user['followingTopics'] : []}
                     refreshControl={
                         <RefreshControl
                             refreshing={this.state.refreshing}

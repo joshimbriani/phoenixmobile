@@ -81,7 +81,7 @@ class Profile extends React.Component {
 
     renderFriends = ({ item }) => {
         return (
-            <TouchableOpacity onLongPress={() => this.setState({ userModalVisible: true, selectedUser: item.id })}>
+            <TouchableOpacity onPress={() => this.setState({ userModalVisible: true, selectedUser: item.id })} onLongPress={() => this.setState({ userModalVisible: true, selectedUser: item.id })}>
                 <View style={{ borderBottomWidth: 1, flexDirection: 'row' }}>
                     <View style={{ padding: 10 }}>
                         <CachedImage
@@ -464,7 +464,7 @@ class Profile extends React.Component {
                                 <TouchableOpacity onPress={() => this.setState({ searchFriends: !this.state.searchFriends })}><PlatformIonicon
                                     name={"search"}
                                     size={30} //this doesn't adjust the size...?
-                                    style={{ color: "white", paddingRight: 10 }}
+                                    style={{ color: "white", marginRight: 30 }}
                                 /></TouchableOpacity>
                                 <TouchableOpacity onPress={() => this.props.navigation.navigate('AddFriends')}><PlatformIonicon
                                     name={"add"}

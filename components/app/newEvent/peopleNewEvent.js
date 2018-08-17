@@ -89,7 +89,7 @@ export class PeopleNewEvent extends React.Component {
                         </View>}
 
                         {this.props.eventPrivacy === 'group' && this.props.groups.length <= 0 && <View style={{ alignSelf: 'center', width: 300 }}>
-                            <Text>You aren't part of any groups! You probably should join one or select a different privacy setting!</Text>
+                            <Text>You aren't part of any groups! Try joining or creating one or select a different privacy setting!</Text>
                         </View>}
                     </View>
                     <View style={{ margin: 10, padding: 10, backgroundColor: 'white', borderRadius: 5, shadowRadius: 2, shadowOpacity: 1, shadowColor: 'black', elevation: 2 }}>

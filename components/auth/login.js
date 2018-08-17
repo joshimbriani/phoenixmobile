@@ -132,7 +132,7 @@ class Login extends React.Component {
 
     render() {
         return (
-            <KeyboardAvoidingView style={{ flex: 1, backgroundColor: 'white' }} behavior={Platform.OS === 'ios' ? "padding" : null} keyboardVerticalOffset={Platform.OS === 'ios' ? -300 : 0}>
+            <KeyboardAvoidingView style={{ flex: 1, backgroundColor: 'white' }} behavior={Platform.OS === 'ios' ? "padding" : null} >
                 {this.state.error.main !== "" && <View style={styles.errorBackground}>
                     <Text style={styles.errorText}>{this.state.error.main}</Text>
                 </View>}
@@ -153,7 +153,6 @@ class Login extends React.Component {
                     </View>
                 </View>
                 <View style={{ flex: 1 }}>
-                    <Content keyboardShouldPersistTaps={'handled'}>
                         <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
                             <View style={{ flexDirection: 'row', marginTop: 30, marginBottom: 15 }}>
                                 <View style={{ width: 250 }}>
@@ -180,7 +179,6 @@ class Login extends React.Component {
                             </View>
                         </View>
 
-                    </Content>
                 </View>
                 <View style={{ marginVertical: 20, alignSelf: 'center' }}>
                     <TouchableOpacity onPress={() => this.submitForm()}>

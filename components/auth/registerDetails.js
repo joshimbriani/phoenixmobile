@@ -81,13 +81,13 @@ class RegisterDetails extends React.Component {
     render() {
         console.log(this.props.navigation.state.params)
         return (
-            <KeyboardAvoidingView style={{ flex: 1, backgroundColor: 'white' }} behavior={Platform.OS === 'ios' ? "padding" : null} keyboardVerticalOffset={Platform.OS === 'ios' ? -300 : 0}>
+            <KeyboardAvoidingView style={{ flex: 1, backgroundColor: 'white' }} behavior={Platform.OS === 'ios' ? "padding" : null} >
                 {this.props.navigation.state.params.error.main !== "" && <View style={styles.errorBackground}>
                     <Text style={styles.errorText}>{this.props.navigation.state.params.error.main}</Text>
                 </View>}
                 <Dialog.Container visible={this.state.showEULA} style={{ height: '80%' }}>
                     <Dialog.Title>Licensing Agreement</Dialog.Title>
-                    <ScrollView>
+                    <ScrollView style={{height: 300}}>
                         <Dialog.Description>
                             End-User License Agreement (EULA) of Koota{"\n"}{"\n"}
 
@@ -153,7 +153,6 @@ class RegisterDetails extends React.Component {
                     </View>
                 </View>
                 <View style={{ flex: 2 }}>
-                    <Content keyboardShouldPersistTaps={'handled'}>
                         <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
                             <View style={{ marginTop: 30, marginBottom: 15 }}>
                                 <View style={{ width: 250 }}>
@@ -193,7 +192,6 @@ class RegisterDetails extends React.Component {
                             </View>
                         </View>
 
-                    </Content>
                 </View>
                 <View style={{ width: 250 }}>
                     <View style={{ flexDirection: 'row' }}>
@@ -212,10 +210,10 @@ class RegisterDetails extends React.Component {
                             }}
                             isChecked={this.state.checked}
                         />
-                        <View style={{ alignItems: 'center', flexDirection: 'row' }}>
-                            <Text style={{ fontSize: 10 }}>I am over the age of 13 and I accept </Text>
+                        <View style={{ alignItems: 'center', flexDirection: 'row', maxWidth: '80%' }}>
+                            <Text style={{ fontSize: 8 }}>I am over the age of 13 and I accept </Text>
                             <TouchableOpacity onPress={() => this.setState({ showEULA: true })}>
-                                <Text style={{ color: 'blue', fontSize: 10 }}>Koota's license agreement.</Text>
+                                <Text style={{ color: 'blue', fontSize: 8 }}>Koota's license agreement.</Text>
                             </TouchableOpacity>
                         </View>
                     </View>

@@ -384,9 +384,8 @@ class NewEvent extends React.Component {
         } else if (this.state.durationMeasure === 'days') {
             duration = duration * 60 * 24;
         }
-        console.log(this.state)
         return (
-            <Swiper onMomentumScrollEnd={() => Keyboard.dismiss()} nextButton={<Text style={{fontSize: 25}}>&gt;</Text>} buttonWrapperStyle={{ alignItems: 'flex-end' }} prevButton={<Text style={{fontSize: 25}}>&lt;</Text>} style={styles.wrapper} showsButtons={true} loop={false} removeClippedSubviews={false} >
+            <Swiper keyboardShouldPersistTaps={'handled'} onMomentumScrollEnd={() => Keyboard.dismiss()} nextButton={<Text style={{fontSize: 25}}>&gt;</Text>} buttonWrapperStyle={{ alignItems: 'flex-end' }} prevButton={<Text style={{fontSize: 25}}>&lt;</Text>} style={styles.wrapper} showsButtons={true} loop={false} removeClippedSubviews={false} >
                 {NewEventArr.filter((item) => {
                     var args = {};
                     if (item["name"] === "Offers") {

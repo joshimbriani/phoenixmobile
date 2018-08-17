@@ -1,5 +1,5 @@
 import React from 'react';
-import { Image, KeyboardAvoidingView, StyleSheet, TouchableOpacity, View, Platform, Keyboard } from 'react-native';
+import { Image, KeyboardAvoidingView, StyleSheet, TouchableOpacity, View, Platform, Keyboard, ScrollView } from 'react-native';
 
 import { Button, Content, Form, Input, Item, Label, Text, Icon } from 'native-base';
 import { StackActions, NavigationActions } from 'react-navigation';
@@ -43,14 +43,9 @@ class Register extends React.Component {
         this.parseRegisterSuccess = this.parseRegisterSuccess.bind(this);
         this.continueToRegistration = this.continueToRegistration.bind(this);
         this.needToGoBack = this.needToGoBack.bind(this);
-        this._keyboardDidHide = this._keyboardDidHide.bind(this);
-        this._keyboardDidShow = this._keyboardDidShow.bind(this);
     }
 
     componentDidMount() {
-
-        this.keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', this._keyboardDidShow);
-        this.keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', this._keyboardDidHide);
 
         if (this.props.token) {
             if (this.props.navigation.state && this.props.navigation.state.params && this.props.navigation.state.params.stay) {
@@ -113,7 +108,7 @@ class Register extends React.Component {
         if (this.state.password.length < 6) {
             valid = false;
         }
-        
+
         const emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
         valid = emailRegex.test(this.state.email.toLowerCase());
 
@@ -129,7 +124,7 @@ class Register extends React.Component {
         if (this.state.password.length < 6) {
             goBack = true;
         }
-        
+
         const emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
         goBack = goBack || !emailRegex.test(this.state.email.toLowerCase());
 
@@ -160,7 +155,7 @@ class Register extends React.Component {
     }
 
     submitForm() {
-        this.setState({first: false})
+        this.setState({ first: false })
         if (this.registrationIsValid()) {
             this.register();
         }
@@ -194,11 +189,11 @@ class Register extends React.Component {
                             'gender': this.state.gender
                         })
                     }).then(response => response.json())
-                    .then(response => {
-                        if (response["success"]) {
-                            this.parseRegisterSuccess(responseOrig);
-                        }
-                    })
+                        .then(response => {
+                            if (response["success"]) {
+                                this.parseRegisterSuccess(responseOrig);
+                            }
+                        })
                 } else {
                     this.parseRegisterError(responseOrig);
                 }
@@ -222,7 +217,7 @@ class Register extends React.Component {
             errorObject["error"]["email"] = response["email"][0];
         }
         errorObject["error"]["main"] = "Registration failed, please try again!";
-        
+
         this.setState(errorObject);
         this.props.navigation.navigate('Register', {})
     }
@@ -238,20 +233,12 @@ class Register extends React.Component {
     }
 
     continueToRegistration() {
-        this.props.navigation.navigate('RegisterDetails', { onChange: this.onChange, submitForm: this.submitForm, birthdate: this.state.birthdate, gender: this.state.gender, error: this.state.error, needToGoBack: this.needToGoBack, first: this.state.first })
-    }
-
-    _keyboardDidShow() {
-        this.setState({imageSize: 0})
-    }
-
-    _keyboardDidHide() {
-        this.setState({imageSize: 100})
+        this.props.navigation.navigate('RegisterDetails', { onChange: this.onChange, submitForm: this.submitForm, birthdate: this.state.birthdate, gender: this.state.gender, error: this.state.error, needToGoBack: this.needToGoBack, first: this.state.first, accept: this.state.accept })
     }
 
     render() {
         return (
-            <KeyboardAvoidingView style={{ flex: 1, backgroundColor: 'white' }} behavior={Platform.OS === 'ios' ? "padding" : null} keyboardVerticalOffset={Platform.OS === 'ios' ? -300 : 0}>
+            <KeyboardAvoidingView style={{ flex: 1, backgroundColor: 'white' }} behavior={Platform.OS === 'ios' ? "padding" : null} >
                 {this.state.error.main !== "" && <View style={styles.errorBackground}>
                     <Text style={styles.errorText}>{this.state.error.main}</Text>
                 </View>}
@@ -271,46 +258,44 @@ class Register extends React.Component {
                         />
                     </View>
                 </View>
-                <View style={{ flex: 2 }}>
-                    <Content keyboardShouldPersistTaps={'handled'}>
-                        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-                            <View style={{ marginTop: 30, marginBottom: 15 }}>
-                                <View style={{ width: 250 }}>
-                                    <Item regular error={this.state.error.username !== ""}>
-                                        <Icon android="md-person" ios="ios-person" />
-                                        <Input name="username" placeholder="Username" autoCapitalize="none" onChangeText={(text) => this.onChange("username", text)} />
-                                    </Item>
-                                    {this.state.error.username !== "" && <View>
-                                        <Text style={{ fontSize: 10, color: 'red' }}>{this.state.error.username}</Text>
-                                    </View>}
-                                </View>
-                            </View>
-                            <View style={{ marginBottom: 15 }}>
-                                <View style={{ width: 250 }}>
-                                    <Item regular error={this.state.error.email !== ""}>
-                                        <Icon android="md-mail" ios="ios-mail" />
-                                        <Input name="email" placeholder="Email" autoCapitalize="none" onChangeText={(text) => this.onChange("email", text)} />
-                                    </Item>
-                                    {this.state.error.email !== "" && <View>
-                                        <Text style={{ fontSize: 10, color: 'red' }}>{this.state.error.email}</Text>
-                                    </View>}
-                                </View>
-                            </View>
-                            <View>
-                                <View style={{ width: 250 }}>
-                                    <Item regular error={this.state.error.password !== ""}>
-                                        <Icon android="md-lock" ios="ios-lock" />
-                                        <Input name="password" placeholder="Password" secureTextEntry={true} autoCapitalize="none" onChangeText={(text) => this.onChange("password", text)} />
-                                    </Item>
-                                    {this.state.error.password !== "" && <View>
-                                        <Text style={{ fontSize: 10, color: 'red' }}>{this.state.error.password}</Text>
-                                    </View>}
-                                </View>
+                <ScrollView style={{ flex: 2 }}>
+                    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+                        <View style={{ marginTop: 30, marginBottom: 15 }}>
+                            <View style={{ width: 250 }}>
+                                <Item regular error={this.state.error.username !== ""}>
+                                    <Icon android="md-person" ios="ios-person" />
+                                    <Input name="username" placeholder="Username" autoCapitalize="none" onChangeText={(text) => this.onChange("username", text)} />
+                                </Item>
+                                {this.state.error.username !== "" && <View>
+                                    <Text style={{ fontSize: 10, color: 'red' }}>{this.state.error.username}</Text>
+                                </View>}
                             </View>
                         </View>
+                        <View style={{ marginBottom: 15 }}>
+                            <View style={{ width: 250 }}>
+                                <Item regular error={this.state.error.email !== ""}>
+                                    <Icon android="md-mail" ios="ios-mail" />
+                                    <Input name="email" placeholder="Email" autoCapitalize="none" onChangeText={(text) => this.onChange("email", text)} />
+                                </Item>
+                                {this.state.error.email !== "" && <View>
+                                    <Text style={{ fontSize: 10, color: 'red' }}>{this.state.error.email}</Text>
+                                </View>}
+                            </View>
+                        </View>
+                        <View>
+                            <View style={{ width: 250 }}>
+                                <Item regular error={this.state.error.password !== ""}>
+                                    <Icon android="md-lock" ios="ios-lock" />
+                                    <Input name="password" placeholder="Password" secureTextEntry={true} autoCapitalize="none" onChangeText={(text) => this.onChange("password", text)} />
+                                </Item>
+                                {this.state.error.password !== "" && <View>
+                                    <Text style={{ fontSize: 10, color: 'red' }}>{this.state.error.password}</Text>
+                                </View>}
+                            </View>
+                        </View>
+                    </View>
 
-                    </Content>
-                </View>
+                </ScrollView>
                 <View style={{ marginVertical: 20, alignSelf: 'center' }}>
                     <TouchableOpacity onPress={() => this.continueToRegistration()}>
                         <View style={{ width: 300, height: 50, backgroundColor: '#006083', alignItems: 'center', justifyContent: 'center' }}>

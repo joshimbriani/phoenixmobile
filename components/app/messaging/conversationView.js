@@ -111,7 +111,7 @@ class ConversationView extends React.Component {
         DeviceEventEmitter.emit('refresh', {});
         BackHandler.removeEventListener('hardwareBackPress', this.handleBackPress);
         this.keyboardDidShowListener.remove();
-        this.clearInterval(this.state.update);
+        clearInterval(this.state.update);
     }
 
     updateThread() {
@@ -189,7 +189,7 @@ class ConversationView extends React.Component {
                 </ScrollView>
                 <KeyboardAvoidingView enabled behavior={Platform.OS === 'ios' ? "padding" : null} keyboardVerticalOffset={Platform.OS === 'ios' ? 110 : 0}>
                     <View style={{ flexDirection: 'row', padding: 5, backgroundColor: '#f9f9f9' }}>
-                        <TouchableOpacity
+                        {/*<TouchableOpacity
                             onPress={() => console.log("Pressed media button")}>
                             <View style={{ paddingRight: 10, alignContent: 'center' }}>
                                 <PlatformIonicon
@@ -198,7 +198,7 @@ class ConversationView extends React.Component {
                                     style={{ color: "black" }}
                                 />
                             </View>
-                        </TouchableOpacity>
+                        </TouchableOpacity>*/}
                         <View style={{ flexDirection: 'row', flex: 1, alignContent: 'center', alignItems: 'center', alignSelf: 'center' }}>
                             <TextInput
                                 value={this.state.messageContent}

@@ -51,13 +51,16 @@ class Achievements extends React.Component {
                     </View>
                 </View>
                 <View style={{ flex: 3 }}>
-                    <FlatList
+                    {acCount > 0 && <FlatList
                         data={this.state.achievements}
                         extraData={this.state}
                         keyExtractor={this._keyExtractor}
                         renderItem={this._renderItem}
                         listKey={(item, index) => 'D' + index.toString()}
-                    />
+                    />}
+                    {acCount <= 0 && <View style={{alignItems: 'center', justifyContent: 'center'}}>
+                        <Text>You don't have any achievements! Going to events unlocks achievements!</Text>
+                    </View>}
                 </View>
             </View>
         );

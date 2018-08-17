@@ -11,7 +11,7 @@ import { bindActionCreators } from 'redux';
 class NotificationSettings extends React.Component {
 
     static navigationOptions = ({ navigation }) => ({
-        title: 'Location Settings',
+        title: 'Notification Settings',
     })
 
     constructor(props) {
@@ -73,7 +73,7 @@ class NotificationSettings extends React.Component {
                             }
                             hasSwitch={true}
                             switchState={this.state.notificationMessages}
-                            switchOnValueChange={(value) => this.syncNotificationSettingsChanges("notificationMessages". value )}
+                            switchOnValueChange={(value) => this.syncNotificationSettingsChanges("notificationMessages", value )}
                             hasNavArrow={false}
                             title='Notifications for Messages'
                         />
@@ -150,6 +150,8 @@ class NotificationSettings extends React.Component {
             notificationGoingEvents: this.state.notificationGoingEvents,
             notificationInvitedEvents: this.state.notificationInvitedEvents
         }
+
+        console.log(field, value)
 
         notificationSettings[field] = value;
         body = {};
