@@ -79,7 +79,6 @@ class RegisterDetails extends React.Component {
     }
 
     render() {
-        console.log(this.props.navigation.state.params)
         return (
             <KeyboardAvoidingView style={{ flex: 1, backgroundColor: 'white' }} behavior={Platform.OS === 'ios' ? "padding" : null} >
                 {this.props.navigation.state.params.error.main !== "" && <View style={styles.errorBackground}>

@@ -258,7 +258,7 @@ class Register extends React.Component {
                         />
                     </View>
                 </View>
-                <ScrollView style={{ flex: 2 }}>
+                <ScrollView style={{ flex: 2 }} keyboardShouldPersistTaps={'handled'}>
                     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
                         <View style={{ marginTop: 30, marginBottom: 15 }}>
                             <View style={{ width: 250 }}>

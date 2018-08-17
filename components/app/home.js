@@ -309,7 +309,7 @@ class Home extends React.Component {
                         <Text>Search</Text>
                     </Button>
                 </Header>
-                <GridView
+                {this.props.user && this.props.user.followingTopics && this.props.user.followingTopics.length > 0 && <GridView
                     contentContainerStyle={{ paddingBottom: 10, paddingTop: 10 }}
                     style={styles.gridView}
                     itemWidth={150}
@@ -338,7 +338,10 @@ class Home extends React.Component {
                                 </View>
                             </TouchableHighlight>
                         )
-                    }} />
+                    }} />}
+                {this.props.user && this.props.user.followingTopics && this.props.user.followingTopics.length <= 0 && <View style={{flex: 1, alignItems: 'center', justifyContent: 'center', padding: 10}}>
+                    <Text>You aren't following any topics! Search for what you're interested in and follow those topics!</Text>
+                </View>}
                 <Fab
                     active={this.state.active}
                     containerStyle={{}}

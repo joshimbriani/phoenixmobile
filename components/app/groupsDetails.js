@@ -41,7 +41,7 @@ class GroupsDetails extends React.Component {
     _keyExtractor = (item, index) => item.id;
 
     renderFriends = ({ item }) => (
-        <TouchableOpacity onLongPress={() => this.setState({ removeUserModalVisible: true, selectedUser: item.id })}>
+        <TouchableOpacity onPress={() => this.setState({ removeUserModalVisible: true, selectedUser: item.id })} onLongPress={() => this.setState({ removeUserModalVisible: true, selectedUser: item.id })}>
             <View style={{ borderBottomWidth: 1, flexDirection: 'row', backgroundColor: 'white' }}>
                 <View style={{ padding: 10 }}>
                     <CachedImage

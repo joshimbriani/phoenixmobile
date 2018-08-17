@@ -48,9 +48,8 @@ export class OffersNewEvent extends React.Component {
                 <View style={{ flex: 1, flexDirection: "row", flexWrap: "wrap", alignSelf: "stretch" }}>
                     <ScrollView style={styles.offerScrollContainer} keyboardShouldPersistTaps={'handled'}>
                         {this.props.offers.map((offer, index) => {
-                            console.log(offer)
                             return (
-                                <OfferContainer index={index} offer={offer} addable={true} addToEvent={this.props.addToEvent} removeFromEvent={this.props.removeFromEvent} />
+                                <OfferContainer index={index} offer={offer} addable={true} addToEvent={this.props.addToEvent} removeFromEvent={this.props.removeFromEvent} checked={this.props.selectedOffers.indexOf(offer.id) > -1} />
                             )
                         })}
                     </ScrollView>

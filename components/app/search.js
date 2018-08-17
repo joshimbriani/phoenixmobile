@@ -105,7 +105,7 @@ class Search extends React.Component {
                                 if (section.title === "Offers") {
                                     const color = getMaterialColor();
                                     return (
-                                        <TouchableOpacity onPress={() => { console.log("Will create an event with this offer.") }}>
+                                        <TouchableOpacity onPress={() => { this.props.navigation.navigate('NewEvent', {offer: item}) }}>
                                             <View key={item.id} style={[styles.listitem, { backgroundColor: color, justifyContent: 'center', alignItems: 'center' }]}>
                                                 <View style={{ padding: 5 }}>
                                                     <Text style={[styles.itemText, { fontSize: 25, fontWeight: 'bold' }]}>{item.name}</Text>

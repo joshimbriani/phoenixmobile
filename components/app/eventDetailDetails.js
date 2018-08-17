@@ -13,7 +13,7 @@ class EventDetailDetails extends React.Component {
     // TODO: Need to handle recursive topic case
     render() {
         if (Object.keys(this.props.event).length > 0) {
-            const date = new Date(this.props.event.created)
+            const date = new Date(this.props.event.datetime)
             return (
                 <View style={styles.flex1} >
                     <ScrollView style={{ flex: 1 }}>

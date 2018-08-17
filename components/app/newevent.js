@@ -95,7 +95,9 @@ class NewEvent extends React.Component {
                 this.setState({ lat: coordinates.latitude, long: coordinates.longitude });
             }
         } else if (Platform.OS === 'ios') {
-
+            // TODO: Eventually want to check permissions here
+            const coordinates = await getCurrentLocation();
+            this.setState({ lat: coordinates.latitude, long: coordinates.longitude });
         }
 
         fetch(getURLForPlatform() + "api/v1/groups/", {
@@ -107,6 +109,10 @@ class NewEvent extends React.Component {
             .then(responseObj => {
                 this.setState({ groups: responseObj["groups"] })
             });
+
+        if (this.props.navigation.state.params.offer) {
+            this.setState({ selectedOffers: [this.props.navigation.state.params.offer.id], offers: [this.props.navigation.state.params.offer], place: this.props.navigation.state.params.offer.place, topics: this.props.navigation.state.params.offer.topicsToShowOn });
+        }
     }
 
     inviteFriends() {
@@ -354,7 +360,7 @@ class NewEvent extends React.Component {
             },
             {
                 name: "Offers",
-                component: <OffersNewEvent addToEvent={this.addToEvent} removeFromEvent={this.removeFromEvent} offers={this.state.offers} />,
+                component: <OffersNewEvent addToEvent={this.addToEvent} removeFromEvent={this.removeFromEvent} offers={this.state.offers} selectedOffers={this.state.selectedOffers} />,
                 condition: (args) => args["offers"].length > 0
             },
             {

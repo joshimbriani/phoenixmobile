@@ -16,8 +16,13 @@ export class OfferContainer extends React.Component {
         }
     }
 
+    componentDidMount() {
+        if (this.props.checked) {
+            this.setState({checked: this.props.checked})
+        }
+    }
+
     render() {
-        console.log("Test");
         const width = Dimensions.get('window').width;
         var address = {};
         if (this.props.offer && this.props.offer.place && this.props.offer.place.placeDetails.address) {
@@ -53,7 +58,7 @@ export class OfferContainer extends React.Component {
                             }
                             this.setState({ checked: !this.state.checked })
                         }}
-                        isChecked={this.state.checked}
+                        isChecked={this.props.checked}
                     />}
                 </View>
             );
