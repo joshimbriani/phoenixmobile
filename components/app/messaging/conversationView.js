@@ -1,7 +1,7 @@
 import { connect } from 'react-redux';
 import React from 'react';
 import { styles } from '../../../assets/styles';
-import { BackHandler, DeviceEventEmitter, FlatList, Text, ScrollView, KeyboardAvoidingView, TextInput, TouchableOpacity, View, Platform } from 'react-native';
+import { BackHandler, DeviceEventEmitter, FlatList, Text, ScrollView, KeyboardAvoidingView, TextInput, TouchableOpacity, View, Platform, Keyboard } from 'react-native';
 import { ConversationHeader } from './conversationHeader';
 import { getURLForPlatform } from '../../utils/networkUtils';
 import { HeaderBackButton } from 'react-navigation';
@@ -30,7 +30,7 @@ class ConversationView extends React.Component {
         headerTitle: <ConversationHeader users={navigation.state.params.userString} eventName={navigation.state.params.eventName} />,
         headerStyle: { backgroundColor: typeof (jsVar) == 'undefined' ? getMaterialColor() : '#' + navigation.state.params.color },
         headerLeft: <HeaderBackButton onPress={() => { if (navigation.state.params.backKey) { navigation.goBack(navigation.state.params.backKey) } else { navigation.goBack() } }} />,
-        headerRight: <View style={{paddingRight: 10}}>
+        /*headerRight: <View style={{ paddingRight: 10 }}>
             <Menu>
                 <MenuTrigger>
                     <PlatformIonicon
@@ -45,7 +45,7 @@ class ConversationView extends React.Component {
                     </MenuOption>
                 </MenuOptions>
             </Menu>
-        </View>
+        </View>*/
     });
 
     constructor(props) {
@@ -95,12 +95,27 @@ class ConversationView extends React.Component {
 
         }, 150);
 
-        BackHandler.addEventListener('hardwareBackPress', this.handleBackPress)
+        /*setTimeout(() => {
+
+        })*/
+
+        BackHandler.addEventListener('hardwareBackPress', this.handleBackPress);
+        this.keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', this._keyboardDidShow);
     }
 
     componentWillUnmount() {
         DeviceEventEmitter.emit('refresh', {});
         BackHandler.removeEventListener('hardwareBackPress', this.handleBackPress);
+        this.keyboardDidShowListener.remove();
+    }
+
+    _keyboardDidShow() {
+        setTimeout(() => {
+            if (this.scrollView) {
+                this.scrollView.scrollToEnd({ animated: false })
+            }
+
+        }, 300);
     }
 
     render() {
@@ -108,6 +123,7 @@ class ConversationView extends React.Component {
             <View style={[styles.flex1, { backgroundColor: '#DCDCDC' }]} >
                 <ScrollView
                     ref={scrollView => { this.scrollView = scrollView; }}
+                    keyboardShouldPersistTaps={'handled'}
                     style={{ flex: 1, flexGrow: 1, margin: 10, backgroundColor: '#DCDCDC' }}>
                     <FlatList
                         data={this.state.messages}
@@ -122,6 +138,8 @@ class ConversationView extends React.Component {
                                             <CachedImage
                                                 source={{ uri: this.getProfilePictureFromMessage(item.fromUser, this.state.users) }}
                                                 style={{ borderRadius: 10, width: 20, height: 20 }}
+                                                ttl={60 * 60 * 24 * 3}
+                                                fallbackSource={require('../../../assets/images/KootaK.png')}
                                             />
                                         </View>
                                         <Bubble

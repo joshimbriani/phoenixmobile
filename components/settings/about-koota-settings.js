@@ -8,11 +8,11 @@ class AboutKootaSettings extends React.Component {
     render() {
         return (
             <ScrollView>
-                <View style={{padding: 10}}>
-                    <Text style={{fontSize: 30, fontWeight: 'bold', color: 'black'}}>Our Story</Text>
+                <View style={{ padding: 10 }}>
+                    <Text style={{ fontSize: 30, fontWeight: 'bold', color: 'black' }}>Our Story</Text>
                 </View>
-                <View style={{padding: 5}}>
-                    <Text style={{color: 'black'}}>
+                <View style={{ padding: 5 }}>
+                    <Text style={{ color: 'black' }}>
                         At graduation, Wes and Josh had an offhand conversation about what
                         they wanted to do after graduation. Josh mentioned that he'd love
                         to start a company at some point. After moving to their respective
@@ -30,22 +30,24 @@ class AboutKootaSettings extends React.Component {
                         city or were in college!
                     </Text>
                 </View>
-                <View style={{padding: 10}}>
-                    <Text style={{fontSize: 30, fontWeight: 'bold', color: 'black'}}>Our Team</Text>
+                <View style={{ padding: 10 }}>
+                    <Text style={{ fontSize: 30, fontWeight: 'bold', color: 'black' }}>Our Team</Text>
                 </View>
                 <View>
-                    <View style={{padding: 10}}>
-                        <Text style={{fontSize: 25, fontWeight: 'bold', color: 'black'}}>Wes Reynolds - CEO</Text>
-                        </View>
-                    <View style={{alignItems: 'center'}}>
+                    <View style={{ padding: 10 }}>
+                        <Text style={{ fontSize: 25, fontWeight: 'bold', color: 'black' }}>Wes Reynolds - CEO</Text>
+                    </View>
+                    <View style={{ alignItems: 'center' }}>
                         <CachedImage
                             source={require('../../assets/images/wes.png')}
                             style={{ width: 200, height: 200 }}
+                            ttl={60 * 60 * 24 * 3}
+                            fallbackSource={require('../../assets/images/KootaK.png')}
                         />
                     </View>
                     <View>
-                        <View style={{padding: 5}}>
-                            <Text style={{color: 'black'}}>
+                        <View style={{ padding: 5 }}>
+                            <Text style={{ color: 'black' }}>
                                 In 2nd grade I told my teacher that I wanted to be an inventor;
                                 I remember because she gave me a book about it (go teachers). To
                                 pursue that dream I attended OU for a mechanical engineering
@@ -58,8 +60,8 @@ class AboutKootaSettings extends React.Component {
                                 can create together with Koota!
                             </Text>
                         </View>
-                        <View style={{padding: 5}}>
-                            <Text style={{color: 'black'}}>
+                        <View style={{ padding: 5 }}>
+                            <Text style={{ color: 'black' }}>
                                 You might find me using Koota when I’m not running it, because I
                                 love meeting new friends! I also enjoy all things outdoors
                                 (especially canoeing), working on old motorcycles, playing music
@@ -70,17 +72,19 @@ class AboutKootaSettings extends React.Component {
                     </View>
                 </View>
                 <View>
-                    <View style={{padding: 10}}>
-                        <Text style={{fontSize: 25, fontWeight: 'bold', color: 'black'}}>Josh Imbriani - CTO</Text></View>
-                    <View style={{alignItems: 'center'}}>
+                    <View style={{ padding: 10 }}>
+                        <Text style={{ fontSize: 25, fontWeight: 'bold', color: 'black' }}>Josh Imbriani - CTO</Text></View>
+                    <View style={{ alignItems: 'center' }}>
                         <CachedImage
                             source={require('../../assets/images/josh.png')}
                             style={{ width: 200, height: 200 }}
+                            ttl={60 * 60 * 24 * 3}
+                            fallbackSource={require('../../assets/images/KootaK.png')}
                         />
                     </View>
                     <View>
-                        <View style={{padding: 5}}>
-                            <Text style={{color: 'black'}}>
+                        <View style={{ padding: 5 }}>
+                            <Text style={{ color: 'black' }}>
                                 Hey Internet! So a little about me: I've been interested in
                                 startups since the start of high school and have gotten lucky
                                 enough to particpate in one a few years ago. I bring that
@@ -90,8 +94,8 @@ class AboutKootaSettings extends React.Component {
                                 find awesome things to do!
                             </Text>
                         </View>
-                        <View style={{padding: 5}}>
-                            <Text style={{color: 'black'}}>
+                        <View style={{ padding: 5 }}>
+                            <Text style={{ color: 'black' }}>
                                 So now that we have that business stuff out of the way, let's
                                 talk about things I enjoy. I'm a huge theme park fan and have
                                 been on over 200 roller coasters, my favorite of which is
@@ -118,13 +122,13 @@ class AboutKootaSettings extends React.Component {
 
 function mapStateToProps(state) {
     return {
-        
+
     };
 }
 
 function mapDispatchToProps(dispatch) {
     return {
-        
+
     };
 }
 

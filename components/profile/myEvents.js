@@ -70,10 +70,9 @@ class MyEvents extends React.Component {
             <Container>
                 <SectionList
                     renderItem={({ item, section }) => {
-                        const color = getMaterialColor();
                         return (
                             <TouchableHighlight onPress={() => this.props.navigation.navigate('EventDetailWrapper', { event: item.title, id: item.id, color: color  }) }>
-                                <View key={item.id} style={[styles.listitem, {backgroundColor: color}]}>
+                                <View key={item.id} style={{backgroundColor: item.color, height: 75}}>
                                     <Text style={styles.itemText}>{item.title}</Text>
                                 </View>
                             </TouchableHighlight>

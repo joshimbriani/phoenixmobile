@@ -51,6 +51,9 @@ export class PeopleNewEvent extends React.Component {
                         {this.props.errors["eventPrivacy"].length > 0 && <View style={{ marginTop: 5, backgroundColor: 'red', paddingHorizontal: 10, paddingVertical: 5 }}>
                             <Text style={{ color: 'white' }}>{this.props.errors["eventPrivacy"]}</Text>
                         </View>}
+                        {this.props.errors["group"].length > 0 && <View style={{ marginTop: 5, backgroundColor: 'red', paddingHorizontal: 10, paddingVertical: 5, flex: 1 }}>
+                                <Text style={{ color: 'white' }}>{this.props.errors["group"]}</Text>
+                            </View>}
                         <View style={{ flexDirection: 'row' }}>
                             <View style={{ alignSelf: 'center', flex: 3, paddingTop: 15 }}>
                                 <Text style={{ fontSize: 20, color: 'black' }}>This event is set to: </Text>
@@ -71,10 +74,7 @@ export class PeopleNewEvent extends React.Component {
                             </View>
                         </View>
 
-                        {this.props.eventPrivacy === 'group' && <View style={{ alignSelf: 'center', width: 300 }}>
-                            {this.props.errors["group"].length > 0 && <View style={{ marginTop: 5, backgroundColor: 'red', paddingHorizontal: 10, paddingVertical: 5 }}>
-                                <Text style={{ color: 'white' }}>{this.props.errors["group"]}</Text>
-                            </View>}
+                        {this.props.eventPrivacy === 'group' && this.props.groups.length > 0 && <View style={{ alignSelf: 'center', width: 300 }}>
                             <Dropdown
                                 label='Which Group?'
                                 onChangeText={(text) => this.props.onChange("group", text)}
@@ -86,6 +86,10 @@ export class PeopleNewEvent extends React.Component {
                                 })
                                 }
                             />
+                        </View>}
+
+                        {this.props.eventPrivacy === 'group' && this.props.groups.length <= 0 && <View style={{ alignSelf: 'center', width: 300 }}>
+                            <Text>You aren't part of any groups! You probably should join one or select a different privacy setting!</Text>
                         </View>}
                     </View>
                     <View style={{ margin: 10, padding: 10, backgroundColor: 'white', borderRadius: 5, shadowRadius: 2, shadowOpacity: 1, shadowColor: 'black', elevation: 2 }}>

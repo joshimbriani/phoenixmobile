@@ -37,7 +37,7 @@ class Settings extends React.Component {
 
     componentWillReceiveProps(nextProps) {
         if (nextProps.token === "") {
-            this.resetNavigation('Register');
+            this.resetNavigation('FrontScreen');
         }
     }
 

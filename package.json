@@ -23,7 +23,7 @@
     "js-base64": "^2.4.8",
     "lodash": "^4.17.10",
     "moment": "^2.22.2",
-    "native-base": "^2.3.3",
+    "native-base": "^2.7.2",
     "parse-google-place": "^1.2.0",
     "prop-types": "^15.6.0",
     "random-material-color": "^1.0.3",
@@ -55,6 +55,7 @@
     "react-redux": "^5.0.6",
     "redux": "^3.7.2",
     "redux-persist": "^5.5.0",
+    "redux-persist-filesystem-storage": "github:davidliu/redux-persist-filesystem-storage",
     "redux-thunk": "^2.2.0",
     "rn-fetch-blob": "^0.10.12"
   }

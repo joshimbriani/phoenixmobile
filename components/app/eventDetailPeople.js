@@ -51,6 +51,8 @@ class EventDetailPeople extends React.Component {
                                 <CachedImage
                                     style={{ margin: 0, width: 50, height: 50, borderRadius: 25 }}
                                     source={{ uri: this.props.event.userBy.profilePicture }}
+                                    ttl={60*60*24*3}
+                                    fallbackSource={require('../../assets/images/KootaK.png')}
                                 />
                                 <Text style={{ paddingLeft: 20 }}>{this.props.event.userBy.username}</Text>
                             </View>
@@ -67,6 +69,8 @@ class EventDetailPeople extends React.Component {
                                                 key={index}
                                                 style={{ width: 50, height: 50, borderRadius: 25 }}
                                                 source={{ uri: user.profilePicture }}
+                                                ttl={60*60*24*3}
+                                                fallbackSource={require('../../assets/images/KootaK.png')}
                                             />
                                         </View>
                                     </TouchableOpacity>
@@ -89,6 +93,8 @@ class EventDetailPeople extends React.Component {
                                                 key={index}
                                                 style={{ width: 50, height: 50, borderRadius: 25 }}
                                                 source={{ uri: user.profilePicture }}
+                                                ttl={60*60*24*3}
+                                                fallbackSource={require('../../assets/images/KootaK.png')}
                                             />
                                         </View>
                                     </TouchableOpacity>

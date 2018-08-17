@@ -47,6 +47,8 @@ class GroupsDetails extends React.Component {
                     <CachedImage
                         style={{ width: 50, height: 50, borderRadius: 25 }}
                         source={{ uri: item.profilePicture }}
+                        ttl={60*60*24*3}
+                        fallbackSource={require('../../assets/images/KootaK.png')}
                     />
                 </View>
                 <View style={{ justifyContent: 'center', flex: 1 }}>
@@ -89,7 +91,7 @@ class GroupsDetails extends React.Component {
     render() {
         if (Object.keys(this.props.group).length > 0) {
             return (
-                <ScrollView style={[styles.flex1]} >
+                <ScrollView style={[styles.flex1]} keyboardShouldPersistTaps={'handled'} >
                     <View style={{ flexDirection: 'row', height: 50, padding: 10 }}>
                         <View style={{ flex: 1 }}>
                             <Text style={{ fontWeight: 'bold' }}>Name</Text>

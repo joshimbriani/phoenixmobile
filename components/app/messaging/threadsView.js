@@ -36,6 +36,8 @@ class ThreadsView extends React.Component {
                                         <CachedImage
                                             source={{uri: this.generateUserImage(item.users)}}
                                             style={{borderRadius:30, width: 60, height: 60}}
+                                            ttl={60*60*24*3}
+                                            fallbackSource={require('../../../assets/images/KootaK.png')}
                                         />
                                     </View>
                                     <View style={{flex: 1, justifyContent: 'center', paddingLeft: 15}}>

@@ -37,6 +37,8 @@ class BlockedUserSettings extends React.Component {
                         <CachedImage
                             style={{ width: 50, height: 50, borderRadius: 25 }}
                             source={{ uri: item.profilePicture }}
+                            ttl={60 * 60 * 24 * 3}
+                            fallbackSource={require('../../assets/images/KootaK.png')}
                         />
                     </View>
                     <View style={{ paddingLeft: 20, justifyContent: 'center' }}>
@@ -53,6 +55,8 @@ class BlockedUserSettings extends React.Component {
                 <CachedImage
                     style={{ width: 50, height: 50, borderRadius: 25 }}
                     source={{ uri: item.profilePicture }}
+                    ttl={60 * 60 * 24 * 3}
+                    fallbackSource={require('../../assets/images/KootaK.png')}
                 />
             </View>
             <View style={{ paddingLeft: 20, justifyContent: 'center', flex: 1 }}>

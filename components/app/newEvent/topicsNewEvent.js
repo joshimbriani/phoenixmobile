@@ -19,6 +19,15 @@ export class TopicsNewEvent extends React.Component {
 
     }
 
+    scrollToBottom() {
+        setTimeout(() => {
+            if (this.scrollView) {
+                this.scrollView.scrollToEnd({ animated: false })
+            }
+
+        }, 150);
+    }
+
     render() {
         return (
             <View style={styles.flex1}>
@@ -27,7 +36,7 @@ export class TopicsNewEvent extends React.Component {
                     <Dialog.Description>
                         Topics are Koota's way of organizing events. In this screen, add all of the topics that apply to what you want to do by typing in the box and clicking add topic!
                     </Dialog.Description>
-                    <Dialog.Button label="Got it!" onPress={() => this.setState({showHelp: false})} />
+                    <Dialog.Button label="Got it!" onPress={() => this.setState({ showHelp: false })} />
                 </Dialog.Container>
                 <View style={{ backgroundColor: '#03A9F4', flexDirection: 'row' }}>
                     <View style={{ flex: 1, paddingLeft: 20, paddingVertical: 10, alignContent: 'center', alignSelf: 'center' }}>
@@ -48,7 +57,7 @@ export class TopicsNewEvent extends React.Component {
                 </View>
                 <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? "padding" : null} style={styles.flex1} keyboardVerticalOffset={Platform.OS === 'ios' ? 20 : 0}>
                     <View style={styles.formContainer}>
-                        <ScrollView keyboardShouldPersistTaps={'handled'}>
+                        <ScrollView ref={scrollView => { this.scrollView = scrollView; }} keyboardShouldPersistTaps={'handled'}>
                             <View style={{ flex: 3 }}>
                                 {this.props.topics && this.props.topics.length > 0 && this.props.topics.map((topic, index) =>
                                     <View key={index} style={{ flexDirection: 'row', backgroundColor: '#' + topic.color, marginTop: 10, marginHorizontal: 10, borderRadius: 5 }}>
@@ -77,10 +86,10 @@ export class TopicsNewEvent extends React.Component {
                         <View style={{ paddingBottom: REACT_SWIPER_BOTTOM_MARGIN, backgroundColor: 'white', paddingTop: 5 }}>
                             <Form style={{ flexDirection: 'row' }}>
                                 <View style={{ flex: 1, paddingLeft: 10 }}>
-                                    <Input placeholder="Type Extra Topics Here" name="topic" value={this.state.topic} onChangeText={(text) => this.setState({ topic: text })} />
+                                    <Input placeholder="List some things you'll be doing!" name="topic" value={this.state.topic} onChangeText={(text) => this.setState({ topic: text })} />
                                 </View>
                                 <View style={{ paddingRight: 10 }}>
-                                    <Button title="Add" style={{ paddingHorizontal: 5 }} accessibilityLabel="Press this button to add a new topic." onPress={() => { this.props.addTopic(this.state.topic.trim()); this.setState({ topic: "" }) }}>
+                                    <Button title="Add" style={{ paddingHorizontal: 5 }} accessibilityLabel="Press this button to add a new topic." onPress={() => { this.props.addTopic(this.state.topic.trim()); this.scrollToBottom(); this.setState({ topic: "" }) }}>
                                         <Text style={{ color: 'white' }}>Add Topic</Text>
                                     </Button>
 

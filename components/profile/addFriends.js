@@ -24,10 +24,33 @@ class AddFriends extends React.Component {
 
         this.state = {
             filteredUsers: [],
-            searchText: ""
+            searchText: "",
+            invitedUsers: [],
+            wasInvitedByUsers: [],
+            contacts: [],
+            blockedUsers: []
         }
         this.findFriends = this.findFriends.bind(this);
         this.addFriend = this.addFriend.bind(this);
+        this.updateUserLists = this.updateUserLists.bind(this);
+    }
+
+    componentDidMount() {
+        this.setState({ 
+            invitedUsers: this.props.user.pendingOutgoingRequests.map((user) => user.id),
+            wasInvitedByUsers: this.props.user.pendingIncomingRequests.map((user) => user.id),
+            contacts: this.props.user.friends.map((user) => user.id),
+            blockedUsers: this.props.user.blockedUsers.map((user) => user.id),
+        })
+    }
+
+    updateUserLists() {
+        this.setState({ 
+            invitedUsers: this.props.user.pendingOutgoingRequests.map((user) => user.id),
+            wasInvitedByUsers: this.props.user.pendingIncomingRequests.map((user) => user.id),
+            contacts: this.props.user.friends.map((user) => user.id),
+            blockedUsers: this.props.user.blockedUsers.map((user) => user.id),
+        })
     }
 
     _keyExtractor = (item, index) => item.id;
@@ -38,23 +61,48 @@ class AddFriends extends React.Component {
                 <CachedImage
                     style={{ width: 50, height: 50, borderRadius: 25 }}
                     source={{ uri: item.profilePicture }}
+                    ttl={60*60*24*3}
+                    fallbackSource={require('../../assets/images/KootaK.png')}
                 />
             </View>
             <View style={{ justifyContent: 'center', flex: 1 }}>
                 <Text style={{ margin: 10 }}>{item.username}</Text>
             </View>
             <View style={{ justifyContent: 'center', paddingRight: 10}}>
-                <Button
+                {this.state.invitedUsers.indexOf(item.id) === -1 && this.state.wasInvitedByUsers.indexOf(item.id) === -1 && this.state.contacts.indexOf(item.id) === -1 && this.state.blockedUsers.indexOf(item.id) === -1 && <Button
                     onPress={() => this.addFriend(item.id)}
                     title="Send Request"
                     color="#2196F3"
-                    accessibilityLabel="Send friend request"
-                />
+                    accessibilityLabel="Send contact request"
+                />}
+                {this.state.invitedUsers.indexOf(item.id) > -1 && <Button
+                    onPress={() => this.cancelRequest(item.id)}
+                    title="Cancel Request"
+                    color="#F44336"
+                    accessibilityLabel="Cancel contact request"
+                />}
+                {this.state.wasInvitedByUsers.indexOf(item.id) > -1 && <Button
+                    onPress={() => this.acceptRequest(item.id)}
+                    title="Accept Request"
+                    color="#4CAF50"
+                    accessibilityLabel="Accept contact request"
+                />}
+                {this.state.contacts.indexOf(item.id) > -1 && <Button
+                    onPress={() => this.unfriendUser(item.id)}
+                    title="Remove Contact"
+                    color="#607D8B"
+                    accessibilityLabel="Remove user from contacts"
+                />}
+                {this.state.blockedUsers.indexOf(item.id) > -1 && <Button
+                    onPress={() => this.unblockUser(item.id)}
+                    title="Unblock User"
+                    color="#9E9E9E"
+                />}
             </View>
         </View>
     )
 
-    addFriend(userID) {
+     addFriend(userID) {
         fetch(getURLForPlatform() + 'api/v1/user/' + this.props.user.id + '/requests/', {
             headers: {
                 Authorization: "Token " + this.props.token
@@ -64,11 +112,91 @@ class AddFriends extends React.Component {
                 'user': userID
             })
         }).then(request => request.json())
-        .then(requestObject => {
+        .then(async (requestObject) => {
             if (requestObject["success"]) {
                 this.findFriends(this.state.searchText);
+                await this.props.userActions.loadUser(this.props.token);
+                this.updateUserLists()
             }
         })
+    }
+
+    cancelRequest(userID) {
+        fetch(getURLForPlatform() + 'api/v1/user/' + this.props.user.id + '/unfriend/', {
+            headers: {
+                Authorization: "Token " + this.props.token
+            },
+            method: 'PUT',
+            body: JSON.stringify({
+                'user': userID
+            })
+        }).then(request => request.json())
+            .then(async (requestObject) => {
+                if (requestObject["success"]) {
+                    this.findFriends(this.state.searchText);
+                    await this.props.userActions.loadUser(this.props.token)
+                    this.updateUserLists()
+                }
+            })
+    }
+
+    acceptRequest(userID) {
+        fetch(getURLForPlatform() + 'api/v1/user/' + this.props.user.id + '/requests/', {
+            headers: {
+                Authorization: "Token " + this.props.token
+            },
+            method: 'PUT',
+            body: JSON.stringify({
+                'status': 1,
+                'user': userID
+            })
+        }).then(request => request.json())
+            .then(async (requestObject) => {
+                if (requestObject["success"]) {
+                    this.findFriends(this.state.searchText);
+                    await this.props.userActions.loadUser(this.props.token)
+                    this.updateUserLists()
+                }
+            })
+    }
+
+    unfriendUser(userID) {
+        fetch(getURLForPlatform() + 'api/v1/user/' + this.props.user.id + '/unfriend/', {
+            headers: {
+                Authorization: "Token " + this.props.token
+            },
+            method: 'PUT',
+            body: JSON.stringify({
+                'user': userID
+            })
+        }).then(request => request.json())
+            .then(async (requestObject) => {
+                if (requestObject["success"]) {
+                    this.findFriends(this.state.searchText);
+                    await this.props.userActions.loadUser(this.props.token)
+                    this.updateUserLists()
+                }
+            })
+    }
+
+    unblockUser(user) {
+        fetch(getURLForPlatform() + 'api/v1/user/' + this.props.user.id + '/block/', {
+            headers: {
+                Authorization: "Token " + this.props.token
+            },
+            method: 'PUT',
+            body: JSON.stringify({
+                'user': user,
+                'action': 'unblock'
+            })
+        }).then(request => request.json())
+            .then(async (requestObject) => {
+                if (requestObject["success"]) {
+                    this.findFriends(this.state.searchText);
+                    await this.props.userActions.loadUser(this.props.token)
+                    this.updateUserLists()
+                }
+            })
     }
 
     findFriends(text) {
@@ -76,13 +204,15 @@ class AddFriends extends React.Component {
             this.setState({ filteredUsers: [] });
             return;
         }
-        fetch(getURLForPlatform() + 'api/v1/user/search/?username=' + text + '&notRelationship=true', {
+        fetch(getURLForPlatform() + 'api/v1/user/search/?username=' + text, {
             headers: {
                 Authorization: "Token " + this.props.token
             },
         }).then(response => response.json())
-            .then(responseObject => {
+            .then(async (responseObject) => {
                 this.setState({ filteredUsers: responseObject["users"] })
+                await this.props.userActions.loadUser(this.props.token)
+                this.updateUserLists()
             })
     }
 
@@ -100,6 +230,7 @@ class AddFriends extends React.Component {
                     keyExtractor={this._keyExtractor}
                     renderItem={this.renderFriends}
                     ListEmptyComponent={this.emptyFriendList}
+                    keyboardShouldPersistTaps={'handled'}
                 />
             </View>
         );

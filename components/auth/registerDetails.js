@@ -1,7 +1,7 @@
 import React from 'react';
-import { Image, KeyboardAvoidingView, StyleSheet, TouchableOpacity, View, Platform, ScrollView } from 'react-native';
+import { Image, KeyboardAvoidingView, StyleSheet, TouchableOpacity, View, Platform, ScrollView, Keyboard } from 'react-native';
 
-import { Button, Content, Form, Input, Item, Label, Text } from 'native-base';
+import { Button, Content, Form, Input, Item, Label, Text, Icon } from 'native-base';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
@@ -16,15 +16,72 @@ class RegisterDetails extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            checked: false,
-            showEULA: false
+            checked: props.navigation.state.params.accept || false,
+            showEULA: false,
+            accept: props.navigation.state.params.accept || false,
+            birthdate: props.navigation.state.params.birthdate || "",
+            gender: props.navigation.state.params.gender || "",
+            error: {
+                birthdate: "",
+                gender: "",
+                accept: ""
+            },
+            imageSize: 100
         }
 
+        this.setErrorUIState = this.setErrorUIState.bind(this);
+        this._keyboardDidHide = this._keyboardDidHide.bind(this);
+        this._keyboardDidShow = this._keyboardDidShow.bind(this);
+    }
+
+    componentDidMount() {
+        this.keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', this._keyboardDidShow);
+        this.keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', this._keyboardDidHide);
+
+        if (!this.props.navigation.state.params.first) {
+            this.setErrorUIState();
+        }
+    }
+
+    componentWillUnmount() {
+        this.keyboardDidShowListener.remove();
+        this.keyboardDidHideListener.remove();
+    }
+
+
+    _keyboardDidShow() {
+        this.setState({imageSize: 0})
+    }
+
+    _keyboardDidHide() {
+        this.setState({imageSize: 100})
+    }
+
+    setErrorUIState() {
+        var errorState = { main: "", username: "", email: "", password: "", gender: "", birthdate: "" }
+        if (this.state.gender === "") {
+            errorState["gender"] = "You need to select your gender!"
+        }
+        if (this.state.birthdate === "") {
+            errorState["birthdate"] = "You need to select your age!"
+        } else {
+            if (!isValidDate(this.state.birthdate)) {
+                errorState["birthdate"] = "Please enter a valid date!"
+            }
+        }
+        if (this.state.accept === false) {
+            errorState["accept"] = "You need to accept our agreement!"
+        }
+        // Eventually we might want to enforce password difficulty
+        // We'd do that here
+        this.setState({ error: errorState });
+        console.log(errorState);
     }
 
     render() {
+        console.log(this.props.navigation.state.params)
         return (
-            <KeyboardAvoidingView style={styles.container} behavior={Platform.OS === 'ios' ? "padding" : null} keyboardVerticalOffset={Platform.OS === 'ios' ? -220 : 0}>
+            <KeyboardAvoidingView style={{ flex: 1, backgroundColor: 'white' }} behavior={Platform.OS === 'ios' ? "padding" : null} keyboardVerticalOffset={Platform.OS === 'ios' ? -300 : 0}>
                 {this.props.navigation.state.params.error.main !== "" && <View style={styles.errorBackground}>
                     <Text style={styles.errorText}>{this.props.navigation.state.params.error.main}</Text>
                 </View>}
@@ -80,119 +137,129 @@ class RegisterDetails extends React.Component {
                     </ScrollView>
                     <Dialog.Button label="Got it!" onPress={() => this.setState({ showEULA: false })} />
                 </Dialog.Container>
-                <View style={styles.imageHeader}>
-                    <Image
-                        source={require('../../assets/images/logologin.png')}
-                        style={styles.image}
-                        resizeMethod="resize"
-                        resizeMode="contain"
-                    />
-                </View>
-                <View style={styles.formBody}>
-                    <Content style={styles.inputWrapper}>
-                        {this.props.navigation.state.params.error.username !== "" && <View style={styles.inputErrorContainer}>
-                            <Text style={styles.inputErrorText}>{this.props.navigation.state.params.error.username}</Text>
-                        </View>}
-                        <Item stackedLabel>
-                            <Label>Age</Label>
-                            <View style={{ width: '80%' }}>
-                                <Dropdown
-                                    label='Which age group do you fall into?'
-                                    onChangeText={(text) => { this.props.navigation.state.params.onChange("age", text) }}
-                                    value={this.props.navigation.state.params.age}
-                                    data={[{
-                                        value: '13-18',
-                                    }, {
-                                        value: '18-22',
-                                    }, {
-                                        value: '22-30'
-                                    }, {
-                                        value: '31-39'
-                                    }, {
-                                        value: '40-49'
-                                    }, {
-                                        value: '50+'
-                                    }]}
-                                />
-                            </View>
-
-                        </Item>
-                        {this.props.navigation.state.params.error.email !== "" && <View style={styles.inputErrorContainer}>
-                            <Text style={styles.inputErrorText}>{this.props.navigation.state.params.error.email}</Text>
-                        </View>}
-                        <Item stackedLabel>
-                            <Label>Gender</Label>
-                            <View style={{ width: '80%' }}>
-                                <Dropdown
-
-                                    label='Which gender do you identify as?'
-                                    onChangeText={(text) => { this.props.navigation.state.params.onChange("gender", text) }}
-                                    value={this.props.navigation.state.params.age}
-                                    data={[{
-                                        value: 'Female',
-                                    }, {
-                                        value: 'Male',
-                                    }, {
-                                        value: 'Non-Binary'
-                                    }]}
-                                />
-                            </View>
-                        </Item>
-                        <View style={{ backgroundColor: 'white', margin: 5, borderRadius: 5, paddingTop: 20, paddingBottom: 15, shadowRadius: 2, shadowOpacity: 1, shadowColor: 'black', elevation: 2 }}>
-                            <View style={{ alignItems: 'center', justifyContent: 'center', paddingTop: 5 }}>
-                                <View>
-                                    <Text>Why do we need this info from you?</Text>
-                                </View>
-                                <View>
-                                    <Text style={{ fontSize: 10 }}>Koota use some demographic data that you provide like age group and gender into our algorithms in order to connect you with users that we think are likely to be your friend!</Text>
-                                </View>
-
-                            </View>
-                        </View>
-                    </Content>
-                </View>
-
-                <View style={{ flexDirection: 'row' }}>
-                    <CheckBox
-                        style={{ padding: 10 }}
-                        onClick={() => {
-                            if (!this.state.checked) {
-                                // It wasn't checked but now it is
-                                this.props.navigation.state.params.onChange("accept", true)
-                            } else {
-                                this.props.navigation.state.params.onChange("accept", false)
-                            }
-                            this.setState({ checked: !this.state.checked })
-                        }}
-                        isChecked={this.state.checked}
-                    />
-                    <View style={{alignItems: 'center', flexDirection: 'row'}}>
-                        <Text style={{ fontSize: 10 }}>I am over the age of 13 and I accept </Text>
-                        <TouchableOpacity onPress={() => this.setState({ showEULA: true })}>
-                            <Text style={{ color: 'blue', fontSize: 10 }}>Koota's license agreement.</Text>
+                <View style={{ flex: 1 }}>
+                    <View>
+                        <TouchableOpacity onPress={() => this.props.navigation.goBack()}>
+                            <Icon android="md-arrow-back" ios="ios-arrow-back" style={{ fontSize: 40, margin: 5 }} />
                         </TouchableOpacity>
                     </View>
-                </View>
-                <View style={styles.registerButtons}>
-                    <Button onPress={this.props.navigation.state.params.submitForm} style={styles.registerButton}>
-                        <View style={styles.registerButtonContainer}>
-                            <Text style={styles.registerButtonText}>Register</Text>
-                        </View>
-                    </Button>
-                    <View style={styles.socialSeparator}>
-                        <Text style={styles.empty}>Or Register</Text>
-                        <Text style={styles.empty}>With</Text>
+                    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+                        <Image
+                            source={require('../../assets/images/KootaK.png')}
+                            style={{ width: this.state.imageSize, height: this.state.imageSize }}
+                            resizeMethod="resize"
+                            resizeMode="contain"
+                        />
                     </View>
                 </View>
-                <View style={styles.loginLinks}>
-                    <Text style={[styles.platformFont, styles.alreadyText]}>Already have an account?</Text>
-                    <View style={{ flex: 1 }} />
-                    <Text style={[styles.loginLink, styles.platformFont]} onPress={() => this.props.navigation.navigate('Login', {})}>Login</Text>
+                <View style={{ flex: 2 }}>
+                    <Content keyboardShouldPersistTaps={'handled'}>
+                        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+                            <View style={{ marginTop: 30, marginBottom: 15 }}>
+                                <View style={{ width: 250 }}>
+                                    <Item regular error={this.state.error.birthdate !== ""}>
+                                        <Icon name="birthday-cake" type="FontAwesome" />
+                                        <Input name="birthdate" placeholder="MM/DD/YYYY" autoCapitalize="none" value={this.state.birthdate} onChangeText={(text) => { this.props.navigation.state.params.onChange("birthdate", text); this.setState({ birthdate: text, error: { birthdate: "", gender: this.state.error.gender, accept: this.state.error.accept } }) }} />
+                                    </Item>
+                                    {this.state.error.birthdate !== "" && <View>
+                                        <Text style={{ fontSize: 10, color: 'red' }}>{this.state.error.birthdate}</Text>
+                                    </View>}
+                                </View>
+                            </View>
+                            <View>
+                                <View style={{ width: 250 }}>
+                                    <Item regular error={this.state.error.gender !== ""}>
+                                        <Icon name="venus-mars" type="FontAwesome" />
+                                        <Dropdown
+                                            containerStyle={{
+                                                width: 175
+                                            }}
+                                            label='Gender'
+                                            onChangeText={(text) => { this.props.navigation.state.params.onChange("gender", text); this.setState({ gender: text, error: { birthdate: this.state.error.birthdate, gender: "", accept: this.state.error.accept } }) }}
+                                            value={this.state.gender}
+                                            data={[{
+                                                value: 'Female',
+                                            }, {
+                                                value: 'Male',
+                                            }, {
+                                                value: 'Non-Binary'
+                                            }]}
+                                        />
+                                    </Item>
+                                    {this.state.error.gender !== "" && <View>
+                                        <Text style={{ fontSize: 10, color: 'red' }}>{this.state.error.gender}</Text>
+                                    </View>}
+                                </View>
+                            </View>
+                        </View>
+
+                    </Content>
+                </View>
+                <View style={{ width: 250 }}>
+                    <View style={{ flexDirection: 'row' }}>
+                        <CheckBox
+                            style={{ padding: 10 }}
+                            onClick={() => {
+                                if (!this.state.checked) {
+                                    // It wasn't checked but now it is
+                                    this.props.navigation.state.params.onChange("accept", true)
+                                } else {
+                                    this.props.navigation.state.params.onChange("accept", false)
+                                }
+                                const oldChecked = this.state.checked;
+                                this.setState({ checked: !oldChecked })
+                                this.setState({ accept: !oldChecked, error: { birthdate: this.state.error.birthdate, gender: this.state.error.gender, accept: "" } })
+                            }}
+                            isChecked={this.state.checked}
+                        />
+                        <View style={{ alignItems: 'center', flexDirection: 'row' }}>
+                            <Text style={{ fontSize: 10 }}>I am over the age of 13 and I accept </Text>
+                            <TouchableOpacity onPress={() => this.setState({ showEULA: true })}>
+                                <Text style={{ color: 'blue', fontSize: 10 }}>Koota's license agreement.</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                    {this.state.error.accept !== "" && <View>
+                        <Text style={{ fontSize: 10, color: 'red' }}>{this.state.error.accept}</Text>
+                    </View>}
+                </View>
+
+                <View style={{ marginVertical: 20, alignSelf: 'center' }}>
+                    <TouchableOpacity onPress={() => { this.props.navigation.state.params.submitForm(); this.setErrorUIState(); if (this.props.navigation.state.params.needToGoBack()) this.props.navigation.goBack() }}>
+                        <View style={{ width: 300, height: 50, backgroundColor: '#006083', alignItems: 'center', justifyContent: 'center' }}>
+                            <Text style={{ color: 'white', fontSize: 20 }}>Register</Text>
+                        </View>
+                    </TouchableOpacity>
                 </View>
             </KeyboardAvoidingView>
         )
     }
 }
+
+function isValidDate(dateString) {
+    // First check for the pattern
+    if (!/^\d{1,2}\/\d{1,2}\/\d{4}$/.test(dateString))
+        return false;
+
+    // Parse the date parts to integers
+    var parts = dateString.split("/");
+    var day = parseInt(parts[1], 10);
+    var month = parseInt(parts[0], 10);
+    var year = parseInt(parts[2], 10);
+
+    // Check the ranges of month and year
+    if (year < 1000 || year > 3000 || month == 0 || month > 12)
+        return false;
+
+    var monthLength = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+
+    // Adjust for leap years
+    if (year % 400 == 0 || (year % 100 != 0 && year % 4 == 0))
+        monthLength[1] = 29;
+
+    // Check the range of the day
+    return day > 0 && day <= monthLength[month - 1];
+};
 
 function mapStateToProps(state) {
     return {

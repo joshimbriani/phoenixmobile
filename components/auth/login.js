@@ -1,7 +1,7 @@
 import React from 'react';
 import { Image, KeyboardAvoidingView, Platform, TouchableOpacity, View } from 'react-native';
 
-import { Button, Content, Form, Input, Item, Label, Text } from 'native-base';
+import { Button, Content, Form, Input, Item, Label, Text, Icon } from 'native-base';
 import { StackActions, NavigationActions } from 'react-navigation';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -101,13 +101,13 @@ class Login extends React.Component {
                 return false;
             }
         })
-        .then(response => {
-            if (response) {
-                this.handleLoginSuccess(response)
-            } else {
-                this.handleLoginFailure();
-            }
-        });
+            .then(response => {
+                if (response) {
+                    this.handleLoginSuccess(response)
+                } else {
+                    this.handleLoginFailure();
+                }
+            });
     }
 
     handleLoginSuccess(response) {
@@ -116,7 +116,7 @@ class Login extends React.Component {
     }
 
     handleLoginFailure() {
-        this.setState({ error: { main: "Login failed. Try again!", username: "", password: "" } });
+        this.setState({ error: { main: "Incorrect username or password. Is there another one it could be?", username: "", password: "" } });
     }
 
     goToScreenAndErasePreviousScreens(targetRoute) {
@@ -132,66 +132,61 @@ class Login extends React.Component {
 
     render() {
         return (
-            <KeyboardAvoidingView style={styles.container} behavior={Platform.OS === 'ios' ? "padding" : null} keyboardVerticalOffset={Platform.OS === 'ios' ? -300 : 0}>
+            <KeyboardAvoidingView style={{ flex: 1, backgroundColor: 'white' }} behavior={Platform.OS === 'ios' ? "padding" : null} keyboardVerticalOffset={Platform.OS === 'ios' ? -300 : 0}>
                 {this.state.error.main !== "" && <View style={styles.errorBackground}>
                     <Text style={styles.errorText}>{this.state.error.main}</Text>
                 </View>}
-                <View style={styles.loginHeader}>
-                    <View style={styles.imageContainer}>
+                <View style={{ flex: 1 }}>
+                    <View>
+                        <TouchableOpacity onPress={() => this.props.navigation.goBack()}>
+                            <Icon android="md-arrow-back" ios="ios-arrow-back" style={{ fontSize: 40, margin: 5 }} />
+                        </TouchableOpacity>
+
+                    </View>
+                    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
                         <Image
-                            source={require('../../assets/images/logologin.png')}
-                            style={styles.image}
+                            source={require('../../assets/images/KootaK.png')}
+                            style={{ width: 100, height: 100 }}
                             resizeMethod="resize"
                             resizeMode="contain"
                         />
                     </View>
-                    <View style={styles.sloganContainer}>
-                        <Text style={styles.slogan}>for friends</Text>
-                    </View>
                 </View>
-                <View style={styles.inputContainer}>
-                    <Content style={styles.inputWrapper}>
-                        {this.state.error.username !== "" && <View style={styles.inputErrorContainer}>
-                            <Text style={styles.inputErrorText}>{this.state.error.username}</Text>
-                        </View>}
-                        <Item stackedLabel>
-                            <Label>Username</Label>
-                            <Input name="username" autoCapitalize="none" onChangeText={(text) => this.onChange("username", text)} />
-                        </Item>
-                        {this.state.error.password !== "" && <View style={styles.inputErrorContainer}>
-                            <Text style={styles.inputErrorText}>{this.state.error.password}</Text>
-                        </View>}
-                        <Item style={styles.separatingMargin} stackedLabel last>
-                            <Label>Password</Label>
-                            <Input name="password" secureTextEntry={true} autoCapitalize="none" onChangeText={(text) => this.onChange("password", text)} />
-                        </Item>
+                <View style={{ flex: 1 }}>
+                    <Content keyboardShouldPersistTaps={'handled'}>
+                        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+                            <View style={{ flexDirection: 'row', marginTop: 30, marginBottom: 15 }}>
+                                <View style={{ width: 250 }}>
+                                    <Item regular error={this.state.error.username !== ""}>
+                                        <Icon android="md-person" ios="ios-person" />
+                                        <Input name="username" placeholder="Username" autoCapitalize="none" onChangeText={(text) => this.onChange("username", text)} />
+                                    </Item>
+                                    {this.state.error.username !== "" && <View>
+                                        <Text style={{fontSize: 10, color: 'red'}}>{this.state.error.username}</Text>
+                                    </View>}
+                                </View>
+                            </View>
+
+                            <View style={{ flexDirection: 'row' }}>
+                                <View style={{ width: 250 }}>
+                                    <Item regular error={this.state.error.password !== ""}>
+                                        <Icon android="md-lock" ios="ios-lock" />
+                                        <Input name="password" placeholder="Password" secureTextEntry={true} autoCapitalize="none" onChangeText={(text) => this.onChange("password", text)} />
+                                    </Item>
+                                    {this.state.error.password !== "" && <View>
+                                        <Text style={{fontSize: 10, color: 'red'}}>{this.state.error.password}</Text>
+                                    </View>}
+                                </View>
+                            </View>
+                        </View>
+
                     </Content>
                 </View>
-                <View style={styles.loginButtonContainer}>
-                    <Button onPress={this.submitForm} style={styles.mainLoginButton}>
-                        <View style={styles.mainLoginTextContainer}>
-                            <Text style={styles.mainLoginText}>Log In</Text>
+                <View style={{ marginVertical: 20, alignSelf: 'center' }}>
+                    <TouchableOpacity onPress={() => this.submitForm()}>
+                        <View style={{ width: 300, height: 50, backgroundColor: '#00ABE6', alignItems: 'center', justifyContent: 'center' }}>
+                            <Text style={{ color: 'white', fontSize: 20 }}>Login</Text>
                         </View>
-                    </Button>
-                    <View style={styles.socialLoginButtonSeparator}>
-                        <Text style={styles.robotoThin}>Or Log</Text>
-                        <Text style={styles.robotoThin}>In With</Text>
-                    </View>
-                    <TouchableOpacity onPress={this.submitForm} style={styles.socialLoginButtonOverlay}>
-                        <Image
-                            source={require('../../assets/images/icons/facebookicon.png')}
-                            style={styles.socialIcons}
-                            resizeMethod="resize"
-                            resizeMode="contain"
-                        />
-                    </TouchableOpacity>
-                    <TouchableOpacity onPress={this.submitForm} style={styles.socialLoginButtonOverlay}>
-                        <Image
-                            source={require('../../assets/images/icons/googleicon.png')}
-                            style={styles.socialIcons}
-                            resizeMethod="resize"
-                            resizeMode="contain"
-                        />
                     </TouchableOpacity>
                 </View>
             </KeyboardAvoidingView>

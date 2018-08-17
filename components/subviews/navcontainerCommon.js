@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { StackNavigator } from 'react-navigation';
+import { createStackNavigator } from 'react-navigation';
 
 import PlatformIonicon from '../utils/platformIonicon';
 import Suggested from '../app/suggested';
@@ -33,7 +33,7 @@ import AddToGroup from '../app/addToGroup';
 import InviteUsers from '../app/newEvent/inviteUsers';
 import { styles } from '../../assets/styles';
 
-export const HomeStack = StackNavigator({
+export const HomeStack = createStackNavigator({
     Home: {
         screen: Home,
     },
@@ -84,9 +84,12 @@ export const HomeStack = StackNavigator({
         path: '/newevent/inviteUsers',
         screen: InviteUsers
     }
+}, {
+    animationEnabled: false,
+    swipeEnabled: false,
 });
 
-export const SettingsStack = StackNavigator({
+export const SettingsStack = createStackNavigator({
     Settings: {
         screen: Settings,
         navigationOptions: ({ navigation }) => ({
@@ -142,9 +145,12 @@ export const SettingsStack = StackNavigator({
     BlockedUserSettings: {
         screen: BlockedUserSettings
     }
+}, {
+    animationEnabled: false,
+    swipeEnabled: false,
 });
 
-export const ProfileStack = StackNavigator({
+export const ProfileStack = createStackNavigator({
     ProfileTabContainer: {
         screen: ProfileTabContainer,
         path: '/profile',
@@ -168,9 +174,12 @@ export const ProfileStack = StackNavigator({
         path: '/addfriends',
         screen: AddFriends
     }
+}, {
+    animationEnabled: false,
+    swipeEnabled: false,
 });
 
-export const GroupStack = StackNavigator({
+export const GroupStack = createStackNavigator({
     GroupsList: {
         path: '/groups/',
         screen: GroupsList
@@ -195,4 +204,8 @@ export const GroupStack = StackNavigator({
         path: '/groups/:id/add',
         screen: AddToGroup
     },
+},
+{
+    animationEnabled: false,
+    swipeEnabled: false,
 })

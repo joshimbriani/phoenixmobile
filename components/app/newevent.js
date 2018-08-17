@@ -1,6 +1,6 @@
 import React from 'react';
 import { Content, Form, Item, Input, Label, Button, Text } from 'native-base';
-import { ScrollView, View, Picker, ToastAndroid, KeyboardAvoidingView, Platform, PermissionsAndroid, FlatList, TouchableOpacity } from 'react-native';
+import { ToastAndroid, Platform, PermissionsAndroid, Keyboard } from 'react-native';
 import PlatformIonicon from '../utils/platformIonicon';
 import { connect } from 'react-redux';
 import Swiper from 'react-native-swiper';
@@ -145,8 +145,6 @@ class NewEvent extends React.Component {
     onChange(component, value) {
         var stateRepresentation = {};
         stateRepresentation[component] = value;
-        //stateRepresentation["formIsValid"] = this.formIsValid();
-        //console.log(this.formIsValid())
         this.setState(stateRepresentation);
     }
 
@@ -186,16 +184,16 @@ class NewEvent extends React.Component {
         for (var i = 0; i < ITEMS_TO_VALIDATE.length; i++) {
             if (ITEMS_TO_VALIDATE[i] === "group") {
                 if (this.state.eventPrivacy === "group" && Object.keys(this.state.group).length < 1) {
-                    errors["group"] = "If you indicate that this event is limited to groups, you need to add a group!"
+                    errors["group"] = "If you indicate that this event is limited to groups, you need to add a group! If you don't have any groups created, make a new one or change the privacy setting!"
                     if (errors.errors.indexOf("Group") === -1) {
                         errors.errors.push("Group")
                     }
-                    
+
                     valid = false;
                 }
             }
             else if (this.state[ITEMS_TO_VALIDATE[i]] === "" || typeof this.state[ITEMS_TO_VALIDATE[i]] === 'undefined' || ((typeof this.state[ITEMS_TO_VALIDATE[i]] === "object" && !(this.state[ITEMS_TO_VALIDATE[i]] instanceof Date)) && Object.keys(this.state[ITEMS_TO_VALIDATE[i]]).length < 1)) {
-                
+
                 if (ITEMS_TO_VALIDATE[i] === 'amount') {
                     errors["amount"] = "You need to have an event capacity!"
                     if (errors.errors.indexOf("Amount") === -1) {
@@ -232,7 +230,7 @@ class NewEvent extends React.Component {
                         errors.errors.push("Event Date & Time")
                     }
                 }
-                
+
 
                 valid = false;
             } else {
@@ -263,7 +261,6 @@ class NewEvent extends React.Component {
     submitForm() {
         // TODO: Need to give error messages
         if (this.formIsValid()) {
-        //if (false) {
             var duration = this.state.duration;
             if (this.state.durationMeasure === 'hours') {
                 duration *= 60;
@@ -389,7 +386,7 @@ class NewEvent extends React.Component {
         }
         console.log(this.state)
         return (
-            <Swiper nextButton={<Text>&gt;</Text>} buttonWrapperStyle={{ alignItems: 'flex-end' }} prevButton={<Text>&lt;</Text>} style={styles.wrapper} showsButtons={true} loop={false} removeClippedSubviews={false} >
+            <Swiper onMomentumScrollEnd={() => Keyboard.dismiss()} nextButton={<Text style={{fontSize: 25}}>&gt;</Text>} buttonWrapperStyle={{ alignItems: 'flex-end' }} prevButton={<Text style={{fontSize: 25}}>&lt;</Text>} style={styles.wrapper} showsButtons={true} loop={false} removeClippedSubviews={false} >
                 {NewEventArr.filter((item) => {
                     var args = {};
                     if (item["name"] === "Offers") {

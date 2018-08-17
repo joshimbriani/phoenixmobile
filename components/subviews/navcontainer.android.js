@@ -1,15 +1,16 @@
 import React from 'react';
 import { StyleSheet, Text, FlatList, ScrollView, View } from 'react-native';
-import { DrawerNavigator, StackNavigator } from 'react-navigation';
+import { createDrawerNavigator, createStackNavigator } from 'react-navigation';
 import SideDrawer from './sidedrawer';
 import PlatformIonicon from '../utils/platformIonicon';
 import { HomeStack, ProfileStack, SettingsStack, GroupStack } from './navcontainerCommon';
 import Login from '../auth/login';
 import Register from '../auth/register';
 import RegisterDetails from '../auth/registerDetails';
+import Main from '../auth/main';
 import { styles } from '../../assets/styles';
 
-const MainNavContainer = DrawerNavigator({
+const MainNavContainer = createDrawerNavigator({
     
     Home: {
         screen: HomeStack,
@@ -65,11 +66,16 @@ const MainNavContainer = DrawerNavigator({
     },
 },
     {
-        contentComponent: SideDrawer
+        contentComponent: SideDrawer,
+        animationEnabled: false,
+        swipeEnabled: false,
     }
 );
 
-const LoginWrapper = StackNavigator({
+const LoginWrapper = createStackNavigator({
+    FrontScreen: {
+        screen: Main,
+    },
     Register: {
         screen: Register,
         navigationOptions: ({ navigation }) => ({
@@ -91,7 +97,9 @@ const LoginWrapper = StackNavigator({
         screen: MainNavContainer
     }
 }, {
-    headerMode: 'none'
+    headerMode: 'none',
+    animationEnabled: false,
+    swipeEnabled: false,
 });
 
 export default LoginWrapper;

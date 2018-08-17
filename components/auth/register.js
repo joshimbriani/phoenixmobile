@@ -1,7 +1,7 @@
 import React from 'react';
-import { Image, KeyboardAvoidingView, StyleSheet, TouchableOpacity, View, Platform } from 'react-native';
+import { Image, KeyboardAvoidingView, StyleSheet, TouchableOpacity, View, Platform, Keyboard } from 'react-native';
 
-import { Button, Content, Form, Input, Item, Label, Text } from 'native-base';
+import { Button, Content, Form, Input, Item, Label, Text, Icon } from 'native-base';
 import { StackActions, NavigationActions } from 'react-navigation';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -10,6 +10,7 @@ import { getURLForPlatform } from '../utils/networkUtils';
 import PlatformIonicon from '../utils/platformIonicon';
 import * as tokenActions from '../../redux/actions/token';
 import fontBasedOnPlatform from '../utils/fontBasedOnPlatform';
+import moment from 'moment';
 
 class Register extends React.Component {
 
@@ -19,7 +20,7 @@ class Register extends React.Component {
             username: "",
             password: "",
             email: "",
-            age: "",
+            birthdate: "",
             gender: "",
             accept: false,
             error: {
@@ -27,22 +28,30 @@ class Register extends React.Component {
                 username: "",
                 email: "",
                 password: "",
-                age: "",
+                birthdate: "",
                 gender: "",
                 accept: ""
-            }
+            },
+            first: true,
+            imageSize: 100
         }
 
         this.onChange = this.onChange.bind(this);
         this.submitForm = this.submitForm.bind(this);
         this.goToScreenAndErasePreviousScreens = this.goToScreenAndErasePreviousScreens.bind(this);
         this.register = this.register.bind(this);
-        this.parseRegisterSuccess = this.parseRegisterSuccess.bind(this); 
+        this.parseRegisterSuccess = this.parseRegisterSuccess.bind(this);
         this.continueToRegistration = this.continueToRegistration.bind(this);
+        this.needToGoBack = this.needToGoBack.bind(this);
+        this._keyboardDidHide = this._keyboardDidHide.bind(this);
+        this._keyboardDidShow = this._keyboardDidShow.bind(this);
     }
 
-    componentDidMount() {          
-          
+    componentDidMount() {
+
+        this.keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', this._keyboardDidShow);
+        this.keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', this._keyboardDidHide);
+
         if (this.props.token) {
             if (this.props.navigation.state && this.props.navigation.state.params && this.props.navigation.state.params.stay) {
                 return;
@@ -53,30 +62,36 @@ class Register extends React.Component {
     }
 
     setErrorUIState() {
+        var goBack = false;
         var errorState = { main: "", username: "", email: "", password: "" }
         if (this.state.username === "") {
             errorState["username"] = "Enter your username!";
+            goBack = true;
         }
         if (this.state.password === "") {
             errorState["password"] = "Enter your password!";
+            goBack = true;
         } else {
             if (this.state.password.length < 6) {
                 errorState["password"] = "Your password needs to at least have 6 characters in it!";
+                goBack = true;
             }
         }
         if (this.state.email === "") {
             errorState["email"] = "Enter your email!";
+            goBack = true;
         } else {
             const emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
             if (!emailRegex.test(this.state.email.toLowerCase())) {
                 errorState["email"] = "That's not a valid email!";
+                goBack = true;
             }
         }
         if (this.state.gender === "") {
             errorState["gender"] = "You need to select your gender!"
         }
-        if (this.state.age === "") {
-            errorState["age"] = "You need to select your age!"
+        if (this.state.birthdate === "") {
+            errorState["birthdate"] = "You need to select your birthdate!"
         }
         if (this.state.accept === "") {
             errorState["accept"] = "You need to accept our agreement!"
@@ -84,18 +99,41 @@ class Register extends React.Component {
         // Eventually we might want to enforce password difficulty
         // We'd do that here
         this.setState({ error: errorState });
+
+        return goBack;
     }
 
     registrationIsValid() {
-        this.setErrorUIState();
-        if (this.state.username === "" || this.state.password === "" || this.state.email === "" || this.state.gender === "" || this.state.age === "" || !this.state.accept) {
-            return false;
+        const goBack = this.setErrorUIState();
+        var valid = true;
+        if (this.state.username === "" || this.state.password === "" || this.state.email === "" || this.state.gender === "" || this.state.birthdate === "" || !this.state.accept) {
+            valid = false;
         }
+
         if (this.state.password.length < 6) {
-            return false;
+            valid = false;
         }
+        
         const emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-        return emailRegex.test(this.state.email.toLowerCase());
+        valid = emailRegex.test(this.state.email.toLowerCase());
+
+        return valid;
+    }
+
+    needToGoBack() {
+        var goBack = false;
+        if (this.state.username === "" || this.state.password === "" || this.state.email === "") {
+            goBack = true;
+        }
+
+        if (this.state.password.length < 6) {
+            goBack = true;
+        }
+        
+        const emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+        goBack = goBack || !emailRegex.test(this.state.email.toLowerCase());
+
+        return goBack;
     }
 
     resetErrorsBasedOnComponent(component) {
@@ -108,8 +146,8 @@ class Register extends React.Component {
             errorState["email"] = "";
         } else if (component === "gender") {
             errorState["gender"] = "";
-        } else if (component === "age") {
-            errorState["age"] = "";
+        } else if (component === "birthdate") {
+            errorState["birthdate"] = "";
         }
         return errorState;
     }
@@ -122,6 +160,7 @@ class Register extends React.Component {
     }
 
     submitForm() {
+        this.setState({first: false})
         if (this.registrationIsValid()) {
             this.register();
         }
@@ -141,13 +180,29 @@ class Register extends React.Component {
                 'email': this.state.email,
             })
         }).then(response => response.json())
-        .then(response => { 
-            if (response.key) { 
-                this.parseRegisterSuccess(response);
-            } else { 
-                this.parseRegisterError(response);
-            } 
-        });
+            .then(responseOrig => {
+                if (responseOrig.key) {
+                    fetch(getURLForPlatform() + "api/v1/rest_auth/registration/complete/", {
+                        method: 'PUT',
+                        headers: {
+                            'Accept': 'application/json',
+                            'Content-Type': 'application/json',
+                            'Authorization': 'Token ' + responseOrig.key
+                        },
+                        body: JSON.stringify({
+                            'birthdate': moment(this.state.birthdate, 'MM/DD/YYYY').toDate(),
+                            'gender': this.state.gender
+                        })
+                    }).then(response => response.json())
+                    .then(response => {
+                        if (response["success"]) {
+                            this.parseRegisterSuccess(responseOrig);
+                        }
+                    })
+                } else {
+                    this.parseRegisterError(responseOrig);
+                }
+            });
     }
 
     parseRegisterSuccess(response) {
@@ -156,7 +211,7 @@ class Register extends React.Component {
     }
 
     parseRegisterError(response) {
-        var errorObject = {"error": { main: "", username: this.state.error.username, password: this.state.error.password, email: this.state.error.email }};
+        var errorObject = { "error": { main: "", username: this.state.error.username, password: this.state.error.password, email: this.state.error.email } };
         if (response["username"]) {
             errorObject["error"]["username"] = response["username"][0];
         }
@@ -167,7 +222,9 @@ class Register extends React.Component {
             errorObject["error"]["email"] = response["email"][0];
         }
         errorObject["error"]["main"] = "Registration failed, please try again!";
+        
         this.setState(errorObject);
+        this.props.navigation.navigate('Register', {})
     }
 
     goToScreenAndErasePreviousScreens(targetRoute) {
@@ -181,62 +238,87 @@ class Register extends React.Component {
     }
 
     continueToRegistration() {
-        console.log("Here")
-        this.props.navigation.navigate('RegisterDetails', {onChange: this.onChange, submitForm: this.submitForm, age: this.state.age, gender: this.state.gender, error: this.state.error})
+        this.props.navigation.navigate('RegisterDetails', { onChange: this.onChange, submitForm: this.submitForm, birthdate: this.state.birthdate, gender: this.state.gender, error: this.state.error, needToGoBack: this.needToGoBack, first: this.state.first })
+    }
+
+    _keyboardDidShow() {
+        this.setState({imageSize: 0})
+    }
+
+    _keyboardDidHide() {
+        this.setState({imageSize: 100})
     }
 
     render() {
         return (
-            <KeyboardAvoidingView style={styles.container} behavior={Platform.OS === 'ios' ? "padding" : null} keyboardVerticalOffset={Platform.OS === 'ios' ? -220 : 0}>
+            <KeyboardAvoidingView style={{ flex: 1, backgroundColor: 'white' }} behavior={Platform.OS === 'ios' ? "padding" : null} keyboardVerticalOffset={Platform.OS === 'ios' ? -300 : 0}>
                 {this.state.error.main !== "" && <View style={styles.errorBackground}>
                     <Text style={styles.errorText}>{this.state.error.main}</Text>
                 </View>}
-                <View style={styles.imageHeader}>
-                    <Image
-                        source={require('../../assets/images/logologin.png')}
-                        style={styles.image}
-                        resizeMethod="resize"
-                        resizeMode="contain"
-                    />
+                <View style={{ flex: 1 }}>
+                    <View>
+                        <TouchableOpacity onPress={() => this.props.navigation.goBack()}>
+                            <Icon android="md-arrow-back" ios="ios-arrow-back" style={{ fontSize: 40, margin: 5 }} />
+                        </TouchableOpacity>
+
+                    </View>
+                    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+                        <Image
+                            source={require('../../assets/images/KootaK.png')}
+                            style={{ width: this.state.imageSize, height: this.state.imageSize }}
+                            resizeMethod="resize"
+                            resizeMode="contain"
+                        />
+                    </View>
                 </View>
-                <View style={styles.formBody}>
-                    <Content style={styles.inputWrapper}>
-                        {this.state.error.username !== "" && <View style={styles.inputErrorContainer}>
-                            <Text style={styles.inputErrorText}>{this.state.error.username}</Text>
-                        </View>}
-                        <Item stackedLabel>
-                            <Label>Username</Label>
-                            <Input name="username" autoCapitalize="none" onChangeText={(text) => this.onChange("username", text)} />
-                        </Item>
-                        {this.state.error.email !== "" && <View style={styles.inputErrorContainer}>
-                            <Text style={styles.inputErrorText}>{this.state.error.email}</Text>
-                        </View>}
-                        <Item stackedLabel>
-                            <Label>Email</Label>
-                            <Input name="email" autoCapitalize="none" onChangeText={(text) => this.onChange("email", text)} />
-                        </Item>
-                        {this.state.error.password !== "" && <View style={styles.inputErrorContainer}>
-                            <Text style={styles.inputErrorText}>{this.state.error.password}</Text>
-                        </View>}
-                        <Item style={styles.separatingMargin} stackedLabel last>
-                            <Label>Password</Label>
-                            <Input name="password" secureTextEntry={true} autoCapitalize="none" onChangeText={(text) => this.onChange("password", text)} />
-                        </Item>
+                <View style={{ flex: 2 }}>
+                    <Content keyboardShouldPersistTaps={'handled'}>
+                        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+                            <View style={{ marginTop: 30, marginBottom: 15 }}>
+                                <View style={{ width: 250 }}>
+                                    <Item regular error={this.state.error.username !== ""}>
+                                        <Icon android="md-person" ios="ios-person" />
+                                        <Input name="username" placeholder="Username" autoCapitalize="none" onChangeText={(text) => this.onChange("username", text)} />
+                                    </Item>
+                                    {this.state.error.username !== "" && <View>
+                                        <Text style={{ fontSize: 10, color: 'red' }}>{this.state.error.username}</Text>
+                                    </View>}
+                                </View>
+                            </View>
+                            <View style={{ marginBottom: 15 }}>
+                                <View style={{ width: 250 }}>
+                                    <Item regular error={this.state.error.email !== ""}>
+                                        <Icon android="md-mail" ios="ios-mail" />
+                                        <Input name="email" placeholder="Email" autoCapitalize="none" onChangeText={(text) => this.onChange("email", text)} />
+                                    </Item>
+                                    {this.state.error.email !== "" && <View>
+                                        <Text style={{ fontSize: 10, color: 'red' }}>{this.state.error.email}</Text>
+                                    </View>}
+                                </View>
+                            </View>
+                            <View>
+                                <View style={{ width: 250 }}>
+                                    <Item regular error={this.state.error.password !== ""}>
+                                        <Icon android="md-lock" ios="ios-lock" />
+                                        <Input name="password" placeholder="Password" secureTextEntry={true} autoCapitalize="none" onChangeText={(text) => this.onChange("password", text)} />
+                                    </Item>
+                                    {this.state.error.password !== "" && <View>
+                                        <Text style={{ fontSize: 10, color: 'red' }}>{this.state.error.password}</Text>
+                                    </View>}
+                                </View>
+                            </View>
+                        </View>
+
                     </Content>
                 </View>
-                <View style={styles.registerButtons}>
-                    <Button onPress={this.continueToRegistration} style={styles.registerButton}>
-                        <View style={styles.registerButtonContainer}>
-                            <Text style={styles.registerButtonText}>Continue Registration</Text>
+                <View style={{ marginVertical: 20, alignSelf: 'center' }}>
+                    <TouchableOpacity onPress={() => this.continueToRegistration()}>
+                        <View style={{ width: 300, height: 50, backgroundColor: '#006083', alignItems: 'center', justifyContent: 'center' }}>
+                            <Text style={{ color: 'white', fontSize: 20 }}>Continue Registration</Text>
                         </View>
-                    </Button>
+                    </TouchableOpacity>
                 </View>
-                <View style={styles.loginLinks}>
-                    <Text style={[styles.platformFont, styles.alreadyText]}>Already have an account?</Text>
-                    <View style={{flex: 1}} />
-                    <Text style={[styles.loginLink, styles.platformFont]} onPress={() => this.props.navigation.navigate('Login', {})}>Login</Text>
-                </View>
-            </KeyboardAvoidingView>
+            </KeyboardAvoidingView >
         )
     }
 }

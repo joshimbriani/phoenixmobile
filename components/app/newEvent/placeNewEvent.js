@@ -95,7 +95,7 @@ export class PlaceNewEvent extends React.Component {
                         </View>
                     </View>
                 </View>
-                <Form>
+                <Form style={{backgroundColor: 'white', borderBottomWidth: 1}}>
                     {this.props.errors["place"].length > 0 && <View style={{ marginTop: 5, backgroundColor: 'red', paddingHorizontal: 30, paddingVertical: 5, marginHorizontal: 30 }}>
                         <Text style={{ color: 'white' }}>{this.props.errors["place"]}</Text>
                     </View>}

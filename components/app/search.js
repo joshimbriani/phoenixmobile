@@ -16,6 +16,7 @@ class Search extends React.Component {
     state = {
         active: false,
         data: [],
+        loading: true
     };
 
     static navigationOptions = ({ navigation }) => ({
@@ -35,7 +36,7 @@ class Search extends React.Component {
             },
         }).then(response => response.json())
             .then(responseObj => {
-                this.setState({ data: responseObj });
+                this.setState({ data: responseObj, loading: false });
             })
     }
 
@@ -53,67 +54,84 @@ class Search extends React.Component {
     }
 
     render() {
-        return (
-            <Container>
-                <SectionList
-                    renderItem={({ item, section }) => {
-                        if (section.title === "Topics") {
-                            return (
-                                <TouchableHighlight onPress={() => { this.props.navigation.navigate('Topic', { topic: item.name, id: item.id, color: item.color.substring(0) }) }}>
-                                    <View
-                                        style={[styles.itemBox, { backgroundColor: '#' + item.color }]}
-                                    >
-                                        <PlatformIonicon
-                                            name={item.icon || 'aperture'}
-                                            size={50}
-                                            style={{ color: "white" }}
-                                        />
-                                        <Text style={styles.itemText}>{item.name}</Text>
-                                    </View>
-                                </TouchableHighlight>
-                            )
-                        }
-                        if (section.title === "Events") {
-                            const date = new Date(item.datetime)
-                            return (
-                                <TouchableHighlight onPress={() => { this.props.navigation.navigate('EventDetailWrapper', { event: item.title, id: item.id, color: item.color }) }}>
-                                    <View key={item.id} style={[styles.listitem, { backgroundColor: item.color, justifyContent: 'center', alignItems: 'center' }]}>
-                                        <View style={{ padding: 5 }}>
-                                            <Text style={[styles.itemText, { fontSize: 25, fontWeight: 'bold' }]}>{item.title}</Text>
-                                        </View>
-                                        <View style={{ padding: 10 }}>
-                                            <Text style={{ color: 'white' }} numberOfLines={2}>{item.description}</Text>
-                                        </View>
-                                        <View style={{ padding: 5 }}>
-                                            <Text style={{ color: 'white' }}>
-                                                {getDayOfWeekFromDayNumber(date.getDay())} {getMonthNameFromMonthNumber(date.getMonth())} {date.getDate()}, {date.getFullYear()} @ {(date.getHours() % 12) + ':' + (date.getMinutes() < 10 ? ('0' + date.getMinutes()) : date.getMinutes()) + (date.getHours() < 12 ? 'AM' : 'PM')}
-                                            </Text>
-                                        </View>
-                                    </View>
-                                </TouchableHighlight>
-                            )
-                        }
-                        if (section.title === "Offers") {
-                            const color = getMaterialColor();
-                            return (
-                                <TouchableOpacity onPress={() => { console.log("Will create an event with this offer.") }}>
-                                    <View key={item.id} style={[styles.listitem, {backgroundColor: color, justifyContent: 'center', alignItems: 'center'}]}>
-                                        <View style={{ padding: 5 }}>
-                                            <Text style={[styles.itemText, { fontSize: 25, fontWeight: 'bold' }]}>{item.name}</Text>
-                                        </View>
-                                        <View style={{ padding: 10 }}>
-                                            <Text style={{ color: 'white' }} numberOfLines={2}>{item.description}</Text>
-                                        </View>
-                                    </View>
-                                </TouchableOpacity>
-                            )
-                        }
-                    }}
-                    renderSectionHeader={({ section }) => this.renderEmptySections(section)}
-                    sections={this.state.data}
-                    keyExtractor={(item, index) => index} />
-            </Container>
-        );
+        if (this.state.loading) {
+            return (
+                <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+                    <Text>Loading...</Text>
+                </View>
+            )
+        } else {
+            if (this.state.data[0]["data"].length > 0 || this.state.data[1]["data"].length > 0 || this.state.data[2]["data"].length > 0) {
+                return (
+                    <Container>
+                        <SectionList
+                            renderItem={({ item, section }) => {
+                                if (section.title === "Topics") {
+                                    return (
+                                        <TouchableHighlight onPress={() => { this.props.navigation.navigate('Topic', { topic: item.name, id: item.id, color: item.color.substring(0) }) }}>
+                                            <View
+                                                style={[styles.itemBox, { backgroundColor: '#' + item.color }]}
+                                            >
+                                                <PlatformIonicon
+                                                    name={item.icon || 'aperture'}
+                                                    size={50}
+                                                    style={{ color: "white" }}
+                                                />
+                                                <Text style={styles.itemText}>{item.name}</Text>
+                                            </View>
+                                        </TouchableHighlight>
+                                    )
+                                }
+                                if (section.title === "Events") {
+                                    const date = new Date(item.datetime)
+                                    return (
+                                        <TouchableHighlight onPress={() => { this.props.navigation.navigate('EventDetailWrapper', { event: item.title, id: item.id, color: item.color }) }}>
+                                            <View key={item.id} style={[styles.listitem, { backgroundColor: item.color, justifyContent: 'center', alignItems: 'center' }]}>
+                                                <View style={{ paddingBottom: 5, paddingTop: 15 }}>
+                                                    <Text style={[styles.itemText, { fontSize: 20, fontWeight: 'bold' }]}>{item.title}</Text>
+                                                </View>
+                                                <View style={{ padding: 10 }}>
+                                                    <Text style={{ color: 'white', fontSize: 15 }} numberOfLines={2}>{item.description}</Text>
+                                                </View>
+                                                <View style={{ paddingTop: 5, paddingBottom: 15 }}>
+                                                    <Text style={{ color: 'white', fontSize: 17 }}>
+                                                        {getDayOfWeekFromDayNumber(date.getDay())} {getMonthNameFromMonthNumber(date.getMonth())} {date.getDate()}, {date.getFullYear()} @ {(date.getHours() % 12) + ':' + (date.getMinutes() < 10 ? ('0' + date.getMinutes()) : date.getMinutes()) + (date.getHours() < 12 ? 'AM' : 'PM')}
+                                                    </Text>
+                                                </View>
+                                            </View>
+                                        </TouchableHighlight>
+                                    )
+                                }
+                                if (section.title === "Offers") {
+                                    const color = getMaterialColor();
+                                    return (
+                                        <TouchableOpacity onPress={() => { console.log("Will create an event with this offer.") }}>
+                                            <View key={item.id} style={[styles.listitem, { backgroundColor: color, justifyContent: 'center', alignItems: 'center' }]}>
+                                                <View style={{ padding: 5 }}>
+                                                    <Text style={[styles.itemText, { fontSize: 25, fontWeight: 'bold' }]}>{item.name}</Text>
+                                                </View>
+                                                <View style={{ padding: 10 }}>
+                                                    <Text style={{ color: 'white' }} numberOfLines={2}>{item.description}</Text>
+                                                </View>
+                                            </View>
+                                        </TouchableOpacity>
+                                    )
+                                }
+                            }}
+                            renderSectionHeader={({ section }) => this.renderEmptySections(section)}
+                            sections={this.state.data}
+                            keyExtractor={(item, index) => index} />
+                    </Container>
+                );
+            } else {
+                return (
+                    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+                        <Text>No results found! Maybe phrase it differently differently?</Text>
+                    </View>
+                )
+            }
+        }
+
     }
 }
 

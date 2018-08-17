@@ -70,7 +70,7 @@ class GroupsList extends React.Component {
         // TODO: Pass the groupID through the GroupWrapper
         return (
             <View style={{ flex: 1 }}>
-                <FlatList
+                {this.state.groups.length > 0 && <FlatList
                     data={this.state.groups}
                     extraData={this.state}
                     keyExtractor={this._keyExtractor}
@@ -81,7 +81,10 @@ class GroupsList extends React.Component {
                             onRefresh={this._onRefresh}
                         />
                     }
-                />
+                />}
+                {this.state.groups.length <= 0 && <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
+                    <Text style={{textAlign: 'center', fontSize: 20, color: 'black'}}>You aren't in any groups! You should start a new one for your crew!</Text>
+                </View>}
                 <Fab
                     active={true}
                     containerStyle={{}}

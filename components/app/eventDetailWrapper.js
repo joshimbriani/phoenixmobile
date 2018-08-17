@@ -1,5 +1,5 @@
 import React from 'react';
-import { DeviceEventEmitter, Text, Dimensions, View } from 'react-native';
+import { DeviceEventEmitter, Text, Dimensions, View, ToastAndroid } from 'react-native';
 import { connect } from 'react-redux';
 import PlatformIonicon from '../utils/platformIonicon';
 import { TabViewAnimated, TabBar } from 'react-native-tab-view';
@@ -46,13 +46,13 @@ class EventDetailWrapper extends React.Component {
                     <Text>{userInList(navigation.state.params.userID, (navigation.state.params.usersGoing || [])) ? "I Can't Go" : "I'm Going!"}</Text>
                 </MenuOption>
                 <MenuOption onSelect={navigation.state.params.markUserAsInterested}>
-                    <Text>{userInList(navigation.state.params.userID, (navigation.state.params.usersInterested || [])) ? "I'm Not Interested Anymore" : "I'm Interested!"}</Text>
+                    <Text>{userInList(navigation.state.params.userID, (navigation.state.params.usersInterested || [])) ? "Nahh, Not Interested Anymore" : "I'm Considering It!"}</Text>
                 </MenuOption>
-                <MenuOption onSelect={navigation.state.params.loadEvent}>
+                {/*<MenuOption onSelect={navigation.state.params.loadEvent}>
                     <Text>Refresh</Text>
-                </MenuOption>
+                </MenuOption>*/}
                 <MenuOption onSelect={navigation.state.params.reportEvent}>
-                    <Text>Report</Text>
+                    <Text>Report Inappropriate Content</Text>
                 </MenuOption>
             </MenuOptions>
         </Menu>
@@ -61,9 +61,9 @@ class EventDetailWrapper extends React.Component {
     constructor(props) {
         super(props);
         var routes = [
-            { key: 'details', title: 'Details' },
-            { key: 'place', title: 'Place' },
-            { key: 'people', title: 'People' },
+            { key: 'details', title: 'The Deets' },
+            { key: 'place', title: 'Where' },
+            { key: 'people', title: 'Who' },
             { key: 'messages', title: 'Messages'}
         ];
 
@@ -82,7 +82,7 @@ class EventDetailWrapper extends React.Component {
 
     _handleIndexChange = index => this.setState({ index });
 
-    _renderHeader = props => <TabBar {...props} labelStyle={{fontSize: 11}} style={[styles.eventTabBar, { backgroundColor: this.props.navigation.state.params.color }]} />;
+    _renderHeader = props => <TabBar {...props} labelStyle={{fontSize: 10}} style={[styles.eventTabBar, { backgroundColor: this.props.navigation.state.params.color }]} />;
 
     _renderScene = ({ route }) => {
         switch (route.key) {
@@ -140,6 +140,8 @@ class EventDetailWrapper extends React.Component {
             .then(responseObj => {
                 if (responseObj["success"] !== true) {
                     console.log("Bad report.")
+                } else {
+                    ToastAndroid.show("Post Reported. Thanks for taking care of your community!", ToastAndroid.SHORT)
                 }
             });
     }

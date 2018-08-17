@@ -47,44 +47,46 @@ export class TitleDescColorNewEvent extends React.Component {
                     </View>
                 </View>
                 <View style={styles.formContainer}>
-                    <Content style={styles.flex1} keyboardShouldPersistTaps={'handled'}>
-                        <Form>
-                            <Item stackedLabel>
-                                {this.props.errors["title"].length > 0 && <View style={{ marginTop: 5, backgroundColor: 'red', paddingHorizontal: 30, paddingVertical: 5 }}>
-                                    <Text style={{ color: 'white' }}>{this.props.errors["title"]}</Text>
-                                </View>}
-                                <Label>Title</Label>
-                                <Input
-                                    name="title"
-                                    //onBlur={() => this.props.fetchTopicsFromDescription()}
-                                    onChangeText={(text) => this.props.onChange("title", text)}
-                                />
-                            </Item>
-                            <Item stackedLabel>
-                                <Label>Event Color</Label>
-                                <ColorPicker
-                                    colors={materialColors}
-                                    selectedColor={this.props.color}
-                                    onSelect={(color) => this.props.onChange("color", color)}
-                                />
-                            </Item>
-                            <Item stackedLabel last>
-                                {this.props.errors["description"].length > 0 && <View style={{ marginTop: 5, backgroundColor: 'red', paddingHorizontal: 30, paddingVertical: 5 }}>
-                                    <Text style={{ color: 'white' }}>{this.props.errors["description"]}</Text>
-                                </View>}
-                                <Label>Full Description</Label>
-                                <Textarea
-                                    style={{width: '90%'}}
-                                    name="description"
-                                    placeholder="Tell us more about what you want to do!"
-                                    //onBlur={() => this.props.fetchTopicsFromDescription()}
-                                    rowSpan={5}
-                                    bordered
-                                    onChangeText={(text) => this.props.onChange("description", text)}
-                                />
-                            </Item>
-                        </Form>
-                    </Content>
+                    <View style={{ margin: 10, padding: 10, backgroundColor: 'white', borderRadius: 5, shadowRadius: 2, shadowOpacity: 1, shadowColor: 'black', elevation: 2 }}>
+                        <Content style={styles.flex1} keyboardShouldPersistTaps={'handled'}>
+                            <Form>
+                                <Item stackedLabel>
+                                    {this.props.errors["title"].length > 0 && <View style={{ marginTop: 5, backgroundColor: 'red', paddingHorizontal: 30, paddingVertical: 5 }}>
+                                        <Text style={{ color: 'white' }}>{this.props.errors["title"]}</Text>
+                                    </View>}
+                                    <Label>Title</Label>
+                                    <Input
+                                        name="title"
+                                        //onBlur={() => this.props.fetchTopicsFromDescription()}
+                                        onChangeText={(text) => this.props.onChange("title", text)}
+                                    />
+                                </Item>
+                                <Item stackedLabel>
+                                    <Label>Event Color</Label>
+                                    <ColorPicker
+                                        colors={materialColors}
+                                        selectedColor={this.props.color}
+                                        onSelect={(color) => this.props.onChange("color", color)}
+                                    />
+                                </Item>
+                                <Item stackedLabel last>
+                                    {this.props.errors["description"].length > 0 && <View style={{ marginTop: 5, backgroundColor: 'red', paddingHorizontal: 30, paddingVertical: 5 }}>
+                                        <Text style={{ color: 'white' }}>{this.props.errors["description"]}</Text>
+                                    </View>}
+                                    <Label>Full Description</Label>
+                                    <Textarea
+                                        style={{ width: '90%' }}
+                                        name="description"
+                                        placeholder="Tell us more about what you want to do!"
+                                        //onBlur={() => this.props.fetchTopicsFromDescription()}
+                                        rowSpan={5}
+                                        bordered
+                                        onChangeText={(text) => this.props.onChange("description", text)}
+                                    />
+                                </Item>
+                            </Form>
+                        </Content>
+                    </View>
                 </View>
             </ScrollView>
         )

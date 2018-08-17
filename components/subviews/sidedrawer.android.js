@@ -14,6 +14,8 @@ class SideDrawer extends React.Component {
                         <CachedImage
                             style={{ width: 75, height: 75, borderRadius: 38 }}
                             source={{ uri: this.props.user.profilePicture }}
+                            ttl={60 * 60 * 24 * 3}
+                            fallbackSource={require('../../assets/images/KootaK.png')}
                         />
                         <Text style={{ fontSize: 30, color: '#fff' }}>
                             {this.props.user.username}
@@ -34,7 +36,7 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
     return {
-        
+
     };
 }
 

@@ -289,15 +289,20 @@ class Home extends React.Component {
                         <Input
                             placeholder="What Do You Wanna Do?"
                             onChangeText={(text) => this.changeValue(text)}
+                            value={this.state.searchQuery}
                             onSubmitEditing={() => {
                                 if (this.state.searchQuery.length > 0) {
-                                    this.props.navigation.navigate('Search', { query: this.state.searchQuery });
+                                    const query = this.state.searchQuery;
+                                    this.setState({searchQuery: ""});
+                                    this.props.navigation.navigate('Search', { query: query });
                                 }
                             }} />
                     </Item>
                     <Button transparent onPress={() => {
                         if (this.state.searchQuery.length > 0) {
-                            this.props.navigation.navigate('Search', { query: this.state.searchQuery })
+                            const query = this.state.searchQuery;
+                            this.setState({searchQuery: ""});
+                            this.props.navigation.navigate('Search', { query: query })
                         }
                     }
                     }>
@@ -309,6 +314,7 @@ class Home extends React.Component {
                     style={styles.gridView}
                     itemWidth={150}
                     enableEmptySections
+                    keyboardShouldPersistTaps={'handled'}
                     items={[{ id: -1, name: "IDK", color: "0097e6", icon: "help" }].concat(this.props.user.followingTopics ? this.props.user['followingTopics'] : [])}
                     refreshControl={
                         <RefreshControl

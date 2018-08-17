@@ -1,5 +1,5 @@
 import React from 'react';
-import { TabNavigator, StackNavigator } from 'react-navigation';
+import { createTabNavigator, createStackNavigator } from 'react-navigation';
 import PlatformIonicon from '../utils/platformIonicon';
 import {HomeStack, ProfileStack, SettingsStack, GroupStack} from './navcontainerCommon';
 import Login from '../auth/login';
@@ -7,7 +7,7 @@ import Register from '../auth/register';
 import { styles } from '../../assets/styles';
 import RegisterDetails from '../auth/registerDetails';
 
-const MainNavContainer = TabNavigator({
+const MainNavContainer = createTabNavigator({
     Home: {
         screen: HomeStack,
         navigationOptions: {
@@ -60,9 +60,15 @@ const MainNavContainer = TabNavigator({
             ),
         },
     },
+}, {
+    animationEnabled: false,
+    swipeEnabled: false,
 });
 
-const LoginWrapper = StackNavigator({
+const LoginWrapper = createStackNavigator({
+    FrontScreen: {
+        screen: Main,
+    },
     Login: {
         screen: Login,
         navigationOptions: ({ navigation }) => ({
@@ -84,7 +90,9 @@ const LoginWrapper = StackNavigator({
         screen: MainNavContainer
     },
 }, {
-        headerMode: 'none'
+        headerMode: 'none',
+        animationEnabled: false,
+        swipeEnabled: false,
     });
 
 export default LoginWrapper;

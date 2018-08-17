@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { Text, FlatList, View, Button, TextInput, TouchableOpacity, ToastAndroid } from 'react-native';
+import { Text, FlatList, View, Button, TextInput, TouchableOpacity, Keyboard, ToastAndroid } from 'react-native';
 import PlatformIonicon from '../utils/platformIonicon';
 import { getURLForPlatform } from '../utils/networkUtils';
 import Swiper from 'react-native-swiper';
@@ -15,7 +15,7 @@ import debounce from 'lodash/debounce';
 
 class NewGroup extends React.Component{
     static navigationOptions = ({ navigation }) => ({
-        title: 'Create a new Group',
+        title: 'Create a New Group',
     });
 
     constructor(props) {
@@ -47,6 +47,8 @@ class NewGroup extends React.Component{
                             <CachedImage
                                 style={{ width: 50, height: 50, borderRadius:25 }}
                                 source={{ uri: item.profilePicture }}
+                                ttl={60*60*24*3}
+                                fallbackSource={require('../../assets/images/KootaK.png')}
                             />
                         </View>
                         <View style={{justifyContent: 'center'}}>
@@ -75,9 +77,9 @@ class NewGroup extends React.Component{
 
     render() {
         return (
-            <Swiper nextButton={<Text>&gt;</Text>} buttonWrapperStyle={{alignItems: 'flex-end'}} prevButton={<Text>&lt;</Text>} style={styles.wrapper} showsButtons={true} loop={false} removeClippedSubviews={false} >
+            <Swiper onMomentumScrollEnd={() => Keyboard.dismiss()} nextButton={<Text>&gt;</Text>} buttonWrapperStyle={{alignItems: 'flex-end'}} prevButton={<Text>&lt;</Text>} style={styles.wrapper} showsButtons={true} loop={false} removeClippedSubviews={false} >
                 <View style={styles.flex1}>
-                    <Content style={styles.flex1}>
+                    <Content style={styles.flex1} keyboardShouldPersistTaps={'handled'}>
                         <Form>
                             <Item stackedLabel>
                                 <Label>Group Name</Label>
@@ -112,7 +114,7 @@ class NewGroup extends React.Component{
                         <TextInput value={this.userListToString(this.state.groupUsers)} placeholder="" editable={false} style={{height: 50}} />
                     </View>
                     <View style={{padding: 5}}>
-                        <TextInput value={this.state.userSearchQuery} onChangeText={(text) => this.saveTextAndSearch(text)} placeholder="Type a username here" editable={true} style={{height: 50}} />
+                        <TextInput value={this.state.userSearchQuery} onChangeText={(text) => this.saveTextAndSearch(text)} placeholder="Type a username here" editable={true} style={{height: 50, borderBottomWidth: 1}} />
                     </View>
                     <FlatList
                         data={this.state.users}
@@ -120,6 +122,7 @@ class NewGroup extends React.Component{
                         keyExtractor={this._keyExtractor}
                         renderItem={this._renderItem}
                         style={{flex: 1}}
+                        keyboardShouldPersistTaps={'handled'}
                     />
                     <View style={{marginBottom: 50}}>
                         <HideableView hide={!this.state.errors} style={{backgroundColor: 'red', padding: 5}}>

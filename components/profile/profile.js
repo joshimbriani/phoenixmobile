@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, Image, Button, TextInput, ToastAndroid, TouchableOpacity, FlatList, RefreshControl } from 'react-native';
+import { View, Text, Image, Button, TextInput, ToastAndroid, TouchableOpacity, FlatList, RefreshControl, ActivityIndicator } from 'react-native';
 import PlatformIonicon from '../utils/platformIonicon';
 import * as userActions from '../../redux/actions/user';
 import { getURLForPlatform } from '../utils/networkUtils';
@@ -28,7 +28,8 @@ class Profile extends React.Component {
             userModalVisible: false,
             profilePictureModalVisible: false,
             selectedUser: -1,
-            refreshing: false
+            refreshing: false,
+            loadingPic: false
         }
 
         this.editUser = this.editUser.bind(this);
@@ -53,6 +54,8 @@ class Profile extends React.Component {
             <CachedImage
                 style={{ width: 50, height: 50, borderRadius: 25 }}
                 source={{ uri: item.profilePicture }}
+                ttl={60 * 60 * 24 * 3}
+                fallbackSource={require('../../assets/images/KootaK.png')}
             />
             <Text>{item.username}</Text>
             <View style={{ flexDirection: 'row' }}>
@@ -84,6 +87,8 @@ class Profile extends React.Component {
                         <CachedImage
                             style={{ width: 50, height: 50, borderRadius: 25 }}
                             source={{ uri: item.profilePicture }}
+                            ttl={60 * 60 * 24 * 3}
+                            fallbackSource={require('../../assets/images/KootaK.png')}
                         />
                     </View>
                     <View style={{ justifyContent: 'center' }}>
@@ -253,6 +258,7 @@ class Profile extends React.Component {
 
             const date = new Date();
             const fileName = this.props.user.username + date.getFullYear() + date.getMonth() + date.getDate() + date.getHours() + date.getMinutes();
+            this.setState({loadingPic: true})
             fetch(getURLForPlatform() + 'api/v1/image/', {
                 method: 'POST',
                 body: JSON.stringify({
@@ -280,7 +286,7 @@ class Profile extends React.Component {
                                 }).then(editUserResponse => {
                                     if (editUserResponse.status === 200) {
                                         this.props.userActions.loadUser(this.props.token);
-                                        this.setState({ profilePictureModalVisible: false })
+                                        this.setState({ profilePictureModalVisible: false, loadingPic: false })
                                     }
                                 })
                             }
@@ -300,6 +306,7 @@ class Profile extends React.Component {
         const date = new Date(this.props.user.created);
         return (
             <KeyboardAwareScrollView
+                keyboardShouldPersistTaps={'handled'}
                 refreshControl={
                     <RefreshControl
                         refreshing={this.state.refreshing}
@@ -310,11 +317,14 @@ class Profile extends React.Component {
                 <View style={{ flex: 1 }}>
                     <HideableView hide={this.state.editingDetails}>
                         <View style={{ justifyContent: 'center', alignItems: 'center', backgroundColor: '#c0392b', height: 175 }}>
-                            <TouchableOpacity onLongPress={() => this.setState({ profilePictureModalVisible: true })}>
-                                <CachedImage
+                            <TouchableOpacity onPress={() => this.setState({ profilePictureModalVisible: true })} onLongPress={() => this.setState({ profilePictureModalVisible: true })}>
+                                {!this.state.loadingPic && <CachedImage
                                     style={{ width: 75, height: 75, borderRadius: 38 }}
                                     source={{ uri: this.props.user.profilePicture }}
-                                />
+                                    ttl={60 * 60 * 24 * 3}
+                                    fallbackSource={require('../../assets/images/KootaK.png')}
+                                />}
+                                {this.state.loadingPic && <ActivityIndicator size="large" color="0000ff" />}
                             </TouchableOpacity>
                             <Text style={{ color: '#ecf0f1', fontSize: 35, fontWeight: 'bold' }}>{this.props.user.username}</Text>
                         </View>
@@ -325,6 +335,8 @@ class Profile extends React.Component {
                                 <CachedImage
                                     style={{ width: 75, height: 75, borderRadius: 38 }}
                                     source={{ uri: this.props.user.profilePicture }}
+                                    ttl={60 * 60 * 24 * 3}
+                                    fallbackSource={require('../../assets/images/KootaK.png')}
                                 />
                             </TouchableOpacity>
                             <Text style={{ color: '#ecf0f1', fontSize: 35, fontWeight: 'bold' }}>{this.props.user.username}</Text>
@@ -471,6 +483,7 @@ class Profile extends React.Component {
                                     </Form>
                                 </View>}
                             <FlatList
+                                keyboardShouldPersistTaps={'handled'}
                                 data={this.state.filteredFriends}
                                 extraData={this.state}
                                 keyExtractor={this._keyExtractor}

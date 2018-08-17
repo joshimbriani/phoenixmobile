@@ -20,7 +20,6 @@ export const styles = StyleSheet.create({
     },
     listitem: {
         alignSelf: 'stretch',
-        height: 200,
     },
     itemText: {
         color: 'white',
@@ -184,10 +183,6 @@ export const styles = StyleSheet.create({
     imageContainer: {
         marginTop: 10,
         flex: 3
-    },
-    image: {
-        width: 200,
-        flex: 1
     },
     sloganContainer: {
         flex: 1,
