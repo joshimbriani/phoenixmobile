@@ -14,6 +14,7 @@ import { DatetimeDurationNewEvent } from './newEvent/datetimeDurationNewEvent';
 import { PlaceNewEvent } from './newEvent/placeNewEvent';
 import { PeopleNewEvent } from './newEvent/peopleNewEvent';
 import { OffersNewEvent } from './newEvent/offersNewEvent';
+import { badWords } from '../../assets/badWords';
 
 const ITEMS_TO_VALIDATE = ["title", "description", "place", "datetime", "duration", "amount", "eventPrivacy", "group"];
 
@@ -197,8 +198,41 @@ class NewEvent extends React.Component {
 
                     valid = false;
                 }
-            }
-            else if (this.state[ITEMS_TO_VALIDATE[i]] === "" || typeof this.state[ITEMS_TO_VALIDATE[i]] === 'undefined' || ((typeof this.state[ITEMS_TO_VALIDATE[i]] === "object" && !(this.state[ITEMS_TO_VALIDATE[i]] instanceof Date)) && Object.keys(this.state[ITEMS_TO_VALIDATE[i]]).length < 1)) {
+            } else if (ITEMS_TO_VALIDATE[i] === "title" || ITEMS_TO_VALIDATE[i] === "description") {
+                if (ITEMS_TO_VALIDATE[i] === "title" && this.state["title"] === "") {
+                    errors["title"] = "You need to have a title!"
+                    if (errors.errors.indexOf("Title") === -1) {
+                        errors.errors.push("Title")
+                    }
+                    valid = false;
+                } else if (ITEMS_TO_VALIDATE[i] === "description" && this.state["description"] === "") {
+                    errors["description"] = "You need to add a description!"
+                    if (errors.errors.indexOf("Description") === -1) {
+                        errors.errors.push("Description")
+                    }
+                    valid = false;
+                } else if (ITEMS_TO_VALIDATE[i] === "title") {
+                    for (var j = 0; j < badWords.length; j++) {
+                        if (this.state["title"].toLowerCase().indexOf(badWords[j]) > -1) {
+                            errors["title"] = "Your title contains objectionable content. Please remove the word '" + badWords[j] + "'"
+                            if (errors.errors.indexOf("Title") === -1) {
+                                errors.errors.push("Title")
+                            }
+                            valid = false;
+                        }
+                    }
+                } else if (ITEMS_TO_VALIDATE[i] === "description") {
+                    for (var j = 0; j < badWords.length; j++) {
+                        if (this.state["description"].toLowerCase().indexOf(badWords[j]) > -1) {
+                            errors["description"] = "Your description contains objectionable content. Please remove the word '" + badWords[j] + "'"
+                            if (errors.errors.indexOf("Description") === -1) {
+                                errors.errors.push("Description")
+                            }
+                            valid = false;
+                        }
+                    }
+                }
+            } else if (this.state[ITEMS_TO_VALIDATE[i]] === "" || typeof this.state[ITEMS_TO_VALIDATE[i]] === 'undefined' || ((typeof this.state[ITEMS_TO_VALIDATE[i]] === "object" && !(this.state[ITEMS_TO_VALIDATE[i]] instanceof Date)) && Object.keys(this.state[ITEMS_TO_VALIDATE[i]]).length < 1)) {
 
                 if (ITEMS_TO_VALIDATE[i] === 'amount') {
                     errors["amount"] = "You need to have an event capacity!"
@@ -243,6 +277,7 @@ class NewEvent extends React.Component {
                 errors[ITEMS_TO_VALIDATE[i]] = ""
             }
         }
+        console.log(valid)
         if (!valid) {
             this.setState({ errors: errors });
             return false;
@@ -391,7 +426,7 @@ class NewEvent extends React.Component {
             duration = duration * 60 * 24;
         }
         return (
-            <Swiper keyboardShouldPersistTaps={'handled'} onMomentumScrollEnd={() => Keyboard.dismiss()} nextButton={<Text style={{fontSize: 25}}>&gt;</Text>} buttonWrapperStyle={{ alignItems: 'flex-end' }} prevButton={<Text style={{fontSize: 25}}>&lt;</Text>} style={styles.wrapper} showsButtons={true} loop={false} removeClippedSubviews={false} >
+            <Swiper keyboardShouldPersistTaps={'handled'} onMomentumScrollEnd={() => Keyboard.dismiss()} nextButton={<Text style={{ fontSize: 25 }}>&gt;</Text>} buttonWrapperStyle={{ alignItems: 'flex-end' }} prevButton={<Text style={{ fontSize: 25 }}>&lt;</Text>} style={styles.wrapper} showsButtons={true} loop={false} removeClippedSubviews={false} >
                 {NewEventArr.filter((item) => {
                     var args = {};
                     if (item["name"] === "Offers") {

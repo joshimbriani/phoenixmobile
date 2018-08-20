@@ -38,7 +38,7 @@
 	<key>NSCameraUsageDescription</key>
 	<string>Koota needs access to your camera so you can take a picture to use as your profile picture</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string></string>
+	<string>Koota needs access to your location to show you events in your area.</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
 	<string>Koota needs access to your photo library so you can set a profile picture</string>
 	<key>NSPhotoLibraryUsageDescription</key>
