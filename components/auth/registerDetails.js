@@ -88,50 +88,75 @@ class RegisterDetails extends React.Component {
                     <Dialog.Title>Licensing Agreement</Dialog.Title>
                     <ScrollView style={{height: 300}}>
                         <Dialog.Description>
-                            End-User License Agreement (EULA) of Koota{"\n"}{"\n"}
-
-                            This End-User License Agreement ("EULA") is a legal agreement between you and Koota, Inc.{"\n"}{"\n"}
-
-                            This EULA agreement governs your acquisition and use of our Koota software ("Software") directly from Koota, Inc. or indirectly through a Koota, Inc. authorized reseller or distributor (a "Reseller").{"\n"}{"\n"}
-
-                            Please read this EULA agreement carefully before completing the installation process and using the Koota software. It provides a license to use the Koota software and contains warranty information and liability disclaimers.{"\n"}{"\n"}
-
-                            If you register for a free trial of the Koota software, this EULA agreement will also govern that trial. By clicking "accept" or installing and/or using the Koota software, you are confirming your acceptance of the Software and agreeing to become bound by the terms of this EULA agreement.{"\n"}{"\n"}
-
-                            If you are entering into this EULA agreement on behalf of a company or other legal entity, you represent that you have the authority to bind such entity and its affiliates to these terms and conditions. If you do not have such authority or if you do not agree with the terms and conditions of this EULA agreement, do not install or use the Software, and you must not accept this EULA agreement.{"\n"}{"\n"}
-
-                            This EULA agreement shall apply only to the Software supplied by Koota, Inc. herewith regardless of whether other software is referred to or described herein. The terms also apply to any Koota, Inc. updates, supplements, Internet-based services, and support services for the Software, unless other terms accompany those items on delivery. If so, those terms apply.{"\n"}{"\n"}{"\n"}{"\n"}
-
+                            End-User License Agreement (EULA) of Koota, Inc.{"\n"}{"\n"}
+                            
+                            Please read this End-User License Agreement ("EULA") carefully. It is a legal document between you and Koota, Inc. (“Koota”) that explains your rights and obligations related to your use of the Koota’s software products provided to you directly by Koota or through a Koota authorized reseller or distributer (“Software”). By downloading or using the Software, or by otherwise indicating your acceptance of this EULA, you are agreeing to be bound by the terms of this EULA. If you enter into this EULA on behalf of a company or other legal entity, you represent that you have the requisite authority to bind such entity and its affiliates to this EULA. If you do not have such authority or if you do not agree with the terms and conditions of this EULA, do not install or use the Software.  If you do not or cannot agree to the terms of this EULA, please do not download or use this Software.
+                            Please review Koota’s Privacy Policy found at kootasocial.com to understand our practices and how we may use your personal data. In addition, your use of the Software is also governed by Koota’s Terms of Service, which may be found at kootasocial.com. By downloading or using the Software, you also agree to Koota’s Terms of Service and acknowledge that you have read Koota’s Privacy Policy.
+                            If you register for a free trial of the Software, this EULA will also govern that trial.{"\n"}{"\n"}
+                            
                             License Grant{"\n"}{"\n"}
-
-                            Koota, Inc. hereby grants you a personal, non-transferable, non-exclusive licence to use the Koota software on your devices in accordance with the terms of this EULA agreement.{"\n"}{"\n"}
-
-                            You are permitted to load the Koota software (for example a PC, laptop, mobile or tablet) under your control. You are responsible for ensuring your device meets the minimum requirements of the Koota software.{"\n"}{"\n"}
-
-                            You are not permitted to:{"\n"}{"\n"}
-
-
-                            - Edit, alter, modify, adapt, translate or otherwise change the whole or any part of the Software nor permit the whole or any part of the Software to be combined with or become incorporated in any other software, nor decompile, disassemble or reverse engineer the Software or attempt to do any such things{"\n"}{"\n"}
-                            - Reproduce, copy, distribute, resell or otherwise use the Software for any commercial purpose{"\n"}{"\n"}
-                            - Allow any third party to use the Software on behalf of or for the benefit of any third party{"\n"}{"\n"}
-                            - Use the Software in any way which breaches any applicable local, national or international law{"\n"}{"\n"}
-                            - use the Software for any purpose that Koota, Inc. considers is a breach of this EULA agreement{"\n"}{"\n"}{"\n"}
-
+                            
+                            Koota hereby grants you a personal, non-transferable, non-exclusive license to use the Software on your devices in accordance with the terms of this EULA.  You are permitted to load the Software on hardware (e.g. your personal PC, laptop, mobile or tablet) that is under your control; provided you are responsible for ensuring your device meets the minimum requirements of the Software.{"\n"}
+                            You may not do any of the following with respect to the Software or any of its parts: (a) use it commercially or for a promotional purpose; (b) use it on more than one device at a time; (c) copy, reproduce, distribute, display, or use it in a way that is not expressly authorized in this EULA; (d) sell, rent, lease, license, distribute, or otherwise transfer it; (e) reverse engineer, derive source code from, modify, adapt, translate, decompile, or disassemble it or make derivative works based on it; (f) remove, disable, circumvent, or modify any proprietary notice or label or security technology included in it; (g) create, develop, distribute, or use any unauthorized software programs; (h) use it to infringe or violate the rights of any third party, including but not limited to any intellectual property, publicity, or privacy rights; (i) use, export, or re-export it in violation of any applicable law or regulation; or (j) behave in a manner which is detrimental to the enjoyment of the Software by other users as intended by Koota in Koota’s sole judgment, including but not limited to the following – harassment, use of abusive or offensive language, sabotage, spamming, social engineering, or scamming.{"\n"}{"\n"}
+                            
                             Intellectual Property and Ownership{"\n"}{"\n"}
+                            Koota shall at all times retain ownership of the Software as originally downloaded by you and all subsequent downloads of the Software by you. The Software (and the copyright, and other intellectual property rights of whatever nature in the Software, including any modifications made thereto) are and shall remain the property of Koota. Koota reserves the right to grant licenses to use the Software to third parties.{"\n"}{"\n"}
 
-                            Koota, Inc. shall at all times retain ownership of the Software as originally downloaded by you and all subsequent downloads of the Software by you. The Software (and the copyright, and other intellectual property rights of whatever nature in the Software, including any modifications made thereto) are and shall remain the property of Koota, Inc..{"\n"}{"\n"}
+                            Disclaimer{"\n"}{"\n"}
 
-                            Koota, Inc. reserves the right to grant licences to use the Software to third parties.{"\n"}{"\n"}{"\n"}{"\n"}
+                            Except as expressly set forth above, Koota and its licensors provide Software “as is” and expressly disclaim all warranties, conditions or other terms, whether express, implied or statutory, including without limitation, warranties, conditions or other terms regarding merchantability, fitness for a particular purpose, design, condition, capacity, performance, title, and non-infringement. Koota does not warrant that the Software will operate uninterrupted or error-free or that all errors will be corrected. In addition, Koota does not warrant that the Software or any equipment, system or network on which the Software is used will be free of vulnerability to intrusion or attack.{"\n"}{"\n"}
 
+                            Limitations and Exclusions of Liability{"\n"}{"\n"}
+
+                            In no event will Koota or its licensors be liable for the following, regardless of the theory of liability or whether arising out of the use or inability to use the Software or otherwise, even if a party been advised of the possibility of such damages: (a) indirect, incidental, exemplary, special or consequential damages; (b) loss or corruption of data or interrupted or loss of business; or (c) loss of revenue, profits, goodwill or anticipated sales or savings. All liability of Koota, its affiliates, officers, directors, employees, agents, suppliers and licensors collectively, to You, whether based in warranty, contract, tort (including negligence), or otherwise, shall not exceed the license fees paid by you for the Software that gave rise to the claim. This limitation of liability for Software is cumulative and not per incident. Nothing in this EULA limits or excludes any liability that cannot be limited or excluded under applicable law.{"\n"}{"\n"}
+
+                            Indemnity {"\n"}{"\n"}
+
+                            You agree to indemnify, pay the defense costs of, and hold Koota, its licensors, its and their affiliates, and its and their employees, officers, directors, agents, contractors, and other representatives harmless from all claims, demands, actions, losses, liabilities, and expenses (including attorneys’ fees, costs, and expert witnesses’ fees) that arise from or in connection with (a) any claim that, if true, would constitute a breach by you of this EULA or negligence by you, or (b) any act or omission by you in using the Software. You agree to reimburse Koota on demand for any defense costs incurred by Koota and any payments made or loss suffered by Koota, whether in a court judgment or settlement.{"\n"}
+
+                            If you are prohibited by law from entering into the indemnification obligation above, then you assume, to the extent permitted by law, all liability for all claims, demands, actions, losses, liabilities, and expenses (including attorneys’ fees, costs and expert witnesses’ fees) that are the stated subject matter of the indemnification obligation above. {"\n"}{"\n"}
+
+                            User Generated Content{"\n"}{"\n"}
+                            
+                            Any content that you create, generate, or make available through the Software, shall be deemed as “User Generated Content”. You hereby grant to Koota a non-exclusive, fully-paid, royalty-free, irrevocable, perpetual, transferable, and sublicensable license to use, copy, modify, adapt, distribute, and publicly display your User Generated Content. You may not create, generate, or make available through the Software any User Generated Content to which you do not have the right to grant Koota such license. In addition, you may not create, generate, or make available through the Software any User Generated Content that is illegal or violates or infringes another’s rights, including intellectual property rights or privacy, publicity or moral rights. Koota reserves the right to take down any User Generated Content in its discretion.{"\n"}{"\n"}
+                            
                             Termination{"\n"}{"\n"}
+                            
+                            This EULA is effective from the date you first use the Software and shall continue until the earlier of (i) you indicate to Koota in writing that you wish to terminate (ii) you fail to comply with any terms and conditions of this EULA. Upon such termination, the licenses granted by this EULA will immediately terminate and you agree to stop all access and use of the Software. {"\n"}{"\n"}
+                            
+                            Amendments of this EULA{"\n"}{"\n"}
+                            
+                            At any time, Koota may issue an amended EULA, Terms of Service, or Privacy Policy in its discretion by posting the amended EULA, Terms of Service, or Privacy Policy on its website or by providing you with digital access to amended versions of any of these documents when you next access the Software. If you do not agree to any amendment to this EULA, the Terms of Service, or Privacy Policy, you may terminate this EULA and must stop using the Software. Your continued use of the Software will demonstrate your acceptance of the amended EULA and Terms of Service as well as your acknowledgement that you have read the amended Privacy Policy.{"\n"}{"\n"}
+                            
+                            No Assignment{"\n"}{"\n"}
+                            
+                            This EULA shall not be assigned by you without the prior written consent of Koota. Upon consensual assignment, this EULA and the rights and obligations hereunder shall be binding upon your successors and assigns.
+                            
+                            Partial Invalidity{"\n"}{"\n"}
+                            
+                            Nothing contained in this EULA shall be construed so as to require the commission of any act contrary to law, and whenever there is any conflict between any provision of the EULA and any statue, law, ordinance, order, or regulation, the latter shall prevail, but in such event, any provision of this EULA so affected shall be curtailed and limited to the extent necessary to bring it within the legal requirements. In the event that any portion of these terms and conditions shall be held to be invalid or unenforceable in a court of law or equality; (i) the parties agree to negotiate in good faith an acceptable alternative provision which reflects as closely as possible the intent of the enforceable provision; and (ii) the validity and legality of the remaining provisions of this EULA shall not in any way be affected or impaired thereby, and shall remain in full force and affect.
+                            
+                            No Waiver{"\n"}{"\n"}
+                            
+                            To the maximum extent permitted under applicable law, the failure of Koota to exercise any right or remedy which it may have hereunder or under the law shall not be construed as a waiver of any other right or remedy which it may have hereunder or under the law.
+                            
+                            U.S. Government Matters{"\n"}{"\n"}
+                            
+                            The Software is a “Commercial Item” (as defined at 48 C.F.R. §2.101), consisting of “Commercial Computer Software” and “Commercial Computer Software Documentation” (as used in 48 C.F.R. §12.212 or 48 C.F.R. §227.7202, as applicable). The Software is being licensed to U.S. Government end users only as Commercial Items and with only those rights as are granted to other licensees under this EULA. {"\n"}{"\n"}
 
-                            This EULA agreement is effective from the date you first use the Software and shall continue until terminated. You may terminate it at any time upon written notice to Koota, Inc..{"\n"}{"\n"}
-
-                            It will also terminate immediately if you fail to comply with any term of this EULA agreement. Upon such termination, the licenses granted by this EULA agreement will immediately terminate and you agree to stop all access and use of the Software. The provisions that by their nature continue and survive will survive any termination of this EULA agreement.{"\n"}{"\n"}{"\n"}{"\n"}
-
+                            You represent and warrant to Koota that you are not located in a country that is subject to a U.S. Government embargo or that has been designated by the U.S. Government as a “terrorist supporting” country, and that you are not listed on any U.S. Government list of prohibited or restricted parties.{"\n"}{"\n"}
+                            
                             Governing Law{"\n"}{"\n"}
-
-                            This EULA agreement, and any dispute arising out of or in connection with this EULA agreement, shall be governed by and construed in accordance with the laws of the United States of America.{"\n"}{"\n"}
+                            
+                            This EULA shall be governed by and construed according to the laws of the State of North Carolina, without regard to its conflicts of law principles.{"\n"}{"\n"}
+                            
+                            Arbitration{"\n"}{"\n"}
+                            
+                            All disputes arising from this EULA, or from any other agreement that exists between the parties to this EULA, shall be referred for binding arbitration under the rules of the American Arbitration Association, with such arbitration to be held in Wake County, North Carolina, USA. In the event that arbitration is found not to apply to the parties or to a particular claim or dispute under this EULA, you  hereby irrevocably consent to the jurisdiction of the state and federal courts of the State of North Carolina, to accept service of all summons, complaints, and other process of such court(s), and that such court(s) is a convenient forum for resolution of disputes arising out of or related to this EULA.{"\n"}{"\n"}
+                            
+                            Miscellaneous{"\n"}{"\n"}
+                            
+                            This EULA contains the entire understanding between the parties and supersedes all prior understandings of the parties hereto relating to the subject matter hereof. This EULA may not be modified, nor may any provision be waived, except by an instrument in writing, signed by both parties. Paragraph headings used herein are for convenience only and shall not be used in any way to interpret the provisions of this EULA. {"\n"}{"\n"}
                         </Dialog.Description>
                     </ScrollView>
                     <Dialog.Button label="Got it!" onPress={() => this.setState({ showEULA: false })} />

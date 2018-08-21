@@ -61,7 +61,6 @@ class Topic extends React.Component {
     }
 
     async componentDidMount() {
-        console.log("Here")
         this.props.userActions.loadUser(this.props.token)
 
         this.props.colorActions.changeColor(this.props.navigation.state.params.color);

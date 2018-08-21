@@ -1,6 +1,6 @@
 import React from 'react';
 import { Container, Fab, Header, Item, Input, Button, Text } from 'native-base';
-import { Platform, RefreshControl, TouchableHighlight, View, PermissionsAndroid, AsyncStorage } from 'react-native';
+import { Platform, RefreshControl, TouchableHighlight, View, PermissionsAndroid, AsyncStorage, ActivityIndicator, FlatList } from 'react-native';
 import GridView from 'react-native-super-grid';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -11,6 +11,7 @@ import { getURLForPlatform } from '../utils/networkUtils';
 import { styles } from '../../assets/styles';
 import firebase from 'react-native-firebase';
 import Icon from 'react-native-vector-icons/Ionicons';
+import { EventDisplay } from './eventDisplay';
 
 import { StackActions, NavigationActions } from 'react-navigation';
 import { generateUserToString } from '../utils/textUtils';
@@ -23,19 +24,22 @@ class Home extends React.Component {
             searchQuery: "",
             refreshing: false,
             GPSPermission: false,
-            notificationsAllowed: false
+            notificationsAllowed: false,
+            loading: true,
+            events: []
         };
 
         this.changeValue = this.changeValue.bind(this);
         this.checkUserPermissions = this.checkUserPermissions.bind(this);
         this.reactToNotification = this.reactToNotification.bind(this);
-
+        this.userInterestedInEvent = this.userInterestedInEvent.bind(this);
+        this._onRefresh = this._onRefresh.bind(this);
     }
 
     async componentDidMount() {
         await this.props.userActions.loadUser(this.props.token);
         this.props.colorActions.resetColor();
-        
+
         await this.checkUserPermissions();
 
         if (this.props.FCMToken !== this.props.user.FCMToken) {
@@ -157,6 +161,19 @@ class Home extends React.Component {
             firebase.notifications().displayNotification(notification);
         })
 
+        this.setState({ loading: true })
+        fetch(getURLForPlatform() + 'api/v1/events/', {
+            headers: {
+                Authorization: "Token " + this.props.token
+            },
+        }).then(response => response.json())
+            .then(responseJSON => {
+                if (responseJSON["events"]) {
+                    this.setState({ events: responseJSON["events"], loading: false })
+                }
+
+            })
+
     }
 
     componentWillUnmount() {
@@ -199,7 +216,7 @@ class Home extends React.Component {
                         this.props.navigation.dispatch(resetAction);
                     })
             } else if (group) {
-                
+
                 const resetAction = StackActions.reset({
                     index: 0,
                     key: null,
@@ -278,11 +295,38 @@ class Home extends React.Component {
 
     _onRefresh() {
         this.props.userActions.loadUser(this.props.token);
+        fetch(getURLForPlatform() + 'api/v1/events/', {
+            headers: {
+                Authorization: "Token " + this.props.token
+            },
+        }).then(response => response.json())
+            .then(responseJSON => {
+                if (responseJSON["events"]) {
+                    this.setState({ events: responseJSON["events"], loading: false })
+                }
+
+            })
+    }
+
+    _keyExtractor = (item, index) => item.id;
+
+    _renderItem = ({ item }) => (
+        <EventDisplay index={item.id} event={item} interested={this.userInterestedInEvent(item.id)} showButtons={true} username={this.props.user.username} token={this.props.token} goToEvent={() => this.props.navigation.navigate('EventDetailWrapper', { event: item.title, id: item.id, color: item.color })} />
+    );
+
+    userInterestedInEvent(eventID) {
+        for (var i = 0; i < this.props.user.interestedIn.length; i++) {
+            if (eventID === this.props.user.interestedIn[i].id) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     render() {
         return (
-            <Container>
+            <Container style={{ backgroundColor: '#D3D3D3' }}>
                 <Header searchBar rounded>
                     <Item>
                         <PlatformIonicon name="search" size={30} style={{ marginLeft: 5 }} />
@@ -293,7 +337,7 @@ class Home extends React.Component {
                             onSubmitEditing={() => {
                                 if (this.state.searchQuery.length > 0) {
                                     const query = this.state.searchQuery;
-                                    this.setState({searchQuery: ""});
+                                    this.setState({ searchQuery: "" });
                                     this.props.navigation.navigate('Search', { query: query });
                                 }
                             }} />
@@ -301,7 +345,7 @@ class Home extends React.Component {
                     <Button transparent onPress={() => {
                         if (this.state.searchQuery.length > 0) {
                             const query = this.state.searchQuery;
-                            this.setState({searchQuery: ""});
+                            this.setState({ searchQuery: "" });
                             this.props.navigation.navigate('Search', { query: query })
                         }
                     }
@@ -309,38 +353,25 @@ class Home extends React.Component {
                         <Text>Search</Text>
                     </Button>
                 </Header>
-                {this.props.user && this.props.user.followingTopics && this.props.user.followingTopics.length > 0 && <GridView
-                    contentContainerStyle={{ paddingBottom: 10, paddingTop: 10 }}
-                    style={styles.gridView}
-                    itemWidth={150}
-                    enableEmptySections
-                    keyboardShouldPersistTaps={'handled'}
-                    //items={[{ id: -1, name: "IDK", color: "0097e6", icon: "help" }].concat(this.props.user.followingTopics ? this.props.user['followingTopics'] : [])}
-                    items={this.props.user.followingTopics ? this.props.user['followingTopics'] : []}
-                    refreshControl={
-                        <RefreshControl
-                            refreshing={this.state.refreshing}
-                            onRefresh={this._onRefresh.bind(this)}
-                        />
-                    }
-                    renderItem={item => {
-                        return (
-                            <TouchableHighlight onPress={() => { this.routeToTopic(item) }}>
-                                <View
-                                    style={[styles.itemBox, { backgroundColor: '#' + item.color }]}
-                                >
-                                    <PlatformIonicon
-                                        name={item.icon || 'aperture'}
-                                        size={50}
-                                        style={{ color: "white" }}
-                                    />
-                                    <Text style={styles.itemText}>{item.name}</Text>
-                                </View>
-                            </TouchableHighlight>
-                        )
-                    }} />}
-                {this.props.user && this.props.user.followingTopics && this.props.user.followingTopics.length <= 0 && <View style={{flex: 1, alignItems: 'center', justifyContent: 'center', padding: 10}}>
-                    <Text>You aren't following any topics! Search for what you're interested in and follow those topics!</Text>
+                {this.state.loading && <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+                    <ActivityIndicator size="large" color="#0000ff" />
+                </View>}
+                {!this.state.loading && this.state.events.length > 0 &&
+                    <FlatList
+                        data={this.state.events}
+                        extraData={this.state}
+                        keyExtractor={this._keyExtractor}
+                        renderItem={this._renderItem}
+                        refreshControl={
+                            <RefreshControl
+                              refreshing={this.state.loading}
+                              onRefresh={this._onRefresh}
+                            />
+                          }
+                  
+                    />}
+                {!this.state.loading && this.state.events.length <= 0 && <View>
+                    <Text>No Events</Text>
                 </View>}
                 <Fab
                     active={this.state.active}
@@ -383,9 +414,9 @@ export default connect(
 function makeid() {
     var text = "";
     var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-  
+
     for (var i = 0; i < 5; i++)
-      text += possible.charAt(Math.floor(Math.random() * possible.length));
-  
+        text += possible.charAt(Math.floor(Math.random() * possible.length));
+
     return text;
-  }
+}
