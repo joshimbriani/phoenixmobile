@@ -1,4 +1,4 @@
-import { SAVE_USER_OBJECT, PURGE_USER_OBJECT } from '../actions/actionTypes';
+import { SAVE_USER_OBJECT, PURGE_USER_OBJECT, SAVE_USER_FILTER, PURGE_USER_FILTER } from '../actions/actionTypes';
 import { getURLForPlatform } from '../../components/utils/networkUtils';
 import { purgeUserToken } from './token';
 
@@ -40,5 +40,18 @@ export function logout(token) {
 export function purgeUserObject() {
     return {
         type: PURGE_USER_OBJECT
+    }
+}
+
+export function saveUserFilter(filter) {
+    return {
+        type: SAVE_USER_FILTER,
+        filter: filter
+    }
+}
+
+export function purgeUserFilter() {
+    return {
+        type: PURGE_USER_FILTER
     }
 }

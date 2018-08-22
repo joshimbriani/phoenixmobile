@@ -17,6 +17,7 @@
     "preset": "jest-expo"
   },
   "dependencies": {
+    "@ptomasroos/react-native-multi-slider": "^1.0.0",
     "buffer": "^5.2.0",
     "color-scheme": "^1.0.0",
     "crypto-js": "^3.1.9-1",
@@ -48,6 +49,7 @@
     "react-native-settings-list": "^1.8.0",
     "react-native-super-grid": "^1.1.0",
     "react-native-swiper": "^1.5.13",
+    "react-native-switch-selector": "^1.1.8",
     "react-native-tab-view": "0.0.74",
     "react-native-vector-icons": "^5.0.0",
     "react-navigation": "^2.11.2",

@@ -277,7 +277,7 @@ class NewEvent extends React.Component {
                 errors[ITEMS_TO_VALIDATE[i]] = ""
             }
         }
-        console.log(valid)
+        
         if (!valid) {
             this.setState({ errors: errors });
             return false;

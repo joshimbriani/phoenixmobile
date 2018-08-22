@@ -31,6 +31,8 @@ import NewGroup from '../app/newGroup';
 import AddFriends from '../profile/addFriends';
 import AddToGroup from '../app/addToGroup';
 import InviteUsers from '../app/newEvent/inviteUsers';
+import FilterHome from '../app/filter/filterHome';
+import FilterTopics from '../app/filter/filterTopics';
 import { styles } from '../../assets/styles';
 
 export const HomeStack = createStackNavigator({
@@ -83,6 +85,14 @@ export const HomeStack = createStackNavigator({
     InviteUsers: {
         path: '/newevent/inviteUsers',
         screen: InviteUsers
+    },
+    FilterHome: {
+        path: '/filter',
+        screen: FilterHome
+    },
+    FilterTopics: {
+        path: '/filter/topics',
+        screen: FilterTopics
     }
 }, {
     animationEnabled: false,

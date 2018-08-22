@@ -26,7 +26,26 @@ class Home extends React.Component {
             GPSPermission: false,
             notificationsAllowed: false,
             loading: true,
-            events: []
+            events: [],
+            filters: {
+                "privacy": "all",
+                "restrictToGender": "all",
+                "offer": "all",
+                "datetime": {
+                    "start": -1,
+                    "end": -1
+                },
+                duration: {
+                    moreThan: 0,
+                    lessThan: 300
+                },
+                capacity: 1,
+                topics: {
+                    type: 'all',
+                    topics: []
+                }
+                
+            }
         };
 
         this.changeValue = this.changeValue.bind(this);
@@ -34,6 +53,9 @@ class Home extends React.Component {
         this.reactToNotification = this.reactToNotification.bind(this);
         this.userInterestedInEvent = this.userInterestedInEvent.bind(this);
         this._onRefresh = this._onRefresh.bind(this);
+        this.setFilter = this.setFilter.bind(this);
+
+        this.props.navigation.setParams({ setFilter: this.setFilter });
     }
 
     async componentDidMount() {
@@ -176,6 +198,13 @@ class Home extends React.Component {
 
     }
 
+    setFilter(key, value) {
+        var filters = Object.assign({}, this.state.filters);
+        filters[key] = value; 
+        this.setState({filters: filters});
+        // datetime start or end can come back with a -1. Need to handle it. Start = current date, end = no end range
+    }
+
     componentWillUnmount() {
         //this.notificationDisplayedListener();
         //this.notificationListener();
@@ -274,10 +303,23 @@ class Home extends React.Component {
             size={35}
             onPress={() => navigation.openDrawer()}
             name="md-menu"
+        />,
+        headerRight: <PlatformIonicon 
+            name="funnel" 
+            size={35} 
+            style={{ marginRight: 10 }} 
+            onPress={() => navigation.navigate('FilterHome', {setFilter: navigation.state.params.setFilter})}
         />
+
     }) : ({ navigation }) => ({
         title: 'Home',
-        headerStyle: { paddingTop: -22, }
+        headerStyle: { paddingTop: -22, },
+        headerRight: <PlatformIonicon 
+            name="funnel" 
+            size={35} 
+            style={{ marginRight: 10 }} 
+            onPress={() => navigation.navigate('FilterHome', {setFilter: navigation.state.params.setFilter})}
+        />
     });
 
     changeValue(text) {
