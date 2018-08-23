@@ -46,6 +46,9 @@ class EventDetailDetails extends React.Component {
                                     return <OfferContainer addable={false} offer={offer} index={index} />
                                 })}
                             </View>}
+                            {/*this.props.event.privacy === "group" && <View>
+                                <Text style={styles.eventDetailSectionHeader}>Group</Text>
+                            </View>*/}
                         </View>
                     </ScrollView>
                 </View>

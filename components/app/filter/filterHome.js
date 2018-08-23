@@ -112,6 +112,7 @@ class FilterHome extends React.Component {
     setFiltersAsDefault() {
         console.log("Setting filters as default")
         this.props.userActions.saveUserFilter({datetime: this.state.datetime, duration: this.state.duration, capacity: this.state.capacity, topics: this.state.topics, privacy: this.state.privacy, offer: this.state.offer, restrictToGender: this.state.restrictToGender})
+        this.props.navigation.state.params.loadEvents();
         this.props.navigation.goBack();
     }
 
@@ -306,7 +307,7 @@ class FilterHome extends React.Component {
                 <View style={{ backgroundColor: 'white', padding: 5 }}>
                     <View style={{ flexDirection: 'row', justifyContent: 'space-between', backgroundColor: 'white' }}>
                         <Button
-                            onPress={() => this.props.navigation.goBack()}
+                            onPress={() => {this.props.navigation.goBack(); this.props.navigation.state.params.loadEvents();}}
                             title="Search With Filters"
                             color="#00ABE6"
                             accessibilityLabel="Search with your currently defined filters"

@@ -45,9 +45,9 @@ class EventDetailWrapper extends React.Component {
                 <MenuOption onSelect={navigation.state.params.markUserAsGoing}>
                     <Text>{userInList(navigation.state.params.userID, (navigation.state.params.usersGoing || [])) ? "I Can't Go" : "I'm Going!"}</Text>
                 </MenuOption>
-                <MenuOption onSelect={navigation.state.params.markUserAsInterested}>
+                {!userInList(navigation.state.params.userID, (navigation.state.params.usersGoing || [])) && <MenuOption onSelect={navigation.state.params.markUserAsInterested}>
                     <Text>{userInList(navigation.state.params.userID, (navigation.state.params.usersInterested || [])) ? "Nahh, Not Interested Anymore" : "I'm Considering It!"}</Text>
-                </MenuOption>
+                </MenuOption>}
                 {/*<MenuOption onSelect={navigation.state.params.loadEvent}>
                     <Text>Refresh</Text>
                 </MenuOption>*/}

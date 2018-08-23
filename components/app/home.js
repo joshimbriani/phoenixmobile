@@ -28,12 +28,13 @@ class Home extends React.Component {
             loading: true,
             events: [],
             filters: {
-                "privacy": "all",
-                "restrictToGender": "all",
-                "offer": "all",
-                "datetime": {
-                    "start": -1,
-                    "end": -1
+                changed: false,
+                privacy: "all",
+                restrictToGender: "all",
+                offer: "all",
+                datetime: {
+                    start: -1,
+                    end: -1
                 },
                 duration: {
                     moreThan: 0,
@@ -44,7 +45,6 @@ class Home extends React.Component {
                     type: 'all',
                     topics: []
                 }
-                
             }
         };
 
@@ -54,8 +54,9 @@ class Home extends React.Component {
         this.userInterestedInEvent = this.userInterestedInEvent.bind(this);
         this._onRefresh = this._onRefresh.bind(this);
         this.setFilter = this.setFilter.bind(this);
+        this.loadEvents = this.loadEvents.bind(this);
 
-        this.props.navigation.setParams({ setFilter: this.setFilter });
+        this.props.navigation.setParams({ setFilter: this.setFilter, loadEvents: this.loadEvents });
     }
 
     async componentDidMount() {
@@ -184,24 +185,15 @@ class Home extends React.Component {
         })
 
         this.setState({ loading: true })
-        fetch(getURLForPlatform() + 'api/v1/events/', {
-            headers: {
-                Authorization: "Token " + this.props.token
-            },
-        }).then(response => response.json())
-            .then(responseJSON => {
-                if (responseJSON["events"]) {
-                    this.setState({ events: responseJSON["events"], loading: false })
-                }
-
-            })
+        this.loadEvents();
 
     }
 
     setFilter(key, value) {
         var filters = Object.assign({}, this.state.filters);
-        filters[key] = value; 
-        this.setState({filters: filters});
+        filters[key] = value;
+        filters["changed"] = true;
+        this.setState({ filters: filters });
         // datetime start or end can come back with a -1. Need to handle it. Start = current date, end = no end range
     }
 
@@ -304,21 +296,21 @@ class Home extends React.Component {
             onPress={() => navigation.openDrawer()}
             name="md-menu"
         />,
-        headerRight: <PlatformIonicon 
-            name="funnel" 
-            size={35} 
-            style={{ marginRight: 10 }} 
-            onPress={() => navigation.navigate('FilterHome', {setFilter: navigation.state.params.setFilter})}
+        headerRight: <PlatformIonicon
+            name="funnel"
+            size={35}
+            style={{ marginRight: 10 }}
+            onPress={() => navigation.navigate('FilterHome', { setFilter: navigation.state.params.setFilter, loadEvents: navigation.state.params.loadEvents })}
         />
 
     }) : ({ navigation }) => ({
         title: 'Home',
         headerStyle: { paddingTop: -22, },
-        headerRight: <PlatformIonicon 
-            name="funnel" 
-            size={35} 
-            style={{ marginRight: 10 }} 
-            onPress={() => navigation.navigate('FilterHome', {setFilter: navigation.state.params.setFilter})}
+        headerRight: <PlatformIonicon
+            name="funnel"
+            size={35}
+            style={{ marginRight: 10 }}
+            onPress={() => navigation.navigate('FilterHome', { setFilter: navigation.state.params.setFilter, loadEvents: navigation.state.params.loadEvents })}
         />
     });
 
@@ -337,17 +329,53 @@ class Home extends React.Component {
 
     _onRefresh() {
         this.props.userActions.loadUser(this.props.token);
-        fetch(getURLForPlatform() + 'api/v1/events/', {
+        this.loadEvents();
+    }
+
+    loadEvents() {
+        var filterProps = {};
+        if (this.props.filter) {
+            Object.assign(filterProps, this.props.filter);
+        }
+
+        if (this.state.filters.changed === true) {
+            Object.assign(filterProps, this.state.filters);
+        }
+        const filterString = this.generateFilterURLString(filterProps);
+
+        fetch(getURLForPlatform() + 'api/v1/events/' + filterString, {
             headers: {
                 Authorization: "Token " + this.props.token
             },
         }).then(response => response.json())
             .then(responseJSON => {
                 if (responseJSON["events"]) {
-                    this.setState({ events: responseJSON["events"], loading: false })
+                    var defaultFilter = Object.assign({}, this.props.filter);
+                    defaultFilter["changed"] = false;
+                    this.setState({ events: responseJSON["events"], loading: false, filters: defaultFilter })
                 }
 
             })
+    }
+
+    generateFilterURLString(filterPropsObject) {
+        var filterString = "?";
+        filterString += ("privacy=" + filterPropsObject.privacy)
+        filterString += ("&restrictToGender=" + (filterPropsObject.restrictToGender === 'all' ? 'false' : 'true'))
+        filterString += ("&offer=" + filterPropsObject.offer)
+        filterString += ("&datetimegt=" + (filterPropsObject.datetime.start === -1 ? 'now' : (typeof filterPropsObject.datetime.start === 'string' ? filterPropsObject.datetime.start : filterPropsObject.datetime.start.toISOString())))
+        if (filterPropsObject.datetime.end !== -1) {
+            filterString += ("&datetimelt=" + (typeof filterPropsObject.datetime.end === 'string' ? filterPropsObject.datetime.end : filterPropsObject.datetime.end.toISOString()))
+        }
+        filterString += ("&durationgt=" + (filterPropsObject.duration.moreThan === 0 ? 'all' : filterPropsObject.duration.moreThan))
+        filterString += ("&durationlt=" + (filterPropsObject.duration.lessThan === 300 ? 'all' : filterPropsObject.duration.lessThan))
+        filterString += ("&capacity=" + filterPropsObject.capacity)
+        filterString += ("&topicsType=" + filterPropsObject.topics.type)
+        if (filterPropsObject.topics.type === 'custom') {
+            filterString += ("&topics=" + filterPropsObject.topics.topics.map(topic => topic.id).join(","))
+        }
+
+        return filterString;
     }
 
     _keyExtractor = (item, index) => item.id;
@@ -406,14 +434,21 @@ class Home extends React.Component {
                         renderItem={this._renderItem}
                         refreshControl={
                             <RefreshControl
-                              refreshing={this.state.loading}
-                              onRefresh={this._onRefresh}
+                                refreshing={this.state.loading}
+                                onRefresh={this._onRefresh}
                             />
-                          }
-                  
+                        }
+
                     />}
-                {!this.state.loading && this.state.events.length <= 0 && <View>
-                    <Text>No Events</Text>
+                {!this.state.loading && this.state.events.length <= 0 && <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+                    <View style={{ alignItems: 'center', justifyContent: 'center', alignSelf: 'center' }}>
+                        <Text>No Events Found. Try Reloading!</Text>
+                        <View style={{alignItems: 'center', alignSelf: 'center', marginTop: 15}}>
+                            <Button onPress={() => { this.setState({ loading: true }); this.loadEvents() }}>
+                                <Text>Reload Events</Text>
+                            </Button>
+                        </View>
+                    </View>
                 </View>}
                 <Fab
                     active={this.state.active}
@@ -437,7 +472,8 @@ function mapStateToProps(state) {
         color: state.backgroundColorReducer.color,
         token: state.tokenReducer.token,
         FCMToken: state.tokenReducer.FCMToken,
-        user: state.userReducer.user
+        user: state.userReducer.user,
+        filter: state.userReducer.filter
     };
 }
 

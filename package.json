@@ -56,7 +56,7 @@
     "react-navigation-backhandler": "^1.1.1",
     "react-redux": "^5.0.6",
     "redux": "^3.7.2",
-    "redux-persist": "^5.5.0",
+    "redux-persist": "^5.10.0",
     "redux-persist-filesystem-storage": "github:davidliu/redux-persist-filesystem-storage",
     "redux-thunk": "^2.2.0",
     "rn-fetch-blob": "^0.10.12"
