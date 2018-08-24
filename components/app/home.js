@@ -230,8 +230,8 @@ class Home extends React.Component {
                             key: this.props.navigation.dangerouslyGetParent().state.key,
                             actions: [
                                 NavigationActions.navigate({ routeName: 'Home' }),
-                                NavigationActions.navigate({ routeName: 'EventDetailWrapper', params: { event: responseObj["title"], id: responseObj["id"], goToMessages: true } }),
-                                NavigationActions.navigate({ routeName: 'ConversationView', params: { newConvo: false, eventName: responseObj["title"], thread: thread, color: '#ffffff', userString: generateUserToString(this.props.user.id, thread.users, responseObj["userBy"]["username"]) } })
+                                StackActions.push({ routeName: 'EventDetailWrapper', params: { event: responseObj["title"], id: responseObj["id"], goToMessages: true } }),
+                                StackActions.push({ routeName: 'ConversationView', params: { newConvo: false, eventName: responseObj["title"], thread: thread, color: '#ffffff', userString: generateUserToString(this.props.user.id, thread.users, responseObj["userBy"]["username"]) } })
                             ]
                         })
                         this.props.navigation.dispatch(resetAction);
@@ -248,12 +248,46 @@ class Home extends React.Component {
                 this.props.navigation.dispatch(resetAction);
             }
         } else if (type === "s") {
+            // Suggested Event
+            const event = data["event"];
+            const resetAction = StackActions.reset({
+                index: 1,
+                key: this.props.navigation.dangerouslyGetParent().state.key,
+                actions: [
+                    NavigationActions.navigate({ routeName: 'Home' }),
+                    StackActions.push({ routeName: 'EventDetailWrapper', params: { id: event } }),
+                ]
+            })
+            this.props.navigation.dispatch(resetAction);
 
         } else if (type === "o") {
+            // Promoted Offer
 
         } else if (type === "y") {
+            // Updates on your events
+            const event = data["event"];
+            const resetAction = StackActions.reset({
+                index: 1,
+                key: this.props.navigation.dangerouslyGetParent().state.key,
+                actions: [
+                    NavigationActions.navigate({ routeName: 'Home' }),
+                    StackActions.push({ routeName: 'EventDetailWrapper', params: { id: event } }),
+                ]
+            })
+            this.props.navigation.dispatch(resetAction);
 
         } else if (type === "e") {
+            // Updates on events you're going to/interested in
+            const event = data["event"];
+            const resetAction = StackActions.reset({
+                index: 1,
+                key: this.props.navigation.dangerouslyGetParent().state.key,
+                actions: [
+                    NavigationActions.navigate({ routeName: 'Home' }),
+                    StackActions.push({ routeName: 'EventDetailWrapper', params: { id: event } }),
+                ]
+            })
+            this.props.navigation.dispatch(resetAction);
 
         }
     }

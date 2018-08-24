@@ -106,11 +106,11 @@ class NewMessage extends React.Component {
             // Want to have all threads passed to this object, check if thread exists for event and user, if so redirect to that thread
             // Otherwise create a new one
             if (threadExists) {
-                navigation.navigate('ConversationView', { backKey: this.props.navigation.state.key, newConvo: false, userString: generateUserToString(this.props.user.id, this.state.toUsers, this.props.creator), eventName: this.props.eventName, thread: thread })
+                navigation.navigate('ConversationView', { backKey: this.props.navigation.state.key, newConvo: false, userString: generateUserToString(this.props.user.id, this.state.toUsers, this.props.creator), eventName: this.props.navigation.state.params.eventName, thread: thread })
             } else {
                 var usersList = this.state.toUsers.map(user => user.id);
                 usersList.push(this.props.user.id)
-                navigation.navigate('ConversationView', { backKey: this.props.navigation.state.key, newConvo: true, userString: generateUserToString(this.props.user.id, this.state.toUsers, this.props.creator), eventName: this.props.eventName, toUsers: usersList, eventID: this.props.navigation.state.params.eventID })
+                navigation.navigate('ConversationView', { backKey: this.props.navigation.state.key, newConvo: true, userString: generateUserToString(this.props.user.id, this.state.toUsers, this.props.creator), eventName: this.props.navigation.state.params.eventName, toUsers: usersList, eventID: this.props.navigation.state.params.eventID })
             }
         } 
     }
