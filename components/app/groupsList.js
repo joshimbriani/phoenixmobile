@@ -29,6 +29,7 @@ class GroupsList extends React.Component {
             refreshing: true
         }
 
+        this.loadGroups = this.loadGroups.bind(this);
     }
 
     componentDidMount() {
@@ -41,7 +42,7 @@ class GroupsList extends React.Component {
 
     _renderItem = ({ item, index }) => {
         return (
-            <TouchableOpacity onPress={() => this.props.navigation.navigate('GroupWrapper', { groupID: item.id })}>
+            <TouchableOpacity onPress={() => this.props.navigation.navigate('GroupWrapper', { groupID: item.id, loadGroups: this.loadGroups })}>
                 <View key={index} style={{ flexDirection: 'row', height: 75, borderBottomWidth: 1 }}>
                     <View style={{ justifyContent: 'center', paddingRight: 10, paddingLeft: 10 }}>
                         <View style={{ backgroundColor: item.color, height: 50, aspectRatio: 1, borderRadius: 50 }}></View>

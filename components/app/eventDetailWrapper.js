@@ -1,5 +1,5 @@
 import React from 'react';
-import { DeviceEventEmitter, Text, Dimensions, View, ToastAndroid } from 'react-native';
+import { DeviceEventEmitter, Text, Dimensions, View, ToastAndroid, Alert } from 'react-native';
 import { connect } from 'react-redux';
 import PlatformIonicon from '../utils/platformIonicon';
 import { TabViewAnimated, TabBar } from 'react-native-tab-view';
@@ -17,7 +17,7 @@ import {
     MenuTrigger,
     MenuOptions,
     MenuOption
-  } from 'react-native-popup-menu';
+} from 'react-native-popup-menu';
 
 // TODO: Do I need to pass navigation to all the objects?
 
@@ -31,9 +31,9 @@ class EventDetailWrapper extends React.Component {
     static navigationOptions = ({ navigation }) => ({
         title: navigation.state.params.event,
         headerStyle: { backgroundColor: navigation.state.params.color },
-        headerRight: <Menu style={{paddingRight: 20}}>
+        headerRight: <Menu style={{ paddingRight: 20 }}>
             <MenuTrigger>
-                <View style={{paddingLeft: 20, paddingRight: 20, paddingTop: 10, paddingBottom: 10}}>
+                <View style={{ paddingLeft: 20, paddingRight: 20, paddingTop: 10, paddingBottom: 10 }}>
                     <PlatformIonicon
                         name={'more'}
                         size={30}
@@ -42,10 +42,10 @@ class EventDetailWrapper extends React.Component {
                 </View>
             </MenuTrigger>
             <MenuOptions optionsContainerStyle={{ marginTop: 30 }}>
-                <MenuOption onSelect={navigation.state.params.markUserAsGoing}>
+                {navigation.state.params.userID !== navigation.state.params.eventCreator && <MenuOption onSelect={navigation.state.params.markUserAsGoing}>
                     <Text>{userInList(navigation.state.params.userID, (navigation.state.params.usersGoing || [])) ? "I Can't Go" : "I'm Going!"}</Text>
-                </MenuOption>
-                {!userInList(navigation.state.params.userID, (navigation.state.params.usersGoing || [])) && <MenuOption onSelect={navigation.state.params.markUserAsInterested}>
+                </MenuOption>}
+                {navigation.state.params.userID !== navigation.state.params.eventCreator && !userInList(navigation.state.params.userID, (navigation.state.params.usersGoing || [])) && <MenuOption onSelect={navigation.state.params.markUserAsInterested}>
                     <Text>{userInList(navigation.state.params.userID, (navigation.state.params.usersInterested || [])) ? "Nahh, Not Interested Anymore" : "I'm Considering It!"}</Text>
                 </MenuOption>}
                 {/*<MenuOption onSelect={navigation.state.params.loadEvent}>
@@ -54,6 +54,9 @@ class EventDetailWrapper extends React.Component {
                 <MenuOption onSelect={navigation.state.params.reportEvent}>
                     <Text>Report Inappropriate Content</Text>
                 </MenuOption>
+                {navigation.state.params.userID === navigation.state.params.eventCreator && <MenuOption onSelect={navigation.state.params.deleteEvent}>
+                    <Text>Delete Event</Text>
+                </MenuOption>}
             </MenuOptions>
         </Menu>
     });
@@ -64,7 +67,7 @@ class EventDetailWrapper extends React.Component {
             { key: 'details', title: 'The Deets' },
             { key: 'place', title: 'Where' },
             { key: 'people', title: 'Who' },
-            { key: 'messages', title: 'Messages'}
+            { key: 'messages', title: 'Messages' }
         ];
 
         this.state = {
@@ -78,42 +81,61 @@ class EventDetailWrapper extends React.Component {
         this.markUserAsGoing = this.markUserAsGoing.bind(this);
         this.markUserAsInterested = this.markUserAsInterested.bind(this);
         this.reportEvent = this.reportEvent.bind(this);
-    }  
+        this.deleteEvent = this.deleteEvent.bind(this);
+        this.showDeleteAlert = this.showDeleteAlert.bind(this);
+        this.redeemOffer = this.redeemOffer.bind(this);
+    }
 
     _handleIndexChange = index => this.setState({ index });
 
-    _renderHeader = props => <TabBar {...props} labelStyle={{fontSize: 10}} style={[styles.eventTabBar, { backgroundColor: this.props.navigation.state.params.color }]} />;
+    _renderHeader = props => <TabBar {...props} labelStyle={{ fontSize: 10 }} style={[styles.eventTabBar, { backgroundColor: this.props.navigation.state.params.color }]} />;
 
     _renderScene = ({ route }) => {
         switch (route.key) {
             case 'details':
-                return <EventDetailDetails event={this.state.eventData} color={this.props.navigation.state.params.color} navigation={this.props.navigation} />;
+                return <EventDetailDetails event={this.state.eventData} color={this.props.navigation.state.params.color} navigation={this.props.navigation} redeemOffer={this.redeemOffer} />;
             case 'place':
                 return <EventDetailPlace event={this.state.eventData} color={this.props.navigation.state.params.color} navigation={this.props.navigation} />;
             case 'people':
                 return <EventDetailPeople event={this.state.eventData} color={this.props.navigation.state.params.color} navigation={this.props.navigation} />
             case 'messages':
-                return <EventDetailMessages 
-                            event={this.state.eventData}  
-                            color={this.props.navigation.state.params.color} 
-                            navigation={this.props.navigation} 
-                            userInvolved={userInList(this.props.user.id, (this.state.eventData.interested || []))} 
-                            userGoing={userInList(this.props.user.id, (this.state.eventData.going || []))} />
+                return <EventDetailMessages
+                    event={this.state.eventData}
+                    color={this.props.navigation.state.params.color}
+                    navigation={this.props.navigation}
+                    userInvolved={userInList(this.props.user.id, (this.state.eventData.interested || []))}
+                    userGoing={userInList(this.props.user.id, (this.state.eventData.going || []))} />
             default:
                 return null;
         }
     }
 
+    redeemOffer() {
+        fetch(getURLForPlatform() + 'api/v1/events/' + this.state.eventData.id + '/', {
+            headers: {
+                Authorization: 'Token ' + this.props.token
+            },
+            method: 'PUT',
+            body: JSON.stringify({'redeemed': true})
+        }).then(response => {
+            if (response.ok) {
+                ToastAndroid.show("Offer Redeemed!", ToastAndroid.SHORT);
+                this.loadEvent(); 
+            } else {
+                ToastAndroid.show("System Error. Please try again later!", ToastAndroid.SHORT);
+            }
+        })
+    }
 
     componentDidMount() {
         this.loadEvent();
-        this.props.navigation.setParams({ markUserAsInterested: this.markUserAsInterested, markUserAsGoing: this.markUserAsGoing, loadEvent: this.loadEvent, userID: this.props.user.id, reportEvent: this.reportEvent });
+        this.props.navigation.setParams({ markUserAsInterested: this.markUserAsInterested, markUserAsGoing: this.markUserAsGoing, loadEvent: this.loadEvent, userID: this.props.user.id, reportEvent: this.reportEvent, deleteEvent: this.showDeleteAlert });
 
         if (!this.props.navigation.state.params.color) {
-            this.props.navigation.setParams({color: this.state.color});
+            this.props.navigation.setParams({ color: this.state.color });
         }
 
-        DeviceEventEmitter.addListener('refresh', (e)=>{ this.loadEvent() })
+        DeviceEventEmitter.addListener('refresh', (e) => { this.loadEvent() })
     }
 
     render() {
@@ -189,8 +211,38 @@ class EventDetailWrapper extends React.Component {
             .then(response => response.json())
             .then(responseObj => {
                 this.setState({ eventData: responseObj });
-                this.props.navigation.setParams({usersInterested: responseObj["interested"], usersGoing: responseObj["going"]})
+                this.props.navigation.setParams({ usersInterested: responseObj["interested"], usersGoing: responseObj["going"], eventCreator: responseObj["userBy"]["id"] })
             });
+    }
+
+    showDeleteAlert() {
+        Alert.alert(
+            'Confirm Deletion',
+            "Are you sure you want to delete this? There's no going back after this!",
+            [
+                { text: 'Cancel', onPress: () => console.log('Cancel Pressed'), style: 'cancel' },
+                { text: 'Yep!', onPress: () => this.deleteEvent() },
+            ]
+        )
+
+    }
+
+    deleteEvent() {
+        fetch(getURLForPlatform() + 'api/v1/events/' + this.state.eventData.id + '/', {
+            headers: {
+                Authorization: 'Token ' + this.props.token
+            },
+            method: 'DELETE',
+        }).then(response => {
+            if (response.ok) {
+                ToastAndroid.show("Event Deleted!", ToastAndroid.SHORT);
+                this.props.navigation.state.params.loadEvents();
+                this.props.navigation.goBack();
+            } else {
+                ToastAndroid.show("System Error. Please try again later!", ToastAndroid.SHORT);
+            }
+        })
+
     }
 }
 

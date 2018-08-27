@@ -415,7 +415,7 @@ class Home extends React.Component {
     _keyExtractor = (item, index) => item.id;
 
     _renderItem = ({ item }) => (
-        <EventDisplay index={item.id} event={item} interested={this.userInterestedInEvent(item.id)} showButtons={true} username={this.props.user.username} token={this.props.token} goToEvent={() => this.props.navigation.navigate('EventDetailWrapper', { event: item.title, id: item.id, color: item.color })} />
+        <EventDisplay index={item.id} event={item} interested={this.userInterestedInEvent(item.id)} showButtons={true} username={this.props.user.username} token={this.props.token} goToEvent={() => this.props.navigation.navigate('EventDetailWrapper', { event: item.title, id: item.id, color: item.color, loadEvents: this.loadEvents })} />
     );
 
     userInterestedInEvent(eventID) {

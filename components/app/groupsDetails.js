@@ -2,7 +2,7 @@ import { connect } from 'react-redux';
 import React from 'react';
 import PropTypes from 'prop-types';
 import { styles } from '../../assets/styles';
-import { Text, View, TextInput, TouchableOpacity, FlatList, Button, ScrollView } from 'react-native';
+import { Text, View, TextInput, TouchableOpacity, FlatList, Button, ScrollView, ToastAndroid, Alert } from 'react-native';
 import ColorPicker from '../utils/ColorPicker';
 import { CachedImage } from 'react-native-cached-image';
 import { bindActionCreators } from 'redux';
@@ -30,6 +30,8 @@ class GroupsDetails extends React.Component {
         }
 
         this.renderFriends = this.renderFriends.bind(this);
+        this.deleteGroup = this.deleteGroup.bind(this);
+        this.showDeleteAlert = this.showDeleteAlert.bind(this);
     }
 
     componentDidUpdate(prevProps, prevState) {
@@ -47,7 +49,7 @@ class GroupsDetails extends React.Component {
                     <CachedImage
                         style={{ width: 50, height: 50, borderRadius: 25 }}
                         source={{ uri: item.profilePicture }}
-                        ttl={60*60*24*3}
+                        ttl={60 * 60 * 24 * 3}
                         fallbackSource={require('../../assets/images/KootaK.png')}
                     />
                 </View>
@@ -59,6 +61,10 @@ class GroupsDetails extends React.Component {
     )
 
     removeFromGroup(userID) {
+        if (userID === this.props.group.creator) {
+            ToastAndroid.show("You can't leave this group, you're the admin!", ToastAndroid.SHORT);
+            return
+        }
         fetch(getURLForPlatform() + 'api/v1/groups/' + this.props.group.id + '/users/', {
             headers: {
                 Authorization: "Token " + this.props.token
@@ -70,7 +76,7 @@ class GroupsDetails extends React.Component {
         }).then(request => request.json())
             .then(requestObject => {
                 if (requestObject["success"]) {
-                    this.setState({selectedUser: -1, removeUserModalVisible: false})
+                    this.setState({ selectedUser: -1, removeUserModalVisible: false })
                     if (userID === this.props.user.id) {
                         this.props.userActions.loadUser(this.props.token);
                         const resetAction = StackActions.reset({
@@ -84,6 +90,37 @@ class GroupsDetails extends React.Component {
                     } else {
                         this.props.loadGroup();
                     }
+                }
+            })
+    }
+
+    showDeleteAlert() {
+        Alert.alert(
+            'Confirm Deletion',
+            "Are you sure you want to delete this? There's no going back after this!",
+            [
+                { text: 'Cancel', onPress: () => console.log('Cancel Pressed'), style: 'cancel' },
+                { text: 'Yep!', onPress: () => this.deleteGroup() },
+            ]
+        )
+
+    }
+
+    deleteGroup() {
+        if (this.props.user.id !== this.props.group.creator) {
+            return;
+        }
+
+        fetch(getURLForPlatform() + 'api/v1/groups/' + this.props.group.id + '/', {
+            headers: {
+                Authorization: "Token " + this.props.token
+            },
+            method: 'DELETE'
+        }).then(request => request.json())
+            .then(requestObject => {
+                if (requestObject["delete"]) {
+                    this.props.loadGroups();
+                    this.props.navigation.goBack();
                 }
             })
     }
@@ -150,7 +187,7 @@ class GroupsDetails extends React.Component {
                             </HideableView>
                         </View>
                     </View>
-                    <View style={{ flexDirection: 'row', padding: 10 }}>
+                    {this.props.user.id !== this.props.group.creator && <View style={{ flexDirection: 'row', padding: 10, margin: 10 }}>
                         <View style={{ flex: 1 }}>
                             <Button
                                 onPress={() => this.removeFromGroup(this.props.user.id)}
@@ -159,7 +196,17 @@ class GroupsDetails extends React.Component {
                                 accessibilityLabel="Leave this group"
                             />
                         </View>
-                    </View>
+                    </View>}
+                    {this.props.user.id === this.props.group.creator && <View style={{ flexDirection: 'row', padding: 10, margin: 10 }}>
+                        <View style={{ flex: 1 }}>
+                            <Button
+                                onPress={() => this.showDeleteAlert()}
+                                title="Delete Group"
+                                color="#F44336"
+                                accessibilityLabel="Delete this group"
+                            />
+                        </View>
+                    </View>}
                     <View style={{ flex: 1 }}>
                         <View style={{ flexDirection: 'row', backgroundColor: this.state.color, alignItems: 'center' }}>
                             <View style={{ flex: 1, padding: 20 }}>

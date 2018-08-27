@@ -259,7 +259,7 @@ class Profile extends React.Component {
             const date = new Date();
             const fileName = this.props.user.username + date.getFullYear() + date.getMonth() + date.getDate() + date.getHours() + date.getMinutes();
             this.setState({loadingPic: true})
-            fetch(getURLForPlatform() + 'api/v1/image/', {
+            fetch(getURLForPlatform() + 'api/v1/image/?type=profile', {
                 method: 'POST',
                 body: JSON.stringify({
                     'name': fileName,
