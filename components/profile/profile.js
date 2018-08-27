@@ -29,7 +29,14 @@ class Profile extends React.Component {
             profilePictureModalVisible: false,
             selectedUser: -1,
             refreshing: false,
-            loadingPic: false
+            loadingPic: false,
+            oldPassword: "",
+            newPassword1: "",
+            newPassword2: "",
+            oldPasswordError: "",
+            newPassword1Error: "",
+            newPassword2Error: "",
+            changedPassword: false
         }
 
         this.editUser = this.editUser.bind(this);
@@ -97,6 +104,57 @@ class Profile extends React.Component {
                 </View>
             </TouchableOpacity>
         )
+    }
+
+    changePassword() {
+        if (this.state.oldPassword === "" || this.state.newPassword1 === "" || this.state.newPassword2 === "") {
+            if (this.state.oldPassword === "") {
+                this.setState({ oldPasswordError: "You need to specify your old password!" })
+            }
+    
+            if (this.state.newPassword1 === "") {
+                this.setState({ newPassword1Error: "You need to specify your new password!" })
+            } 
+    
+            if (this.state.newPassword2 === "") {
+                this.setState({ newPassword2Error: "You need to confirm your password!" })
+            }
+
+            return;
+        }
+        
+
+        if (this.state.newPassword1 !== this.state.newPassword2) {
+            this.setState({ newPassword2Error: "Your passwords must match!" })
+            return;
+        }
+
+        fetch(getURLForPlatform() + 'api/v1/rest_auth/password/change/', {
+            headers: {
+                Authorization: "Token " + this.props.token,
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+            },
+            method: 'POST',
+            body: JSON.stringify({
+                'new_password1': this.state.newPassword1,
+                'new_password2': this.state.newPassword2,
+                'old_password': this.state.oldPassword
+            })
+        }).then(request => request.json())
+            .then(requestObject => {
+                console.log(requestObject)
+                if (requestObject["detail"]) {
+                    this.setState({ editingDetails: false, changedPassword: true });
+                    setTimeout(() => {
+                        this.setState({ changedPassword: false });
+            
+                    }, 5000);
+                }
+                if (requestObject["old_password"]) {
+                    this.setState({ oldPasswordError: requestObject["old_password"][0] })
+                }
+            })
     }
 
     unfriendUser(userID) {
@@ -258,7 +316,7 @@ class Profile extends React.Component {
 
             const date = new Date();
             const fileName = this.props.user.username + date.getFullYear() + date.getMonth() + date.getDate() + date.getHours() + date.getMinutes();
-            this.setState({loadingPic: true})
+            this.setState({ loadingPic: true })
             fetch(getURLForPlatform() + 'api/v1/image/?type=profile', {
                 method: 'POST',
                 body: JSON.stringify({
@@ -303,6 +361,7 @@ class Profile extends React.Component {
     }
 
     render() {
+        console.log(this.state.oldPasswordError)
         const date = new Date(this.props.user.created);
         return (
             <KeyboardAwareScrollView
@@ -432,9 +491,31 @@ class Profile extends React.Component {
                                     {!this.state.editingDetails && <Text>{this.props.user.email}</Text>}
                                     {this.state.editingDetails && <TextInput value={this.state.email} onChangeText={(text) => this.setState({ email: text })} />}
                                 </View>
-                                <View style={{ height: 40, justifyContent: 'center' }}>
-                                    {!this.state.editingDetails && <Text>Click on the Edit Icon to Reset</Text>}
-                                    {this.state.editingDetails && <Button title="Reset Password" color="#8e44ad" onPress={() => ToastAndroid.show('Password Reset Email Sent', ToastAndroid.SHORT)} />}
+                                <View style={{ justifyContent: 'center' }}>
+                                    {!this.state.editingDetails && <Text>{this.state.changedPassword ? "Password Changed!" : "Click on the Edit Icon to Change"}</Text>}
+                                    {/*this.state.editingDetails && <Button title="Reset Password" color="#8e44ad" onPress={() => ToastAndroid.show('Password Reset Email Sent', ToastAndroid.SHORT)} />*/}
+                                    {this.state.editingDetails && <View>
+                                        <View>
+                                            {this.state.oldPasswordError !== "" && <View><Text style={{color: 'red'}}>{this.state.oldPasswordError}</Text></View>}
+                                            <TextInput value={this.state.oldPassword} placeholder="Old Password" onChangeText={(text) => this.setState({ oldPassword: text, oldPasswordError: "" })} />
+                                        </View>
+                                        <View>
+                                            {this.state.newPassword1Error !== "" && <View><Text style={{color: 'red'}}>{this.state.newPassword1Error}</Text></View>}
+                                            <TextInput value={this.state.newPassword1} placeholder="New Password" onChangeText={(text) => this.setState({ newPassword1: text, newPassword1Error: "" })} />
+                                        </View>
+                                        <View>
+                                            {this.state.newPassword2Error !== "" && <View><Text style={{color: 'red'}}>{this.state.newPassword2Error}</Text></View>}
+                                            <TextInput value={this.state.newPassword2} placeholder="New Password Confirm" onChangeText={(text) => this.setState({ newPassword2: text, newPassword2Error: "" })} />
+                                        </View>
+                                        <View>
+                                            <Button
+                                                onPress={() => this.changePassword()}
+                                                title="Change Password"
+                                                color="#4CAF50"
+                                                accessibilityLabel="Change the User's password"
+                                            />
+                                        </View>
+                                    </View>}
                                 </View>
                             </View>
                         </View>
