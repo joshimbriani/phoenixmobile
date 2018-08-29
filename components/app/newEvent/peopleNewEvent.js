@@ -109,9 +109,9 @@ export class PeopleNewEvent extends React.Component {
                         </View>
                     </View>
 
-                    <View style={{ flexDirection: 'row', margin: 10, padding: 10, backgroundColor: 'white', borderRadius: 5, shadowRadius: 2, shadowOpacity: 1, shadowColor: 'black', elevation: 2 }}>
+                    {this.props.user.gender !== 'Non-Binary' && <View style={{ flexDirection: 'row', margin: 10, padding: 10, backgroundColor: 'white', borderRadius: 5, shadowRadius: 2, shadowOpacity: 1, shadowColor: 'black', elevation: 2 }}>
                         <View style={{ alignSelf: 'center', flex: 3, paddingTop: 15 }}>
-                            <Text style={{ fontSize: 15, color: 'black' }}>Make it a guys only event?</Text>
+                            <Text style={{ fontSize: 15, color: 'black' }}>Make it a {this.props.user.gender === 'Male' ? "guy" : "girl"}s only event?</Text>
                         </View>
                         <View style={{ alignSelf: 'center', flex: 2 }}>
                             <Dropdown
@@ -125,8 +125,7 @@ export class PeopleNewEvent extends React.Component {
                                 }]}
                             />
                         </View>
-
-                    </View>
+                    </View>}
                 </Form>
                 <View style={{ marginBottom: REACT_SWIPER_BOTTOM_MARGIN }}>
                     {this.props.errors["errors"].length > 0 && <View style={{ margin: 10, backgroundColor: 'red', paddingHorizontal: 10, paddingVertical: 5 }}>
