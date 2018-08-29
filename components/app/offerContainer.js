@@ -18,7 +18,7 @@ export class OfferContainer extends React.Component {
 
     componentDidMount() {
         if (this.props.checked) {
-            this.setState({checked: this.props.checked})
+            this.setState({ checked: this.props.checked })
         }
     }
 
@@ -26,7 +26,9 @@ export class OfferContainer extends React.Component {
         const width = Dimensions.get('window').width;
         var address = {};
         if (this.props.offer && this.props.offer.place && this.props.offer.place.placeDetails.address) {
-            address = parseGooglePlace({ "address_components": JSON.parse(this.props.offer.place.placeDetails.address) });
+            if (IsJsonString(this.props.offer.place.placeDetails.address)) {
+                address = parseGooglePlace({ "address_components": JSON.parse(this.props.offer.place.placeDetails.address) });
+            }
         }
         if (Object.keys(this.props.offer).length > 0) {
             return (
@@ -73,4 +75,13 @@ OfferContainer.propTypes = {
     index: PropTypes.number.isRequired,
     addable: PropTypes.bool.isRequired,
     addToEvent: PropTypes.func
+}
+
+function IsJsonString(str) {
+    try {
+        JSON.parse(str);
+    } catch (e) {
+        return false;
+    }
+    return true;
 }
