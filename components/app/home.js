@@ -419,12 +419,13 @@ class Home extends React.Component {
     );
 
     userInterestedInEvent(eventID) {
-        for (var i = 0; i < this.props.user.interestedIn.length; i++) {
-            if (eventID === this.props.user.interestedIn[i].id) {
-                return true;
+        if (this.props.user.interestedIn) {
+            for (var i = 0; i < this.props.user.interestedIn.length; i++) {
+                if (eventID === this.props.user.interestedIn[i].id) {
+                    return true;
+                }
             }
         }
-
         return false;
     }
 
