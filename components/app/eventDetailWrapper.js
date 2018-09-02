@@ -1,5 +1,5 @@
 import React from 'react';
-import { DeviceEventEmitter, Text, Dimensions, View, ToastAndroid, Alert } from 'react-native';
+import { DeviceEventEmitter, Text, Dimensions, View, ToastAndroid, Alert, TouchableOpacity } from 'react-native';
 import { connect } from 'react-redux';
 import PlatformIonicon from '../utils/platformIonicon';
 import { TabViewAnimated, TabBar } from 'react-native-tab-view';
@@ -19,7 +19,7 @@ import {
     MenuOption
 } from 'react-native-popup-menu';
 
-// TODO: Do I need to pass navigation to all the objects?
+// TODO: Fork View
 
 const initialLayout = {
     height: 0,
@@ -31,7 +31,7 @@ class EventDetailWrapper extends React.Component {
     static navigationOptions = ({ navigation }) => ({
         title: navigation.state.params.event,
         headerStyle: { backgroundColor: navigation.state.params.color },
-        headerRight: <Menu style={{ paddingRight: 20 }}>
+        headerRight: <Menu style={{ paddingRight: 20, flexDirection: 'row' }}>
             <MenuTrigger>
                 <View style={{ paddingLeft: 20, paddingRight: 20, paddingTop: 10, paddingBottom: 10 }}>
                     <PlatformIonicon
@@ -41,6 +41,15 @@ class EventDetailWrapper extends React.Component {
                     />
                 </View>
             </MenuTrigger>
+            <TouchableOpacity onPress={() => console.log("Test")}>
+                <View style={{ paddingRight: 10, paddingLeft: 10, paddingTop: 10, paddingBottom: 10 }}>
+                    <PlatformIonicon
+                        name={'git-branch'}
+                        size={30}
+                        style={{ color: "white" }}
+                    />
+                </View>
+            </TouchableOpacity>
             <MenuOptions optionsContainerStyle={{ marginTop: 30 }}>
                 {navigation.state.params.userID !== navigation.state.params.eventCreator && <MenuOption onSelect={navigation.state.params.markUserAsGoing}>
                     <Text>{userInList(navigation.state.params.userID, (navigation.state.params.usersGoing || [])) ? "I Can't Go" : "I'm Going!"}</Text>
@@ -84,6 +93,7 @@ class EventDetailWrapper extends React.Component {
         this.deleteEvent = this.deleteEvent.bind(this);
         this.showDeleteAlert = this.showDeleteAlert.bind(this);
         this.redeemOffer = this.redeemOffer.bind(this);
+        this.forkEvent = this.forkEvent.bind(this);
     }
 
     _handleIndexChange = index => this.setState({ index });
@@ -97,7 +107,7 @@ class EventDetailWrapper extends React.Component {
             case 'place':
                 return <EventDetailPlace event={this.state.eventData} color={this.props.navigation.state.params.color} navigation={this.props.navigation} />;
             case 'people':
-                return <EventDetailPeople event={this.state.eventData} color={this.props.navigation.state.params.color} navigation={this.props.navigation} />
+                return <EventDetailPeople forkEvent={this.forkEvent} event={this.state.eventData} color={this.props.navigation.state.params.color} navigation={this.props.navigation} />
             case 'messages':
                 return <EventDetailMessages
                     event={this.state.eventData}
@@ -116,15 +126,19 @@ class EventDetailWrapper extends React.Component {
                 Authorization: 'Token ' + this.props.token
             },
             method: 'PUT',
-            body: JSON.stringify({'redeemed': true})
+            body: JSON.stringify({ 'redeemed': true })
         }).then(response => {
             if (response.ok) {
                 ToastAndroid.show("Offer Redeemed!", ToastAndroid.SHORT);
-                this.loadEvent(); 
+                this.loadEvent();
             } else {
                 ToastAndroid.show("System Error. Please try again later!", ToastAndroid.SHORT);
             }
         })
+    }
+
+    forkEvent() {
+        console.log("Forking event");
     }
 
     componentDidMount() {

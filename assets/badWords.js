@@ -369,7 +369,6 @@ export const badWords = [
     'white power',
     'wrapping men',
     'wrinkled starfish',
-    'xx',
     'xxx',
     'yaoi',
     'yellow showers',

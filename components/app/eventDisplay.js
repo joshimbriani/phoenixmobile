@@ -61,6 +61,7 @@ export class EventDisplay extends React.Component {
     }
 
     render() {
+        console.log(this.props.event)
         if (Object.keys(this.props.event).length > 0) {
             const date = new Date(this.props.event.datetime)
             return (

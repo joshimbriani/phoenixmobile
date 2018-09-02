@@ -42,65 +42,95 @@ class EventDetailPeople extends React.Component {
         }
 
         if (Object.keys(this.props.event).length > 0) {
+            console.log(this.props.event)
             return (
                 <View style={styles.flex1} >
-                    <View style={styles.eventDetailPeopleSection}>
+                    {!this.props.event.forkedFrom && <View style={styles.eventDetailPeopleSection}>
                         <Text style={styles.eventDetailSectionHeader}>Created By</Text>
                         <TouchableOpacity onLongPress={() => this.setState({ userOptionModalVisible: true, selectedUser: this.props.event.userBy.id })}>
                             <View style={{ flexDirection: 'row', alignItems: 'center', paddingTop: 5 }}>
                                 <CachedImage
                                     style={{ margin: 0, width: 50, height: 50, borderRadius: 25 }}
                                     source={{ uri: this.props.event.userBy.profilePicture }}
-                                    ttl={60*60*24*3}
+                                    ttl={60 * 60 * 24 * 3}
                                     fallbackSource={require('../../assets/images/KootaK.png')}
                                 />
                                 <Text style={{ paddingLeft: 20 }}>{this.props.event.userBy.username}</Text>
                             </View>
                         </TouchableOpacity>
-                    </View>
+                    </View>}
+                    {this.props.event.forks && this.props.event.forks.length > 0 && <View style={styles.eventDetailPeopleSection}>
+                        <Text style={styles.eventDetailSectionHeader}>Groups</Text>
+                        <View>
+                            <View>
+                                <Text>There are {this.props.event.forks.length} groups looking for users!</Text>
+                                <Button
+                                    onPress={() => this.findSubEvents()}
+                                    title="Join a Group"
+                                    color="#2196F3"
+                                    accessibilityLabel="Join a Group"
+                                />
+                            </View>
+                            <View>
+                                <Text>Or</Text>
+                                <Button
+                                    onPress={() => this.props.forkEvent()}
+                                    title="Create a New Group"
+                                    color="#2196F3"
+                                    accessibilityLabel="Create a New Group"
+                                />
+                            </View>
+                        </View>
+                    </View>}
                     <View style={[styles.eventDetailPeopleSection, { flex: 3, justifyContent: 'flex-end' }]}>
                         <Text style={styles.eventDetailSectionHeader}>Going</Text>
-                        <View style={{ flexDirection: 'row', }}>
+                        {!this.props.event.forkedFrom && <View style={{ flexDirection: 'row', }}>
                             {this.props.event.going.map((user, index) => {
                                 return (
                                     <TouchableOpacity onLongPress={() => this.setState({ userOptionModalVisible: true, selectedUser: user.id })}>
-                                        <View style={{margin: 5}}>
+                                        <View style={{ margin: 5 }}>
                                             <CachedImage
                                                 key={index}
                                                 style={{ width: 50, height: 50, borderRadius: 25 }}
                                                 source={{ uri: user.profilePicture }}
-                                                ttl={60*60*24*3}
+                                                ttl={60 * 60 * 24 * 3}
                                                 fallbackSource={require('../../assets/images/KootaK.png')}
                                             />
                                         </View>
                                     </TouchableOpacity>
                                 )
                             })}
-                        </View>
-                        <View>
+                        </View>}
+                        {!this.props.event.forkedFrom && <View>
                             <ProgressBar style={{ marginTop: 'auto' }} progress={this.props.event.going && this.props.event.capacity && (this.props.event.going.length / this.props.event.capacity)} width={Dimensions.get('window').width - 30} />
                             <Text>{this.props.event.going.length} out of {this.props.event.capacity} places have been filled.</Text>
-                        </View>
+                        </View>}
+                        {this.props.event.forkedFrom && <View>
+                            <Text>{this.props.event.going.length} users going</Text>
+                        </View>}
                     </View>
                     <View style={[styles.eventDetailPeopleSection, { flex: 3 }]}>
                         <Text style={styles.eventDetailSectionHeader}>Interested</Text>
-                        <View style={{ flexDirection: 'row' }}>
+                        {!this.props.event.forkedFrom && <View style={{ flexDirection: 'row' }}>
                             {this.props.event.interested.map((user, index) => {
                                 return (
                                     <TouchableOpacity onLongPress={() => this.setState({ userOptionModalVisible: true, selectedUser: user.id })}>
-                                        <View style={{margin: 5}}>
+                                        <View style={{ margin: 5 }}>
                                             <CachedImage
                                                 key={index}
                                                 style={{ width: 50, height: 50, borderRadius: 25 }}
                                                 source={{ uri: user.profilePicture }}
-                                                ttl={60*60*24*3}
+                                                ttl={60 * 60 * 24 * 3}
                                                 fallbackSource={require('../../assets/images/KootaK.png')}
                                             />
                                         </View>
                                     </TouchableOpacity>
                                 )
                             })}
-                        </View>
+                        </View>}
+                        {this.props.event.forkedFrom && <View>
+                            <Text>{this.props.event.interested.length} users interested</Text>
+                        </View>}
                     </View>
                     <Modal
                         isVisible={this.state.userOptionModalVisible}
@@ -181,8 +211,8 @@ class EventDetailPeople extends React.Component {
             .then(requestObject => {
                 if (requestObject["success"]) {
                     this.props.userActions.loadUser(this.props.token);
-                    this.setState({ userOptionModalVisible: false})
-                    this.setState({selectedUser: -1 });
+                    this.setState({ userOptionModalVisible: false })
+                    this.setState({ selectedUser: -1 });
                 }
             })
     }
@@ -205,7 +235,7 @@ class EventDetailPeople extends React.Component {
                     if (requestObject["success"]) {
                         this.props.userActions.loadUser(this.props.token);
                         this.setState({ userOptionModalVisible: false });
-                        this.setState({selectedUser: -1 });
+                        this.setState({ selectedUser: -1 });
                     }
                 })
         } else if (removeUserFromContacts) {
@@ -222,7 +252,7 @@ class EventDetailPeople extends React.Component {
                     if (requestObject["success"]) {
                         this.props.userActions.loadUser(this.props.token);
                         this.setState({ userOptionModalVisible: false });
-                        this.setState({selectedUser: -1 });
+                        this.setState({ selectedUser: -1 });
                     }
                 })
         } else if (acceptUserRequest) {
@@ -240,7 +270,7 @@ class EventDetailPeople extends React.Component {
                     if (requestObject["success"]) {
                         this.props.userActions.loadUser(this.props.token).then();
                         this.setState({ userOptionModalVisible: false });
-                        this.setState({selectedUser: -1 });
+                        this.setState({ selectedUser: -1 });
                     }
                 })
         } else if (denyUserRequest) {
@@ -258,7 +288,7 @@ class EventDetailPeople extends React.Component {
                     if (requestObject["success"]) {
                         this.props.userActions.loadUser(this.props.token).then();
                         this.setState({ userOptionModalVisible: false });
-                        this.setState({selectedUser: -1 });
+                        this.setState({ selectedUser: -1 });
                     }
                 })
         }
