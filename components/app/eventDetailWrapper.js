@@ -1,5 +1,5 @@
 import React from 'react';
-import { DeviceEventEmitter, Text, Dimensions, View, ToastAndroid, Alert, TouchableOpacity } from 'react-native';
+import { DeviceEventEmitter, Text, Dimensions, View, ToastAndroid, Alert, TouchableOpacity, Share } from 'react-native';
 import { connect } from 'react-redux';
 import PlatformIonicon from '../utils/platformIonicon';
 import { TabViewAnimated, TabBar } from 'react-native-tab-view';
@@ -41,7 +41,7 @@ class EventDetailWrapper extends React.Component {
                     />
                 </View>
             </MenuTrigger>
-            <TouchableOpacity onPress={() => console.log("Test")}>
+            <TouchableOpacity onPress={() => navigation.state.params.forkEvent()}>
                 <View style={{ paddingRight: 10, paddingLeft: 10, paddingTop: 10, paddingBottom: 10 }}>
                     <PlatformIonicon
                         name={'git-branch'}
@@ -94,6 +94,7 @@ class EventDetailWrapper extends React.Component {
         this.showDeleteAlert = this.showDeleteAlert.bind(this);
         this.redeemOffer = this.redeemOffer.bind(this);
         this.forkEvent = this.forkEvent.bind(this);
+        this.shareEvent = this.shareEvent.bind(this);
     }
 
     _handleIndexChange = index => this.setState({ index });
@@ -103,7 +104,7 @@ class EventDetailWrapper extends React.Component {
     _renderScene = ({ route }) => {
         switch (route.key) {
             case 'details':
-                return <EventDetailDetails event={this.state.eventData} color={this.props.navigation.state.params.color} navigation={this.props.navigation} redeemOffer={this.redeemOffer} />;
+                return <EventDetailDetails markUserAsInterested={this.markUserAsInterested} markUserAsGoing={this.markUserAsGoing} shareEvent={this.shareEvent} event={this.state.eventData} color={this.props.navigation.state.params.color} navigation={this.props.navigation} redeemOffer={this.redeemOffer} userGoing={userInList(this.props.user.id, (this.state.eventData.going || []))} userInterested={userInList(this.props.user.id, (this.state.eventData.interested || []))} />;
             case 'place':
                 return <EventDetailPlace event={this.state.eventData} color={this.props.navigation.state.params.color} navigation={this.props.navigation} />;
             case 'people':
@@ -137,13 +138,28 @@ class EventDetailWrapper extends React.Component {
         })
     }
 
+    shareEvent() {
+        Share.share({
+            message: "It's " + this.props.user.username + " and I think you'd really like this event - " + this.state.eventData.title + ". Check it out on Koota! https://kootasocial.com/",
+            url: 'http://kootasocial.com',
+            title: "I think you'd like this event on Koota!"
+        }, {
+                // Android only:
+                dialogTitle: 'Share this awesome event!',
+            })
+
+    }
+
     forkEvent() {
-        console.log("Forking event");
+        if (Object.keys(this.state.eventData).length > 0) {
+            this.props.navigation.navigate('NewEventFork', {event: this.state.eventData});
+        }
+        
     }
 
     componentDidMount() {
         this.loadEvent();
-        this.props.navigation.setParams({ markUserAsInterested: this.markUserAsInterested, markUserAsGoing: this.markUserAsGoing, loadEvent: this.loadEvent, userID: this.props.user.id, reportEvent: this.reportEvent, deleteEvent: this.showDeleteAlert });
+        this.props.navigation.setParams({ markUserAsInterested: this.markUserAsInterested, markUserAsGoing: this.markUserAsGoing, loadEvent: this.loadEvent, userID: this.props.user.id, reportEvent: this.reportEvent, deleteEvent: this.showDeleteAlert, forkEvent: this.forkEvent });
 
         if (!this.props.navigation.state.params.color) {
             this.props.navigation.setParams({ color: this.state.color });

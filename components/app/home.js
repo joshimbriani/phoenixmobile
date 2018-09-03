@@ -334,7 +334,7 @@ class Home extends React.Component {
             name="funnel"
             size={35}
             style={{ marginRight: 10 }}
-            onPress={() => navigation.navigate('FilterHome', { setFilter: navigation.state.params.setFilter, loadEvents: navigation.state.params.loadEvents })}
+            onPress={() => navigation.navigate('FilterHome', { setFilter: navigation.state.params.setFilter, loadEvents: navigation.state.params.loadEvents, default: true })}
         />
 
     }) : ({ navigation }) => ({
@@ -344,7 +344,7 @@ class Home extends React.Component {
             name="funnel"
             size={35}
             style={{ marginRight: 10 }}
-            onPress={() => navigation.navigate('FilterHome', { setFilter: navigation.state.params.setFilter, loadEvents: navigation.state.params.loadEvents })}
+            onPress={() => navigation.navigate('FilterHome', { setFilter: navigation.state.params.setFilter, loadEvents: navigation.state.params.loadEvents, default: true })}
         />
     });
 
@@ -394,7 +394,8 @@ class Home extends React.Component {
 
     generateFilterURLString(filterPropsObject) {
         var filterString = "?";
-        filterString += ("privacy=" + filterPropsObject.privacy)
+        filterString += ("&includeForks=false")
+        filterString += ("&privacy=" + filterPropsObject.privacy)
         filterString += ("&restrictToGender=" + (filterPropsObject.restrictToGender === 'all' ? 'false' : 'true'))
         filterString += ("&offer=" + filterPropsObject.offer)
         filterString += ("&datetimegt=" + (filterPropsObject.datetime.start === -1 ? 'now' : (typeof filterPropsObject.datetime.start === 'string' ? filterPropsObject.datetime.start : filterPropsObject.datetime.start.toISOString())))

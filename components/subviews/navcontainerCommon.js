@@ -33,6 +33,8 @@ import AddToGroup from '../app/addToGroup';
 import InviteUsers from '../app/newEvent/inviteUsers';
 import FilterHome from '../app/filter/filterHome';
 import FilterTopics from '../app/filter/filterTopics';
+import NewEventFork from '../app/newEvent/newEventFork';
+import FindSubEvents from '../app/newEvent/findSubEvents';
 import { styles } from '../../assets/styles';
 
 export const HomeStack = createStackNavigator({
@@ -93,6 +95,14 @@ export const HomeStack = createStackNavigator({
     FilterTopics: {
         path: '/filter/topics',
         screen: FilterTopics
+    },
+    NewEventFork: {
+        path: '/newevent/fork',
+        screen: NewEventFork
+    },
+    FindSubEvents: {
+        path: '/newevent/findsubevents',
+        screen: FindSubEvents
     }
 }, {
     animationEnabled: false,

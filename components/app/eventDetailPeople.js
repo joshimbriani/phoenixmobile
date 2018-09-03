@@ -2,7 +2,7 @@ import { connect } from 'react-redux';
 import React from 'react';
 import PropTypes from 'prop-types';
 import { styles } from '../../assets/styles';
-import { Dimensions, TouchableOpacity, Text, View } from 'react-native';
+import { Dimensions, TouchableOpacity, Text, View, Button } from 'react-native';
 import ProgressBar from 'react-native-progress/Bar';
 
 import { CachedImage } from 'react-native-cached-image';
@@ -45,7 +45,7 @@ class EventDetailPeople extends React.Component {
             console.log(this.props.event)
             return (
                 <View style={styles.flex1} >
-                    {!this.props.event.forkedFrom && <View style={styles.eventDetailPeopleSection}>
+                    {this.props.event.owned && <View style={styles.eventDetailPeopleSection}>
                         <Text style={styles.eventDetailSectionHeader}>Created By</Text>
                         <TouchableOpacity onLongPress={() => this.setState({ userOptionModalVisible: true, selectedUser: this.props.event.userBy.id })}>
                             <View style={{ flexDirection: 'row', alignItems: 'center', paddingTop: 5 }}>
@@ -59,32 +59,36 @@ class EventDetailPeople extends React.Component {
                             </View>
                         </TouchableOpacity>
                     </View>}
-                    {this.props.event.forks && this.props.event.forks.length > 0 && <View style={styles.eventDetailPeopleSection}>
+                    {!this.props.event.owned && <View style={styles.eventDetailPeopleSection}>
                         <Text style={styles.eventDetailSectionHeader}>Groups</Text>
-                        <View>
-                            <View>
-                                <Text>There are {this.props.event.forks.length} groups looking for users!</Text>
+                        {this.props.event.forks && this.props.event.forks.length > 0 && <View style={{marginVertical: 5}}>
+                            <Text>There are {this.props.event.forks.length} groups looking for users!</Text>
+                        </View>}
+                        <View style={{marginTop: 10, flexDirection: 'row'}}>
+                            {this.props.event.forks && this.props.event.forks.length > 0 && <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
                                 <Button
                                     onPress={() => this.findSubEvents()}
                                     title="Join a Group"
                                     color="#2196F3"
                                     accessibilityLabel="Join a Group"
                                 />
-                            </View>
-                            <View>
+                            </View>}
+                            {this.props.event.forks && this.props.event.forks.length > 0 && <View style={{padding: 5, alignItems: 'center', justifyContent: 'center'}}>
                                 <Text>Or</Text>
+                            </View>}
+                            <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
                                 <Button
                                     onPress={() => this.props.forkEvent()}
-                                    title="Create a New Group"
+                                    title="Create a Group"
                                     color="#2196F3"
-                                    accessibilityLabel="Create a New Group"
+                                    accessibilityLabel="Create a Group"
                                 />
                             </View>
                         </View>
                     </View>}
                     <View style={[styles.eventDetailPeopleSection, { flex: 3, justifyContent: 'flex-end' }]}>
                         <Text style={styles.eventDetailSectionHeader}>Going</Text>
-                        {!this.props.event.forkedFrom && <View style={{ flexDirection: 'row', }}>
+                        {this.props.event.owned && <View style={{ flexDirection: 'row', }}>
                             {this.props.event.going.map((user, index) => {
                                 return (
                                     <TouchableOpacity onLongPress={() => this.setState({ userOptionModalVisible: true, selectedUser: user.id })}>
@@ -101,17 +105,17 @@ class EventDetailPeople extends React.Component {
                                 )
                             })}
                         </View>}
-                        {!this.props.event.forkedFrom && <View>
+                        {this.props.event.owned && <View>
                             <ProgressBar style={{ marginTop: 'auto' }} progress={this.props.event.going && this.props.event.capacity && (this.props.event.going.length / this.props.event.capacity)} width={Dimensions.get('window').width - 30} />
                             <Text>{this.props.event.going.length} out of {this.props.event.capacity} places have been filled.</Text>
                         </View>}
-                        {this.props.event.forkedFrom && <View>
+                        {!this.props.event.owned && <View>
                             <Text>{this.props.event.going.length} users going</Text>
                         </View>}
                     </View>
                     <View style={[styles.eventDetailPeopleSection, { flex: 3 }]}>
                         <Text style={styles.eventDetailSectionHeader}>Interested</Text>
-                        {!this.props.event.forkedFrom && <View style={{ flexDirection: 'row' }}>
+                        {this.props.event.owned && <View style={{ flexDirection: 'row' }}>
                             {this.props.event.interested.map((user, index) => {
                                 return (
                                     <TouchableOpacity onLongPress={() => this.setState({ userOptionModalVisible: true, selectedUser: user.id })}>
@@ -128,7 +132,7 @@ class EventDetailPeople extends React.Component {
                                 )
                             })}
                         </View>}
-                        {this.props.event.forkedFrom && <View>
+                        {!this.props.event.owned && <View>
                             <Text>{this.props.event.interested.length} users interested</Text>
                         </View>}
                     </View>
@@ -215,6 +219,10 @@ class EventDetailPeople extends React.Component {
                     this.setState({ selectedUser: -1 });
                 }
             })
+    }
+
+    findSubEvents() {
+        this.props.navigation.navigate('FindSubEvents', {event: this.props.event})
     }
 
     addUserToContacts(userToAdd, addUserToContacts, removeUserFromContacts, acceptUserRequest, denyUserRequest) {

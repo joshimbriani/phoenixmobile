@@ -312,12 +312,12 @@ class FilterHome extends React.Component {
                             color="#00ABE6"
                             accessibilityLabel="Search with your currently defined filters"
                         />
-                        <Button
+                        {this.props.navigation.state.params.default && <Button
                             onPress={() => this.setFiltersAsDefault()}
                             title="Set Filters as Default"
                             color="#00ABE6"
                             accessibilityLabel="Set your currently applied filters as your home screen"
-                        />
+                        />}
                     </View>
                 </View>
             </View>

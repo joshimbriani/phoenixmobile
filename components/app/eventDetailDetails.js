@@ -8,6 +8,7 @@ import { getComplementaryColor } from '../utils/styleutils';
 import { styles } from '../../assets/styles';
 import { OfferContainer } from './offerContainer';
 import moment from 'moment';
+import PlatformIonicon from '../utils/platformIonicon';
 
 class EventDetailDetails extends React.Component {
     // TODO: Offer View
@@ -27,8 +28,8 @@ class EventDetailDetails extends React.Component {
                                     return (
                                         <TouchableOpacity
                                             key={index}
-                                            style={{padding: 5}}
-                                            onPress={() => { this.routeToTopic(topic)}}>
+                                            style={{ padding: 5 }}
+                                            onPress={() => { this.routeToTopic(topic) }}>
                                             <View>
                                                 <Text>#{topic.name}</Text>
                                             </View>
@@ -37,12 +38,50 @@ class EventDetailDetails extends React.Component {
                                 })}
                             </ScrollView>
                         </View>
+                        <View style={{ flexDirection: 'row', backgroundColor: 'white', borderTopWidth: 1, borderTopColor: '#A8A8A8' }}>
+                            { !this.props.userGoing && <TouchableOpacity onPress={() => this.props.markUserAsInterested(this.props.event.id)} style={{ flexDirection: 'row', flex: 1, margin: 5 }}>
+                                <View style={{ flexDirection: 'row', flex: 1, padding: 5, borderRightWidth: 1, borderRightColor: '#A8A8A8' }}>
+                                    <PlatformIonicon
+                                        name={this.props.userInterested ? "heart" : "heart-empty"}
+                                        size={25} //this doesn't adjust the size...?
+                                        style={{ color: "#e84118", margin: 5 }}
+                                    />
+                                    <View style={{ alignItems: 'center', justifyContent: 'center', flex: 1 }}>
+                                        <Text>I'm Interested!</Text>
+                                    </View>
+                                </View>
+                            </TouchableOpacity>}
+                            <TouchableOpacity onPress={() => this.props.markUserAsGoing(this.props.event.id)} style={{ flexDirection: 'row', flex: 1, margin: 5 }}>
+                                <View style={{ flexDirection: 'row', flex: 1, padding: 5, borderRightWidth: 1, borderRightColor: '#A8A8A8' }}>
+                                    <PlatformIonicon
+                                        name={this.props.userGoing ? "checkbox" : "checkbox-outline"}
+                                        size={25} //this doesn't adjust the size...?
+                                        style={{ color: "green", margin: 5 }}
+                                    />
+                                    <View style={{ alignItems: 'center', justifyContent: 'center', flex: 1 }}>
+                                        <Text>I'm Going!</Text>
+                                    </View>
+                                </View>
+                            </TouchableOpacity>
+                            <TouchableOpacity onPress={() => this.props.shareEvent()} style={{ flexDirection: 'row', flex: 1, margin: 5 }}>
+                                <View style={{ flexDirection: 'row', flex: 1, padding: 5 }}>
+                                    <PlatformIonicon
+                                        name={"share"}
+                                        size={25} //this doesn't adjust the size...?
+                                        style={{ color: "blue", margin: 5 }}
+                                    />
+                                    <View style={{ alignItems: 'center', justifyContent: 'center', flex: 1 }}>
+                                        <Text>Share With Friends</Text>
+                                    </View>
+                                </View>
+                            </TouchableOpacity>
+                        </View>
                         <View style={styles.eventDetailBody}>
                             <View>
                                 <Text style={styles.eventDetailSectionHeader}>Description</Text>
                                 <Text>{this.props.event.description}</Text>
                             </View>
-                            {this.props.event.offers.length > 0 && <View style={{flex: 1}}>
+                            {this.props.event.offers.length > 0 && <View style={{ flex: 1 }}>
                                 <Text style={styles.eventDetailSectionHeader}>Applied Offers</Text>
                                 {this.props.event.offers.map((offer, index) => {
                                     return <OfferContainer addable={false} offer={offer} index={index} />
@@ -51,8 +90,8 @@ class EventDetailDetails extends React.Component {
                             {/*this.props.event.privacy === "group" && <View>
                                 <Text style={styles.eventDetailSectionHeader}>Group</Text>
                             </View>*/}
-                            {this.props.user.id === this.props.event.userBy.id && now.isAfter(moment(date).subtract(1, 'hour')) && 
-                                <View style={{marginTop: 20}}>
+                            {this.props.user.id === this.props.event.userBy.id && now.isAfter(moment(date).subtract(1, 'hour')) &&
+                                <View style={{ marginTop: 20 }}>
                                     <Button disabled={this.props.event.redeemed || now.isAfter(moment(date).add(1, 'hour'))} title={this.props.event.redeemed ? "Redeemed!" : "Redeem Now"} color='#8BC34A' accessibilityLabel="Redeem Offer Button" onPress={this.props.redeemOffer} />
                                 </View>
                             }
@@ -69,20 +108,8 @@ class EventDetailDetails extends React.Component {
         }
     }
 
-    componentDidUpdate() {
-        console.log("Here")
-    }
-
-    markUserAsInterested() {
-        return;
-    }
-
-    markUserAsGoing() {
-        return;
-    }
-
     routeToTopic(topic) {
-        this.props.navigation.navigate('Topic', { topic: topic.name, id: topic.id, color: topic.color.substring(0)})
+        this.props.navigation.navigate('Topic', { topic: topic.name, id: topic.id, color: topic.color.substring(0) })
     }
 }
 
