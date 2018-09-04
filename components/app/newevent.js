@@ -14,6 +14,8 @@ import { DatetimeDurationNewEvent } from './newEvent/datetimeDurationNewEvent';
 import { PlaceNewEvent } from './newEvent/placeNewEvent';
 import { PeopleNewEvent } from './newEvent/peopleNewEvent';
 import { OffersNewEvent } from './newEvent/offersNewEvent';
+import { EventTypeNewEvent } from './newEvent/eventTypeNewEvent';
+import EventNewEvent from './newEvent/eventNewEvent';
 import { badWords } from '../../assets/badWords';
 
 const ITEMS_TO_VALIDATE = ["title", "description", "place", "datetime", "duration", "amount", "eventPrivacy", "group"];
@@ -63,6 +65,7 @@ class NewEvent extends React.Component {
             groups: [],
             group: {},
             invitedUsers: [],
+            eventType: "",
             errors: {
                 errors: [],
                 amount: "",
@@ -205,7 +208,7 @@ class NewEvent extends React.Component {
                         errors.errors.push("Title")
                     }
                     valid = false;
-                } else if (ITEMS_TO_VALIDATE[i] === "description" && this.state["description"] === "") {
+                } else if (ITEMS_TO_VALIDATE[i] === "description" && this.state["description"] === "" && this.state.eventType !== 'event') {
                     errors["description"] = "You need to add a description!"
                     if (errors.errors.indexOf("Description") === -1) {
                         errors.errors.push("Description")
@@ -234,50 +237,54 @@ class NewEvent extends React.Component {
                 }
             } else if (this.state[ITEMS_TO_VALIDATE[i]] === "" || typeof this.state[ITEMS_TO_VALIDATE[i]] === 'undefined' || ((typeof this.state[ITEMS_TO_VALIDATE[i]] === "object" && !(this.state[ITEMS_TO_VALIDATE[i]] instanceof Date)) && Object.keys(this.state[ITEMS_TO_VALIDATE[i]]).length < 1)) {
 
-                if (ITEMS_TO_VALIDATE[i] === 'amount') {
+                if (ITEMS_TO_VALIDATE[i] === 'amount' && this.state.eventType !== 'event') {
                     errors["amount"] = "You need to have an event capacity!"
                     if (errors.errors.indexOf("Amount") === -1) {
                         errors.errors.push("Amount")
                     }
+                    valid = false;
                 } else if (ITEMS_TO_VALIDATE[i] === 'description') {
                     errors["description"] = "You need to add a description!"
                     if (errors.errors.indexOf("Description") === -1) {
                         errors.errors.push("Description")
                     }
+                    valid = false;
                 } else if (ITEMS_TO_VALIDATE[i] === 'title') {
                     errors["title"] = "You need to have a title!"
                     if (errors.errors.indexOf("Title") === -1) {
                         errors.errors.push("Title")
                     }
+                    valid = false;
                 } else if (ITEMS_TO_VALIDATE[i] === 'place') {
                     errors["place"] = "You need to add a place!"
                     if (errors.errors.indexOf("Place") === -1) {
                         errors.errors.push("Place")
                     }
+                    valid = false;
                 } else if (ITEMS_TO_VALIDATE[i] === 'eventPrivacy') {
                     errors["eventPrivacy"] = "You need to set a privacy level for this event!"
                     if (errors.errors.indexOf("Event Privacy") === -1) {
                         errors.errors.push("Event Privacy")
                     }
+                    valid = false;
                 } else if (ITEMS_TO_VALIDATE[i] === 'duration') {
                     errors["duration"] = "You need to set how long this event will take!"
                     if (errors.errors.indexOf("Duration") === -1) {
                         errors.errors.push("Duration")
                     }
+                    valid = false;
                 } else if (ITEMS_TO_VALIDATE[i] === 'datetime') {
                     errors["datetime"] = "You need to mark when this event is!"
                     if (errors.errors.indexOf("Event Date & Time") === -1) {
                         errors.errors.push("Event Date & Time")
                     }
+                    valid = false;
                 }
-
-
-                valid = false;
             } else {
                 errors[ITEMS_TO_VALIDATE[i]] = ""
             }
         }
-        
+
         if (!valid) {
             this.setState({ errors: errors });
             return false;
@@ -317,7 +324,7 @@ class NewEvent extends React.Component {
                 },
                 body: JSON.stringify({
                     'title': this.state.title,
-                    'description': this.state.description,
+                    'description': this.state.description || "",
                     'place': this.state.place,
                     'restrictToSameGender': this.state.restrictToGender,
                     'capacity': this.state.amount,
@@ -328,7 +335,8 @@ class NewEvent extends React.Component {
                     'color': this.state.color,
                     'privacy': this.state.eventPrivacy,
                     'privacyGroup': Object.keys(this.state.group).length > 0 ? this.state.group.id : null,
-                    'invitedUsers': this.state.invitedUsers
+                    'invitedUsers': this.state.invitedUsers,
+                    'owned': this.state.eventType === 'hangout'
                 })
             }).then(response => {
                 if (response.ok) {
@@ -391,32 +399,32 @@ class NewEvent extends React.Component {
             {
                 name: "Topics",
                 component: <TopicsNewEvent topics={this.state.topics} removeTopic={this.removeTopic} onChange={this.onChange} addTopic={this.addTopic} />,
-                condition: (args) => true
+                condition: (args) => args["type"] === "hangout"
             },
             {
                 name: "Offers",
                 component: <OffersNewEvent addToEvent={this.addToEvent} removeFromEvent={this.removeFromEvent} offers={this.state.offers} selectedOffers={this.state.selectedOffers} />,
-                condition: (args) => args["offers"].length > 0
+                condition: (args) => args["offers"].length > 0 && args["type"] === "hangout"
             },
             {
                 name: "TitleDescColor",
                 component: <TitleDescColorNewEvent onChange={this.onChange} fetchTopicsFromDescription={this.fetchTopicsFromDescription} color={this.state.color} errors={this.state.errors} />,
-                condition: (args) => true
+                condition: (args) => args["type"] === "hangout"
             },
             {
                 name: "Place",
                 component: <PlaceNewEvent onChange={this.onChange} lat={this.state.lat} long={this.state.long} place={this.state.place} session={this.state.session} selectedOffers={this.state.selectedOffers} errors={this.state.errors} />,
-                condition: (args) => true
+                condition: (args) => args["type"] === "hangout"
             },
             {
                 name: "DateTime",
                 component: <DatetimeDurationNewEvent onChange={this.onChange} datetime={this.state.datetime} duration={this.state.duration} durationMeasure={this.state.durationMeasure} errors={this.state.errors} />,
-                condition: (args) => true
+                condition: (args) => args["type"] === "hangout"
             },
             {
                 name: "People",
                 component: <PeopleNewEvent onChange={this.onChange} inviteFriends={this.inviteFriends} submitForm={this.submitForm} restrictToGender={this.state.restrictToGender} eventPrivacy={this.state.eventPrivacy} groups={this.state.groups} errors={this.state.errors} user={this.props.user} />,
-                condition: (args) => true
+                condition: (args) => args["type"] === "hangout"
             }
         ]
         var duration = this.state.duration;
@@ -425,22 +433,33 @@ class NewEvent extends React.Component {
         } else if (this.state.durationMeasure === 'days') {
             duration = duration * 60 * 24;
         }
-        return (
-            <Swiper keyboardShouldPersistTaps={'handled'} onMomentumScrollEnd={() => Keyboard.dismiss()} nextButton={<Text style={{ fontSize: 25 }}>&gt;</Text>} buttonWrapperStyle={{ alignItems: 'flex-end' }} prevButton={<Text style={{ fontSize: 25 }}>&lt;</Text>} style={styles.wrapper} showsButtons={true} loop={false} removeClippedSubviews={false} >
-                {NewEventArr.filter((item) => {
-                    var args = {};
-                    if (item["name"] === "Offers") {
-                        args["offers"] = this.state.offers
-                    }
-                    if (item["condition"](args)) {
-                        return true;
-                    }
-                    return false;
-                }).map((item) => {
-                    return item["component"]
-                })}
-            </Swiper>
-        );
+        if (this.state.eventType === "hangout") {
+            return (
+                <Swiper keyboardShouldPersistTaps={'handled'} onMomentumScrollEnd={() => Keyboard.dismiss()} nextButton={<Text style={{ fontSize: 25 }}>&gt;</Text>} buttonWrapperStyle={{ alignItems: 'flex-end' }} prevButton={<Text style={{ fontSize: 25 }}>&lt;</Text>} style={styles.wrapper} showsButtons={true} loop={false} removeClippedSubviews={false} >
+                    {NewEventArr.filter((item) => {
+                        var args = {};
+                        if (item["name"] === "Offers") {
+                            args["offers"] = this.state.offers
+                        }
+                        args["type"] = this.state.eventType
+                        if (item["condition"](args)) {
+                            return true;
+                        }
+                        return false;
+                    }).map((item) => {
+                        return item["component"]
+                    })}
+                </Swiper>
+            );
+        } else if (this.state.eventType === "event") {
+            return (
+                <EventNewEvent createEvent={this.submitForm} navigation={this.props.navigation} onChange={this.onChange} fetchTopicsFromDescription={this.fetchTopicsFromDescription} color={this.state.color} errors={this.state.errors} lat={this.state.lat} long={this.state.long} place={this.state.place} session={this.state.session} datetime={this.state.datetime} duration={this.state.duration} durationMeasure={this.state.durationMeasure} />
+            )
+        } else {
+            return (
+                <EventTypeNewEvent onChange={this.onChange} />
+            )
+        }
     }
 }
 

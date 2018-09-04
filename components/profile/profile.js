@@ -143,7 +143,6 @@ class Profile extends React.Component {
             })
         }).then(request => request.json())
             .then(requestObject => {
-                console.log(requestObject)
                 if (requestObject["detail"]) {
                     this.setState({ editingDetails: false, changedPassword: true });
                     setTimeout(() => {
@@ -361,7 +360,6 @@ class Profile extends React.Component {
     }
 
     render() {
-        console.log(this.state.oldPasswordError)
         const date = new Date(this.props.user.created);
         return (
             <KeyboardAwareScrollView

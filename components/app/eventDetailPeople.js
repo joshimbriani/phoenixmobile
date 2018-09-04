@@ -42,7 +42,6 @@ class EventDetailPeople extends React.Component {
         }
 
         if (Object.keys(this.props.event).length > 0) {
-            console.log(this.props.event)
             return (
                 <View style={styles.flex1} >
                     {this.props.event.owned && <View style={styles.eventDetailPeopleSection}>

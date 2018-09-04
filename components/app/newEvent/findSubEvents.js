@@ -5,6 +5,28 @@ import { connect } from 'react-redux';
 import { getURLForPlatform } from '../../utils/networkUtils';
 import { EventDisplay } from '../eventDisplay';
 import PlatformIonicon from '../../utils/platformIonicon';
+import * as userActions from '../../../redux/actions/user';
+import { bindActionCreators } from 'redux';
+
+const defaultFilters = {
+    changed: false,
+    privacy: "all",
+    restrictToGender: "all",
+    offer: "all",
+    datetime: {
+        start: -1,
+        end: -1
+    },
+    duration: {
+        moreThan: 0,
+        lessThan: 300
+    },
+    capacity: 1,
+    topics: {
+        type: 'all',
+        topics: []
+    }
+}
 
 class FindSubEvents extends React.Component {
     constructor(props) {
@@ -48,12 +70,11 @@ class FindSubEvents extends React.Component {
     async componentDidMount() {
         this.setState({ loading: true })
         this.loadEvents();
-
+        await this.props.userActions.loadUser(this.props.token);
     }
 
     setFilter(key, value) {
         var filters = Object.assign({}, this.state.filters);
-        console.log(filters)
         filters[key] = value;
         filters["changed"] = true;
         this.setState({ filters: filters });
@@ -75,11 +96,11 @@ class FindSubEvents extends React.Component {
     }
 
     _onRefresh() {
+        this.props.userActions.loadUser(this.props.token);
         this.loadEvents();
     }
 
     loadEvents() {
-        console.log(this.state)
         const filterString = this.generateFilterURLString(this.state.filters);
 
         fetch(getURLForPlatform() + 'api/v1/events/' + filterString, {
@@ -89,16 +110,12 @@ class FindSubEvents extends React.Component {
         }).then(response => response.json())
             .then(responseJSON => {
                 if (responseJSON["events"]) {
-                    var defaultFilter = Object.assign({}, this.props.filter);
-                    defaultFilter["changed"] = false;
-                    this.setState({ events: responseJSON["events"], loading: false, filters: defaultFilter })
+                    this.setState({ events: responseJSON["events"], loading: false, filters: defaultFilters })
                 }
-
             })
     }
 
     generateFilterURLString(filterPropsObject) {
-        console.log(filterPropsObject)
         var filterString = "?";
         filterString += ("&includeForks=true")
         filterString += ("&forkedFrom=" + this.props.navigation.state.params.event.id)
@@ -123,7 +140,7 @@ class FindSubEvents extends React.Component {
     _keyExtractor = (item, index) => item.id;
 
     _renderItem = ({ item }) => (
-        <EventDisplay index={item.id} event={item} interested={this.userInterestedInEvent(item.id)} showButtons={true} username={this.props.user.username} token={this.props.token} goToEvent={() => this.props.navigation.navigate('EventDetailWrapper', { event: item.title, id: item.id, color: item.color, loadEvents: this.loadEvents })} />
+        <EventDisplay index={item.id} event={item} interested={this.userInterestedInEvent(item.id)} showButtons={true} username={this.props.user.username} token={this.props.token} goToEvent={() => this.props.navigation.push('EventDetailWrapper', { event: item.title, id: item.id, color: item.color, loadEvents: this.loadEvents })} />
     );
 
     userInterestedInEvent(eventID) {
@@ -181,7 +198,7 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
     return {
-
+        userActions: bindActionCreators(userActions, dispatch),
     };
 }
 

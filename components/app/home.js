@@ -394,7 +394,7 @@ class Home extends React.Component {
 
     generateFilterURLString(filterPropsObject) {
         var filterString = "?";
-        filterString += ("&includeForks=false")
+        filterString += ("includeForks=false")
         filterString += ("&privacy=" + filterPropsObject.privacy)
         filterString += ("&restrictToGender=" + (filterPropsObject.restrictToGender === 'all' ? 'false' : 'true'))
         filterString += ("&offer=" + filterPropsObject.offer)

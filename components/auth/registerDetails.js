@@ -75,7 +75,6 @@ class RegisterDetails extends React.Component {
         // Eventually we might want to enforce password difficulty
         // We'd do that here
         this.setState({ error: errorState });
-        console.log(errorState);
     }
 
     render() {

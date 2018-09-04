@@ -25,6 +25,12 @@ export class EventDisplay extends React.Component {
         this.setState({interested: this.props.interested})
     }
 
+    componentDidUpdate(prevProps) {
+        if (prevProps.interested !== this.props.interested) {
+            this.setState({interested: this.props.interested})
+        }
+    }
+
     markUserAsInterested(eventID) {
         fetch(getURLForPlatform() + "api/v1/events/" + eventID + "/interested/", {
             headers: {
@@ -37,7 +43,6 @@ export class EventDisplay extends React.Component {
                 if (responseObj["success"] !== true) {
                     console.log("Bad interested.")
                 } else {
-                    console.log(responseObj)
                     if (responseObj["action"] === "added") {
                         this.setState({interested: true})
                     } else if (responseObj["action"] === "removed") {
@@ -47,7 +52,7 @@ export class EventDisplay extends React.Component {
                 }
             });
     }
-
+    
     shareEvent() {
         Share.share({
             message: "It's " + this.props.username + " and I think you'd really like this event - " + this.props.event.title + ". Check it out on Koota! https://kootasocial.com/",
@@ -61,7 +66,6 @@ export class EventDisplay extends React.Component {
     }
 
     render() {
-        console.log(this.props.event)
         if (Object.keys(this.props.event).length > 0) {
             const date = new Date(this.props.event.datetime)
             return (
@@ -106,9 +110,9 @@ export class EventDisplay extends React.Component {
                             {this.props.event.topics.length > 0 && <View style={{ paddingBottom: 5 }}>
                                 <Text numberOfLines={1}>{'#' + this.props.event.topics.map(topic => topic.name).join('  #')}</Text>
                             </View>}
-                            <View>
+                            {this.props.event.owned && <View>
                                 <ProgressBar style={{ marginTop: 'auto' }} progress={this.props.event.going && this.props.event.capacity && (this.props.event.going.length / this.props.event.capacity)} width={Dimensions.get('window').width - 30} />
-                            </View>
+                            </View>}
                         </View>
                     </TouchableOpacity>
                     {this.props.showButtons && <View style={{ flexDirection: 'row', marginTop: 10, borderTopWidth: 1, borderTopColor: '#A8A8A8' }}>

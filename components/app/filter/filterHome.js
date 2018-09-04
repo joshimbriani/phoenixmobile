@@ -110,14 +110,12 @@ class FilterHome extends React.Component {
     };
 
     setFiltersAsDefault() {
-        console.log("Setting filters as default")
         this.props.userActions.saveUserFilter({datetime: this.state.datetime, duration: this.state.duration, capacity: this.state.capacity, topics: this.state.topics, privacy: this.state.privacy, offer: this.state.offer, restrictToGender: this.state.restrictToGender})
         this.props.navigation.state.params.loadEvents();
         this.props.navigation.goBack();
     }
 
     render() {
-        console.log(this.state)
         return (
             <View style={{ flex: 1 }}>
                 <ScrollView style={{ flexDirection: 'column', backgroundColor: 'white', flex: 1 }}>
@@ -328,7 +326,6 @@ class FilterHome extends React.Component {
 
 
 function mapStateToProps(state) {
-    console.log(state.userReducer)
     return {
         token: state.tokenReducer.token,
         user: state.userReducer.user,

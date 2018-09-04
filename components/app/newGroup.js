@@ -187,7 +187,6 @@ class NewGroup extends React.Component{
         })
         .then(response => response.json())
         .then(responseObj => {
-            console.log(responseObj)
             this.setState({users: responseObj["users"]});
         });
     })

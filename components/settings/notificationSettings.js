@@ -151,8 +151,6 @@ class NotificationSettings extends React.Component {
             notificationInvitedEvents: this.state.notificationInvitedEvents
         }
 
-        console.log(field, value)
-
         notificationSettings[field] = value;
         body = {};
         body[field] = value;

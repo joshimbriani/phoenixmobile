@@ -26,7 +26,7 @@ class NewEventFork extends React.Component {
 
         this.state = {
             restrictToGender: false,
-            amount: props.navigation.state.params.event.capacity,
+            amount: props.navigation.state.params.event.capacity === -1 ? 1 : props.navigation.state.params.event.capacity,
             datetime: props.navigation.state.params.event.datetime,
             formIsValid: false,
             isDateTimePickerVisible: false,
@@ -224,7 +224,6 @@ class NewEventFork extends React.Component {
     };
 
     render() {
-        console.log(this.state);
         var duration = this.state.duration;
         if (this.state.durationMeasure === 'hours') {
             duration *= 60;
