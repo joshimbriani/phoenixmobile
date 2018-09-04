@@ -193,7 +193,7 @@ class NewEvent extends React.Component {
             },
         }).then(response => response.json())
             .then(responseJSON => {
-                this.setState({ offers: responseJSON });
+                this.setState({ offers: responseJSON["offers"] });
             })
     }
 
@@ -408,32 +408,32 @@ class NewEvent extends React.Component {
             {
                 name: "Topics",
                 component: <TopicsNewEvent topics={this.state.topics} removeTopic={this.removeTopic} onChange={this.onChange} addTopic={this.addTopic} />,
-                condition: (args) => args["type"] === "hangout"
+                condition: (args) => true
             },
             {
                 name: "Offers",
                 component: <OffersNewEvent addToEvent={this.addToEvent} removeFromEvent={this.removeFromEvent} offers={this.state.offers} selectedOffers={this.state.selectedOffers} />,
-                condition: (args) => args["offers"].length > 0 && args["type"] === "hangout"
+                condition: (args) => args["offers"].length > 0
             },
             {
                 name: "TitleDescColor",
                 component: <TitleDescColorNewEvent onChange={this.onChange} fetchTopicsFromDescription={this.fetchTopicsFromDescription} color={this.state.color} errors={this.state.errors} />,
-                condition: (args) => args["type"] === "hangout"
+                condition: (args) => true
             },
             {
                 name: "Place",
                 component: <PlaceNewEvent onChange={this.onChange} lat={this.state.lat} long={this.state.long} place={this.state.place} session={this.state.session} selectedOffers={this.state.selectedOffers} errors={this.state.errors} />,
-                condition: (args) => args["type"] === "hangout"
+                condition: (args) => true
             },
             {
                 name: "DateTime",
                 component: <DatetimeDurationNewEvent onChange={this.onChange} datetime={this.state.datetime} duration={this.state.duration} durationMeasure={this.state.durationMeasure} errors={this.state.errors} />,
-                condition: (args) => args["type"] === "hangout"
+                condition: (args) => true
             },
             {
                 name: "People",
                 component: <PeopleNewEvent onChange={this.onChange} inviteFriends={this.inviteFriends} submitForm={this.submitForm} restrictToGender={this.state.restrictToGender} eventPrivacy={this.state.eventPrivacy} groups={this.state.groups} errors={this.state.errors} user={this.props.user} />,
-                condition: (args) => args["type"] === "hangout"
+                condition: (args) => true
             }
         ]
         var duration = this.state.duration;
