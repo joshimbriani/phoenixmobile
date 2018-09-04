@@ -330,8 +330,8 @@ class Home extends React.Component {
             onPress={() => navigation.openDrawer()}
             name="md-menu"
         />,
-        headerRight: <PlatformIonicon
-            name="funnel"
+        headerRight: <Icon
+            name="md-funnel"
             size={35}
             style={{ marginRight: 10 }}
             onPress={() => navigation.navigate('FilterHome', { setFilter: navigation.state.params.setFilter, loadEvents: navigation.state.params.loadEvents, default: true })}
@@ -340,8 +340,8 @@ class Home extends React.Component {
     }) : ({ navigation }) => ({
         title: 'Home',
         headerStyle: { paddingTop: -22, },
-        headerRight: <PlatformIonicon
-            name="funnel"
+        headerRight: <Icon
+            name="ios-funnel"
             size={35}
             style={{ marginRight: 10 }}
             onPress={() => navigation.navigate('FilterHome', { setFilter: navigation.state.params.setFilter, loadEvents: navigation.state.params.loadEvents, default: true })}

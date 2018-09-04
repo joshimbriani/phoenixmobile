@@ -1,5 +1,5 @@
 import React from 'react';
-import { Container, Fab, Header, ListItem, Item, Input, Icon, Button, Text } from 'native-base';
+import { Container, Fab, Header, ListItem, Item, Input, Button, Text } from 'native-base';
 import { Platform, SectionList, StyleSheet, TouchableHighlight, View } from 'react-native';
 import PlatformIonicon from '../utils/platformIonicon';
 import { connect } from 'react-redux';
@@ -7,6 +7,7 @@ import { bindActionCreators } from 'redux';
 import { getURLForPlatform } from '../utils/networkUtils';
 import * as userActions from '../../redux/actions/user';
 import { styles } from '../../assets/styles';
+import Icon from 'react-native-vector-icons/Ionicons';
 
 import { getMaterialColor } from '../utils/styleutils';
 
@@ -18,8 +19,8 @@ class MyEvents extends React.Component {
 
     static navigationOptions = (Platform.OS === 'android') ? ({ navigation }) => ({
         title: 'My Events',
-        headerLeft: <PlatformIonicon
-            name="menu"
+        headerLeft: <Icon
+            name="md-menu"
             style={{ paddingLeft: 10 }}
             size={35}
             onPress={() => navigation.openDrawer()} />

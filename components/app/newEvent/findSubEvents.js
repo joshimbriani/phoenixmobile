@@ -7,6 +7,7 @@ import { EventDisplay } from '../eventDisplay';
 import PlatformIonicon from '../../utils/platformIonicon';
 import * as userActions from '../../../redux/actions/user';
 import { bindActionCreators } from 'redux';
+import Icon from 'react-native-vector-icons/Ionicons';
 
 const defaultFilters = {
     changed: false,
@@ -81,10 +82,19 @@ class FindSubEvents extends React.Component {
         // datetime start or end can come back with a -1. Need to handle it. Start = current date, end = no end range
     }
 
-    static navigationOptions = ({ navigation }) => ({
+    static navigationOptions = (Platform.OS === 'android') ? ({ navigation }) => ({
         title: 'Find Forked Events',
-        headerRight: <PlatformIonicon
-            name="funnel"
+        headerRight: <Icon
+            name="md-funnel"
+            size={35}
+            style={{ marginRight: 10 }}
+            onPress={() => navigation.navigate('FilterHome', { setFilter: navigation.state.params.setFilter, loadEvents: navigation.state.params.loadEvents, default: false })}
+        />
+
+    }) : ({ navigation }) => ({
+        title: 'Find Forked Events',
+        headerRight: <Icon
+            name="ios-funnel"
             size={35}
             style={{ marginRight: 10 }}
             onPress={() => navigation.navigate('FilterHome', { setFilter: navigation.state.params.setFilter, loadEvents: navigation.state.params.loadEvents, default: false })}

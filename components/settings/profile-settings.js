@@ -8,13 +8,14 @@ import * as colorActions from '../../redux/actions/backgroundColor';
 import * as userActions from '../../redux/actions/user';
 import SettingsList from 'react-native-settings-list';
 import { StackActions, NavigationActions } from 'react-navigation';
+import VecIcon from 'react-native-vector-icons/Ionicons';
 
 class ProfileSettings extends React.Component {
 
     static navigationOptions = (Platform.OS === 'android') ? ({ navigation }) => ({
         title: 'Settings',
-        headerLeft: <PlatformIonicon
-            name="menu"
+        headerLeft: <VecIcon
+            name="md-menu"
             style={{ paddingLeft: 10 }}
             size={35}
             onPress={() => navigation.openDrawer()} />

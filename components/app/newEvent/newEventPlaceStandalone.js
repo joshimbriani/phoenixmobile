@@ -7,13 +7,22 @@ import MapView, { PROVIDER_GOOGLE, Marker } from 'react-native-maps';
 import Dialog from "react-native-dialog";
 import debounce from 'lodash/debounce';
 import { styles } from '../../../assets/styles';
+import Icon from 'react-native-vector-icons/Ionicons';
 
 class NewEventPlaceStandalone extends React.Component {
 
-    static navigationOptions = ({ navigation }) => ({
+    static navigationOptions = (Platform.OS === 'android') ? ({ navigation }) => ({
         title: 'Add Place to Event',
-        headerLeft: <PlatformIonicon
-            name='arrow-back'
+        headerLeft: <Icon
+            name='md-arrow-back'
+            style={{ paddingLeft: 10 }}
+            size={35}
+            onPress={() => navigation.goBack()} />
+
+    }) : ({ navigation }) => ({
+        title: 'Add Place to Event',
+        headerLeft: <Icon
+            name='ios-arrow-back'
             style={{ paddingLeft: 10 }}
             size={35}
             onPress={() => navigation.goBack()} />

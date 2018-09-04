@@ -1,5 +1,5 @@
 import React from 'react';
-import { DeviceEventEmitter, Text, Dimensions, View, ToastAndroid, Alert, TouchableOpacity, Share } from 'react-native';
+import { Platform, DeviceEventEmitter, Text, Dimensions, View, ToastAndroid, Alert, TouchableOpacity, Share } from 'react-native';
 import { connect } from 'react-redux';
 import PlatformIonicon from '../utils/platformIonicon';
 import { TabViewAnimated, TabBar } from 'react-native-tab-view';
@@ -9,6 +9,7 @@ import EventDetailDetails from './eventDetailDetails';
 import EventDetailPlace from './eventDetailPlace';
 import EventDetailPeople from './eventDetailPeople';
 import EventDetailMessages from './eventDetailMessages';
+import Icon from 'react-native-vector-icons/Ionicons';
 
 import { getMaterialColor } from '../utils/styleutils';
 
@@ -28,14 +29,14 @@ const initialLayout = {
 
 class EventDetailWrapper extends React.Component {
 
-    static navigationOptions = ({ navigation }) => ({
+    static navigationOptions = (Platform.OS === 'android') ? ({ navigation }) => ({
         title: navigation.state.params.event,
         headerStyle: { backgroundColor: navigation.state.params.color },
         headerRight: <Menu style={{ paddingRight: 20, flexDirection: 'row' }}>
             <MenuTrigger>
                 <View style={{ paddingLeft: 20, paddingRight: 20, paddingTop: 10, paddingBottom: 10 }}>
-                    <PlatformIonicon
-                        name={'more'}
+                    <Icon
+                        name={'md-more'}
                         size={30}
                         style={{ color: "white" }}
                     />
@@ -43,8 +44,49 @@ class EventDetailWrapper extends React.Component {
             </MenuTrigger>
             <TouchableOpacity onPress={() => navigation.state.params.forkEvent()}>
                 <View style={{ paddingRight: 10, paddingLeft: 10, paddingTop: 10, paddingBottom: 10 }}>
-                    <PlatformIonicon
-                        name={'git-branch'}
+                    <Icon
+                        name={'md-git-branch'}
+                        size={30}
+                        style={{ color: "white" }}
+                    />
+                </View>
+            </TouchableOpacity>
+            <MenuOptions optionsContainerStyle={{ marginTop: 30 }}>
+                {navigation.state.params.userID !== navigation.state.params.eventCreator && <MenuOption onSelect={navigation.state.params.markUserAsGoing}>
+                    <Text>{userInList(navigation.state.params.userID, (navigation.state.params.usersGoing || [])) ? "I Can't Go" : "I'm Going!"}</Text>
+                </MenuOption>}
+                {navigation.state.params.userID !== navigation.state.params.eventCreator && !userInList(navigation.state.params.userID, (navigation.state.params.usersGoing || [])) && <MenuOption onSelect={navigation.state.params.markUserAsInterested}>
+                    <Text>{userInList(navigation.state.params.userID, (navigation.state.params.usersInterested || [])) ? "Nahh, Not Interested Anymore" : "I'm Considering It!"}</Text>
+                </MenuOption>}
+                {/*<MenuOption onSelect={navigation.state.params.loadEvent}>
+                    <Text>Refresh</Text>
+                </MenuOption>*/}
+                <MenuOption onSelect={navigation.state.params.reportEvent}>
+                    <Text>Report Inappropriate Content</Text>
+                </MenuOption>
+                {navigation.state.params.userID === navigation.state.params.eventCreator && <MenuOption onSelect={navigation.state.params.deleteEvent}>
+                    <Text>Delete Event</Text>
+                </MenuOption>}
+            </MenuOptions>
+        </Menu>
+
+    }) : ({ navigation }) => ({
+        title: navigation.state.params.event,
+        headerStyle: { backgroundColor: navigation.state.params.color },
+        headerRight: <Menu style={{ paddingRight: 20, flexDirection: 'row' }}>
+            <MenuTrigger>
+                <View style={{ paddingLeft: 20, paddingRight: 20, paddingTop: 10, paddingBottom: 10 }}>
+                    <Icon
+                        name={'ios-more'}
+                        size={30}
+                        style={{ color: "white" }}
+                    />
+                </View>
+            </MenuTrigger>
+            <TouchableOpacity onPress={() => navigation.state.params.forkEvent()}>
+                <View style={{ paddingRight: 10, paddingLeft: 10, paddingTop: 10, paddingBottom: 10 }}>
+                    <Icon
+                        name={'ios-git-branch'}
                         size={30}
                         style={{ color: "white" }}
                     />
@@ -152,9 +194,9 @@ class EventDetailWrapper extends React.Component {
 
     forkEvent() {
         if (Object.keys(this.state.eventData).length > 0) {
-            this.props.navigation.navigate('NewEventFork', {event: this.state.eventData});
+            this.props.navigation.navigate('NewEventFork', { event: this.state.eventData });
         }
-        
+
     }
 
     componentDidMount() {

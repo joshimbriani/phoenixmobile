@@ -11,6 +11,7 @@ import { getURLForPlatform } from '../utils/networkUtils';
 import { KootaListView } from '../utils/listView';
 import { styles } from '../../assets/styles';
 import { getCurrentLocation } from '../utils/otherUtils';
+import Icon from 'react-native-vector-icons/Ionicons';
 
 import {
     Menu,
@@ -21,14 +22,39 @@ import {
 
 class Topic extends React.Component {
 
-    static navigationOptions = ({ navigation }) => ({
+    static navigationOptions = (Platform.OS === 'android') ? ({ navigation }) => ({
         title: navigation.state.params.topic,
         headerStyle: { backgroundColor: '#' + navigation.state.params.color },
         headerRight: <Menu style={{paddingRight: 20}}>
                         <MenuTrigger>
                             <View style={{paddingLeft: 20, paddingRight: 20, paddingTop: 10, paddingBottom: 10}}>
-                                <PlatformIonicon
-                                    name={'more'}
+                                <Icon
+                                    name={'md-more'}
+                                    size={30}
+                                    style={{ color: "white" }}
+                                />
+                            </View>
+                        </MenuTrigger>
+                        <MenuOptions optionsContainerStyle={{ marginTop: 30 }}>
+                            <MenuOption onSelect={navigation.state.params.toggleTopic}>
+                                <Text>{isTopicFollowed((navigation.state.params.followingTopics || []), navigation.state.params.topicID) ? "Unfollow" : "Follow"}</Text>
+                            </MenuOption>
+                            <MenuOption onSelect={() => navigation.navigate('Filter')}>
+                                <Text>Filter</Text>
+                            </MenuOption>
+                            <MenuOption onSelect={() => navigation.state.params.reportTopic()}>
+                                <Text>Report</Text>
+                            </MenuOption>
+                        </MenuOptions>
+                    </Menu>
+    }) : ({ navigation }) => ({
+        title: navigation.state.params.topic,
+        headerStyle: { backgroundColor: '#' + navigation.state.params.color },
+        headerRight: <Menu style={{paddingRight: 20}}>
+                        <MenuTrigger>
+                            <View style={{paddingLeft: 20, paddingRight: 20, paddingTop: 10, paddingBottom: 10}}>
+                                <Icon
+                                    name={'ios-more'}
                                     size={30}
                                     style={{ color: "white" }}
                                 />

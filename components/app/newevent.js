@@ -17,15 +17,24 @@ import { OffersNewEvent } from './newEvent/offersNewEvent';
 import { EventTypeNewEvent } from './newEvent/eventTypeNewEvent';
 import EventNewEvent from './newEvent/eventNewEvent';
 import { badWords } from '../../assets/badWords';
+import Icon from 'react-native-vector-icons/Ionicons';
 
 const ITEMS_TO_VALIDATE = ["title", "description", "place", "datetime", "duration", "amount", "eventPrivacy", "group"];
 
 class NewEvent extends React.Component {
 
-    static navigationOptions = ({ navigation }) => ({
+    static navigationOptions = (Platform.OS === 'android') ? ({ navigation }) => ({
         title: 'New Event',
-        headerLeft: <PlatformIonicon
-            name='close'
+        headerLeft: <Icon
+            name='md-close'
+            style={{ paddingLeft: 10 }}
+            size={35}
+            onPress={() => navigation.goBack()} />
+
+    }) : ({ navigation }) => ({
+        title: 'New Event',
+        headerLeft: <Icon
+            name='ios-close'
             style={{ paddingLeft: 10 }}
             size={35}
             onPress={() => navigation.goBack()} />

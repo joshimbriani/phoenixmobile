@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { TouchableOpacity, View } from 'react-native';
+import { TouchableOpacity, View, Platform } from 'react-native';
+import Icon from 'react-native-vector-icons/Ionicons';
 
 import PlatformIonicon from '../utils/platformIonicon';
 
@@ -8,14 +9,17 @@ import PlatformIonicon from '../utils/platformIonicon';
 
 export class GroupHeader extends React.Component {
     render() {
+        var save = Platform.OS === 'android' ? 'md-save' : 'ios-save';
+        var closeCircle = Platform.OS === 'android' ? 'md-close-circle' : 'ios-close-circle';
+        var create = Platform.OS === 'android' ? 'md-create' : 'ios-create';
         if (this.props.index === 1) {
             if (this.props.editing) {
                 return (
                     <View style={{paddingLeft: 10, flexDirection: 'row'}}>
                         <TouchableOpacity onPress={this.props.saveEdits}>
                             <View style={{padding: 5}}>
-                                <PlatformIonicon
-                                    name={'save'}
+                                <Icon
+                                    name={save}
                                     size={30}
                                     style={{ color: "black" }}
                                 />
@@ -23,8 +27,8 @@ export class GroupHeader extends React.Component {
                         </TouchableOpacity>
                         <TouchableOpacity onPress={this.props.cancelEditing}>
                             <View style={{padding: 5}}>
-                                <PlatformIonicon
-                                    name={'close-circle'}
+                                <Icon
+                                    name={closeCircle}
                                     size={30}
                                     style={{ color: "black" }}
                                 />
@@ -36,8 +40,8 @@ export class GroupHeader extends React.Component {
                 return (
                     <View style={{paddingLeft: 10, flexDirection: 'row'}}>
                         <TouchableOpacity onPress={this.props.edit} style={{paddingRight: 10}}>
-                            <PlatformIonicon
-                                name={'create'}
+                            <Icon
+                                name={create}
                                 size={30}
                                 style={{ color: "black" }}
                             />

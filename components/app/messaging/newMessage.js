@@ -1,8 +1,9 @@
 import { connect } from 'react-redux';
 import React from 'react';
-import { DeviceEventEmitter, SectionList, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { DeviceEventEmitter, SectionList, Text, TextInput, TouchableOpacity, View, Platform } from 'react-native';
 import PlatformIonicon from '../../utils/platformIonicon';
 import { styles } from '../../../assets/styles';
+import Icon from 'react-native-vector-icons/Ionicons';
 
 import { UserRow } from './userRow';
 
@@ -10,11 +11,21 @@ import { generateUserToString } from '../../utils/textUtils';
 import { listsEqual } from '../../utils/otherUtils';
 
 class NewMessage extends React.Component {
-    static navigationOptions = ({ navigation }) => ({
+    static navigationOptions = (Platform.OS === 'android') ? ({ navigation }) => ({
         title: 'New Message',
         headerRight: <TouchableOpacity style={{paddingLeft: 20, paddingRight: 20, paddingTop: 10, paddingBottom: 10}} onPress={() => navigation.state.params.startConversation(navigation, navigation.state.params.toUsers)}>
-                        <PlatformIonicon
-                            name={'send'}
+                        <Icon
+                            name={'md-send'}
+                            size={30}
+                            style={{ color: "black" }}
+                        />
+                    </TouchableOpacity>
+
+    }) : ({ navigation }) => ({
+        title: 'New Message',
+        headerRight: <TouchableOpacity style={{paddingLeft: 20, paddingRight: 20, paddingTop: 10, paddingBottom: 10}} onPress={() => navigation.state.params.startConversation(navigation, navigation.state.params.toUsers)}>
+                        <Icon
+                            name={'ios-send'}
                             size={30}
                             style={{ color: "black" }}
                         />
@@ -66,7 +77,7 @@ class NewMessage extends React.Component {
                     )}
                     extraData={true}
                     sections={[
-                        {title: 'Event Creator', data: [this.state.creator]},
+                        {title: 'Event Creator', data: this.props.user.id === this.state.creator.id ? [] : [this.state.creator]},
                         {title: 'Going', data: this.state.going},
                         {title: 'Interested', data: this.state.interested},
                     ]}

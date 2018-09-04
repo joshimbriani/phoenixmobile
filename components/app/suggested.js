@@ -1,16 +1,24 @@
 import React from 'react';
 import { Button, Container, Text } from 'native-base';
-import { Alert, StatusBar, FlatList, StyleSheet, TouchableHighlight, View } from 'react-native';
+import { Alert, StatusBar, FlatList, StyleSheet, TouchableHighlight, View, Platform } from 'react-native';
 import PlatformIonicon from '../utils/platformIonicon';
 import { connect } from 'react-redux';
 import { getURLForPlatform } from '../utils/networkUtils';
 import {KootaListView} from '../utils/listView';
+import Icon from 'react-native-vector-icons/Ionicons';
 
 class Suggested extends React.Component {
 
-    static navigationOptions = ({ navigation }) => ({
-        headerRight: <PlatformIonicon
-            name='funnel'
+    static navigationOptions = (Platform.OS === 'android') ? ({ navigation }) => ({
+        headerRight: <Icon
+            name='md-funnel'
+            style={{ paddingRight: 10 }}
+            size={35}
+            onPress={() => navigation.navigate('Filter')} />
+
+    }) : ({ navigation }) => ({
+        headerRight: <Icon
+            name='ios-funnel'
             style={{ paddingRight: 10 }}
             size={35}
             onPress={() => navigation.navigate('Filter')} />
