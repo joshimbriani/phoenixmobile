@@ -43,12 +43,6 @@ class locationPoint {
     };
 
 };
-//why aren't my setters working?????
-// make class for locationPoints, allow user to create new ones, & to edit existing ones, use same drop-down for radius???
-
-
-//Format to look like settings list, with the 4 parameters; allow users to edit, add, and delete pins; integerate search function
-
 
 const firstLocation = new locationPoint('Norman', 35.2226, 97.4395, 50);
 const secondLocation = new locationPoint();
@@ -129,7 +123,7 @@ class LocationsSettings extends React.Component {
                     containerStyle={{}}
                     style={{ backgroundColor: '#e84118' }}
                     position="bottomRight"
-                    onPress={() => this.props.navigation.navigate('LocationsSettings')}>
+                    onPress={() => this.props.navigation.navigate('NewLocation')}>
                     <PlatformIonicon
                         name={"add"}
                         size={50} //this doesn't adjust the size...? -- not in a Fab

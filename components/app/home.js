@@ -13,6 +13,8 @@ import firebase from 'react-native-firebase';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { EventDisplay } from './eventDisplay';
 
+import { LocationHeader } from './locationHeader';
+
 import { StackActions, NavigationActions } from 'react-navigation';
 import { generateUserToString } from '../utils/textUtils';
 
@@ -56,7 +58,9 @@ class Home extends React.Component {
         this.setFilter = this.setFilter.bind(this);
         this.loadEvents = this.loadEvents.bind(this);
 
-        this.props.navigation.setParams({ setFilter: this.setFilter, loadEvents: this.loadEvents });
+
+        console.log(props)
+        this.props.navigation.setParams({ setFilter: this.setFilter, loadEvents: this.loadEvents, locations: props.locations, selected: props.selected });
     }
 
     async componentDidMount() {
@@ -322,24 +326,29 @@ class Home extends React.Component {
         }
     }
 
-    static navigationOptions = (Platform.OS === 'android') ? ({ navigation }) => ({
-        title: 'Home',
-        headerLeft: <Icon
-            style={{ paddingLeft: 10 }}
-            size={35}
-            onPress={() => navigation.openDrawer()}
-            name="md-menu"
-        />,
-        headerRight: <Icon
-            name="md-funnel"
-            size={35}
-            style={{ marginRight: 10 }}
-            onPress={() => navigation.navigate('FilterHome', { setFilter: navigation.state.params.setFilter, loadEvents: navigation.state.params.loadEvents, default: true })}
-        />
+    static navigationOptions = (Platform.OS === 'android') ? ({ navigation }) => {
+        const { params = {} } = navigation.state;
+        return ({
+            title: 'Home',
+            headerLeft: <Icon
+                style={{ paddingLeft: 10 }}
+                size={35}
+                onPress={() => navigation.openDrawer()}
+                name="md-menu"
+            />,
+            headerRight: <Icon
+                name="md-funnel"
+                size={35}
+                style={{ marginRight: 10 }}
+                onPress={() => navigation.navigate('FilterHome', { setFilter: navigation.state.params.setFilter, loadEvents: navigation.state.params.loadEvents, default: true })}
+            />,
+            headerTitle: <LocationHeader locations={params ? params.locations : []} selectedLocation={params ? params.selected : []} setCurrentLocation={() => console.log("Test")} />,
 
-    }) : ({ navigation }) => ({
+        })
+    } : ({ navigation }) => ({
         title: 'Home',
         headerStyle: { paddingTop: -22, },
+        headerTitle: <LocationHeader locations={[]} selectedLocation={-1} setCurrentLocation={() => console.log("Test")} />,
         headerRight: <Icon
             name="ios-funnel"
             size={35}
@@ -479,7 +488,7 @@ class Home extends React.Component {
                 {!this.state.loading && this.state.events.length <= 0 && <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
                     <View style={{ alignItems: 'center', justifyContent: 'center', alignSelf: 'center' }}>
                         <Text>No Events Found. Try Reloading!</Text>
-                        <View style={{alignItems: 'center', alignSelf: 'center', marginTop: 15}}>
+                        <View style={{ alignItems: 'center', alignSelf: 'center', marginTop: 15 }}>
                             <Button onPress={() => { this.setState({ loading: true }); this.loadEvents() }}>
                                 <Text>Reload Events</Text>
                             </Button>
@@ -509,7 +518,9 @@ function mapStateToProps(state) {
         token: state.tokenReducer.token,
         FCMToken: state.tokenReducer.FCMToken,
         user: state.userReducer.user,
-        filter: state.userReducer.filter
+        filter: state.userReducer.filter,
+        locations: state.locationReducer.locations,
+        selected: state.locationReducer.selected
     };
 }
 
