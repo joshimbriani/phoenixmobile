@@ -12,6 +12,7 @@ import { styles } from '../../assets/styles';
 import firebase from 'react-native-firebase';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { EventDisplay } from './eventDisplay';
+import Permissions from 'react-native-permissions';
 
 import { LocationHeader } from './locationHeader';
 
@@ -29,6 +30,7 @@ class Home extends React.Component {
             notificationsAllowed: false,
             loading: true,
             events: [],
+            coordinates: {},
             filters: {
                 changed: false,
                 privacy: "all",
@@ -58,8 +60,6 @@ class Home extends React.Component {
         this.setFilter = this.setFilter.bind(this);
         this.loadEvents = this.loadEvents.bind(this);
 
-
-        console.log(props)
         this.props.navigation.setParams({ setFilter: this.setFilter, loadEvents: this.loadEvents, locations: props.locations, selected: props.selected });
     }
 
@@ -87,7 +87,7 @@ class Home extends React.Component {
         }
 
         navigator.geolocation.getCurrentPosition((position) => {
-            console.log(position)
+            this.setState({ coordinates: { lat: position.coords.latitude, long: position.coords.longitude } })
         },
             (error) => console.error(error.message),
             Platform.OS === 'ios' ? { enableHighAccuracy: true, timeout: 20000 } : { timeout: 50000 },
@@ -384,6 +384,19 @@ class Home extends React.Component {
         if (this.state.filters.changed === true) {
             Object.assign(filterProps, this.state.filters);
         }
+
+        if (this.state.GPSPermission) {
+            if (this.props.selected === -1) {
+                filterProps["lat"] = this.state.coordinates.lat
+                filterProps["long"] = this.state.coordinates.long
+            } else {
+                var index = this.props.locations.map((location) => location.id).indexOf(this.props.selected);
+                filterProps["lat"] = this.props.locations[index].lat;
+                filterProps["long"] = this.props.locations[index].long;
+            }
+
+        }
+
         const filterString = this.generateFilterURLString(filterProps);
 
         fetch(getURLForPlatform() + 'api/v1/events/' + filterString, {
@@ -417,6 +430,10 @@ class Home extends React.Component {
         filterString += ("&topicsType=" + filterPropsObject.topics.type)
         if (filterPropsObject.topics.type === 'custom') {
             filterString += ("&topics=" + filterPropsObject.topics.topics.map(topic => topic.id).join(","))
+        }
+        if (filterPropsObject["lat"] && filterPropsObject["long"]) {
+            filterString += ("&lat=" + filterPropsObject.lat)
+            filterString += ("&long=" + filterPropsObject.long)
         }
 
         return filterString;

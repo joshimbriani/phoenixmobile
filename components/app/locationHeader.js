@@ -7,16 +7,16 @@ import { Dropdown } from 'react-native-material-dropdown';
 export class LocationHeader extends React.Component {
     render() {
         return (
-            <View style={{ paddingLeft: 10, flexDirection: 'row', flex: 1, alignItems: 'center', alignSelf: 'center', alignContent: 'center' }}>
-                <View style={{ flex: 1, alignItems: 'center', alignSelf: 'center', alignContent: 'center' }}>
+            <View style={{ flexDirection: 'row', flex: 1, alignItems: 'center', alignSelf: 'center', alignContent: 'center' }}>
+                <View style={{ marginBottom: 10, flex: 1, alignItems: 'center', alignSelf: 'center', alignContent: 'center' }}>
                     <Dropdown
-                        containerStyle={{width: 200}}
+                        containerStyle={{width: 250 }}
                         value={this.props.selectedLocation}
                         onChangeText={(text) => console.log(text)}
                         data={this.props.locations}
                         valueExtractor={(location) => {console.log(location); return location.id}}
                         labelExtractor={(location) => location.name}
-                        
+                        fontSize={20}
                     />
                 </View>
             </View>
