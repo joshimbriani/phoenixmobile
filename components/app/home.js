@@ -6,6 +6,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import * as colorActions from '../../redux/actions/backgroundColor';
 import * as userActions from '../../redux/actions/user';
+import * as locationActions from '../../redux/actions/location';
 import PlatformIonicon from '../utils/platformIonicon';
 import { getURLForPlatform } from '../utils/networkUtils';
 import { styles } from '../../assets/styles';
@@ -59,8 +60,19 @@ class Home extends React.Component {
         this._onRefresh = this._onRefresh.bind(this);
         this.setFilter = this.setFilter.bind(this);
         this.loadEvents = this.loadEvents.bind(this);
+        this.setSelectedLocation = this.setSelectedLocation.bind(this);
 
-        this.props.navigation.setParams({ setFilter: this.setFilter, loadEvents: this.loadEvents, locations: props.locations, selected: props.selected });
+        this.props.navigation.setParams({ setFilter: this.setFilter, loadEvents: this.loadEvents, locations: props.locations, selected: props.selected, setSelectedLocation: this.setSelectedLocation });
+    }
+
+    setSelectedLocation(item) {
+        console.log(item)
+        if (item === -2) {
+            this.props.navigation.navigate('NewLocation');
+            this.props.locationActions.setSelectedLocation(this.props.selected);
+        } else {
+            this.props.locationActions.setSelectedLocation(item);
+        }
     }
 
     async componentDidMount() {
@@ -342,7 +354,7 @@ class Home extends React.Component {
                 style={{ marginRight: 10 }}
                 onPress={() => navigation.navigate('FilterHome', { setFilter: navigation.state.params.setFilter, loadEvents: navigation.state.params.loadEvents, default: true })}
             />,
-            headerTitle: <LocationHeader locations={params ? params.locations : []} selectedLocation={params ? params.selected : []} setCurrentLocation={() => console.log("Test")} />,
+            headerTitle: <LocationHeader locations={params ? params.locations : []} selectedLocation={params ? params.selected : []} setCurrentLocation={async(location) => {await params.setSelectedLocation(location); params.loadEvents()}} />,
 
         })
     } : ({ navigation }) => ({
@@ -376,6 +388,7 @@ class Home extends React.Component {
     }
 
     loadEvents() {
+        this.setState({loading: true})
         var filterProps = {};
         if (this.props.filter) {
             Object.assign(filterProps, this.props.filter);
@@ -457,6 +470,7 @@ class Home extends React.Component {
     }
 
     render() {
+        console.log(this.props.locations)
         return (
             <Container style={{ backgroundColor: '#D3D3D3' }}>
                 <Header searchBar rounded>
@@ -545,6 +559,7 @@ function mapDispatchToProps(dispatch) {
     return {
         colorActions: bindActionCreators(colorActions, dispatch),
         userActions: bindActionCreators(userActions, dispatch),
+        locationActions: bindActionCreators(locationActions, dispatch)
     };
 }
 

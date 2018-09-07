@@ -12,11 +12,12 @@ export class LocationHeader extends React.Component {
                     <Dropdown
                         containerStyle={{width: 250 }}
                         value={this.props.selectedLocation}
-                        onChangeText={(text) => console.log(text)}
-                        data={this.props.locations}
-                        valueExtractor={(location) => {console.log(location); return location.id}}
+                        onChangeText={(text) => this.props.setCurrentLocation(text)}
+                        data={(this.props.locations || []).concat([{id: -2, name: 'Add Location...'}])}
+                        valueExtractor={(location) => {return location.id}}
                         labelExtractor={(location) => location.name}
                         fontSize={20}
+                        dropdownPosition={0}
                     />
                 </View>
             </View>

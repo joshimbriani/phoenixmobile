@@ -7,10 +7,10 @@ export function addUserLocation(location) {
     }
 }
 
-export function removeUserLocation(locationIndex) {
+export function removeUserLocation(locationID) {
     return {
         type: REMOVE_USER_LOCATION,
-        locationIndex: locationIndex
+        locationID: locationID
     }
 }
 

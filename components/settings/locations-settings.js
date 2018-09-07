@@ -1,10 +1,12 @@
 import React from 'react';
 import { Container, Fab, Header, Item, Input, Icon, Button, Text } from 'native-base';
-import { PermissionsAndroid, Platform, RefreshControl, StyleSheet, TouchableHighlight, View, FlatList, ListItem } from 'react-native';
+import { PermissionsAndroid, Platform, RefreshControl, StyleSheet, TouchableOpacity, View, FlatList, ListItem } from 'react-native';
 import PlatformIonicon from '../utils/platformIonicon';
 import { connect } from 'react-redux';
 import { styles } from '../../assets/styles';
 import MapView, { PROVIDER_GOOGLE, Marker } from 'react-native-maps';
+import { bindActionCreators } from 'redux';
+import * as locationActions from '../../redux/actions/location';
 
 class LocationsSettings extends React.Component {
     constructor(props) {
@@ -15,10 +17,17 @@ class LocationsSettings extends React.Component {
                 lat: 28.473802,
                 long: -81.465088
             },
+            mapView: {
+                latitude: 39.8283,
+                longitude: -98.5795,
+                latitudeDelta: 30,
+                longitudeDelta: 30,
+            },
             GPSPermission: false
         }
 
         this.checkUserPermissions = this.checkUserPermissions.bind(this);
+        this.selectLocation = this.selectLocation.bind(this);
     }
 
     async componentDidMount() {
@@ -63,47 +72,28 @@ class LocationsSettings extends React.Component {
         }
     }
 
-    render() {
-        /*if (settings.state.switchValue3 == false) {
-            distUnit = 'mi';
-        }
-        else {
-            distUnit = 'km';
-        };
+    selectLocation(item) {
+        this.setState({
+            mapView: {
+                latitude: item.id === -1 ? this.state.coordinates.lat : item.lat,
+                longitude: item.id === -1 ? this.state.coordinates.long : item.long,
+                latitudeDelta: .1,
+                longitudeDelta: .1,
+            },
+        });
 
-        let data = [{
-            value: '10', label: '10 ' + distUnit
-        },
-        {
-            value: '25', label: '25 ' + distUnit
-        },
-        {
-            value: '50', label: '50 ' + distUnit
-        }
-        ];*/
+        this.props.locationActions.setSelectedLocation(item.id);
+    }
+
+    render() {
         console.log(this.props.locations)
         return (
             <Container>
-                <Header searchBar rounded>
-                    <Item>
-                        <Icon name="ios-search" />
-                        <Input placeholder="Pin where?"
-                        /*onChangeText={(text) => this.changeValue(text)} onSubmitEditing={() => { this.props.navigation.navigate('Search', { query: this.state.searchQuery }) }}*/ />
-                    </Item>
-                    <Button transparent>
-                        <Text>Search</Text>
-                    </Button>
-                </Header>
                 <View style={{ flex: 1 }}>
                     <MapView
                         provider={PROVIDER_GOOGLE}
                         style={styles.eventDetailPlaceMap}
-                        region={{
-                            latitude: 39.8283,
-                            longitude: -98.5795,
-                            latitudeDelta: 30,
-                            longitudeDelta: 30,
-                        }}
+                        region={this.state.mapView}
                     >
                         {this.props.locations.map((location) => {
                             if (location.id === -1) {
@@ -118,6 +108,7 @@ class LocationsSettings extends React.Component {
                                     />
                                 )
                             } else {
+                                console.log(location)
                                 return (
                                     <Marker
                                         coordinate={{
@@ -137,18 +128,36 @@ class LocationsSettings extends React.Component {
                         contentContainerStyle={{ paddingTop: 0 }}
                         keyExtractor={(item, index) => index}
                         style={styles.listView}
-                        renderItem={(location, index) => {
-                            if (location.id !== -1) {
-                                return (
-                                    <View>
-                                        <Text style={styles.titleStyle}>
-                                            {location.name}
-                                        </Text>
-                                    </View>
-                                )
-                            } else {
-                                return null;
-                            }
+                        renderItem={({ item, index }) => {
+                            return (
+                                <View style={{ height: 75, alignItems: 'center', flexDirection: 'row', backgroundColor: index % 2 === 0 ? '#f0f0f0' : 'white' }}>
+                                    <TouchableOpacity
+                                        style={{ flex: 1 }}
+                                        onPress={() => this.selectLocation(item)}>
+                                        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', marginLeft: 10, flexDirection: 'row' }}>
+                                            {this.props.selected === item.id && <View style={{ marginRight: 10, marginLeft: 20 }}>
+                                                <PlatformIonicon
+                                                    name={"home"}
+                                                    size={25} //this doesn't adjust the size...?
+                                                    style={{ color: "green", margin: 5 }}
+                                                />
+                                            </View>}
+                                            <Text style={{ width: '100%' }} numberOfLines={1}>
+                                                {item.name}
+                                            </Text>
+                                        </View>
+                                    </TouchableOpacity>
+                                    {item.id !== -1 && <TouchableOpacity onPress={() => this.props.locationActions.removeUserLocation(item.id)}>
+                                        <View style={{ marginRight: 10 }}>
+                                            <PlatformIonicon
+                                                name={"trash"}
+                                                size={25} //this doesn't adjust the size...?
+                                                style={{ color: "black", margin: 5 }}
+                                            />
+                                        </View>
+                                    </TouchableOpacity>}
+                                </View>
+                            )
                         }}
                     />
                 </View>
@@ -178,7 +187,7 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
     return {
-
+        locationActions: bindActionCreators(locationActions, dispatch)
     };
 }
 

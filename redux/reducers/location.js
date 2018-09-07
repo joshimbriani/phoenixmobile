@@ -12,7 +12,7 @@ export default function locationsReducer(state = defaultState, action) {
                 locations: [...state.locations, action.location]
             })
         case REMOVE_USER_LOCATION:
-            var index = state.locations.map((location) => location.id).indexOf(action.locationIndex);
+            var index = state.locations.map((location) => location.id).indexOf(action.locationID);
             return Object.assign({}, state, {
                 locations: [
                     ...state.locations.slice(0, index),
