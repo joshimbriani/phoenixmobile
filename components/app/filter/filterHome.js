@@ -284,12 +284,12 @@ class FilterHome extends React.Component {
                     </View>
                     <View style={{ flexDirection: 'row' }}>
                         <View style={{ alignItems: 'flex-start', justifyContent: 'center', padding: 20 }}>
-                            <Text style={{ fontWeight: 'bold', fontSize: 15, color: 'black' }}>Just {this.props.user.gender === 'Male' ? "guys" : "girls"}?</Text>
+                            <Text style={{ fontWeight: 'bold', fontSize: 15, color: 'black' }}>Just {this.props.details.gender === 'Male' ? "guys" : "girls"}?</Text>
                         </View>
                         <View style={{ justifyContent: 'center', marginRight: 20, flex: 1, padding: 5 }}>
                             <SwitchSelector options={[
                                 { label: 'No', value: 'all' },
-                                { label: 'Yes', value: this.props.user.gender }
+                                { label: 'Yes', value: this.props.details.gender }
                             ]} initial={this.state.restrictToGender === 'all' ? 0 : 1} hasPadding={true} buttonColor={"#00ABE6"} onPress={value => {this.setState({restrictToGender: value}); this.props.navigation.state.params.setFilter("restrictToGender", value)}} />
                         </View>
                     </View>
@@ -328,7 +328,7 @@ class FilterHome extends React.Component {
 function mapStateToProps(state) {
     return {
         token: state.tokenReducer.token,
-        user: state.userReducer.user,
+        details: state.userReducer.details,
         filter: state.userReducer.filter
     };
 }

@@ -19,7 +19,7 @@ class GroupsMessage extends React.Component {
                         thread={this.props.group.thread}
                         eventName={this.props.group.name}
                         color={this.props.group.color}
-                        userString={generateUserToString(this.props.user.id, this.props.group.users, null)}
+                        userString={generateUserToString(this.props.user, this.props.group.users, null)}
                         navigation={this.props.navigation}
                         groupID={this.props.group.id}
                     />

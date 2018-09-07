@@ -36,7 +36,7 @@ export function saveUserObject(user) {
 
 export function loadUser(token) {
     return function action(dispatch) {
-        return fetch(getURLForPlatform() + "api/v1/user/", {
+        return fetch(getURLForPlatform() + "api/v1/user/id/", {
             method: 'GET',
             headers: {
                 'Accept': 'application/json',
@@ -45,7 +45,7 @@ export function loadUser(token) {
             }
         }).then(response => response.ok && response.json())
             .then(responseObj => {
-                dispatch(saveUserObject(responseObj))
+                dispatch(saveUserObject(responseObj["id"]))
             });
     }
 }
@@ -115,7 +115,7 @@ export function loadUserDetails(token, userID) {
             }
         }).then(response => response.ok && response.json())
             .then(responseObj => {
-                dispatch(saveUserObject(responseObj))
+                dispatch(saveUserDetails(responseObj["user"]))
             });
     }
 }
@@ -144,7 +144,7 @@ export function loadCreatedEvents(token, userID) {
             }
         }).then(response => response.ok && response.json())
             .then(responseObj => {
-                dispatch(saveUserObject(responseObj))
+                dispatch(saveCreatedEvents(responseObj["events"]))
             });
     }
 }
@@ -162,7 +162,7 @@ export function purgeFollowingTopics() {
     }
 }
 
-export function loadCreatedEvents(token, userID) {
+export function loadFollowingTopics(token, userID) {
     return function action(dispatch) {
         return fetch(getURLForPlatform() + "api/v1/user/" + userID + "/following/", {
             method: 'GET',
@@ -173,7 +173,7 @@ export function loadCreatedEvents(token, userID) {
             }
         }).then(response => response.ok && response.json())
             .then(responseObj => {
-                dispatch(saveUserObject(responseObj))
+                dispatch(saveFollowingTopics(responseObj["topics"]))
             });
     }
 }
@@ -202,7 +202,7 @@ export function loadGoingTo(token, userID) {
             }
         }).then(response => response.ok && response.json())
             .then(responseObj => {
-                dispatch(saveUserObject(responseObj))
+                dispatch(saveGoingTo(responseObj["topics"]))
             });
     }
 }
@@ -231,7 +231,7 @@ export function loadInvited(token, userID) {
             }
         }).then(response => response.ok && response.json())
             .then(responseObj => {
-                dispatch(saveUserObject(responseObj))
+                dispatch(saveInvited(responseObj["events"]))
             });
     }
 }
@@ -260,7 +260,7 @@ export function loadInterested(token, userID) {
             }
         }).then(response => response.ok && response.json())
             .then(responseObj => {
-                dispatch(saveUserObject(responseObj))
+                dispatch(saveInterested(responseObj["events"]))
             });
     }
 }
@@ -289,7 +289,7 @@ export function loadOutgoingRequests(token, userID) {
             }
         }).then(response => response.ok && response.json())
             .then(responseObj => {
-                dispatch(saveUserObject(responseObj))
+                dispatch(saveOutgoingRequests(responseObj["users"]))
             });
     }
 }
@@ -318,7 +318,7 @@ export function loadIncomingRequests(token, userID) {
             }
         }).then(response => response.ok && response.json())
             .then(responseObj => {
-                dispatch(saveUserObject(responseObj))
+                dispatch(saveIncomingRequests(responseObj["users"]))
             });
     }
 }
@@ -347,7 +347,7 @@ export function loadContacts(token, userID) {
             }
         }).then(response => response.ok && response.json())
             .then(responseObj => {
-                dispatch(saveUserObject(responseObj))
+                dispatch(saveContacts(responseObj["users"]))
             });
     }
 }
@@ -376,7 +376,7 @@ export function loadBlocked(token, userID) {
             }
         }).then(response => response.ok && response.json())
             .then(responseObj => {
-                dispatch(saveUserObject(responseObj))
+                dispatch(saveBlockedUsers(responseObj["users"]))
             });
     }
 }

@@ -13,12 +13,12 @@ class SideDrawer extends React.Component {
                     <View style={{ marginTop: 50, alignItems: 'center' }}>
                         <CachedImage
                             style={{ width: 75, height: 75, borderRadius: 38 }}
-                            source={{ uri: this.props.user.profilePicture }}
+                            source={{ uri: this.props.details.profilePicture }}
                             ttl={60 * 60 * 24 * 3}
                             fallbackSource={require('../../assets/images/KootaK.png')}
                         />
                         <Text style={{ fontSize: 30, color: '#fff' }}>
-                            {this.props.user.username}
+                            {this.props.details.username}
                         </Text>
                     </View>
                 </View>
@@ -30,7 +30,7 @@ class SideDrawer extends React.Component {
 
 function mapStateToProps(state) {
     return {
-        user: state.userReducer.user,
+        details: state.userReducer.details,
     };
 }
 

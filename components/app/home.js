@@ -61,12 +61,14 @@ class Home extends React.Component {
 
     async componentDidMount() {
         await this.props.userActions.loadUser(this.props.token);
+        await this.props.userActions.loadUserDetails(this.props.token, this.props.user);
+        await this.props.userActions.loadInterested(this.props.token, this.props.user);
         this.props.colorActions.resetColor();
 
         await this.checkUserPermissions();
 
-        if (this.props.FCMToken !== this.props.user.FCMToken) {
-            fetch(getURLForPlatform() + "api/v1/user/" + this.props.user.id + "/", {
+        if (this.props.FCMToken !== this.props.details.FCMToken) {
+            fetch(getURLForPlatform() + "api/v1/user/" + this.props.user + "/", {
                 headers: {
                     Authorization: "Token " + this.props.token
                 },
@@ -231,7 +233,7 @@ class Home extends React.Component {
                             actions: [
                                 NavigationActions.navigate({ routeName: 'Home' }),
                                 StackActions.push({ routeName: 'EventDetailWrapper', params: { event: responseObj["title"], id: responseObj["id"], goToMessages: true } }),
-                                StackActions.push({ routeName: 'ConversationView', params: { newConvo: false, eventName: responseObj["title"], thread: thread, color: '#ffffff', userString: generateUserToString(this.props.user.id, thread.users, responseObj["userBy"]["username"]) } })
+                                StackActions.push({ routeName: 'ConversationView', params: { newConvo: false, eventName: responseObj["title"], thread: thread, color: '#ffffff', userString: generateUserToString(this.props.user, thread.users, responseObj["userBy"]["username"]) } })
                             ]
                         })
                         this.props.navigation.dispatch(resetAction);
@@ -416,13 +418,13 @@ class Home extends React.Component {
     _keyExtractor = (item, index) => item.id;
 
     _renderItem = ({ item }) => (
-        <EventDisplay index={item.id} event={item} interested={this.userInterestedInEvent(item.id)} showButtons={true} username={this.props.user.username} token={this.props.token} goToEvent={() => this.props.navigation.navigate('EventDetailWrapper', { event: item.title, id: item.id, color: item.color, loadEvents: this.loadEvents })} />
+        <EventDisplay index={item.id} event={item} interested={this.userInterestedInEvent(item.id)} showButtons={true} username={this.props.details.username} token={this.props.token} goToEvent={() => this.props.navigation.navigate('EventDetailWrapper', { event: item.title, id: item.id, color: item.color, loadEvents: this.loadEvents })} />
     );
 
     userInterestedInEvent(eventID) {
-        if (this.props.user.interestedIn) {
-            for (var i = 0; i < this.props.user.interestedIn.length; i++) {
-                if (eventID === this.props.user.interestedIn[i].id) {
+        if (this.props.interestedInEvents) {
+            for (var i = 0; i < this.props.interestedInEvents.length; i++) {
+                if (eventID === this.props.interestedInEvents[i].id) {
                     return true;
                 }
             }
@@ -509,7 +511,9 @@ function mapStateToProps(state) {
         token: state.tokenReducer.token,
         FCMToken: state.tokenReducer.FCMToken,
         user: state.userReducer.user,
-        filter: state.userReducer.filter
+        filter: state.userReducer.filter,
+        interestedInEvents: state.userReducer.interestedInEvents,
+        details: state.userReducer.details
     };
 }
 
