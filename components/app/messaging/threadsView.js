@@ -30,7 +30,7 @@ class ThreadsView extends React.Component {
                             const date = new Date(item.lastUpdate)
                             return (
                             <TouchableOpacity
-                                onPress={() => this.props.navigation.navigate('ConversationView', { newConvo: false, thread: item, eventName: this.props.eventName, color: this.props.color, userString: generateUserToString(this.props.user.id, item.users, this.props.creator) })}>
+                                onPress={() => this.props.navigation.navigate('ConversationView', { newConvo: false, thread: item, eventName: this.props.eventName, color: this.props.color, userString: generateUserToString(this.props.user, item.users, this.props.creator) })}>
                                 <View style={{flexDirection: 'row', marginTop: 10, paddingRight: 10, paddingLeft: 10, paddingBottom: 10, borderBottomWidth: 0.5, borderColor: '#000'}}>
                                     <View style={{ justifyContent: 'center', margin: 5}}>
                                         <CachedImage
@@ -41,7 +41,7 @@ class ThreadsView extends React.Component {
                                         />
                                     </View>
                                     <View style={{flex: 1, justifyContent: 'center', paddingLeft: 15}}>
-                                        <Text numberOfLines={1} style={{fontWeight: "bold"}}>{generateUserToString(this.props.user.id, item.users, this.props.creator)}</Text>
+                                        <Text numberOfLines={1} style={{fontWeight: "bold"}}>{generateUserToString(this.props.user, item.users, this.props.creator)}</Text>
                                         <Text numberOfLines={1}>{item.messages[item.messages.length - 1].content}</Text>
                                     </View>
                                     <View style={{justifyContent: 'center'}}>
@@ -54,6 +54,7 @@ class ThreadsView extends React.Component {
                 </View>
             )
         } else {
+            console.log(this.props.userGoing, this.props.userInterested, this.props.creator)
             const invLevel = this.getUserInvolvementLevel(this.props.userGoing, this.props.userInterested, this.props.creator);
             return (
                 <View style={{padding: 5}}>
@@ -69,7 +70,7 @@ class ThreadsView extends React.Component {
     generateUserImage(users) {
         var usersCopy = users.slice();
         for (var i = usersCopy.length - 1; i >= 0; i--) {
-            if (usersCopy[i].id === this.props.user.id) {
+            if (usersCopy[i].id === this.props.user) {
                 usersCopy.splice(i, 1);
                 break;
             }
@@ -86,7 +87,7 @@ class ThreadsView extends React.Component {
             return ['Interested', 'the event organizer and other interested or going users.', '']
         }
 
-        if (creator === this.props.user.username) {
+        if (creator === this.props.details.username) {
             return ['Event Organizer', 'interested and going users.', '']
         }
 
@@ -102,6 +103,7 @@ ThreadsView.propTypes = {
 function mapStateToProps(state) {
     return {
         user: state.userReducer.user,
+        details: state.userReducer.user
     };
 }
 

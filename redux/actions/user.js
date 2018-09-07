@@ -279,6 +279,7 @@ export function purgeOutgoingRequests() {
 }
 
 export function loadOutgoingRequests(token, userID) {
+    console.log("Here?")
     return function action(dispatch) {
         return fetch(getURLForPlatform() + "api/v1/user/" + userID + "/pendingRequests/", {
             method: 'GET',
@@ -289,7 +290,8 @@ export function loadOutgoingRequests(token, userID) {
             }
         }).then(response => response.ok && response.json())
             .then(responseObj => {
-                dispatch(saveOutgoingRequests(responseObj["users"]))
+                console.log(responseObj)
+                dispatch(saveOutgoingRequests(responseObj["outgoing"]))
             });
     }
 }
@@ -318,7 +320,8 @@ export function loadIncomingRequests(token, userID) {
             }
         }).then(response => response.ok && response.json())
             .then(responseObj => {
-                dispatch(saveIncomingRequests(responseObj["users"]))
+                console.log(responseObj["incoming"])
+                dispatch(saveIncomingRequests(responseObj["incoming"]))
             });
     }
 }

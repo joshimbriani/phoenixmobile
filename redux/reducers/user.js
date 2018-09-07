@@ -125,7 +125,7 @@ export default function userReducer(state = defaultState, action) {
             })
         case SAVE_USER_PENDING_INCOMING_RELATIONSHIPS:
             return Object.assign({}, state, {
-                pendingOutgoingRelationships: action.pendingOutgoingRelationships
+                pendingIncomingRelationships: action.pendingIncomingRelationships
             })
         case PURGE_USER_PENDING_INCOMING_RELATIONSHIPS:
             return Object.assign({}, state, {
@@ -133,7 +133,7 @@ export default function userReducer(state = defaultState, action) {
             })
         case SAVE_USER_PENDING_OUTGOING_RELATIONSHIPS:
             return Object.assign({}, state, {
-                pendingIncomingRelationships: action.pendingIncomingRelationships
+                pendingOutgoingRelationships: action.pendingOutgoingRelationships
             })
         case PURGE_USER_PENDING_OUTGOING_RELATIONSHIPS:
             return Object.assign({}, state, {

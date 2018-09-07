@@ -26,10 +26,14 @@ class EventDetailPeople extends React.Component {
     }
 
     render() {
-        const selectedUserBlocked = this.props.user.blockedUsers.map((user) => user.id).indexOf(this.state.selectedUser) !== -1;
-        const selectedUserContact = this.props.user.friends.map((user) => user.id).indexOf(this.state.selectedUser) !== -1;
-        const selectedUserRequestedCurrentUser = this.props.user.pendingIncomingRequests.map((user) => user.id).indexOf(this.state.selectedUser) !== -1;
-        const selectedUserPendingRequested = this.props.user.pendingOutgoingRequests.map((user) => user.id).indexOf(this.state.selectedUser) !== -1;
+        console.log("blocked", this.props.blockedUsers)
+        console.log("contacts", this.props.contacts)
+        console.log("incoming", this.props.pendingIncomingRelationships)
+        console.log("outgoing", this.props.pendingOutgoingRelationships)
+        const selectedUserBlocked = this.props.blockedUsers.map((user) => user.id).indexOf(this.state.selectedUser) !== -1;
+        const selectedUserContact = this.props.contacts.map((user) => user.id).indexOf(this.state.selectedUser) !== -1;
+        const selectedUserRequestedCurrentUser = this.props.pendingIncomingRelationships.map((user) => user.id).indexOf(this.state.selectedUser) !== -1;
+        const selectedUserPendingRequested = this.props.pendingOutgoingRelationships.map((user) => user.id).indexOf(this.state.selectedUser) !== -1;
         var modalHeight = 0;
         if (this.state.selectedUser === -1) {
             modalHeight = 0;
@@ -201,7 +205,7 @@ class EventDetailPeople extends React.Component {
         if (userToBlock < 0) {
             return;
         }
-        fetch(getURLForPlatform() + 'api/v1/user/' + this.props.user.id + '/block/', {
+        fetch(getURLForPlatform() + 'api/v1/user/' + this.props.user + '/block/', {
             headers: {
                 Authorization: "Token " + this.props.token
             },
@@ -229,7 +233,7 @@ class EventDetailPeople extends React.Component {
             return;
         }
         if (addUserToContacts) {
-            fetch(getURLForPlatform() + 'api/v1/user/' + this.props.user.id + '/requests/', {
+            fetch(getURLForPlatform() + 'api/v1/user/' + this.props.user + '/requests/', {
                 headers: {
                     Authorization: "Token " + this.props.token
                 },
@@ -246,7 +250,7 @@ class EventDetailPeople extends React.Component {
                     }
                 })
         } else if (removeUserFromContacts) {
-            fetch(getURLForPlatform() + 'api/v1/user/' + this.props.user.id + '/unfriend/', {
+            fetch(getURLForPlatform() + 'api/v1/user/' + this.props.user + '/unfriend/', {
                 headers: {
                     Authorization: "Token " + this.props.token
                 },
@@ -263,7 +267,7 @@ class EventDetailPeople extends React.Component {
                     }
                 })
         } else if (acceptUserRequest) {
-            fetch(getURLForPlatform() + 'api/v1/user/' + this.props.user.id + '/requests/', {
+            fetch(getURLForPlatform() + 'api/v1/user/' + this.props.user + '/requests/', {
                 headers: {
                     Authorization: "Token " + this.props.token
                 },
@@ -281,7 +285,7 @@ class EventDetailPeople extends React.Component {
                     }
                 })
         } else if (denyUserRequest) {
-            fetch(getURLForPlatform() + 'api/v1/user/' + this.props.user.id + '/requests/', {
+            fetch(getURLForPlatform() + 'api/v1/user/' + this.props.user + '/requests/', {
                 headers: {
                     Authorization: "Token " + this.props.token
                 },
@@ -312,7 +316,11 @@ EventDetailPeople.propTypes = {
 function mapStateToProps(state) {
     return {
         user: state.userReducer.user,
-        token: state.tokenReducer.token
+        token: state.tokenReducer.token,
+        blockedUsers: state.userReducer.blockedUsers,
+        contacts: state.userReducer.contacts,
+        pendingIncomingRelationships: state.userReducer.pendingIncomingRelationships,
+        pendingOutgoingRelationships: state.userReducer.pendingOutgoingRelationships
     };
 }
 

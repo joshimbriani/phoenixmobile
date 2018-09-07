@@ -90,7 +90,7 @@ class EventDetailDetails extends React.Component {
                             {/*this.props.event.privacy === "group" && <View>
                                 <Text style={styles.eventDetailSectionHeader}>Group</Text>
                             </View>*/}
-                            {this.props.user.id === this.props.event.userBy.id && now.isAfter(moment(date).subtract(1, 'hour')) &&
+                            {this.props.user === this.props.event.userBy.id && now.isAfter(moment(date).subtract(1, 'hour')) &&
                                 <View style={{ marginTop: 20 }}>
                                     <Button disabled={this.props.event.redeemed || now.isAfter(moment(date).add(1, 'hour'))} title={this.props.event.redeemed ? "Redeemed!" : "Redeem Now"} color='#8BC34A' accessibilityLabel="Redeem Offer Button" onPress={this.props.redeemOffer} />
                                 </View>

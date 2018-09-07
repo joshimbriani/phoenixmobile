@@ -27,7 +27,7 @@ class NewGroup extends React.Component{
             color: materialColors[0],
             users: [],
             userSearchQuery: "",
-            groupUsers: [this.props.user],
+            groupUsers: [this.props.details],
             errors: ""
         }
 
@@ -229,7 +229,7 @@ class NewGroup extends React.Component{
         .then(response => response.json())
         .then(responseObj => {
             if (responseObj["success"]) {
-                this.props.navigation.navigate('GroupWrapper', {backKey: this.props.navigation.state.key, groupID: responseObj["groupID"]});
+                this.props.navigation.navigate('GroupWrapper', {backKey: this.props.navigation.state.key, groupID: responseObj["groupID"], loadGroups: this.props.navigation.state.params.loadGroups});
             } else {
                 this.setState({errors: "Something went wrong. Please try again in a few minutes."})
             }
@@ -240,7 +240,8 @@ class NewGroup extends React.Component{
 function mapStateToProps(state) {
     return {
         token: state.tokenReducer.token,
-        user: state.userReducer.user
+        user: state.userReducer.user,
+        details: state.userReducer.details
     };
 }
 
