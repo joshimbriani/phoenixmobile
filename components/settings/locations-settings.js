@@ -86,7 +86,6 @@ class LocationsSettings extends React.Component {
     }
 
     render() {
-        console.log(this.props.locations)
         return (
             <Container>
                 <View style={{ flex: 1 }}>

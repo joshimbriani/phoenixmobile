@@ -205,6 +205,12 @@ class Home extends React.Component {
 
     }
 
+    componentDidUpdate(prevProps) {
+        if (prevProps.locations !== this.props.locations) {
+            this.props.navigation.setParams({ locations: this.props.locations });
+        }
+    }
+
     setFilter(key, value) {
         var filters = Object.assign({}, this.state.filters);
         filters[key] = value;
