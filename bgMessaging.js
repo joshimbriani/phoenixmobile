@@ -48,6 +48,13 @@ export default async (message) => {
                 userFromID: message.data["userFromID"],
                 randomID: message.data["randomID"]
             });
+        } else if (message.data["type"] === 'i') {
+            notification.setSubtitle("Invitation")
+                .android.setChannelId("invitation")
+                .setData({
+                    type: message.data["type"],
+                    event: message.data["event"],
+                });
         } else {
             notification.android.setChannelId("default");
         }

@@ -63,6 +63,18 @@ class EventDetailDetails extends React.Component {
                                     </View>
                                 </View>
                             </TouchableOpacity>
+                            <TouchableOpacity onPress={() => this.props.inviteUsers(this.props.event.id)} style={{ flexDirection: 'row', flex: 1, margin: 5 }}>
+                                <View style={{ flexDirection: 'row', flex: 1, padding: 5, borderRightWidth: 1, borderRightColor: '#A8A8A8' }}>
+                                    <PlatformIonicon
+                                        name={this.props.userGoing ? "checkbox" : "checkbox-outline"}
+                                        size={25} //this doesn't adjust the size...?
+                                        style={{ color: "green", margin: 5 }}
+                                    />
+                                    <View style={{ alignItems: 'center', justifyContent: 'center', flex: 1 }}>
+                                        <Text>Invite Users</Text>
+                                    </View>
+                                </View>
+                            </TouchableOpacity>
                             <TouchableOpacity onPress={() => this.props.shareEvent()} style={{ flexDirection: 'row', flex: 1, margin: 5 }}>
                                 <View style={{ flexDirection: 'row', flex: 1, padding: 5 }}>
                                     <PlatformIonicon
