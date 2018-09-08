@@ -83,7 +83,7 @@ class NewEventFork extends React.Component {
     }
 
     inviteFriends() {
-        this.props.navigation.navigate('InviteUsers', { contacts: this.props.user.friends, addUsersToInviteLists: this.addUsersToInviteLists, invitedUsers: this.state.invitedUsers });
+        this.props.navigation.navigate('InviteUsers', { contacts: this.props.contacts, addUsersToInviteLists: this.addUsersToInviteLists, invitedUsers: this.state.invitedUsers });
     }
 
     // Actually toggles users
@@ -320,9 +320,9 @@ class NewEventFork extends React.Component {
                         </View>
                     </View>
 
-                    {this.props.user.gender !== 'Non-Binary' && <View style={{ flexDirection: 'row', margin: 10, padding: 10, backgroundColor: 'white', borderRadius: 5, shadowRadius: 2, shadowOpacity: 1, shadowColor: 'black', elevation: 2 }}>
+                    {this.props.details.gender !== 'Non-Binary' && <View style={{ flexDirection: 'row', margin: 10, padding: 10, backgroundColor: 'white', borderRadius: 5, shadowRadius: 2, shadowOpacity: 1, shadowColor: 'black', elevation: 2 }}>
                         <View style={{ alignSelf: 'center', flex: 3, paddingTop: 15 }}>
-                            <Text style={{ fontSize: 15, color: 'black' }}>Make it a {this.props.user.gender === 'Male' ? "guy" : "girl"}s only event?</Text>
+                            <Text style={{ fontSize: 15, color: 'black' }}>Make it a {this.props.details.gender === 'Male' ? "guy" : "girl"}s only event?</Text>
                         </View>
                         <View style={{ alignSelf: 'center', flex: 2 }}>
                             <Dropdown
@@ -414,7 +414,9 @@ class NewEventFork extends React.Component {
 function mapStateToProps(state) {
     return {
         token: state.tokenReducer.token,
-        user: state.userReducer.user
+        user: state.userReducer.user,
+        contacts: state.userReducer.contacts,
+        details: state.userReducer.details
     };
 }
 

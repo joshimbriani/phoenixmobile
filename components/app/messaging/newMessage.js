@@ -77,7 +77,7 @@ class NewMessage extends React.Component {
                     )}
                     extraData={true}
                     sections={[
-                        {title: 'Event Creator', data: this.props.user.id === this.state.creator.id ? [] : [this.state.creator]},
+                        {title: 'Event Creator', data: this.props.user === this.state.creator.id ? [] : [this.state.creator]},
                         {title: 'Going', data: this.state.going},
                         {title: 'Interested', data: this.state.interested},
                     ]}
@@ -90,7 +90,7 @@ class NewMessage extends React.Component {
     removeUserFromList(list) {
         var copy = list.slice();
         for (var i = copy.length-1; i >= 0; i--) {
-            if (copy[i].id === this.props.user.id) {
+            if (copy[i].id === this.props.user) {
                 copy.splice(i, 1);
             }
         }
@@ -117,11 +117,11 @@ class NewMessage extends React.Component {
             // Want to have all threads passed to this object, check if thread exists for event and user, if so redirect to that thread
             // Otherwise create a new one
             if (threadExists) {
-                navigation.navigate('ConversationView', { backKey: this.props.navigation.state.key, newConvo: false, userString: generateUserToString(this.props.user.id, this.state.toUsers, this.props.creator), eventName: this.props.navigation.state.params.eventName, thread: thread })
+                navigation.navigate('ConversationView', { backKey: this.props.navigation.state.key, newConvo: false, userString: generateUserToString(this.props.user, this.state.toUsers, this.props.navigation.state.params.creator.username), eventName: this.props.navigation.state.params.eventName, thread: thread })
             } else {
                 var usersList = this.state.toUsers.map(user => user.id);
-                usersList.push(this.props.user.id)
-                navigation.navigate('ConversationView', { backKey: this.props.navigation.state.key, newConvo: true, userString: generateUserToString(this.props.user.id, this.state.toUsers, this.props.creator), eventName: this.props.navigation.state.params.eventName, toUsers: usersList, eventID: this.props.navigation.state.params.eventID })
+                usersList.push(this.props.user)
+                navigation.navigate('ConversationView', { backKey: this.props.navigation.state.key, newConvo: true, userString: generateUserToString(this.props.user, this.state.toUsers, this.props.navigation.state.params.creator.username), eventName: this.props.navigation.state.params.eventName, toUsers: usersList, eventID: this.props.navigation.state.params.eventID })
             }
         } 
     }
@@ -148,7 +148,7 @@ class NewMessage extends React.Component {
         var returnThread = {};
         this.props.navigation.state.params.threads.forEach((thread) => {
             var usersList = this.state.toUsers.map(user => user.id);
-            usersList.push(this.props.user.id)
+            usersList.push(this.props.user)
             var threadUserList = thread.users.map(user => user.id);
 
             if (listsEqual(usersList, threadUserList)) {

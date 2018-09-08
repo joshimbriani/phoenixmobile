@@ -36,7 +36,10 @@ class MyEvents extends React.Component {
     }
 
     componentDidMount() {
-        this.props.userActions.loadUser(this.props.token);
+        this.props.userActions.loadCreatedEvents(this.props.token, this.props.user)
+        this.props.userActions.loadGoingTo(this.props.token, this.props.user)
+        this.props.userActions.loadInvited(this.props.token, this.props.user)
+        this.props.userActions.loadInterested(this.props.token, this.props.user)
     }
 
     renderEmptySections(section) {
@@ -50,8 +53,10 @@ class MyEvents extends React.Component {
     }
 
     noEventsInMyEvents() {
-        if (Object.keys(this.props.user).length > 0) {
-            return this.props.user.events.length + this.props.user.goingTo.length + this.props.user.invitedTo.length + this.props.user.interestedIn.length;
+        console.log(this.props.user)
+        if (this.props.user > 0) {
+            console.log(this.props.createdEvents, this.props.goingToEvents, this.props.invitedToEvents, this.props.interestedInEvents)
+            return this.props.createdEvents.length + this.props.goingToEvents.length + this.props.invitedToEvents.length + this.props.interestedInEvents.length;
         }
 
         return 0
@@ -81,10 +86,10 @@ class MyEvents extends React.Component {
                     }}
                     renderSectionHeader={({ section }) => this.renderEmptySections(section)}
                     sections={[
-                        {name: 'Created', data: this.props.user.events},
-                        {name: 'Going To', data: this.props.user.goingTo},
-                        {name: 'Invited To', data: this.props.user.invitedTo},
-                        {name: 'Interested In', data: this.props.user.interestedIn}
+                        {name: 'Created', data: this.props.createdEvents},
+                        {name: 'Going To', data: this.props.goingToEvents},
+                        {name: 'Invited To', data: this.props.invitedToEvents},
+                        {name: 'Interested In', data: this.props.interestedInEvents}
                     ]}
                     keyExtractor={(item, index) => index} />
             </Container>
@@ -95,7 +100,11 @@ class MyEvents extends React.Component {
 function mapStateToProps(state) {
     return {
         token: state.tokenReducer.token,
-        user: state.userReducer.user
+        user: state.userReducer.user,
+        createdEvents: state.userReducer.createdEvents,
+        goingToEvents: state.userReducer.goingToEvents,
+        invitedToEvents: state.userReducer.invitedToEvents,
+        interestedInEvents: state.userReducer.interestedInEvents
     };
 }
 

@@ -87,10 +87,10 @@ class Topic extends React.Component {
     }
 
     async componentDidMount() {
-        this.props.userActions.loadUser(this.props.token)
+        this.props.userActions.loadFollowingTopics(this.props.token, this.props.user)
 
         this.props.colorActions.changeColor(this.props.navigation.state.params.color);
-        this.props.navigation.setParams({ toggleTopic: this.toggleTopic, followingTopics: this.props.user.followingTopics, topicID: this.props.navigation.state.params.id, userID: this.props.user.id, reportTopic: this.reportTopic });
+        this.props.navigation.setParams({ toggleTopic: this.toggleTopic, followingTopics: this.props.followingTopics, topicID: this.props.navigation.state.params.id, userID: this.props.user, reportTopic: this.reportTopic });
         
         var url = getURLForPlatform() + "api/v1/events/search/?topic=" + this.props.navigation.state.params.id;
         if (Platform.OS === 'android') {
@@ -133,14 +133,14 @@ class Topic extends React.Component {
                 if (responseJSON["success"] !== true) {
                     console.log("Bad going.")
                 } else {
-                    var userFollow = this.props.user.followingTopics.slice();
+                    var userFollow = this.props.followingTopics.slice();
                     if (responseJSON["action"] === "add") {
                         userFollow.push({id: this.props.navigation.state.params.id})
                     } else if (responseJSON["action"] === "remove") {
                         removeTopic(userFollow, this.props.navigation.state.params.id)
                     }
                     this.props.navigation.setParams({ followingTopics: userFollow });
-                    this.props.userActions.loadUser(this.props.token);
+                    this.props.userActions.loadFollowingTopics(this.props.token, this.props.user)
                 }
             })
     }
@@ -184,6 +184,7 @@ function mapStateToProps(state) {
         color: state.backgroundColorReducer.color,
         token: state.tokenReducer.token,
         user: state.userReducer.user,
+        followingTopics: state.userReducer.followingTopics
     };
 }
 

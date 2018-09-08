@@ -22,7 +22,7 @@ class Profile extends React.Component {
         super(props);
         this.state = {
             editingDetails: false,
-            email: this.props.user.email,
+            email: this.props.details.email,
             filteredFriends: [],
             filterString: "",
             userModalVisible: false,
@@ -48,8 +48,10 @@ class Profile extends React.Component {
     }
 
     componentDidMount() {
-        this.setState({ email: this.props.user.email, filteredFriends: this.props.user.friends });
-        this.props.userActions.loadUser(this.props.token);
+        this.setState({ email: this.props.details.email, filteredFriends: this.props.contacts });
+        this.props.userActions.loadContacts(this.props.token, this.props.user);
+        this.props.userActions.loadUserDetails(this.props.token, this.props.user);
+        this.props.userActions.loadIncomingRequests(this.props.token, this.props.user);
         this.filterFriends(this.state.filterString, {})
     }
 
@@ -160,7 +162,7 @@ class Profile extends React.Component {
         if (userID === -1) {
             this.setState({ userModalVisible: false });
         }
-        fetch(getURLForPlatform() + 'api/v1/user/' + this.props.user.id + '/unfriend/', {
+        fetch(getURLForPlatform() + 'api/v1/user/' + this.props.user + '/unfriend/', {
             headers: {
                 Authorization: "Token " + this.props.token
             },
@@ -171,7 +173,7 @@ class Profile extends React.Component {
         }).then(request => request.json())
             .then(requestObject => {
                 if (requestObject["success"]) {
-                    this.props.userActions.loadUser(this.props.token);
+                    this.props.userActions.loadContacts(this.props.token, this.props.user);
                     this.removeUserFromFilteredUsers(userID);
                     this.setState({ userModalVisible: false, selectedUser: -1 });
                 }
@@ -182,7 +184,7 @@ class Profile extends React.Component {
         if (userID === -1) {
             this.setState({ userModalVisible: false });
         }
-        fetch(getURLForPlatform() + 'api/v1/user/' + this.props.user.id + '/block/', {
+        fetch(getURLForPlatform() + 'api/v1/user/' + this.props.user + '/block/', {
             headers: {
                 Authorization: "Token " + this.props.token
             },
@@ -194,7 +196,7 @@ class Profile extends React.Component {
         }).then(request => request.json())
             .then(requestObject => {
                 if (requestObject["success"]) {
-                    this.props.userActions.loadUser(this.props.token);
+                    this.props.userActions.loadBlocked(this.props.token, this.props.user);
                     this.removeUserFromFilteredUsers(userID);
                     this.setState({ userModalVisible: false, selectedUser: -1 });
                 }
@@ -215,7 +217,7 @@ class Profile extends React.Component {
 
     acceptRequest(userFor) {
         console.log("Accept friend request")
-        fetch(getURLForPlatform() + 'api/v1/user/' + this.props.user.id + '/requests/', {
+        fetch(getURLForPlatform() + 'api/v1/user/' + this.props.user + '/requests/', {
             headers: {
                 Authorization: "Token " + this.props.token
             },
@@ -227,7 +229,8 @@ class Profile extends React.Component {
         }).then(request => request.json())
             .then(requestObject => {
                 if (requestObject["success"]) {
-                    this.props.userActions.loadUser(this.props.token).then();
+                    this.props.userActions.loadContacts(this.props.token, this.props.user);
+                    this.props.userActions.loadIncomingRequests(this.props.token, this.props.user);
                     this.filterFriends(this.state.filterString, userFor);
                 }
             })
@@ -235,7 +238,7 @@ class Profile extends React.Component {
 
     denyRequest(userFor) {
         console.log("Deny friend request")
-        fetch(getURLForPlatform() + 'api/v1/user/' + this.props.user.id + '/requests/', {
+        fetch(getURLForPlatform() + 'api/v1/user/' + this.props.user + '/requests/', {
             headers: {
                 Authorization: "Token " + this.props.token
             },
@@ -247,7 +250,7 @@ class Profile extends React.Component {
         }).then(request => request.json())
             .then(requestObject => {
                 if (requestObject["success"]) {
-                    this.props.userActions.loadUser(this.props.token);
+                    this.props.userActions.loadIncomingRequests(this.props.token, this.props.user);
                 }
             })
     }
@@ -259,10 +262,11 @@ class Profile extends React.Component {
     );
 
     filterFriends(text, newFriend) {
-        if (!this.props.user.friends) {
+        console.log(this.props.contacts)
+        if (!this.props.contacts) {
             return;
         }
-        var filteredFriends = this.props.user.friends.slice();
+        var filteredFriends = this.props.contacts.slice();
         if (Object.keys(newFriend).length > 0 && filteredFriends.map((friend) => friend.id).indexOf(newFriend.id) === -1) {
             filteredFriends.push(newFriend);
         }
@@ -276,11 +280,13 @@ class Profile extends React.Component {
             }
         }
 
+        console.log(filteredFriends)
+
         this.setState({ filteredFriends: filteredFriends });
     }
 
     editUser() {
-        fetch(getURLForPlatform() + "api/v1/user/" + this.props.user.id + "/", {
+        fetch(getURLForPlatform() + "api/v1/user/" + this.props.user + "/", {
             headers: {
                 Authorization: "Token " + this.props.token
             },
@@ -291,7 +297,7 @@ class Profile extends React.Component {
         }).then(response => response.json())
             .then(responseObj => {
                 this.setState({ email: responseObj["email"], editingDetails: false });
-                this.props.userActions.loadUser(this.props.token);
+                this.props.userActions.loadUserDetails(this.props.token, this.props.user);
             });
     }
 
@@ -314,7 +320,7 @@ class Profile extends React.Component {
             }
 
             const date = new Date();
-            const fileName = this.props.user.username + date.getFullYear() + date.getMonth() + date.getDate() + date.getHours() + date.getMinutes();
+            const fileName = this.props.details.username + date.getFullYear() + date.getMonth() + date.getDate() + date.getHours() + date.getMinutes();
             this.setState({ loadingPic: true })
             fetch(getURLForPlatform() + 'api/v1/image/?type=profile', {
                 method: 'POST',
@@ -332,7 +338,7 @@ class Profile extends React.Component {
                     xhr.onreadystatechange = () => {
                         if (xhr.readyState === 4) {
                             if (xhr.status === 200) {
-                                fetch(getURLForPlatform() + 'api/v1/user/' + this.props.user.id + '/', {
+                                fetch(getURLForPlatform() + 'api/v1/user/' + this.props.user + '/', {
                                     method: 'PUT',
                                     body: JSON.stringify({
                                         'profilePicture': 'https://s3.us-east-2.amazonaws.com/koota-profile-pictures/' + fileName
@@ -342,7 +348,7 @@ class Profile extends React.Component {
                                     },
                                 }).then(editUserResponse => {
                                     if (editUserResponse.status === 200) {
-                                        this.props.userActions.loadUser(this.props.token);
+                                        this.props.userActions.loadUserDetails(this.props.token, this.props.user);
                                         this.setState({ profilePictureModalVisible: false, loadingPic: false })
                                     }
                                 })
@@ -356,11 +362,14 @@ class Profile extends React.Component {
     }
 
     _onRefresh() {
-        this.props.userActions.loadUser(this.props.token);
+        this.props.userActions.loadContacts(this.props.token, this.props.user);
+        this.props.userActions.loadUserDetails(this.props.token, this.props.user);
+        this.props.userActions.loadIncomingRequests(this.props.token, this.props.user);
+        this.filterFriends(this.state.filterString, {})
     }
 
     render() {
-        const date = new Date(this.props.user.created);
+        const date = new Date(this.props.details.created);
         return (
             <KeyboardAwareScrollView
                 keyboardShouldPersistTaps={'handled'}
@@ -377,13 +386,13 @@ class Profile extends React.Component {
                             <TouchableOpacity onPress={() => this.setState({ profilePictureModalVisible: true })} onLongPress={() => this.setState({ profilePictureModalVisible: true })}>
                                 {!this.state.loadingPic && <CachedImage
                                     style={{ width: 75, height: 75, borderRadius: 38 }}
-                                    source={{ uri: this.props.user.profilePicture }}
+                                    source={{ uri: this.props.details.profilePicture }}
                                     ttl={60 * 60 * 24 * 3}
                                     fallbackSource={require('../../assets/images/KootaK.png')}
                                 />}
                                 {this.state.loadingPic && <ActivityIndicator size="large" color="0000ff" />}
                             </TouchableOpacity>
-                            <Text style={{ color: '#ecf0f1', fontSize: 35, fontWeight: 'bold' }}>{this.props.user.username}</Text>
+                            <Text style={{ color: '#ecf0f1', fontSize: 35, fontWeight: 'bold' }}>{this.props.details.username}</Text>
                         </View>
                     </HideableView>
                     <HideableView hide={!this.state.editingDetails}>
@@ -391,12 +400,12 @@ class Profile extends React.Component {
                             <TouchableOpacity onPress={() => this.changeProfilePicture()}>
                                 <CachedImage
                                     style={{ width: 75, height: 75, borderRadius: 38 }}
-                                    source={{ uri: this.props.user.profilePicture }}
+                                    source={{ uri: this.props.details.profilePicture }}
                                     ttl={60 * 60 * 24 * 3}
                                     fallbackSource={require('../../assets/images/KootaK.png')}
                                 />
                             </TouchableOpacity>
-                            <Text style={{ color: '#ecf0f1', fontSize: 35, fontWeight: 'bold' }}>{this.props.user.username}</Text>
+                            <Text style={{ color: '#ecf0f1', fontSize: 35, fontWeight: 'bold' }}>{this.props.details.username}</Text>
                         </View>
                     </HideableView>
                     <Modal
@@ -483,10 +492,10 @@ class Profile extends React.Component {
                             </View>
                             <View style={{ flex: 2 }}>
                                 <View style={{ height: 40, justifyContent: 'center' }}>
-                                    <Text>{this.props.user.username}</Text>
+                                    <Text>{this.props.details.username}</Text>
                                 </View>
                                 <View style={{ height: 40, justifyContent: 'center' }}>
-                                    {!this.state.editingDetails && <Text>{this.props.user.email}</Text>}
+                                    {!this.state.editingDetails && <Text>{this.props.details.email}</Text>}
                                     {this.state.editingDetails && <TextInput value={this.state.email} onChangeText={(text) => this.setState({ email: text })} />}
                                 </View>
                                 <View style={{ justifyContent: 'center' }}>
@@ -518,7 +527,7 @@ class Profile extends React.Component {
                             </View>
                         </View>
                     </View>
-                    {this.props.user.pendingIncomingRequests && this.props.user.pendingIncomingRequests.length > 0 && <View>
+                    {this.props.pendingIncomingRelationships && this.props.pendingIncomingRelationships.length > 0 && <View>
                         <View style={{ flexDirection: 'row', backgroundColor: '#2196F3', alignItems: 'center' }}>
                             <View style={{ flex: 1, padding: 20 }}>
                                 <Text style={{ fontWeight: 'bold', color: 'white' }}>Requests</Text>
@@ -527,7 +536,7 @@ class Profile extends React.Component {
                         <View style={{ backgroundColor: '#ecf0f1', padding: 10, flexDirection: 'row' }}>
                             <FlatList
                                 horizontal={true}
-                                data={this.props.user.pendingIncomingRequests}
+                                data={this.props.pendingIncomingRelationships}
                                 extraData={this.props}
                                 keyExtractor={this._keyExtractor}
                                 renderItem={this._renderItem}
@@ -585,7 +594,7 @@ class Profile extends React.Component {
                             </View>
                             <View style={{ flex: 2 }}>
                                 <View style={{ height: 40, justifyContent: 'center' }}>
-                                    {this.props.user.created && <Text>{(new Date(this.props.user.created)).getMonth() + 1}/{(new Date(this.props.user.created)).getDate()}/{(new Date(this.props.user.created)).getFullYear()}</Text>}
+                                    {this.props.details.created && <Text>{(new Date(this.props.details.created)).getMonth() + 1}/{(new Date(this.props.details.created)).getDate()}/{(new Date(this.props.details.created)).getFullYear()}</Text>}
                                 </View>
                             </View>
                         </View>
@@ -599,7 +608,10 @@ class Profile extends React.Component {
 function mapStateToProps(state) {
     return {
         user: state.userReducer.user,
-        token: state.tokenReducer.token
+        token: state.tokenReducer.token,
+        details: state.userReducer.details,
+        contacts: state.userReducer.contacts,
+        pendingIncomingRelationships: state.userReducer.pendingIncomingRelationships
     };
 }
 

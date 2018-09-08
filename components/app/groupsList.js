@@ -94,7 +94,7 @@ class GroupsList extends React.Component {
                     containerStyle={{}}
                     style={{ backgroundColor: '#e84118' }}
                     position="bottomRight"
-                    onPress={() => this.props.navigation.navigate('NewGroup', {})}>
+                    onPress={() => this.props.navigation.navigate('NewGroup', {loadGroups: this.loadGroups})}>
                     <PlatformIonicon
                         name={"add"}
                         size={50} //this doesn't adjust the size...?

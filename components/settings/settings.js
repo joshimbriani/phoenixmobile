@@ -136,7 +136,7 @@ class Settings extends React.Component {
     }
 
     logout() {
-        fetch(getURLForPlatform() + "api/v1/user/" + this.props.user.id + "/", {
+        fetch(getURLForPlatform() + "api/v1/user/" + this.props.user + "/", {
             headers: {
                 Authorization: "Token " + this.props.token
             },

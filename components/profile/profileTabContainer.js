@@ -48,9 +48,6 @@ class ProfileTabContainer extends React.Component {
 
     _handleIndexChange(index) {
         this.setState({ index });
-        if (index === 0) {
-            this.props.userActions.loadUser(this.props.token);
-        }
     }
 
     _renderHeader = props => <TabBar labelStyle={{ fontSize: 10 }} {...props} />;

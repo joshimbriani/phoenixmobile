@@ -77,8 +77,8 @@ class GroupsDetails extends React.Component {
             .then(requestObject => {
                 if (requestObject["success"]) {
                     this.setState({ selectedUser: -1, removeUserModalVisible: false })
-                    if (userID === this.props.user.id) {
-                        this.props.userActions.loadUser(this.props.token);
+                    if (userID === this.props.user) {
+                        this.props.loadGroups();
                         const resetAction = StackActions.reset({
                             index: 0,
                             key: null,
@@ -107,7 +107,7 @@ class GroupsDetails extends React.Component {
     }
 
     deleteGroup() {
-        if (this.props.user.id !== this.props.group.creator) {
+        if (this.props.user !== this.props.group.creator) {
             return;
         }
 
@@ -120,7 +120,11 @@ class GroupsDetails extends React.Component {
             .then(requestObject => {
                 if (requestObject["delete"]) {
                     this.props.loadGroups();
-                    this.props.navigation.goBack();
+                    if (this.props.navigation.state.params.backKey) {
+                        this.props.navigation.goBack(this.props.navigation.state.params.backKey)
+                    } else {
+                        this.props.navigation.goBack()
+                    }
                 }
             })
     }
@@ -187,17 +191,17 @@ class GroupsDetails extends React.Component {
                             </HideableView>
                         </View>
                     </View>
-                    {this.props.user.id !== this.props.group.creator && <View style={{ flexDirection: 'row', padding: 10, margin: 10 }}>
+                    {this.props.user !== this.props.group.creator && <View style={{ flexDirection: 'row', padding: 10, margin: 10 }}>
                         <View style={{ flex: 1 }}>
                             <Button
-                                onPress={() => this.removeFromGroup(this.props.user.id)}
+                                onPress={() => this.removeFromGroup(this.props.user)}
                                 title="Leave Group"
                                 color="#F44336"
                                 accessibilityLabel="Leave this group"
                             />
                         </View>
                     </View>}
-                    {this.props.user.id === this.props.group.creator && <View style={{ flexDirection: 'row', padding: 10, margin: 10 }}>
+                    {this.props.user === this.props.group.creator && <View style={{ flexDirection: 'row', padding: 10, margin: 10 }}>
                         <View style={{ flex: 1 }}>
                             <Button
                                 onPress={() => this.showDeleteAlert()}
