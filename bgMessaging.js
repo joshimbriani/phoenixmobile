@@ -32,6 +32,22 @@ export default async (message) => {
         } else if (message.data["type"] === 'e') {
             notification.setSubtitle("Event Update")
             .android.setChannelId("eventUpdates");
+        } else if (message.data["type"] === 'g') {
+            notification.setSubtitle("Added to Group")
+            .android.setChannelId("group")
+            .setData({
+                type: message.data["type"],
+                groupID: message.data["groupID"],
+                randomID: message.data["randomID"]
+            });
+        } else if (message.data["type"] === 'c') {
+            notification.setSubtitle("Contact Request")
+            .android.setChannelId("contact")
+            .setData({
+                type: message.data["type"],
+                userFromID: message.data["userFromID"],
+                randomID: message.data["randomID"]
+            });
         } else {
             notification.android.setChannelId("default");
         }

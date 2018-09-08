@@ -142,6 +142,7 @@ class Home extends React.Component {
             data["event"] = notification.notification.data["event"]
             data["group"] = notification.notification.data["group"]
             data["threadID"] = notification.notification.data["threadID"]
+            data["groupID"] = notification.notification.data["groupID"]
             const not = await AsyncStorage.getItem("notificationOpened");
             if (not !== notification.notification.data["randomID"]) {
                 await AsyncStorage.setItem('notificationOpened', notification.notification.data["randomID"]);
@@ -177,6 +178,12 @@ class Home extends React.Component {
             } else if (message.data["type"] === 'e') {
                 notification.setSubtitle("Event Update")
                     .android.setChannelId("eventUpdates");
+            } else if (message.data["type"] === 'g') {
+                notification.setSubtitle("Added to Group")
+                    .android.setChannelId("group");
+            } else if (message.data["type"] === 'c') {
+                notification.setSubtitle("Contact Request")
+                    .android.setChannelId("contact");
             } else {
                 notification.android.setChannelId("default");
             }
@@ -288,7 +295,26 @@ class Home extends React.Component {
                 ]
             })
             this.props.navigation.dispatch(resetAction);
-
+        } else if (type === "g") {
+            // Notification for joining a group
+            const resetAction = StackActions.reset({
+                index: 0,
+                key: null,
+                actions: [
+                    NavigationActions.navigate({ routeName: 'Main', action: StackActions.push({ routeName: 'GroupWrapper', params: { groupID: data["groupID"] } }), }),
+                ]
+            })
+            this.props.navigation.dispatch(resetAction);
+        } else if (type === "c") {
+            // Notifications for new contact request
+            const resetAction = StackActions.reset({
+                index: 0,
+                key: null,
+                actions: [
+                    NavigationActions.navigate({ routeName: 'Main', action: StackActions.push({ routeName: 'Profile' }), }),
+                ]
+            })
+            this.props.navigation.dispatch(resetAction);
         }
     }
 
@@ -479,7 +505,7 @@ class Home extends React.Component {
                 {!this.state.loading && this.state.events.length <= 0 && <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
                     <View style={{ alignItems: 'center', justifyContent: 'center', alignSelf: 'center' }}>
                         <Text>No Events Found. Try Reloading!</Text>
-                        <View style={{alignItems: 'center', alignSelf: 'center', marginTop: 15}}>
+                        <View style={{ alignItems: 'center', alignSelf: 'center', marginTop: 15 }}>
                             <Button onPress={() => { this.setState({ loading: true }); this.loadEvents() }}>
                                 <Text>Reload Events</Text>
                             </Button>
