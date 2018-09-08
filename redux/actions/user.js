@@ -202,7 +202,7 @@ export function loadGoingTo(token, userID) {
             }
         }).then(response => response.ok && response.json())
             .then(responseObj => {
-                dispatch(saveGoingTo(responseObj["topics"]))
+                dispatch(saveGoingTo(responseObj["events"]))
             });
     }
 }
@@ -279,7 +279,6 @@ export function purgeOutgoingRequests() {
 }
 
 export function loadOutgoingRequests(token, userID) {
-    console.log("Here?")
     return function action(dispatch) {
         return fetch(getURLForPlatform() + "api/v1/user/" + userID + "/pendingRequests/", {
             method: 'GET',

@@ -80,7 +80,7 @@ class BlockedUserSettings extends React.Component {
 
 
     toggleBlock(user, action) {
-        fetch(getURLForPlatform() + 'api/v1/user/' + this.props.user.id + '/block/', {
+        fetch(getURLForPlatform() + 'api/v1/user/' + this.props.user + '/block/', {
             headers: {
                 Authorization: "Token " + this.props.token
             },
@@ -92,7 +92,7 @@ class BlockedUserSettings extends React.Component {
         }).then(request => request.json())
             .then(requestObject => {
                 if (requestObject["success"]) {
-                    this.props.userActions.loadUser(this.props.token);
+                    this.props.userActions.loadBlocked(this.props.token, this.props.user);
                     if (action === 'unblock') {
                         this.setState({ showUserModal: false, selectedUser: -1 });
                     }
@@ -127,7 +127,7 @@ class BlockedUserSettings extends React.Component {
     })
 
     componentDidMount() {
-        this.props.userActions.loadUser(this.props.token);
+        this.props.userActions.loadBlocked(this.props.token, this.props.user);
     }
 
     render() {
@@ -141,10 +141,10 @@ class BlockedUserSettings extends React.Component {
                     </Form>
                 </View>
                 <View style={{ flex: 1 }}>
-                    {!this.state.searchText && this.props.user.blockedUsers.length > 0 && this.props.user.blockedUsers.map((user, index) => {
+                    {!this.state.searchText && this.props.blockedUsers.length > 0 && this.props.blockedUsers.map((user, index) => {
                         return this._renderItem(user)
                     })}
-                    {!this.state.searchText && this.props.user.blockedUsers.length <= 0 && <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                    {!this.state.searchText && this.props.blockedUsers.length <= 0 && <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
                         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
                             <Text>You have no users blocked</Text>
                         </View>
@@ -185,7 +185,8 @@ class BlockedUserSettings extends React.Component {
 function mapStateToProps(state) {
     return {
         user: state.userReducer.user,
-        token: state.tokenReducer.token
+        token: state.tokenReducer.token,
+        blockedUsers: state.userReducer.blockedUsers
     };
 }
 

@@ -71,7 +71,8 @@ class FindSubEvents extends React.Component {
     async componentDidMount() {
         this.setState({ loading: true })
         this.loadEvents();
-        await this.props.userActions.loadUser(this.props.token);
+        this.props.userActions.loadGoing(this.props.token, this.props.user);
+        this.props.userActions.loadInterested(this.props.token, this.props.user);
     }
 
     setFilter(key, value) {
@@ -106,7 +107,8 @@ class FindSubEvents extends React.Component {
     }
 
     _onRefresh() {
-        this.props.userActions.loadUser(this.props.token);
+        this.props.userActions.loadGoing(this.props.token, this.props.user);
+        this.props.userActions.loadInterested(this.props.token, this.props.user);
         this.loadEvents();
     }
 
@@ -150,13 +152,13 @@ class FindSubEvents extends React.Component {
     _keyExtractor = (item, index) => item.id;
 
     _renderItem = ({ item }) => (
-        <EventDisplay index={item.id} event={item} interested={this.userInterestedInEvent(item.id)} showButtons={true} username={this.props.user.username} token={this.props.token} goToEvent={() => this.props.navigation.push('EventDetailWrapper', { event: item.title, id: item.id, color: item.color, loadEvents: this.loadEvents })} />
+        <EventDisplay index={item.id} event={item} interested={this.userInterestedInEvent(item.id)} showButtons={true} username={this.props.details.username} token={this.props.token} goToEvent={() => this.props.navigation.push('EventDetailWrapper', { event: item.title, id: item.id, color: item.color, loadEvents: this.loadEvents })} />
     );
 
     userInterestedInEvent(eventID) {
-        if (this.props.user.interestedIn) {
-            for (var i = 0; i < this.props.user.interestedIn.length; i++) {
-                if (eventID === this.props.user.interestedIn[i].id) {
+        if (this.props.interestedInEvents) {
+            for (var i = 0; i < this.props.interestedInEvents.length; i++) {
+                if (eventID === this.props.interestedInEvents[i].id) {
                     return true;
                 }
             }
@@ -203,6 +205,8 @@ function mapStateToProps(state) {
     return {
         token: state.tokenReducer.token,
         user: state.userReducer.user,
+        details: state.userReducer.details,
+        interestedInEvents: state.userReducer.interestedInEvents
     };
 }
 

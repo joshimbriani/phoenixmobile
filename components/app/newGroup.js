@@ -39,7 +39,7 @@ class NewGroup extends React.Component{
     _keyExtractor = (item, index) => item.id;
 
     _renderItem = ({item}) => {
-        if (item.id !== this.props.user.id) {
+        if (item.id !== this.props.user) {
             return (
                 <View style={{flexDirection: 'row', marginBottom: 5, paddingBottom: 5, borderBottomWidth: 1, borderBottomColor: 'black'}}>
                     <View style={{flexDirection: 'row', flex: 1}}>

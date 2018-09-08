@@ -217,7 +217,7 @@ class EventDetailPeople extends React.Component {
         }).then(request => request.json())
             .then(requestObject => {
                 if (requestObject["success"]) {
-                    this.props.userActions.loadUser(this.props.token);
+                    this.props.userActions.loadBlocked(this.props.token, this.props.user)
                     this.setState({ userOptionModalVisible: false })
                     this.setState({ selectedUser: -1 });
                 }
@@ -244,7 +244,7 @@ class EventDetailPeople extends React.Component {
             }).then(request => request.json())
                 .then(requestObject => {
                     if (requestObject["success"]) {
-                        this.props.userActions.loadUser(this.props.token);
+                        this.props.userActions.loadOutgoingRequests(this.props.token, this.props.user);
                         this.setState({ userOptionModalVisible: false });
                         this.setState({ selectedUser: -1 });
                     }
@@ -261,7 +261,7 @@ class EventDetailPeople extends React.Component {
             }).then(request => request.json())
                 .then(requestObject => {
                     if (requestObject["success"]) {
-                        this.props.userActions.loadUser(this.props.token);
+                        this.props.userActions.loadContacts(this.props.token, this.props.user)
                         this.setState({ userOptionModalVisible: false });
                         this.setState({ selectedUser: -1 });
                     }
@@ -279,7 +279,7 @@ class EventDetailPeople extends React.Component {
             }).then(request => request.json())
                 .then(requestObject => {
                     if (requestObject["success"]) {
-                        this.props.userActions.loadUser(this.props.token).then();
+                        this.props.userActions.loadContacts(this.props.token, this.props.user)
                         this.setState({ userOptionModalVisible: false });
                         this.setState({ selectedUser: -1 });
                     }

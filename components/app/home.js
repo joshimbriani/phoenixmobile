@@ -364,7 +364,7 @@ class Home extends React.Component {
     }
 
     _onRefresh() {
-        this.props.userActions.loadUser(this.props.token);
+        this.props.userActions.loadInterested(this.props.token, this.props.user);
         this.loadEvents();
     }
 

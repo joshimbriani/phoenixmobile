@@ -78,7 +78,7 @@ class GroupsDetails extends React.Component {
                 if (requestObject["success"]) {
                     this.setState({ selectedUser: -1, removeUserModalVisible: false })
                     if (userID === this.props.user) {
-                        this.props.userActions.loadUser(this.props.token);
+                        this.props.loadGroups();
                         const resetAction = StackActions.reset({
                             index: 0,
                             key: null,

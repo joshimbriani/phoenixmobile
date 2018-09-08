@@ -33,7 +33,7 @@ class Suggested extends React.Component {
     }
 
     componentDidMount() {
-        fetch(getURLForPlatform() + "api/v1/user/" + this.props.user.id + "/recommendations/", {
+        fetch(getURLForPlatform() + "api/v1/user/" + this.props.user + "/recommendations/", {
             headers: {
                 Authorization: "Token " + this.props.token
             },
