@@ -36,6 +36,7 @@ import FilterTopics from '../app/filter/filterTopics';
 import NewEventFork from '../app/newEvent/newEventFork';
 import FindSubEvents from '../app/newEvent/findSubEvents';
 import NewEventPlaceStandalone from '../app/newEvent/newEventPlaceStandalone';
+import NewLocation from '../settings/newLocation';
 import { styles } from '../../assets/styles';
 
 export const HomeStack = createStackNavigator({
@@ -108,6 +109,9 @@ export const HomeStack = createStackNavigator({
     NewEventPlaceStandalone: {
         path: '/newevent/place',
         screen: NewEventPlaceStandalone
+    },
+    NewLocation: {
+        screen: NewLocation
     }
 }, {
     animationEnabled: false,
@@ -169,6 +173,9 @@ export const SettingsStack = createStackNavigator({
     },
     BlockedUserSettings: {
         screen: BlockedUserSettings
+    },
+    NewLocation: {
+        screen: NewLocation
     }
 }, {
     animationEnabled: false,

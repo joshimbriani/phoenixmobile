@@ -60,6 +60,12 @@ const persistConfig = {
     if (!state.userReducer.blockedUsers) {
       state.userReducer["blockedUsers"] = []
     }
+    if (!state.locationReducer) {
+      state["locationReducer"] = {
+        locations: [{id: -1, name: 'Current Location'}],
+        selected: -1
+      }
+    }
     console.log('Migration Running!')
     return Promise.resolve(state)
   }

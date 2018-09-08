@@ -6,12 +6,16 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import * as colorActions from '../../redux/actions/backgroundColor';
 import * as userActions from '../../redux/actions/user';
+import * as locationActions from '../../redux/actions/location';
 import PlatformIonicon from '../utils/platformIonicon';
 import { getURLForPlatform } from '../utils/networkUtils';
 import { styles } from '../../assets/styles';
 import firebase from 'react-native-firebase';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { EventDisplay } from './eventDisplay';
+import Permissions from 'react-native-permissions';
+
+import { LocationHeader } from './locationHeader';
 
 import { StackActions, NavigationActions } from 'react-navigation';
 import { generateUserToString } from '../utils/textUtils';
@@ -27,6 +31,7 @@ class Home extends React.Component {
             notificationsAllowed: false,
             loading: true,
             events: [],
+            coordinates: {},
             filters: {
                 changed: false,
                 privacy: "all",
@@ -55,8 +60,19 @@ class Home extends React.Component {
         this._onRefresh = this._onRefresh.bind(this);
         this.setFilter = this.setFilter.bind(this);
         this.loadEvents = this.loadEvents.bind(this);
+        this.setSelectedLocation = this.setSelectedLocation.bind(this);
 
-        this.props.navigation.setParams({ setFilter: this.setFilter, loadEvents: this.loadEvents });
+        this.props.navigation.setParams({ setFilter: this.setFilter, loadEvents: this.loadEvents, locations: props.locations, selected: props.selected, setSelectedLocation: this.setSelectedLocation });
+    }
+
+    setSelectedLocation(item) {
+        console.log(item)
+        if (item === -2) {
+            this.props.navigation.navigate('NewLocation');
+            this.props.locationActions.setSelectedLocation(this.props.selected);
+        } else {
+            this.props.locationActions.setSelectedLocation(item);
+        }
     }
 
     async componentDidMount() {
@@ -85,7 +101,7 @@ class Home extends React.Component {
         }
 
         navigator.geolocation.getCurrentPosition((position) => {
-            console.log(position)
+            this.setState({ coordinates: { lat: position.coords.latitude, long: position.coords.longitude } })
         },
             (error) => console.error(error.message),
             Platform.OS === 'ios' ? { enableHighAccuracy: true, timeout: 20000 } : { timeout: 50000 },
@@ -189,6 +205,12 @@ class Home extends React.Component {
         this.setState({ loading: true })
         this.loadEvents();
 
+    }
+
+    componentDidUpdate(prevProps) {
+        if (prevProps.locations !== this.props.locations) {
+            this.props.navigation.setParams({ locations: this.props.locations });
+        }
     }
 
     setFilter(key, value) {
@@ -324,24 +346,29 @@ class Home extends React.Component {
         }
     }
 
-    static navigationOptions = (Platform.OS === 'android') ? ({ navigation }) => ({
-        title: 'Home',
-        headerLeft: <Icon
-            style={{ paddingLeft: 10 }}
-            size={35}
-            onPress={() => navigation.openDrawer()}
-            name="md-menu"
-        />,
-        headerRight: <Icon
-            name="md-funnel"
-            size={35}
-            style={{ marginRight: 10 }}
-            onPress={() => navigation.navigate('FilterHome', { setFilter: navigation.state.params.setFilter, loadEvents: navigation.state.params.loadEvents, default: true })}
-        />
+    static navigationOptions = (Platform.OS === 'android') ? ({ navigation }) => {
+        const { params = {} } = navigation.state;
+        return ({
+            title: 'Home',
+            headerLeft: <Icon
+                style={{ paddingLeft: 10 }}
+                size={35}
+                onPress={() => navigation.openDrawer()}
+                name="md-menu"
+            />,
+            headerRight: <Icon
+                name="md-funnel"
+                size={35}
+                style={{ marginRight: 10 }}
+                onPress={() => navigation.navigate('FilterHome', { setFilter: navigation.state.params.setFilter, loadEvents: navigation.state.params.loadEvents, default: true })}
+            />,
+            headerTitle: <LocationHeader locations={params ? params.locations : []} selectedLocation={params ? params.selected : []} setCurrentLocation={async(location) => {await params.setSelectedLocation(location); params.loadEvents()}} />,
 
-    }) : ({ navigation }) => ({
+        })
+    } : ({ navigation }) => ({
         title: 'Home',
         headerStyle: { paddingTop: -22, },
+        headerTitle: <LocationHeader locations={[]} selectedLocation={-1} setCurrentLocation={() => console.log("Test")} />,
         headerRight: <Icon
             name="ios-funnel"
             size={35}
@@ -369,6 +396,7 @@ class Home extends React.Component {
     }
 
     loadEvents() {
+        this.setState({loading: true})
         var filterProps = {};
         if (this.props.filter) {
             Object.assign(filterProps, this.props.filter);
@@ -377,6 +405,19 @@ class Home extends React.Component {
         if (this.state.filters.changed === true) {
             Object.assign(filterProps, this.state.filters);
         }
+
+        if (this.state.GPSPermission) {
+            if (this.props.selected === -1) {
+                filterProps["lat"] = this.state.coordinates.lat
+                filterProps["long"] = this.state.coordinates.long
+            } else {
+                var index = this.props.locations.map((location) => location.id).indexOf(this.props.selected);
+                filterProps["lat"] = this.props.locations[index].lat;
+                filterProps["long"] = this.props.locations[index].long;
+            }
+
+        }
+
         const filterString = this.generateFilterURLString(filterProps);
 
         fetch(getURLForPlatform() + 'api/v1/events/' + filterString, {
@@ -411,6 +452,10 @@ class Home extends React.Component {
         if (filterPropsObject.topics.type === 'custom') {
             filterString += ("&topics=" + filterPropsObject.topics.topics.map(topic => topic.id).join(","))
         }
+        if (filterPropsObject["lat"] && filterPropsObject["long"]) {
+            filterString += ("&lat=" + filterPropsObject.lat)
+            filterString += ("&long=" + filterPropsObject.long)
+        }
 
         return filterString;
     }
@@ -433,6 +478,7 @@ class Home extends React.Component {
     }
 
     render() {
+        console.log(this.props.locations)
         return (
             <Container style={{ backgroundColor: '#D3D3D3' }}>
                 <Header searchBar rounded>
@@ -481,7 +527,7 @@ class Home extends React.Component {
                 {!this.state.loading && this.state.events.length <= 0 && <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
                     <View style={{ alignItems: 'center', justifyContent: 'center', alignSelf: 'center' }}>
                         <Text>No Events Found. Try Reloading!</Text>
-                        <View style={{alignItems: 'center', alignSelf: 'center', marginTop: 15}}>
+                        <View style={{ alignItems: 'center', alignSelf: 'center', marginTop: 15 }}>
                             <Button onPress={() => { this.setState({ loading: true }); this.loadEvents() }}>
                                 <Text>Reload Events</Text>
                             </Button>
@@ -513,7 +559,9 @@ function mapStateToProps(state) {
         user: state.userReducer.user,
         filter: state.userReducer.filter,
         interestedInEvents: state.userReducer.interestedInEvents,
-        details: state.userReducer.details
+        details: state.userReducer.details,
+        locations: state.locationReducer.locations,
+        selected: state.locationReducer.selected
     };
 }
 
@@ -521,6 +569,7 @@ function mapDispatchToProps(dispatch) {
     return {
         colorActions: bindActionCreators(colorActions, dispatch),
         userActions: bindActionCreators(userActions, dispatch),
+        locationActions: bindActionCreators(locationActions, dispatch)
     };
 }
 
