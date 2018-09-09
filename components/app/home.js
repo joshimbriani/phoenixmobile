@@ -129,6 +129,7 @@ class Home extends React.Component {
                 data["event"] = notification.notification.data["event"]
                 data["group"] = notification.notification.data["group"]
                 data["threadID"] = notification.notification.data["threadID"]
+                data["groupID"] = notification.notification.data["groupID"]
 
                 await AsyncStorage.setItem('notification', notification.notification.data["randomID"]);
                 this.reactToNotification(data);
@@ -160,6 +161,8 @@ class Home extends React.Component {
             data["event"] = notification.notification.data["event"]
             data["group"] = notification.notification.data["group"]
             data["threadID"] = notification.notification.data["threadID"]
+            data["groupID"] = notification.notification.data["groupID"]
+            data["eventTitle"] = notification.notification.data["eventTitle"]
             const not = await AsyncStorage.getItem("notificationOpened");
             if (not !== notification.notification.data["randomID"]) {
                 await AsyncStorage.setItem('notificationOpened', notification.notification.data["randomID"]);
@@ -191,10 +194,40 @@ class Home extends React.Component {
                     .android.setChannelId("promotedOffer");
             } else if (message.data["type"] === 'y') {
                 notification.setSubtitle("Your Event Update")
-                    .android.setChannelId("yourEventUpdates");
+                    .android.setChannelId("yourEventUpdates")
+                    .setData({
+                        type: message.data["type"],
+                        event: message.data["event"],
+                        randomID: message.data["randomID"],
+                        eventTitle: message.data["eventTitle"]
+                    });
             } else if (message.data["type"] === 'e') {
                 notification.setSubtitle("Event Update")
-                    .android.setChannelId("eventUpdates");
+                    .android.setChannelId("eventUpdates")
+                    .setData({
+                        type: message.data["type"],
+                        event: message.data["event"],
+                        randomID: message.data["randomID"],
+                        eventTitle: message.data["eventTitle"]
+                    });
+            } else if (message.data["type"] === 'g') {
+                notification.setSubtitle("Added to Group")
+                    .android.setChannelId("group")
+                    .setData({
+                        group: message.data["groupID"]
+                    });
+            } else if (message.data["type"] === 'c') {
+                notification.setSubtitle("Contact Request")
+                    .android.setChannelId("contact");
+            } else if (message.data["type"] === 'i') {
+                notification.setSubtitle("Invitation")
+                    .android.setChannelId("invitation")
+                    .setData({
+                        type: message.data["type"],
+                        event: message.data["event"],
+                        randomID: message.data["randomID"],
+                        eventTitle: message.data["eventTitle"]
+                    });
             } else {
                 notification.android.setChannelId("default");
             }
@@ -295,7 +328,7 @@ class Home extends React.Component {
                 key: this.props.navigation.dangerouslyGetParent().state.key,
                 actions: [
                     NavigationActions.navigate({ routeName: 'Home' }),
-                    StackActions.push({ routeName: 'EventDetailWrapper', params: { id: event } }),
+                    StackActions.push({ routeName: 'EventDetailWrapper', params: { id: event, event: data["eventTitle"] } }),
                 ]
             })
             this.props.navigation.dispatch(resetAction);
@@ -308,11 +341,42 @@ class Home extends React.Component {
                 key: this.props.navigation.dangerouslyGetParent().state.key,
                 actions: [
                     NavigationActions.navigate({ routeName: 'Home' }),
-                    StackActions.push({ routeName: 'EventDetailWrapper', params: { id: event } }),
+                    StackActions.push({ routeName: 'EventDetailWrapper', params: { id: event, event: data["eventTitle"] } }),
                 ]
             })
             this.props.navigation.dispatch(resetAction);
-
+        } else if (type === "g") {
+            // Notification for joining a group
+            const resetAction = StackActions.reset({
+                index: 0,
+                key: null,
+                actions: [
+                    NavigationActions.navigate({ routeName: 'Main', action: StackActions.push({ routeName: 'GroupWrapper', params: { groupID: data["groupID"] } }), }),
+                ]
+            })
+            this.props.navigation.dispatch(resetAction);
+        } else if (type === "c") {
+            // Notifications for new contact request
+            const resetAction = StackActions.reset({
+                index: 0,
+                key: null,
+                actions: [
+                    NavigationActions.navigate({ routeName: 'Main', action: StackActions.push({ routeName: 'ProfileTabContainer' }), }),
+                ]
+            })
+            this.props.navigation.dispatch(resetAction);
+        } else if (type === "i") {
+            // Notifications for new event invitation
+            const event = data["event"];
+            const resetAction = StackActions.reset({
+                index: 1,
+                key: this.props.navigation.dangerouslyGetParent().state.key,
+                actions: [
+                    NavigationActions.navigate({ routeName: 'Home' }),
+                    StackActions.push({ routeName: 'EventDetailWrapper', params: { id: event, event: data["eventTitle"] } }),
+                ]
+            })
+            this.props.navigation.dispatch(resetAction);
         }
     }
 
