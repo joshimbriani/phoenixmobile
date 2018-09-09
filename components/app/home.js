@@ -144,6 +144,7 @@ class Home extends React.Component {
             data["group"] = notification.notification.data["group"]
             data["threadID"] = notification.notification.data["threadID"]
             data["groupID"] = notification.notification.data["groupID"]
+            data["eventTitle"] = notification.notification.data["eventTitle"]
             const not = await AsyncStorage.getItem("notificationOpened");
             if (not !== notification.notification.data["randomID"]) {
                 await AsyncStorage.setItem('notificationOpened', notification.notification.data["randomID"]);
@@ -175,10 +176,22 @@ class Home extends React.Component {
                     .android.setChannelId("promotedOffer");
             } else if (message.data["type"] === 'y') {
                 notification.setSubtitle("Your Event Update")
-                    .android.setChannelId("yourEventUpdates");
+                    .android.setChannelId("yourEventUpdates")
+                    .setData({
+                        type: message.data["type"],
+                        event: message.data["event"],
+                        randomID: message.data["randomID"],
+                        eventTitle: message.data["eventTitle"]
+                    });
             } else if (message.data["type"] === 'e') {
                 notification.setSubtitle("Event Update")
-                    .android.setChannelId("eventUpdates");
+                    .android.setChannelId("eventUpdates")
+                    .setData({
+                        type: message.data["type"],
+                        event: message.data["event"],
+                        randomID: message.data["randomID"],
+                        eventTitle: message.data["eventTitle"]
+                    });
             } else if (message.data["type"] === 'g') {
                 notification.setSubtitle("Added to Group")
                     .android.setChannelId("group")
@@ -192,7 +205,10 @@ class Home extends React.Component {
                 notification.setSubtitle("Invitation")
                     .android.setChannelId("invitation")
                     .setData({
+                        type: message.data["type"],
                         event: message.data["event"],
+                        randomID: message.data["randomID"],
+                        eventTitle: message.data["eventTitle"]
                     });
             } else {
                 notification.android.setChannelId("default");
@@ -288,7 +304,7 @@ class Home extends React.Component {
                 key: this.props.navigation.dangerouslyGetParent().state.key,
                 actions: [
                     NavigationActions.navigate({ routeName: 'Home' }),
-                    StackActions.push({ routeName: 'EventDetailWrapper', params: { id: event } }),
+                    StackActions.push({ routeName: 'EventDetailWrapper', params: { id: event, event: data["eventTitle"] } }),
                 ]
             })
             this.props.navigation.dispatch(resetAction);
@@ -301,7 +317,7 @@ class Home extends React.Component {
                 key: this.props.navigation.dangerouslyGetParent().state.key,
                 actions: [
                     NavigationActions.navigate({ routeName: 'Home' }),
-                    StackActions.push({ routeName: 'EventDetailWrapper', params: { id: event } }),
+                    StackActions.push({ routeName: 'EventDetailWrapper', params: { id: event, event: data["eventTitle"] } }),
                 ]
             })
             this.props.navigation.dispatch(resetAction);
@@ -333,7 +349,7 @@ class Home extends React.Component {
                 key: this.props.navigation.dangerouslyGetParent().state.key,
                 actions: [
                     NavigationActions.navigate({ routeName: 'Home' }),
-                    StackActions.push({ routeName: 'EventDetailWrapper', params: { id: event } }),
+                    StackActions.push({ routeName: 'EventDetailWrapper', params: { id: event, event: data["eventTitle"] } }),
                 ]
             })
             this.props.navigation.dispatch(resetAction);

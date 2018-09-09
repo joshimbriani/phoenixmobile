@@ -28,10 +28,22 @@ export default async (message) => {
             .android.setChannelId("promotedOffer");
         } else if (message.data["type"] === 'y') {
             notification.setSubtitle("Your Event Update")
-            .android.setChannelId("yourEventUpdates");
+            .android.setChannelId("yourEventUpdates")
+            .setData({
+                type: message.data["type"],
+                event: message.data["event"],
+                randomID: message.data["randomID"],
+                eventTitle: message.data["eventTitle"]
+            });
         } else if (message.data["type"] === 'e') {
             notification.setSubtitle("Event Update")
-            .android.setChannelId("eventUpdates");
+            .android.setChannelId("eventUpdates")
+            .setData({
+                type: message.data["type"],
+                event: message.data["event"],
+                randomID: message.data["randomID"],
+                eventTitle: message.data["eventTitle"]
+            });
         } else if (message.data["type"] === 'g') {
             notification.setSubtitle("Added to Group")
             .android.setChannelId("group")
@@ -54,6 +66,8 @@ export default async (message) => {
                 .setData({
                     type: message.data["type"],
                     event: message.data["event"],
+                    randomID: message.data["randomID"],
+                    eventTitle: message.data["eventTitle"]
                 });
         } else {
             notification.android.setChannelId("default");
@@ -68,6 +82,14 @@ function makeid(data) {
     var id = data["type"];
     if (data["type"] === 'm') {
         id += data["group"] ? "group" + data["group"] : "event" + data["event"];
+    } else if (data["type"] === 'y') {
+        id += data["userFromID"] + data["updateType"]
+    } else if (data["type"] === 'i') {
+        id += data["userFromID"] + data["event"]
+    } else if (data["type"] === 'c') {
+        id += data["userFromID"]
+    } else if (data["type"] === 'e') {
+        id += data["type"] + data["event"]
     }
 
     return id;
