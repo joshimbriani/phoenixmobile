@@ -11,6 +11,8 @@ import PlatformIonicon from '../../utils/platformIonicon';
 import { Bubble } from './bubble';
 import { getMaterialColor } from '../../utils/styleutils';
 
+import {AutoGrowingTextInput} from 'react-native-autogrow-textinput';
+
 import { CachedImage } from 'react-native-cached-image';
 import {
     Menu,
@@ -200,12 +202,7 @@ class ConversationView extends React.Component {
                             </View>
                         </TouchableOpacity>*/}
                         <View style={{ flexDirection: 'row', flex: 1, alignContent: 'center', alignItems: 'center', alignSelf: 'center' }}>
-                            <TextInput
-                                value={this.state.messageContent}
-                                style={{ flex: 1, borderBottomColor: Platform.OS === 'ios' ? 'black' : null, borderBottomWidth: Platform.OS === 'ios' ? 1 : 0 }}
-                                height={40}
-                                onChangeText={(messageContent) => this.setState({ messageContent })}
-                            />
+                            <AutoGrowingTextInput value={this.state.messageContent} onChangeText={(messageContent) => this.setState({ messageContent })} style={{ flex: 1, borderBottomColor: Platform.OS === 'ios' ? 'black' : null, borderBottomWidth: Platform.OS === 'ios' ? 1 : 0 }} placeholder={'Your Message'} />
                             <TouchableOpacity
                                 onPress={this.sendMessage}>
                                 <View style={{ paddingLeft: 10, paddingRight: 5, alignContent: 'center', alignItems: 'center', alignSelf: 'center' }}>
