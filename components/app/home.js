@@ -407,6 +407,7 @@ class Home extends React.Component {
             }
         } else if (Platform.OS === 'ios') {
             navigator.geolocation.requestAuthorization();
+            this.setState({ GPSPermission: true })
         }
     }
 
@@ -429,17 +430,20 @@ class Home extends React.Component {
             headerTitle: <LocationHeader locations={params ? params.locations : []} selectedLocation={params ? params.selected : []} setCurrentLocation={async(location) => {await params.setSelectedLocation(location); params.loadEvents()}} />,
 
         })
-    } : ({ navigation }) => ({
-        title: 'Home',
-        headerStyle: { paddingTop: -22, },
-        headerTitle: <LocationHeader locations={[]} selectedLocation={-1} setCurrentLocation={() => console.log("Test")} />,
-        headerRight: <Icon
-            name="ios-funnel"
-            size={35}
-            style={{ marginRight: 10 }}
-            onPress={() => navigation.navigate('FilterHome', { setFilter: navigation.state.params.setFilter, loadEvents: navigation.state.params.loadEvents, default: true })}
-        />
-    });
+    } : ({ navigation }) => {
+        const { params = {} } = navigation.state;
+        return ({
+            title: 'Home',
+            headerStyle: { paddingTop: -22, },
+            headerTitle: <LocationHeader locations={params ? params.locations : []} selectedLocation={params ? params.selected : []} setCurrentLocation={async(location) => {await params.setSelectedLocation(location); params.loadEvents()}} />,
+            headerRight: <Icon
+                name="ios-funnel"
+                size={35}
+                style={{ marginRight: 10 }}
+                onPress={() => navigation.navigate('FilterHome', { setFilter: navigation.state.params.setFilter, loadEvents: navigation.state.params.loadEvents, default: true })}
+            />
+        })
+    };
 
     changeValue(text) {
         this.setState({ searchQuery: text });
@@ -542,7 +546,6 @@ class Home extends React.Component {
     }
 
     render() {
-        console.log(this.props.locations)
         return (
             <Container style={{ backgroundColor: '#D3D3D3' }}>
                 <Header searchBar rounded>
