@@ -79,9 +79,9 @@ class NewEventPlaceStandalone extends React.Component {
 
     getPlaceDetails(item) {
 
-        fetch('https://maps.googleapis.com/maps/api/place/details/json?placeid=' + item["place_id"] + '&fields=geometry&key=AIzaSyDUVAEJq3xQe6nTG4uaj00xcl-EkHp2oXQ&sessiontoken=' + this.props.session)
+        fetch('https://maps.googleapis.com/maps/api/place/details/json?placeid=' + item["place_id"] + '&fields=geometry,formatted_address&key=AIzaSyDUVAEJq3xQe6nTG4uaj00xcl-EkHp2oXQ&sessiontoken=' + this.props.session)
             .then((results) => results.json())
-            .then((resultsJSON) => { this.setState({ geometryDetails: resultsJSON["result"]["geometry"] }) })
+            .then((resultsJSON) => { item["address"] = resultsJSON["result"]["formatted_address"]; this.setState({ geometryDetails: resultsJSON["result"]["geometry"] }) })
             .catch((error) => console.log(error.message));
 
         this.setState({ placePredictions: [], placeSearchText: "", place: item });
