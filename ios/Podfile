@@ -47,6 +47,8 @@ target 'phoenixmobile' do
   pod 'Firebase/Core', '~> 5.3.0'
   pod 'Firebase/Messaging', '~> 5.3.0'
 
+  pod 'ReactNativePermissions', :path => '../node_modules/react-native-permissions'
+
   target 'phoenixmobileTests' do
     inherit! :search_paths
     # Pods for testing
