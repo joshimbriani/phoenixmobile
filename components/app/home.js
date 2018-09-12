@@ -65,6 +65,12 @@ class Home extends React.Component {
         this.props.navigation.setParams({ setFilter: this.setFilter, loadEvents: this.loadEvents, locations: props.locations, selected: props.selected, setSelectedLocation: this.setSelectedLocation });
     }
 
+    getPosition(options) {
+        return new Promise(function (resolve, reject) {
+            navigator.geolocation.getCurrentPosition(resolve, reject, options);
+        });
+    }
+
     setSelectedLocation(item) {
         console.log(item)
         if (item === -2) {
@@ -100,12 +106,12 @@ class Home extends React.Component {
                 })
         }
 
-        navigator.geolocation.getCurrentPosition((position) => {
+        try {
+            let position = await this.getPosition(Platform.OS === 'ios' ? { enableHighAccuracy: true, timeout: 20000 } : { timeout: 50000 });
             this.setState({ coordinates: { lat: position.coords.latitude, long: position.coords.longitude } })
-        },
-            (error) => console.error(error.message),
-            Platform.OS === 'ios' ? { enableHighAccuracy: true, timeout: 20000 } : { timeout: 50000 },
-        );
+        } catch (err) {
+            console.log(err); // TypeError: failed to fetch
+        }
 
         firebase.messaging().requestPermission()
             .then(() => {
@@ -426,20 +432,23 @@ class Home extends React.Component {
                 style={{ marginRight: 10 }}
                 onPress={() => navigation.navigate('FilterHome', { setFilter: navigation.state.params.setFilter, loadEvents: navigation.state.params.loadEvents, default: true })}
             />,
-            headerTitle: <LocationHeader locations={params ? params.locations : []} selectedLocation={params ? params.selected : []} setCurrentLocation={async(location) => {await params.setSelectedLocation(location); params.loadEvents()}} />,
+            headerTitle: <LocationHeader locations={params ? params.locations : []} selectedLocation={params ? params.selected : []} setCurrentLocation={async (location) => { await params.setSelectedLocation(location); params.loadEvents() }} />,
 
         })
-    } : ({ navigation }) => ({
-        title: 'Home',
-        headerStyle: { paddingTop: -22, },
-        headerTitle: <LocationHeader locations={[]} selectedLocation={-1} setCurrentLocation={() => console.log("Test")} />,
-        headerRight: <Icon
-            name="ios-funnel"
-            size={35}
-            style={{ marginRight: 10 }}
-            onPress={() => navigation.navigate('FilterHome', { setFilter: navigation.state.params.setFilter, loadEvents: navigation.state.params.loadEvents, default: true })}
-        />
-    });
+    } : ({ navigation }) => {
+        const { params = {} } = navigation.state;
+        return ({
+            title: 'Home',
+            headerStyle: { paddingTop: -22, },
+            headerTitle: <LocationHeader locations={params ? params.locations : []} selectedLocation={params ? params.selected : []} setCurrentLocation={async (location) => { await params.setSelectedLocation(location); params.loadEvents() }} />,
+            headerRight: <Icon
+                name="ios-funnel"
+                size={35}
+                style={{ marginRight: 10 }}
+                onPress={() => navigation.navigate('FilterHome', { setFilter: navigation.state.params.setFilter, loadEvents: navigation.state.params.loadEvents, default: true })}
+            />
+        })
+    };
 
     changeValue(text) {
         this.setState({ searchQuery: text });
@@ -460,7 +469,7 @@ class Home extends React.Component {
     }
 
     loadEvents() {
-        this.setState({loading: true})
+        this.setState({ loading: true })
         var filterProps = {};
         if (this.props.filter) {
             Object.assign(filterProps, this.props.filter);
