@@ -1,7 +1,6 @@
 import React from 'react';
 import { Container, Fab, Header, Item, Input, Button, Text } from 'native-base';
-import { Platform, RefreshControl, TouchableHighlight, View, PermissionsAndroid, AsyncStorage, ActivityIndicator, FlatList } from 'react-native';
-import GridView from 'react-native-super-grid';
+import { Platform, RefreshControl, TouchableHighlight, View, SectionList, PermissionsAndroid, AsyncStorage, ActivityIndicator, FlatList } from 'react-native';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import * as colorActions from '../../redux/actions/backgroundColor';
@@ -14,6 +13,7 @@ import firebase from 'react-native-firebase';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { EventDisplay } from './eventDisplay';
 import Permissions from 'react-native-permissions';
+import moment from 'moment';
 
 import { LocationHeader } from './locationHeader';
 
@@ -30,8 +30,9 @@ class Home extends React.Component {
             GPSPermission: false,
             notificationsAllowed: false,
             loading: true,
-            events: [],
+            feed: [],
             coordinates: {},
+            latestDate: null,
             filters: {
                 changed: false,
                 privacy: "all",
@@ -493,7 +494,7 @@ class Home extends React.Component {
 
         const filterString = this.generateFilterURLString(filterProps);
 
-        fetch(getURLForPlatform() + 'api/v1/events/' + filterString, {
+        fetch(getURLForPlatform() + 'api/v1/user/feed/' + filterString, {
             headers: {
                 Authorization: "Token " + this.props.token
             },
@@ -502,10 +503,26 @@ class Home extends React.Component {
                 if (responseJSON["events"]) {
                     var defaultFilter = Object.assign({}, this.props.filter);
                     defaultFilter["changed"] = false;
-                    this.setState({ events: responseJSON["events"], loading: false, filters: defaultFilter })
+                    this.setState({ feed: this.generateFeed(responseJSON["events"], responseJSON["offers"]), loading: false, filters: defaultFilter })
                 }
 
             })
+    }
+
+    generateFeed(events, offers) {
+        console.log("events, ", events)
+        console.log("offers, ", offers)
+        var feed = [];
+        for (var i = 0; i < events.length; i++) {
+            var datestring = moment(events[i].datetime).format('MM-DD-YYYY');
+            var item = feed.find((date) => date.datestring === datestring);
+            if (item) {
+                item.data.push(events[i])
+            } else {
+                feed.push({ datestring: datestring, data: [events[i]] })
+            }
+        }
+        return feed
     }
 
     generateFilterURLString(filterPropsObject) {
@@ -535,7 +552,7 @@ class Home extends React.Component {
 
     _keyExtractor = (item, index) => item.id;
 
-    _renderItem = ({ item }) => (
+    _renderItem = (item) => (
         <EventDisplay index={item.id} event={item} interested={this.userInterestedInEvent(item.id)} showButtons={true} username={this.props.details.username} token={this.props.token} goToEvent={() => this.props.navigation.navigate('EventDetailWrapper', { event: item.title, id: item.id, color: item.color, loadEvents: this.loadEvents })} />
     );
 
@@ -551,7 +568,6 @@ class Home extends React.Component {
     }
 
     render() {
-        console.log(this.props.locations)
         return (
             <Container style={{ backgroundColor: '#D3D3D3' }}>
                 <Header searchBar rounded>
@@ -583,21 +599,20 @@ class Home extends React.Component {
                 {this.state.loading && <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
                     <ActivityIndicator size="large" color="#0000ff" />
                 </View>}
-                {!this.state.loading && this.state.events.length > 0 &&
-                    <FlatList
-                        data={this.state.events}
-                        extraData={this.state}
-                        keyExtractor={this._keyExtractor}
-                        renderItem={this._renderItem}
-                        refreshControl={
-                            <RefreshControl
-                                refreshing={this.state.loading}
-                                onRefresh={this._onRefresh}
-                            />
-                        }
-
+                {!this.state.loading && this.state.feed.length > 0 &&
+                    <SectionList
+                        renderItem={({ item, index, section }) => {
+                            return this._renderItem(item)
+                        }}
+                        renderSectionHeader={({ section: { datestring } }) => {
+                            return (
+                                <Text>{datestring}</Text>
+                            )
+                        }}
+                        sections={this.state.feed}
+                        keyExtractor={(item, index) => item + index}
                     />}
-                {!this.state.loading && this.state.events.length <= 0 && <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+                {!this.state.loading && this.state.feed.length <= 0 && <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
                     <View style={{ alignItems: 'center', justifyContent: 'center', alignSelf: 'center' }}>
                         <Text>No Events Found. Try Reloading!</Text>
                         <View style={{ alignItems: 'center', alignSelf: 'center', marginTop: 15 }}>
