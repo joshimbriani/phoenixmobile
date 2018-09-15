@@ -1,6 +1,6 @@
 import React from 'react';
 import { Container, Fab, Header, Item, Input, Button, Text } from 'native-base';
-import { Platform, RefreshControl, TouchableHighlight, View, SectionList, PermissionsAndroid, AsyncStorage, ActivityIndicator, FlatList } from 'react-native';
+import { Platform, RefreshControl, TouchableOpacity, View, SectionList, PermissionsAndroid, AsyncStorage, ActivityIndicator, FlatList } from 'react-native';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import * as colorActions from '../../redux/actions/backgroundColor';
@@ -33,6 +33,9 @@ class Home extends React.Component {
             feed: [],
             coordinates: {},
             latestDate: null,
+            loadingMore: false,
+            events: [],
+            endOfResults: false,
             filters: {
                 changed: false,
                 privacy: "all",
@@ -53,6 +56,8 @@ class Home extends React.Component {
                 }
             }
         };
+
+        this.onEndReachedCalledDuringMomentum = true;
 
         this.changeValue = this.changeValue.bind(this);
         this.checkUserPermissions = this.checkUserPermissions.bind(this);
@@ -466,11 +471,19 @@ class Home extends React.Component {
 
     _onRefresh() {
         this.props.userActions.loadInterested(this.props.token, this.props.user);
-        this.loadEvents();
+        this.setState({ events: [], feed: [] })
+        this.loadEvents(null, false);
     }
 
-    loadEvents() {
-        this.setState({ loading: true })
+    loadEvents(latestDate = null, loadingMore = false, append = true) {
+        if (loadingMore) {
+            this.setState({ loadingMore: true })
+        } else {
+            this.setState({ loading: true })
+        }
+
+        this.setState({ endOfResults: false })
+
         var filterProps = {};
         if (this.props.filter) {
             Object.assign(filterProps, this.props.filter);
@@ -492,7 +505,7 @@ class Home extends React.Component {
 
         }
 
-        const filterString = this.generateFilterURLString(filterProps);
+        const filterString = this.generateFilterURLString(filterProps, latestDate);
 
         fetch(getURLForPlatform() + 'api/v1/user/feed/' + filterString, {
             headers: {
@@ -503,15 +516,22 @@ class Home extends React.Component {
                 if (responseJSON["events"]) {
                     var defaultFilter = Object.assign({}, this.props.filter);
                     defaultFilter["changed"] = false;
-                    this.setState({ feed: this.generateFeed(responseJSON["events"], responseJSON["offers"]), loading: false, filters: defaultFilter })
+                    var feed = this.state.feed.slice();
+                    var events = this.state.events.slice();
+                    events = events.concat(responseJSON["events"])
+                    feed = this.generateFeed(events, responseJSON["offers"])
+                    this.setState({ feed: feed, loading: false, filters: defaultFilter, events: events })
+                    if (responseJSON["events"].length > 0) {
+                        this.setState({ latestDate: responseJSON["events"][responseJSON["events"].length - 1].datetime })
+                    } else {
+                        this.setState({ endOfResults: true })
+                    }
                 }
 
             })
     }
 
     generateFeed(events, offers) {
-        console.log("events, ", events)
-        console.log("offers, ", offers)
         var feed = [];
         for (var i = 0; i < events.length; i++) {
             var datestring = moment(events[i].datetime).format('MM-DD-YYYY');
@@ -519,13 +539,53 @@ class Home extends React.Component {
             if (item) {
                 item.data.push(events[i])
             } else {
-                feed.push({ datestring: datestring, data: [events[i]] })
+                feed.push({ datestring: datestring, data: [events[i]], offers: [] })
             }
         }
+        var latestDay = Math.max.apply(null, events.map((event) => new Date(event.datetime)));
+        console.log((new Date(latestDay)).toISOString())
+        const startDate = moment()
+        const endDate = moment(latestDay)
+        for (var m = moment(startDate).seconds(0).minutes(0).hours(0); m.isBefore(endDate); m.add(1, 'days')) {
+            console.log(m.format('MM-DD-YYYY HH:mm'))
+            var offersForDate = offers.filter((offer) => {
+                var isOngoingOffer = moment(offer.startTime).isSameOrBefore(m) && moment(offer.endTime).isSameOrAfter(m);
+                if (offer.recurrences.length > 0) {
+                    const matchingRecurrences = offer.recurrences.filter((recurrence) => m.format('dddd').toLowerCase() === recurrence.dayOfWeek);
+                    return matchingRecurrences.length > 0;
+                }
+
+                return isOngoingOffer
+            });
+
+            if (offersForDate && offersForDate.length > 0) {
+                var item = feed.find((date) => date.datestring === m.format('MM-DD-YYYY'));
+                if (item) {
+                    item.offers = offersForDate
+                } else {
+                    console.log(offersForDate)
+                    feed.push({ datestring: m.format('MM-DD-YYYY'), data: [], offers: offersForDate })
+                }
+            }
+        }
+
+        feed.sort((a, b) => {
+            var aMoment = moment(a.datestring);
+            var bMoment = moment(b.datestring);
+
+            if (aMoment.isBefore(bMoment)) {
+                return -1
+            } else if (aMoment.isAfter(bMoment)) {
+                return 1
+            } else {
+                return 0
+            }
+        })
+        console.log(feed)
         return feed
     }
 
-    generateFilterURLString(filterPropsObject) {
+    generateFilterURLString(filterPropsObject, latestDate) {
         var filterString = "?";
         filterString += ("includeForks=false")
         filterString += ("&privacy=" + filterPropsObject.privacy)
@@ -545,6 +605,9 @@ class Home extends React.Component {
         if (filterPropsObject["lat"] && filterPropsObject["long"]) {
             filterString += ("&lat=" + filterPropsObject.lat)
             filterString += ("&long=" + filterPropsObject.long)
+        }
+        if (latestDate) {
+            filterString += ("&startDate=" + latestDate)
         }
 
         return filterString;
@@ -604,13 +667,57 @@ class Home extends React.Component {
                         renderItem={({ item, index, section }) => {
                             return this._renderItem(item)
                         }}
-                        renderSectionHeader={({ section: { datestring } }) => {
+                        renderSectionHeader={({ section }) => {
                             return (
-                                <Text>{datestring}</Text>
+                                <View>
+                                    <View style={{ alignItems: 'center', marginTop: 5 }}>
+                                        <Text style={{ fontSize: 7 }}>{moment(section.datestring, 'MM-DD-YYYY').format('dddd, MMMM Do YYYY')}</Text>
+                                    </View>
+                                    <FlatList 
+                                        data={section.offers}
+                                        horizontal={true}
+                                        renderItem={({item}) => (
+                                            <View key={item.id} style={{backgroundColor: item.color, borderRadius: 5, margin: 5}}>
+                                                <View>
+                                                    <Text style={{fontSize: 15}}>{item.name}</Text>
+                                                </View>
+                                                <View>
+                                                    <Text style={{fontSize: 15}}>{item.recurrences.length === 0 && "All Day"}{item.recurrences.length > 0 && (item.recurrences.find((recurrence) => moment(section.datestring, 'MM-DD-YYYY').format('dddd').toLowerCase() === recurrence.dayOfWeek).startTime + ' ' + item.recurrences.find((recurrence) => moment(section.datestring, 'MM-DD-YYYY').format('dddd').toLowerCase() === recurrence.dayOfWeek).endTime)}</Text>
+                                                </View>
+                                                <View style={{flexDirection: 'row'}}>
+                                                    <PlatformIonicon name="pin" size={15} style={{ marginHorizontal: 5 }} />
+                                                    <Text style={{fontSize: 12}}>{item.place.name}</Text>
+                                                </View>
+                                            </View>
+                                        )}
+                                    />
+                                </View>
+
                             )
                         }}
                         sections={this.state.feed}
                         keyExtractor={(item, index) => item + index}
+                        refreshControl={
+                            <RefreshControl
+                                refreshing={this.state.loading}
+                                onRefresh={this._onRefresh}
+                            />
+                        }
+                        onEndReached={() => {
+                            if (!this.state.endOfResults) {
+                                this.loadEvents(this.state.latestDate, true, true);
+                            }
+                        }
+                        }
+                        ListFooterComponent={() => {
+                            return (
+                                <View style={{ flex: 1 }}>
+                                    {this.state.loadingMore && !this.state.endOfResults && <ActivityIndicator size="small" color="#0000ff" />}
+                                </View>
+                            )
+                        }}
+
+                        onEndReachedThreshold={0.3}
                     />}
                 {!this.state.loading && this.state.feed.length <= 0 && <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
                     <View style={{ alignItems: 'center', justifyContent: 'center', alignSelf: 'center' }}>
