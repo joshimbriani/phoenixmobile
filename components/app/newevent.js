@@ -48,6 +48,8 @@ class NewEvent extends React.Component {
         for (var i = 0; i < 5; i++)
             text += possible.charAt(Math.floor(Math.random() * possible.length));
 
+        console.log(props.navigation.state.params.offer)
+
         this.state = {
             title: "",
             description: "",
@@ -74,7 +76,7 @@ class NewEvent extends React.Component {
             groups: [],
             group: {},
             invitedUsers: [],
-            eventType: "",
+            eventType: props.navigation.state.params.offer ? "hangout" : "",
             errors: {
                 errors: [],
                 amount: "",

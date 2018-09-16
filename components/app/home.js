@@ -8,7 +8,6 @@ import * as userActions from '../../redux/actions/user';
 import * as locationActions from '../../redux/actions/location';
 import PlatformIonicon from '../utils/platformIonicon';
 import { getURLForPlatform } from '../utils/networkUtils';
-import { styles } from '../../assets/styles';
 import firebase from 'react-native-firebase';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { EventDisplay } from './eventDisplay';
@@ -543,11 +542,9 @@ class Home extends React.Component {
             }
         }
         var latestDay = Math.max.apply(null, events.map((event) => new Date(event.datetime)));
-        console.log((new Date(latestDay)).toISOString())
         const startDate = moment()
         const endDate = moment(latestDay)
         for (var m = moment(startDate).seconds(0).minutes(0).hours(0); m.isBefore(endDate); m.add(1, 'days')) {
-            console.log(m.format('MM-DD-YYYY HH:mm'))
             var offersForDate = offers.filter((offer) => {
                 var isOngoingOffer = moment(offer.startTime).isSameOrBefore(m) && moment(offer.endTime).isSameOrAfter(m);
                 if (offer.recurrences.length > 0) {
@@ -561,9 +558,10 @@ class Home extends React.Component {
             if (offersForDate && offersForDate.length > 0) {
                 var item = feed.find((date) => date.datestring === m.format('MM-DD-YYYY'));
                 if (item) {
+                    shuffleArray(offersForDate)
                     item.offers = offersForDate
                 } else {
-                    console.log(offersForDate)
+                    shuffleArray(offersForDate)
                     feed.push({ datestring: m.format('MM-DD-YYYY'), data: [], offers: offersForDate })
                 }
             }
@@ -581,7 +579,7 @@ class Home extends React.Component {
                 return 0
             }
         })
-        console.log(feed)
+
         return feed
     }
 
@@ -673,24 +671,45 @@ class Home extends React.Component {
                                     <View style={{ alignItems: 'center', marginTop: 5 }}>
                                         <Text style={{ fontSize: 7 }}>{moment(section.datestring, 'MM-DD-YYYY').format('dddd, MMMM Do YYYY')}</Text>
                                     </View>
-                                    <FlatList 
+                                    {section.offers && section.offers.length > 0 && <View style={{ alignItems: 'center', marginTop: 5 }}>
+                                        <Text style={{ fontSize: 10, fontWeight: 'bold' }}>Offers</Text>
+                                    </View>}
+                                    <FlatList
                                         data={section.offers}
                                         horizontal={true}
-                                        renderItem={({item}) => (
-                                            <View key={item.id} style={{backgroundColor: item.color, borderRadius: 5, margin: 5}}>
-                                                <View>
-                                                    <Text style={{fontSize: 15}}>{item.name}</Text>
+                                        renderItem={({ item }) => (
+                                            <TouchableOpacity onPress={() => this.props.navigation.navigate('OfferWrapper', { offer: item, date: section.datestring })}>
+                                                <View key={this.props.index} style={{
+                                                    backgroundColor: '#BFF2BD', flex: 1, margin: 5, padding: 5,
+                                                    ...Platform.select({
+                                                        ios: {
+                                                            shadowColor: 'rgba(0,0,0, .2)',
+                                                            shadowOffset: { height: 0, width: 0 },
+                                                            shadowOpacity: 1,
+                                                            shadowRadius: 1,
+                                                        },
+                                                        android: {
+                                                            elevation: 1,
+                                                        },
+                                                    }),
+                                                }}>
+                                                    <View>
+                                                        <Text style={{ fontSize: 15, fontWeight: 'bold' }}>{item.name}</Text>
+                                                    </View>
+                                                    <View>
+                                                        <Text style={{ fontSize: 10 }}>{item.recurrences.length === 0 && "All Day"}{item.recurrences.length > 0 && (moment(item.recurrences.find((recurrence) => moment(section.datestring, 'MM-DD-YYYY').format('dddd').toLowerCase() === recurrence.dayOfWeek).startTime, 'HH:mm:ss').format('h:mm a') + ' - ' + moment(item.recurrences.find((recurrence) => moment(section.datestring, 'MM-DD-YYYY').format('dddd').toLowerCase() === recurrence.dayOfWeek).endTime, 'HH:mm:ss').format('h:mm a'))}</Text>
+                                                    </View>
+                                                    <View style={{ flexDirection: 'row' }}>
+                                                        <PlatformIonicon name="pin" size={12} style={{ marginHorizontal: 5 }} />
+                                                        <Text style={{ fontSize: 10 }}>{item.place.name}</Text>
+                                                    </View>
                                                 </View>
-                                                <View>
-                                                    <Text style={{fontSize: 15}}>{item.recurrences.length === 0 && "All Day"}{item.recurrences.length > 0 && (item.recurrences.find((recurrence) => moment(section.datestring, 'MM-DD-YYYY').format('dddd').toLowerCase() === recurrence.dayOfWeek).startTime + ' ' + item.recurrences.find((recurrence) => moment(section.datestring, 'MM-DD-YYYY').format('dddd').toLowerCase() === recurrence.dayOfWeek).endTime)}</Text>
-                                                </View>
-                                                <View style={{flexDirection: 'row'}}>
-                                                    <PlatformIonicon name="pin" size={15} style={{ marginHorizontal: 5 }} />
-                                                    <Text style={{fontSize: 12}}>{item.place.name}</Text>
-                                                </View>
-                                            </View>
+                                            </TouchableOpacity>
                                         )}
                                     />
+                                    {section.data && section.data.length > 0 && <View style={{ alignItems: 'center', marginTop: 5 }}>
+                                        <Text style={{ fontSize: 10, fontWeight: 'bold' }}>Events</Text>
+                                    </View>}
                                 </View>
 
                             )
@@ -781,4 +800,11 @@ function makeid() {
         text += possible.charAt(Math.floor(Math.random() * possible.length));
 
     return text;
+}
+
+function shuffleArray(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]]; // eslint-disable-line no-param-reassign
+    }
 }
