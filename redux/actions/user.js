@@ -289,7 +289,6 @@ export function loadOutgoingRequests(token, userID) {
             }
         }).then(response => response.ok && response.json())
             .then(responseObj => {
-                console.log(responseObj)
                 dispatch(saveOutgoingRequests(responseObj["outgoing"]))
             });
     }
@@ -319,7 +318,6 @@ export function loadIncomingRequests(token, userID) {
             }
         }).then(response => response.ok && response.json())
             .then(responseObj => {
-                console.log(responseObj["incoming"])
                 dispatch(saveIncomingRequests(responseObj["incoming"]))
             });
     }

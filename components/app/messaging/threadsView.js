@@ -54,7 +54,6 @@ class ThreadsView extends React.Component {
                 </View>
             )
         } else {
-            console.log(this.props.userGoing, this.props.userInterested, this.props.creator)
             const invLevel = this.getUserInvolvementLevel(this.props.userGoing, this.props.userInterested, this.props.creator);
             return (
                 <View style={{padding: 5}}>

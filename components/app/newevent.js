@@ -74,7 +74,7 @@ class NewEvent extends React.Component {
             groups: [],
             group: {},
             invitedUsers: [],
-            eventType: "",
+            eventType: props.navigation.state.params.offer ? "hangout" : "",
             errors: {
                 errors: [],
                 amount: "",

@@ -26,10 +26,6 @@ class EventDetailPeople extends React.Component {
     }
 
     render() {
-        console.log("blocked", this.props.blockedUsers)
-        console.log("contacts", this.props.contacts)
-        console.log("incoming", this.props.pendingIncomingRelationships)
-        console.log("outgoing", this.props.pendingOutgoingRelationships)
         const selectedUserBlocked = this.props.blockedUsers.map((user) => user.id).indexOf(this.state.selectedUser) !== -1;
         const selectedUserContact = this.props.contacts.map((user) => user.id).indexOf(this.state.selectedUser) !== -1;
         const selectedUserRequestedCurrentUser = this.props.pendingIncomingRelationships.map((user) => user.id).indexOf(this.state.selectedUser) !== -1;

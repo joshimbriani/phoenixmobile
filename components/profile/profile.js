@@ -262,7 +262,6 @@ class Profile extends React.Component {
     );
 
     filterFriends(text, newFriend) {
-        console.log(this.props.contacts)
         if (!this.props.contacts) {
             return;
         }
@@ -279,8 +278,6 @@ class Profile extends React.Component {
                 filteredFriends.splice(i, 1);
             }
         }
-
-        console.log(filteredFriends)
 
         this.setState({ filteredFriends: filteredFriends });
     }

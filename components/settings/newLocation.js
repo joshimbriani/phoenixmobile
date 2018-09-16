@@ -127,7 +127,6 @@ class NewLocation extends React.Component {
     }
 
     render() {
-        console.log(this.state.location)
         return (
             <Container>
                 <Header searchBar rounded>

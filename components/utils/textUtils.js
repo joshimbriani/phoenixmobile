@@ -4,7 +4,6 @@ import { debounce } from 'lodash'
 
 export function generateUserToString(userID, users, creator) {
     const userList = removeUserFromList(userID, users);
-    console.log("Making user string ", userID, users, creator)
     return userList.map(function(item) { if (item.username === creator) { return item.username + ' (Creator)' } return item.username }).join(", ")
 }
 

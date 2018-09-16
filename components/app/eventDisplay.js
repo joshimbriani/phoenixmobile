@@ -70,7 +70,7 @@ export class EventDisplay extends React.Component {
             const date = new Date(this.props.event.datetime)
             return (
                 <View key={this.props.index} style={{
-                    backgroundColor: '#FFFFFF', flex: 1, margin: 5,
+                    backgroundColor: this.props.event.owned ? '#FFFFFF' : '#A5DEF5', flex: 1, margin: 5,
                     ...Platform.select({
                         ios: {
                             shadowColor: 'rgba(0,0,0, .2)',
@@ -95,8 +95,8 @@ export class EventDisplay extends React.Component {
                             </View>
                             <View style={{ flex: 1 }}>
                                 <Text numberOfLines={1} style={{ fontSize: 20, fontWeight: 'bold', color: 'black', maxWidth: this.props.event.offers.length > 0 ? 230 : 275 }}>{this.props.event.title}</Text>
-                                <Text numberOfLines={1} style={{ fontSize: 9 }}>{getDayOfWeekFromDayNumber(date.getDay())} {getMonthNameFromMonthNumber(date.getMonth())} {date.getDate()}, {date.getFullYear()} @ {(date.getHours() % 12) + ':' + (date.getMinutes() < 10 ? ('0' + date.getMinutes()) : date.getMinutes()) + (date.getHours() < 12 ? 'AM' : 'PM')}  </Text>
-                                <Text numberOfLines={1} style={{ fontSize: 9 }}>{this.props.event.place.name}</Text>
+                                <Text numberOfLines={1} style={{ fontSize: 9, color: 'black' }}>{getDayOfWeekFromDayNumber(date.getDay())} {getMonthNameFromMonthNumber(date.getMonth())} {date.getDate()}, {date.getFullYear()} @ {(date.getHours() % 12) + ':' + (date.getMinutes() < 10 ? ('0' + date.getMinutes()) : date.getMinutes()) + (date.getHours() < 12 ? 'AM' : 'PM')}  </Text>
+                                <Text numberOfLines={1} style={{ fontSize: 9, color: 'black' }}>{this.props.event.place.name}</Text>
                             </View>
                             {this.props.event.offers.length > 0 && <View style={{ width: 30, height: 30, borderRadius: 13, backgroundColor: 'green', alignItems: 'center', justifyContent: 'center' }}>
                                 <PlatformIonicon
@@ -108,7 +108,7 @@ export class EventDisplay extends React.Component {
                         </View>
                         <View style={{ paddingTop: 10, paddingHorizontal: 10 }}>
                             {this.props.event.topics.length > 0 && <View style={{ paddingBottom: 5 }}>
-                                <Text numberOfLines={1}>{'#' + this.props.event.topics.map(topic => topic.name).join('  #')}</Text>
+                                <Text numberOfLines={1} style={{color: 'black'}}>{'#' + this.props.event.topics.map(topic => topic.name).join('  #')}</Text>
                             </View>}
                             {this.props.event.owned && <View>
                                 <ProgressBar style={{ marginTop: 'auto' }} progress={this.props.event.going && this.props.event.capacity && (this.props.event.going.length / this.props.event.capacity)} width={Dimensions.get('window').width - 30} />
@@ -124,7 +124,7 @@ export class EventDisplay extends React.Component {
                                     style={{ color: "#e84118" }}
                                 />
                                 <View style={{ alignItems: 'center', justifyContent: 'center', flex: 1 }}>
-                                    <Text>I'm Interested!</Text>
+                                    <Text style={{color: 'black'}}>I'm Interested!</Text>
                                 </View>
                             </View>
                         </TouchableOpacity>
@@ -136,7 +136,7 @@ export class EventDisplay extends React.Component {
                                     style={{ color: "green" }}
                                 />
                                 <View style={{ alignItems: 'center', justifyContent: 'center', flex: 1 }}>
-                                    <Text>Share With Friends</Text>
+                                    <Text style={{color: 'black'}}>Share With Friends</Text>
                                 </View>
                             </View>
                         </TouchableOpacity>

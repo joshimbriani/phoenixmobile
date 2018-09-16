@@ -328,7 +328,6 @@ class EventDetailWrapper extends React.Component {
 }
 
 function userInList(userID, userList) {
-    console.log(userID, userList)
     for (var i = 0; i < userList.length; i++) {
         if (userID === userList[i].id) {
             return true
