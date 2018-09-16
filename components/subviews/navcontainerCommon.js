@@ -37,6 +37,7 @@ import NewEventFork from '../app/newEvent/newEventFork';
 import FindSubEvents from '../app/newEvent/findSubEvents';
 import NewEventPlaceStandalone from '../app/newEvent/newEventPlaceStandalone';
 import NewLocation from '../settings/newLocation';
+import OfferWrapper from '../app/offerDetailWrapper';
 import { styles } from '../../assets/styles';
 
 export const HomeStack = createStackNavigator({
@@ -112,6 +113,10 @@ export const HomeStack = createStackNavigator({
     },
     NewLocation: {
         screen: NewLocation
+    },
+    OfferWrapper: {
+        path: '/offer/:id',
+        screen: OfferWrapper
     }
 }, {
     animationEnabled: false,

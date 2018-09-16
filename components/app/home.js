@@ -1,7 +1,6 @@
 import React from 'react';
 import { Container, Fab, Header, Item, Input, Button, Text } from 'native-base';
-import { Platform, RefreshControl, TouchableHighlight, View, PermissionsAndroid, AsyncStorage, ActivityIndicator, FlatList } from 'react-native';
-import GridView from 'react-native-super-grid';
+import { Platform, RefreshControl, TouchableOpacity, View, SectionList, PermissionsAndroid, AsyncStorage, ActivityIndicator, FlatList } from 'react-native';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import * as colorActions from '../../redux/actions/backgroundColor';
@@ -9,11 +8,11 @@ import * as userActions from '../../redux/actions/user';
 import * as locationActions from '../../redux/actions/location';
 import PlatformIonicon from '../utils/platformIonicon';
 import { getURLForPlatform } from '../utils/networkUtils';
-import { styles } from '../../assets/styles';
 import firebase from 'react-native-firebase';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { EventDisplay } from './eventDisplay';
 import Permissions from 'react-native-permissions';
+import moment from 'moment';
 
 import { LocationHeader } from './locationHeader';
 
@@ -30,8 +29,12 @@ class Home extends React.Component {
             GPSPermission: false,
             notificationsAllowed: false,
             loading: true,
-            events: [],
+            feed: [],
             coordinates: {},
+            latestDate: null,
+            loadingMore: false,
+            events: [],
+            endOfResults: false,
             filters: {
                 changed: false,
                 privacy: "all",
@@ -53,6 +56,8 @@ class Home extends React.Component {
             }
         };
 
+        this.onEndReachedCalledDuringMomentum = true;
+
         this.changeValue = this.changeValue.bind(this);
         this.checkUserPermissions = this.checkUserPermissions.bind(this);
         this.reactToNotification = this.reactToNotification.bind(this);
@@ -65,8 +70,13 @@ class Home extends React.Component {
         this.props.navigation.setParams({ setFilter: this.setFilter, loadEvents: this.loadEvents, locations: props.locations, selected: props.selected, setSelectedLocation: this.setSelectedLocation });
     }
 
+    getPosition(options) {
+        return new Promise(function (resolve, reject) {
+            navigator.geolocation.getCurrentPosition(resolve, reject, options);
+        });
+    }
+
     setSelectedLocation(item) {
-        console.log(item)
         if (item === -2) {
             this.props.navigation.navigate('NewLocation');
             this.props.locationActions.setSelectedLocation(this.props.selected);
@@ -100,12 +110,12 @@ class Home extends React.Component {
                 })
         }
 
-        navigator.geolocation.getCurrentPosition((position) => {
+        try {
+            let position = await this.getPosition(Platform.OS === 'ios' ? { enableHighAccuracy: true, timeout: 20000 } : { timeout: 50000 });
             this.setState({ coordinates: { lat: position.coords.latitude, long: position.coords.longitude } })
-        },
-            (error) => console.error(error.message),
-            Platform.OS === 'ios' ? { enableHighAccuracy: true, timeout: 20000 } : { timeout: 50000 },
-        );
+        } catch (err) {
+            console.log(err); // TypeError: failed to fetch
+        }
 
         firebase.messaging().requestPermission()
             .then(() => {
@@ -427,7 +437,7 @@ class Home extends React.Component {
                 style={{ marginRight: 10 }}
                 onPress={() => navigation.navigate('FilterHome', { setFilter: navigation.state.params.setFilter, loadEvents: navigation.state.params.loadEvents, default: true })}
             />,
-            headerTitle: <LocationHeader locations={params ? params.locations : []} selectedLocation={params ? params.selected : []} setCurrentLocation={async(location) => {await params.setSelectedLocation(location); params.loadEvents()}} />,
+            headerTitle: <LocationHeader locations={params ? params.locations : []} selectedLocation={params ? params.selected : []} setCurrentLocation={async (location) => { await params.setSelectedLocation(location); params.loadEvents() }} />,
 
         })
     } : ({ navigation }) => {
@@ -435,7 +445,7 @@ class Home extends React.Component {
         return ({
             title: 'Home',
             headerStyle: { paddingTop: -22, },
-            headerTitle: <LocationHeader locations={params ? params.locations : []} selectedLocation={params ? params.selected : []} setCurrentLocation={async(location) => {await params.setSelectedLocation(location); params.loadEvents()}} />,
+            headerTitle: <LocationHeader locations={params ? params.locations : []} selectedLocation={params ? params.selected : []} setCurrentLocation={async (location) => { await params.setSelectedLocation(location); params.loadEvents() }} />,
             headerRight: <Icon
                 name="ios-funnel"
                 size={35}
@@ -460,11 +470,19 @@ class Home extends React.Component {
 
     _onRefresh() {
         this.props.userActions.loadInterested(this.props.token, this.props.user);
-        this.loadEvents();
+        this.setState({ events: [], feed: [] })
+        this.loadEvents(null, false);
     }
 
-    loadEvents() {
-        this.setState({loading: true})
+    loadEvents(latestDate = null, loadingMore = false, append = true) {
+        if (loadingMore) {
+            this.setState({ loadingMore: true })
+        } else {
+            this.setState({ loading: true })
+        }
+
+        this.setState({ endOfResults: false })
+
         var filterProps = {};
         if (this.props.filter) {
             Object.assign(filterProps, this.props.filter);
@@ -486,9 +504,9 @@ class Home extends React.Component {
 
         }
 
-        const filterString = this.generateFilterURLString(filterProps);
+        const filterString = this.generateFilterURLString(filterProps, latestDate);
 
-        fetch(getURLForPlatform() + 'api/v1/events/' + filterString, {
+        fetch(getURLForPlatform() + 'api/v1/user/feed/' + filterString, {
             headers: {
                 Authorization: "Token " + this.props.token
             },
@@ -497,13 +515,75 @@ class Home extends React.Component {
                 if (responseJSON["events"]) {
                     var defaultFilter = Object.assign({}, this.props.filter);
                     defaultFilter["changed"] = false;
-                    this.setState({ events: responseJSON["events"], loading: false, filters: defaultFilter })
+                    var feed = this.state.feed.slice();
+                    var events = this.state.events.slice();
+                    events = events.concat(responseJSON["events"])
+                    feed = this.generateFeed(events, responseJSON["offers"])
+                    this.setState({ feed: feed, loading: false, filters: defaultFilter, events: events })
+                    if (responseJSON["events"].length > 0) {
+                        this.setState({ latestDate: responseJSON["events"][responseJSON["events"].length - 1].datetime })
+                    } else {
+                        this.setState({ endOfResults: true })
+                    }
                 }
 
             })
     }
 
-    generateFilterURLString(filterPropsObject) {
+    generateFeed(events, offers) {
+        var feed = [];
+        for (var i = 0; i < events.length; i++) {
+            var datestring = moment(events[i].datetime).format('MM-DD-YYYY');
+            var item = feed.find((date) => date.datestring === datestring);
+            if (item) {
+                item.data.push(events[i])
+            } else {
+                feed.push({ datestring: datestring, data: [events[i]], offers: [] })
+            }
+        }
+        var latestDay = Math.max.apply(null, events.map((event) => new Date(event.datetime)));
+        const startDate = moment()
+        const endDate = moment(latestDay)
+        for (var m = moment(startDate).seconds(0).minutes(0).hours(0); m.isBefore(endDate); m.add(1, 'days')) {
+            var offersForDate = offers.filter((offer) => {
+                var isOngoingOffer = moment(offer.startTime).isSameOrBefore(m) && moment(offer.endTime).isSameOrAfter(m);
+                if (offer.recurrences.length > 0) {
+                    const matchingRecurrences = offer.recurrences.filter((recurrence) => m.format('dddd').toLowerCase() === recurrence.dayOfWeek);
+                    return matchingRecurrences.length > 0;
+                }
+
+                return isOngoingOffer
+            });
+
+            if (offersForDate && offersForDate.length > 0) {
+                var item = feed.find((date) => date.datestring === m.format('MM-DD-YYYY'));
+                if (item) {
+                    shuffleArray(offersForDate)
+                    item.offers = offersForDate
+                } else {
+                    shuffleArray(offersForDate)
+                    feed.push({ datestring: m.format('MM-DD-YYYY'), data: [], offers: offersForDate })
+                }
+            }
+        }
+
+        feed.sort((a, b) => {
+            var aMoment = moment(a.datestring, 'MM-DD-YYYY');
+            var bMoment = moment(b.datestring, 'MM-DD-YYYY');
+
+            if (aMoment.isBefore(bMoment)) {
+                return -1
+            } else if (aMoment.isAfter(bMoment)) {
+                return 1
+            } else {
+                return 0
+            }
+        })
+
+        return feed
+    }
+
+    generateFilterURLString(filterPropsObject, latestDate) {
         var filterString = "?";
         filterString += ("includeForks=false")
         filterString += ("&privacy=" + filterPropsObject.privacy)
@@ -524,13 +604,16 @@ class Home extends React.Component {
             filterString += ("&lat=" + filterPropsObject.lat)
             filterString += ("&long=" + filterPropsObject.long)
         }
+        if (latestDate) {
+            filterString += ("&startDate=" + latestDate)
+        }
 
         return filterString;
     }
 
     _keyExtractor = (item, index) => item.id;
 
-    _renderItem = ({ item }) => (
+    _renderItem = (item) => (
         <EventDisplay index={item.id} event={item} interested={this.userInterestedInEvent(item.id)} showButtons={true} username={this.props.details.username} token={this.props.token} goToEvent={() => this.props.navigation.navigate('EventDetailWrapper', { event: item.title, id: item.id, color: item.color, loadEvents: this.loadEvents })} />
     );
 
@@ -577,21 +660,85 @@ class Home extends React.Component {
                 {this.state.loading && <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
                     <ActivityIndicator size="large" color="#0000ff" />
                 </View>}
-                {!this.state.loading && this.state.events.length > 0 &&
-                    <FlatList
-                        data={this.state.events}
-                        extraData={this.state}
-                        keyExtractor={this._keyExtractor}
-                        renderItem={this._renderItem}
+                {!this.state.loading && this.state.feed.length > 0 &&
+                    <SectionList
+                        renderItem={({ item, index, section }) => {
+                            return this._renderItem(item)
+                        }}
+                        renderSectionHeader={({ section }) => {
+                            return (
+                                <View>
+                                    <View style={{ alignItems: 'center', marginTop: 5 }}>
+                                        <Text style={{ fontSize: 7 }}>{moment(section.datestring, 'MM-DD-YYYY').format('dddd, MMMM Do YYYY')}</Text>
+                                    </View>
+                                    {section.offers && section.offers.length > 0 && <View style={{ alignItems: 'center', marginTop: 5 }}>
+                                        <Text style={{ fontSize: 10, fontWeight: 'bold' }}>Offers</Text>
+                                    </View>}
+                                    <FlatList
+                                        data={section.offers}
+                                        horizontal={true}
+                                        renderItem={({ item }) => (
+                                            <TouchableOpacity onPress={() => this.props.navigation.navigate('OfferWrapper', { offer: item, date: section.datestring })}>
+                                                <View key={this.props.index} style={{
+                                                    backgroundColor: '#BFF2BD', flex: 1, margin: 5, padding: 5,
+                                                    ...Platform.select({
+                                                        ios: {
+                                                            shadowColor: 'rgba(0,0,0, .2)',
+                                                            shadowOffset: { height: 0, width: 0 },
+                                                            shadowOpacity: 1,
+                                                            shadowRadius: 1,
+                                                        },
+                                                        android: {
+                                                            elevation: 1,
+                                                        },
+                                                    }),
+                                                }}>
+                                                    <View>
+                                                        <Text style={{ fontSize: 15, fontWeight: 'bold' }}>{item.name}</Text>
+                                                    </View>
+                                                    <View>
+                                                        <Text style={{ fontSize: 10 }}>{item.recurrences.length === 0 && "All Day"}{item.recurrences.length > 0 && (moment(item.recurrences.find((recurrence) => moment(section.datestring, 'MM-DD-YYYY').format('dddd').toLowerCase() === recurrence.dayOfWeek).startTime, 'HH:mm:ss').format('h:mm a') + ' - ' + moment(item.recurrences.find((recurrence) => moment(section.datestring, 'MM-DD-YYYY').format('dddd').toLowerCase() === recurrence.dayOfWeek).endTime, 'HH:mm:ss').format('h:mm a'))}</Text>
+                                                    </View>
+                                                    <View style={{ flexDirection: 'row' }}>
+                                                        <PlatformIonicon name="pin" size={12} style={{ marginHorizontal: 5 }} />
+                                                        <Text style={{ fontSize: 10 }}>{item.place.name}</Text>
+                                                    </View>
+                                                </View>
+                                            </TouchableOpacity>
+                                        )}
+                                    />
+                                    {section.data && section.data.length > 0 && <View style={{ alignItems: 'center', marginTop: 5 }}>
+                                        <Text style={{ fontSize: 10, fontWeight: 'bold' }}>Events</Text>
+                                    </View>}
+                                </View>
+
+                            )
+                        }}
+                        sections={this.state.feed}
+                        keyExtractor={(item, index) => item + index}
                         refreshControl={
                             <RefreshControl
                                 refreshing={this.state.loading}
                                 onRefresh={this._onRefresh}
                             />
                         }
+                        onEndReached={() => {
+                            if (!this.state.endOfResults) {
+                                this.loadEvents(this.state.latestDate, true, true);
+                            }
+                        }
+                        }
+                        ListFooterComponent={() => {
+                            return (
+                                <View style={{ flex: 1 }}>
+                                    {this.state.loadingMore && !this.state.endOfResults && <ActivityIndicator size="small" color="#0000ff" />}
+                                </View>
+                            )
+                        }}
 
+                        onEndReachedThreshold={0.3}
                     />}
-                {!this.state.loading && this.state.events.length <= 0 && <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+                {!this.state.loading && this.state.feed.length <= 0 && <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
                     <View style={{ alignItems: 'center', justifyContent: 'center', alignSelf: 'center' }}>
                         <Text>No Events Found. Try Reloading!</Text>
                         <View style={{ alignItems: 'center', alignSelf: 'center', marginTop: 15 }}>
@@ -653,4 +800,11 @@ function makeid() {
         text += possible.charAt(Math.floor(Math.random() * possible.length));
 
     return text;
+}
+
+function shuffleArray(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]]; // eslint-disable-line no-param-reassign
+    }
 }
