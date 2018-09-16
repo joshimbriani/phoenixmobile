@@ -77,7 +77,6 @@ class Home extends React.Component {
     }
 
     setSelectedLocation(item) {
-        console.log(item)
         if (item === -2) {
             this.props.navigation.navigate('NewLocation');
             this.props.locationActions.setSelectedLocation(this.props.selected);
@@ -568,8 +567,8 @@ class Home extends React.Component {
         }
 
         feed.sort((a, b) => {
-            var aMoment = moment(a.datestring);
-            var bMoment = moment(b.datestring);
+            var aMoment = moment(a.datestring, 'MM-DD-YYYY');
+            var bMoment = moment(b.datestring, 'MM-DD-YYYY');
 
             if (aMoment.isBefore(bMoment)) {
                 return -1

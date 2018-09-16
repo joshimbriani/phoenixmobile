@@ -107,7 +107,6 @@ class LocationsSettings extends React.Component {
                                     />
                                 )
                             } else {
-                                console.log(location)
                                 return (
                                     <Marker
                                         coordinate={{

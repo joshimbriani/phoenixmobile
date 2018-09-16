@@ -48,8 +48,6 @@ class NewEvent extends React.Component {
         for (var i = 0; i < 5; i++)
             text += possible.charAt(Math.floor(Math.random() * possible.length));
 
-        console.log(props.navigation.state.params.offer)
-
         this.state = {
             title: "",
             description: "",

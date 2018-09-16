@@ -53,9 +53,7 @@ class MyEvents extends React.Component {
     }
 
     noEventsInMyEvents() {
-        console.log(this.props.user)
         if (this.props.user > 0) {
-            console.log(this.props.createdEvents, this.props.goingToEvents, this.props.invitedToEvents, this.props.interestedInEvents)
             return this.props.createdEvents.length + this.props.goingToEvents.length + this.props.invitedToEvents.length + this.props.interestedInEvents.length;
         }
 

@@ -68,7 +68,6 @@ export class EventDisplay extends React.Component {
     render() {
         if (Object.keys(this.props.event).length > 0) {
             const date = new Date(this.props.event.datetime)
-            console.log(this.props.event)
             return (
                 <View key={this.props.index} style={{
                     backgroundColor: this.props.event.owned ? '#FFFFFF' : '#A5DEF5', flex: 1, margin: 5,
