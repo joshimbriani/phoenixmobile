@@ -139,6 +139,7 @@ class EventDetailWrapper extends React.Component {
         this.redeemOffer = this.redeemOffer.bind(this);
         this.forkEvent = this.forkEvent.bind(this);
         this.shareEvent = this.shareEvent.bind(this);
+        this.inviteUser = this.inviteUser.bind(this);
     }
 
     _handleIndexChange = index => this.setState({ index });
@@ -149,7 +150,7 @@ class EventDetailWrapper extends React.Component {
         console.log("Interested In Event ", this.state.eventData.interested)
         switch (route.key) {
             case 'details':
-                return <EventDetailDetails markUserAsInterested={this.markUserAsInterested} markUserAsGoing={this.markUserAsGoing} shareEvent={this.shareEvent} event={this.state.eventData} color={this.props.navigation.state.params.color} navigation={this.props.navigation} redeemOffer={this.redeemOffer} userGoing={userInList(this.props.user, (this.state.eventData.going || []))} userInterested={userInList(this.props.user, (this.state.eventData.interested || []))} />;
+                return <EventDetailDetails markUserAsInterested={this.markUserAsInterested} markUserAsGoing={this.markUserAsGoing} shareEvent={this.shareEvent} event={this.state.eventData} color={this.props.navigation.state.params.color} navigation={this.props.navigation} redeemOffer={this.redeemOffer} userGoing={userInList(this.props.user, (this.state.eventData.going || []))} userInterested={userInList(this.props.user, (this.state.eventData.interested || []))} inviteUsers={this.inviteUser} />;
             case 'place':
                 return <EventDetailPlace event={this.state.eventData} color={this.props.navigation.state.params.color} navigation={this.props.navigation} />;
             case 'people':
@@ -218,6 +219,7 @@ class EventDetailWrapper extends React.Component {
     }
 
     render() {
+        console.log(this.state.eventData)
         return (
             <TabViewAnimated
                 style={styles.eventTabView}
@@ -228,6 +230,11 @@ class EventDetailWrapper extends React.Component {
                 initialLayout={initialLayout}
             />
         )
+    }
+
+    inviteUser(eventID) {
+        console.log(this.state.eventData)
+        this.props.navigation.navigate('InviteUsers', {contacts: this.props.contacts, existing: true, inviteUsers: (users) => this.marksUsersAsInvited(users), invitedUsers: this.state.eventData.invited.map((user) => user.id) })
     }
 
     reportEvent() {
@@ -279,6 +286,24 @@ class EventDetailWrapper extends React.Component {
                 } else {
                     this.loadEvent();
                     this.props.userActions.loadGoing(this.props.token, this.props.user)
+                }
+            });
+    }
+
+    marksUsersAsInvited(users) {
+        fetch(getURLForPlatform() + "api/v1/events/" + this.props.navigation.state.params.id + "/invited/", {
+            headers: {
+                Authorization: "Token " + this.props.token
+            },
+            method: 'PUT',
+            body: JSON.stringify({'users': users})
+        })
+            .then(response => response.json())
+            .then(responseObj => {
+                if (responseObj["success"] !== true) {
+                    console.log("Bad going.")
+                } else {
+                    this.loadEvent();
                 }
             });
     }

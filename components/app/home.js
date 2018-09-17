@@ -66,6 +66,7 @@ class Home extends React.Component {
         this.setFilter = this.setFilter.bind(this);
         this.loadEvents = this.loadEvents.bind(this);
         this.setSelectedLocation = this.setSelectedLocation.bind(this);
+        this.resetEvents = this.resetEvents.bind(this);
 
         this.props.navigation.setParams({ setFilter: this.setFilter, loadEvents: this.loadEvents, locations: props.locations, selected: props.selected, setSelectedLocation: this.setSelectedLocation });
     }
@@ -76,12 +77,13 @@ class Home extends React.Component {
         });
     }
 
-    setSelectedLocation(item) {
+    async setSelectedLocation(item) {
         if (item === -2) {
             this.props.navigation.navigate('NewLocation');
-            this.props.locationActions.setSelectedLocation(this.props.selected);
+            await this.props.locationActions.setSelectedLocation(this.props.selected);
         } else {
-            this.props.locationActions.setSelectedLocation(item);
+            this.resetEvents();
+            await this.props.locationActions.setSelectedLocation(item);
         }
     }
 
@@ -528,6 +530,10 @@ class Home extends React.Component {
                 }
 
             })
+    }
+
+    resetEvents() {
+        this.setState({events: []})
     }
 
     generateFeed(events, offers) {
