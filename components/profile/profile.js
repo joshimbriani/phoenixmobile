@@ -366,7 +366,12 @@ class Profile extends React.Component {
     }
 
     render() {
-        const date = new Date(this.props.details.created || null);
+        var date;
+        if (this.props.details) {
+            date = new Date(this.props.details.created);
+        } else {
+            date = new Date();
+        }
         return (
             <KeyboardAwareScrollView
                 keyboardShouldPersistTaps={'handled'}
@@ -591,7 +596,7 @@ class Profile extends React.Component {
                             </View>
                             <View style={{ flex: 2 }}>
                                 <View style={{ height: 40, justifyContent: 'center' }}>
-                                    {this.props.details.created && <Text>{(new Date(this.props.details.created)).getMonth() + 1}/{(new Date(this.props.details.created)).getDate()}/{(new Date(this.props.details.created)).getFullYear()}</Text>}
+                                    {this.props.details && this.props.details.created && <Text>{(new Date(this.props.details.created)).getMonth() + 1}/{(new Date(this.props.details.created)).getDate()}/{(new Date(this.props.details.created)).getFullYear()}</Text>}
                                 </View>
                             </View>
                         </View>
