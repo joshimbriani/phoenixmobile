@@ -68,7 +68,7 @@ class Home extends React.Component {
         this.setSelectedLocation = this.setSelectedLocation.bind(this);
         this.resetEvents = this.resetEvents.bind(this);
 
-        this.props.navigation.setParams({ setFilter: this.setFilter, loadEvents: this.loadEvents, locations: props.locations, selected: props.selected, setSelectedLocation: this.setSelectedLocation });
+        this.props.navigation.setParams({ setFilter: this.setFilter, loadEvents: () => {this.resetEvents(); this.loadEvents()}, locations: props.locations, selected: props.selected, setSelectedLocation: this.setSelectedLocation });
     }
 
     getPosition(options) {
@@ -620,7 +620,7 @@ class Home extends React.Component {
     _keyExtractor = (item, index) => item.id;
 
     _renderItem = (item) => (
-        <EventDisplay index={item.id} event={item} interested={this.userInterestedInEvent(item.id)} showButtons={true} username={this.props.details.username} token={this.props.token} goToEvent={() => this.props.navigation.navigate('EventDetailWrapper', { event: item.title, id: item.id, color: item.color, loadEvents: this.loadEvents })} />
+        <EventDisplay index={item.id} event={item} interested={this.userInterestedInEvent(item.id)} showButtons={true} username={this.props.details.username} token={this.props.token} goToEvent={() => this.props.navigation.navigate('EventDetailWrapper', { event: item.title, id: item.id, color: item.color, loadEvents: () => {this.resetEvents(); this.loadEvents()} })} />
     );
 
     userInterestedInEvent(eventID) {
