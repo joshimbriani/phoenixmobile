@@ -19,14 +19,20 @@ class InviteUsers extends React.Component {
         super(props);
 
         this.state = {
-            filteredUsers: this.props.navigation.state.params.contacts,
+            filteredUsers: props.navigation.state.params.contacts,
             searchText: "",
-            userContacts: this.props.navigation.state.params.contacts,
-            invitedUsers: this.props.navigation.state.params.invitedUsers
+            userContacts: props.navigation.state.params.contacts,
+            invitedUsers: props.navigation.state.params.invitedUsers || []
         }
         this.findFriends = this.findFriends.bind(this);
         this.toggleUser = this.toggleUser.bind(this);
         this.userInInviteList = this.userInInviteList.bind(this);
+    }
+
+    componentWillUnmount() {
+        if (this.props.navigation.state.params.existing) {
+            this.props.navigation.state.params.inviteUsers(this.state.invitedUsers);
+        }
     }
 
     _keyExtractor = (item, index) => item.id;
@@ -80,7 +86,9 @@ class InviteUsers extends React.Component {
         }
         
         this.setState({invitedUsers: invitedUsers });
-        this.props.navigation.state.params.addUsersToInviteLists(userID);
+        if (!this.props.navigation.state.params.existing) {
+            this.props.navigation.state.params.addUsersToInviteLists(userID);
+        }
     }
 
     findFriends(text) {
