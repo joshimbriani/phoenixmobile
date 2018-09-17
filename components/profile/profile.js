@@ -366,7 +366,7 @@ class Profile extends React.Component {
     }
 
     render() {
-        const date = new Date(this.props.details.created);
+        const date = new Date(this.props.details.created || null);
         return (
             <KeyboardAwareScrollView
                 keyboardShouldPersistTaps={'handled'}
