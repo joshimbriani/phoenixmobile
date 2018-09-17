@@ -665,6 +665,7 @@ class Home extends React.Component {
                         renderItem={({ item, index, section }) => {
                             return this._renderItem(item)
                         }}
+                        stickySectionHeadersEnabled={false}
                         renderSectionHeader={({ section }) => {
                             return (
                                 <View>
