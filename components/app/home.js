@@ -527,14 +527,13 @@ class Home extends React.Component {
                     var events = this.state.events.slice();
                     events = events.concat(responseJSON["events"])
                     feed = this.generateFeed(events, responseJSON["offers"])
-                    this.setState({ feed: feed, loading: false, filters: defaultFilter, events: events })
+                    this.setState({ feed: feed, loading: false, filters: defaultFilter, events: events, loadingMore: false })
                     if (responseJSON["events"].length > 0) {
                         this.setState({ latestDate: responseJSON["events"][responseJSON["events"].length - 1].datetime })
                     } else {
                         this.setState({ endOfResults: true })
                     }
                 }
-
             })
     }
 
@@ -736,7 +735,7 @@ class Home extends React.Component {
                             />
                         }
                         onEndReached={() => {
-                            if (!this.state.endOfResults) {
+                            if (!this.state.endOfResults && !this.state.loadingMore) {
                                 this.loadEvents(this.state.latestDate, true, true);
                             }
                         }
