@@ -155,7 +155,7 @@ class NotificationSettings extends React.Component {
         body = {};
         body[field] = value;
 
-        fetch(getURLForPlatform() + "api/v1/user/" + this.props.user.id + "/settings/", {
+        fetch(getURLForPlatform() + "api/v1/user/" + this.props.user + "/settings/", {
             method: 'PUT',
             headers: {
                 Authorization: "Token " + this.props.token

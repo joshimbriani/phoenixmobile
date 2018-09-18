@@ -36,20 +36,21 @@ class AddFriends extends React.Component {
     }
 
     componentDidMount() {
+        this.props.userActions.loadOutgoingRequests(this.props.token, this.props.user)
         this.setState({ 
-            invitedUsers: this.props.user.pendingOutgoingRequests.map((user) => user.id),
-            wasInvitedByUsers: this.props.user.pendingIncomingRequests.map((user) => user.id),
-            contacts: this.props.user.friends.map((user) => user.id),
-            blockedUsers: this.props.user.blockedUsers.map((user) => user.id),
+            invitedUsers: this.props.pendingOutgoingRelationships.map((user) => user.id),
+            wasInvitedByUsers: this.props.pendingIncomingRelationships.map((user) => user.id),
+            contacts: this.props.contacts.map((user) => user.id),
+            blockedUsers: this.props.blockedUsers.map((user) => user.id),
         })
     }
 
     updateUserLists() {
         this.setState({ 
-            invitedUsers: this.props.user.pendingOutgoingRequests.map((user) => user.id),
-            wasInvitedByUsers: this.props.user.pendingIncomingRequests.map((user) => user.id),
-            contacts: this.props.user.friends.map((user) => user.id),
-            blockedUsers: this.props.user.blockedUsers.map((user) => user.id),
+            invitedUsers: this.props.pendingOutgoingRelationships.map((user) => user.id),
+            wasInvitedByUsers: this.props.pendingIncomingRelationships.map((user) => user.id),
+            contacts: this.props.contacts.map((user) => user.id),
+            blockedUsers: this.props.blockedUsers.map((user) => user.id),
         })
     }
 
@@ -103,7 +104,7 @@ class AddFriends extends React.Component {
     )
 
      addFriend(userID) {
-        fetch(getURLForPlatform() + 'api/v1/user/' + this.props.user.id + '/requests/', {
+        fetch(getURLForPlatform() + 'api/v1/user/' + this.props.user + '/requests/', {
             headers: {
                 Authorization: "Token " + this.props.token
             },
@@ -115,14 +116,14 @@ class AddFriends extends React.Component {
         .then(async (requestObject) => {
             if (requestObject["success"]) {
                 this.findFriends(this.state.searchText);
-                await this.props.userActions.loadUser(this.props.token);
+                await this.props.userActions.loadOutgoingRequests(this.props.token, this.props.user);
                 this.updateUserLists()
             }
         })
     }
 
     cancelRequest(userID) {
-        fetch(getURLForPlatform() + 'api/v1/user/' + this.props.user.id + '/unfriend/', {
+        fetch(getURLForPlatform() + 'api/v1/user/' + this.props.user + '/unfriend/', {
             headers: {
                 Authorization: "Token " + this.props.token
             },
@@ -134,14 +135,14 @@ class AddFriends extends React.Component {
             .then(async (requestObject) => {
                 if (requestObject["success"]) {
                     this.findFriends(this.state.searchText);
-                    await this.props.userActions.loadUser(this.props.token)
+                    await this.props.userActions.loadOutgoingRequests(this.props.token, this.props.user);
                     this.updateUserLists()
                 }
             })
     }
 
     acceptRequest(userID) {
-        fetch(getURLForPlatform() + 'api/v1/user/' + this.props.user.id + '/requests/', {
+        fetch(getURLForPlatform() + 'api/v1/user/' + this.props.user + '/requests/', {
             headers: {
                 Authorization: "Token " + this.props.token
             },
@@ -154,14 +155,14 @@ class AddFriends extends React.Component {
             .then(async (requestObject) => {
                 if (requestObject["success"]) {
                     this.findFriends(this.state.searchText);
-                    await this.props.userActions.loadUser(this.props.token)
+                    await this.props.userActions.loadContacts(this.props.token, this.props.user)
                     this.updateUserLists()
                 }
             })
     }
 
     unfriendUser(userID) {
-        fetch(getURLForPlatform() + 'api/v1/user/' + this.props.user.id + '/unfriend/', {
+        fetch(getURLForPlatform() + 'api/v1/user/' + this.props.user + '/unfriend/', {
             headers: {
                 Authorization: "Token " + this.props.token
             },
@@ -173,14 +174,14 @@ class AddFriends extends React.Component {
             .then(async (requestObject) => {
                 if (requestObject["success"]) {
                     this.findFriends(this.state.searchText);
-                    await this.props.userActions.loadUser(this.props.token)
+                    await this.props.userActions.loadContacts(this.props.token, this.props.user)
                     this.updateUserLists()
                 }
             })
     }
 
     unblockUser(user) {
-        fetch(getURLForPlatform() + 'api/v1/user/' + this.props.user.id + '/block/', {
+        fetch(getURLForPlatform() + 'api/v1/user/' + this.props.user + '/block/', {
             headers: {
                 Authorization: "Token " + this.props.token
             },
@@ -193,7 +194,7 @@ class AddFriends extends React.Component {
             .then(async (requestObject) => {
                 if (requestObject["success"]) {
                     this.findFriends(this.state.searchText);
-                    await this.props.userActions.loadUser(this.props.token)
+                    await this.props.userActions.loadBlocked(this.props.token, this.props.user)
                     this.updateUserLists()
                 }
             })
@@ -211,7 +212,6 @@ class AddFriends extends React.Component {
         }).then(response => response.json())
             .then(async (responseObject) => {
                 this.setState({ filteredUsers: responseObject["users"] })
-                await this.props.userActions.loadUser(this.props.token)
                 this.updateUserLists()
             })
     }
@@ -240,7 +240,11 @@ class AddFriends extends React.Component {
 function mapStateToProps(state) {
     return {
         token: state.tokenReducer.token,
-        user: state.userReducer.user
+        user: state.userReducer.user,
+        pendingOutgoingRelationships: state.userReducer.pendingOutgoingRelationships,
+        pendingIncomingRelationships: state.userReducer.pendingIncomingRelationships,
+        contacts: state.userReducer.contacts,
+        blockedUsers: state.userReducer.blockedUsers
     };
 }
 
@@ -255,4 +259,3 @@ export default connect(
     mapStateToProps,
     mapDispatchToProps
 )(AddFriends);
-

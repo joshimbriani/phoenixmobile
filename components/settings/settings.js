@@ -63,6 +63,15 @@ class Settings extends React.Component {
                             title='Notifications'
                             onPress={() => this.props.navigation.navigate("NotificationSettings", {})}
                         />
+                        <SettingsList.Item
+                            icon={<PlatformIonicon
+                                name='pin'
+                                size={30}
+                                style={{ paddingTop: 10, paddingLeft: 5 }}
+                            />}
+                            title='Locations'
+                            onPress={() => this.props.navigation.navigate("LocationsSettings", {})}
+                        />
 
                         {/*<SettingsList.Header headerStyle={{ marginTop: 15 }} />
                         <SettingsList.Item
@@ -136,7 +145,7 @@ class Settings extends React.Component {
     }
 
     logout() {
-        fetch(getURLForPlatform() + "api/v1/user/" + this.props.user.id + "/", {
+        fetch(getURLForPlatform() + "api/v1/user/" + this.props.user + "/", {
             headers: {
                 Authorization: "Token " + this.props.token
             },

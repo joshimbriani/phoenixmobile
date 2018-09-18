@@ -10,6 +10,8 @@ import EventDetailPlace from './eventDetailPlace';
 import EventDetailPeople from './eventDetailPeople';
 import EventDetailMessages from './eventDetailMessages';
 import Icon from 'react-native-vector-icons/Ionicons';
+import * as userActions from '../../redux/actions/user';
+import { bindActionCreators } from 'redux';
 
 import { getMaterialColor } from '../utils/styleutils';
 
@@ -137,6 +139,7 @@ class EventDetailWrapper extends React.Component {
         this.redeemOffer = this.redeemOffer.bind(this);
         this.forkEvent = this.forkEvent.bind(this);
         this.shareEvent = this.shareEvent.bind(this);
+        this.inviteUser = this.inviteUser.bind(this);
     }
 
     _handleIndexChange = index => this.setState({ index });
@@ -144,9 +147,10 @@ class EventDetailWrapper extends React.Component {
     _renderHeader = props => <TabBar {...props} labelStyle={{ fontSize: 10 }} style={[styles.eventTabBar, { backgroundColor: this.props.navigation.state.params.color }]} />;
 
     _renderScene = ({ route }) => {
+        console.log("Interested In Event ", this.state.eventData.interested)
         switch (route.key) {
             case 'details':
-                return <EventDetailDetails markUserAsInterested={this.markUserAsInterested} markUserAsGoing={this.markUserAsGoing} shareEvent={this.shareEvent} event={this.state.eventData} color={this.props.navigation.state.params.color} navigation={this.props.navigation} redeemOffer={this.redeemOffer} userGoing={userInList(this.props.user.id, (this.state.eventData.going || []))} userInterested={userInList(this.props.user.id, (this.state.eventData.interested || []))} />;
+                return <EventDetailDetails markUserAsInterested={this.markUserAsInterested} markUserAsGoing={this.markUserAsGoing} shareEvent={this.shareEvent} event={this.state.eventData} color={this.props.navigation.state.params.color} navigation={this.props.navigation} redeemOffer={this.redeemOffer} userGoing={userInList(this.props.user, (this.state.eventData.going || []))} userInterested={userInList(this.props.user, (this.state.eventData.interested || []))} inviteUsers={this.inviteUser} />;
             case 'place':
                 return <EventDetailPlace event={this.state.eventData} color={this.props.navigation.state.params.color} navigation={this.props.navigation} />;
             case 'people':
@@ -156,8 +160,8 @@ class EventDetailWrapper extends React.Component {
                     event={this.state.eventData}
                     color={this.props.navigation.state.params.color}
                     navigation={this.props.navigation}
-                    userInvolved={userInList(this.props.user.id, (this.state.eventData.interested || []))}
-                    userGoing={userInList(this.props.user.id, (this.state.eventData.going || []))} />
+                    userInterested={userInList(this.props.user, (this.state.eventData.interested || []))}
+                    userGoing={userInList(this.props.user, (this.state.eventData.going || []))} />
             default:
                 return null;
         }
@@ -182,7 +186,7 @@ class EventDetailWrapper extends React.Component {
 
     shareEvent() {
         Share.share({
-            message: "It's " + this.props.user.username + " and I think you'd really like this event - " + this.state.eventData.title + ". Check it out on Koota! https://kootasocial.com/",
+            message: "It's " + this.props.details.username + " and I think you'd really like this event - " + this.state.eventData.title + ". Check it out on Koota! https://kootasocial.com/",
             url: 'http://kootasocial.com',
             title: "I think you'd like this event on Koota!"
         }, {
@@ -201,7 +205,11 @@ class EventDetailWrapper extends React.Component {
 
     componentDidMount() {
         this.loadEvent();
-        this.props.navigation.setParams({ markUserAsInterested: this.markUserAsInterested, markUserAsGoing: this.markUserAsGoing, loadEvent: this.loadEvent, userID: this.props.user.id, reportEvent: this.reportEvent, deleteEvent: this.showDeleteAlert, forkEvent: this.forkEvent });
+        this.props.userActions.loadBlocked(this.props.token, this.props.user);
+        this.props.userActions.loadContacts(this.props.token, this.props.user);
+        this.props.userActions.loadIncomingRequests(this.props.token, this.props.user);
+        this.props.userActions.loadOutgoingRequests(this.props.token, this.props.user);
+        this.props.navigation.setParams({ markUserAsInterested: this.markUserAsInterested, markUserAsGoing: this.markUserAsGoing, loadEvent: this.loadEvent, userID: this.props.user, reportEvent: this.reportEvent, deleteEvent: this.showDeleteAlert, forkEvent: this.forkEvent });
 
         if (!this.props.navigation.state.params.color) {
             this.props.navigation.setParams({ color: this.state.color });
@@ -211,6 +219,7 @@ class EventDetailWrapper extends React.Component {
     }
 
     render() {
+        console.log(this.state.eventData)
         return (
             <TabViewAnimated
                 style={styles.eventTabView}
@@ -221,6 +230,11 @@ class EventDetailWrapper extends React.Component {
                 initialLayout={initialLayout}
             />
         )
+    }
+
+    inviteUser(eventID) {
+        console.log(this.state.eventData)
+        this.props.navigation.navigate('InviteUsers', {contacts: this.props.contacts, existing: true, inviteUsers: (users) => this.marksUsersAsInvited(users), invitedUsers: this.state.eventData.invited.map((user) => user.id) })
     }
 
     reportEvent() {
@@ -253,6 +267,7 @@ class EventDetailWrapper extends React.Component {
                     console.log("Bad interested.")
                 } else {
                     this.loadEvent();
+                    this.props.userActions.loadInterested(this.props.token, this.props.user)
                 }
             });
     }
@@ -263,6 +278,25 @@ class EventDetailWrapper extends React.Component {
                 Authorization: "Token " + this.props.token
             },
             method: 'PUT',
+        })
+            .then(response => response.json())
+            .then(responseObj => {
+                if (responseObj["success"] !== true) {
+                    console.log("Bad going.")
+                } else {
+                    this.loadEvent();
+                    this.props.userActions.loadGoing(this.props.token, this.props.user)
+                }
+            });
+    }
+
+    marksUsersAsInvited(users) {
+        fetch(getURLForPlatform() + "api/v1/events/" + this.props.navigation.state.params.id + "/invited/", {
+            headers: {
+                Authorization: "Token " + this.props.token
+            },
+            method: 'PUT',
+            body: JSON.stringify({'users': users})
         })
             .then(response => response.json())
             .then(responseObj => {
@@ -331,13 +365,18 @@ function userInList(userID, userList) {
 function mapStateToProps(state) {
     return {
         token: state.tokenReducer.token,
-        user: state.userReducer.user
+        user: state.userReducer.user,
+        details: state.userReducer.details,
+        pendingOutgoingRelationships: state.userReducer.pendingOutgoingRelationships,
+        pendingIncomingRelationships: state.userReducer.pendingIncomingRelationships,
+        contacts: state.userReducer.contacts,
+        blockedUsers: state.userReducer.blockedUsers
     };
 }
 
 function mapDispatchToProps(dispatch) {
     return {
-
+        userActions: bindActionCreators(userActions, dispatch),
     };
 }
 

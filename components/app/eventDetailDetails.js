@@ -63,6 +63,18 @@ class EventDetailDetails extends React.Component {
                                     </View>
                                 </View>
                             </TouchableOpacity>
+                            <TouchableOpacity onPress={() => this.props.inviteUsers(this.props.event.id)} style={{ flexDirection: 'row', flex: 1, margin: 5 }}>
+                                <View style={{ flexDirection: 'row', flex: 1, padding: 5, borderRightWidth: 1, borderRightColor: '#A8A8A8' }}>
+                                    <PlatformIonicon
+                                        name={this.props.userGoing ? "checkbox" : "checkbox-outline"}
+                                        size={25} //this doesn't adjust the size...?
+                                        style={{ color: "green", margin: 5 }}
+                                    />
+                                    <View style={{ alignItems: 'center', justifyContent: 'center', flex: 1 }}>
+                                        <Text>Invite Users</Text>
+                                    </View>
+                                </View>
+                            </TouchableOpacity>
                             <TouchableOpacity onPress={() => this.props.shareEvent()} style={{ flexDirection: 'row', flex: 1, margin: 5 }}>
                                 <View style={{ flexDirection: 'row', flex: 1, padding: 5 }}>
                                     <PlatformIonicon
@@ -90,7 +102,7 @@ class EventDetailDetails extends React.Component {
                             {/*this.props.event.privacy === "group" && <View>
                                 <Text style={styles.eventDetailSectionHeader}>Group</Text>
                             </View>*/}
-                            {this.props.user.id === this.props.event.userBy.id && now.isAfter(moment(date).subtract(1, 'hour')) &&
+                            {this.props.user === this.props.event.userBy.id && now.isAfter(moment(date).subtract(1, 'hour')) &&
                                 <View style={{ marginTop: 20 }}>
                                     <Button disabled={this.props.event.redeemed || now.isAfter(moment(date).add(1, 'hour'))} title={this.props.event.redeemed ? "Redeemed!" : "Redeem Now"} color='#8BC34A' accessibilityLabel="Redeem Offer Button" onPress={this.props.redeemOffer} />
                                 </View>

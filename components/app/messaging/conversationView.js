@@ -11,6 +11,8 @@ import PlatformIonicon from '../../utils/platformIonicon';
 import { Bubble } from './bubble';
 import { getMaterialColor } from '../../utils/styleutils';
 
+import {AutoGrowingTextInput} from 'react-native-autogrow-textinput';
+
 import { CachedImage } from 'react-native-cached-image';
 import {
     Menu,
@@ -60,7 +62,7 @@ class ConversationView extends React.Component {
                 messages: [],
                 threadID: '',
                 users: [
-                    { id: this.props.user.id, username: this.props.user.username, profilePicture: this.props.user.profilePicture }
+                    { id: this.props.user, username: this.props.details.username, profilePicture: this.props.details.profilePicture }
                 ],
                 update: null
             }
@@ -152,7 +154,7 @@ class ConversationView extends React.Component {
                         extraData={this.state}
                         initialNumToRender={this.state.messages.length}
                         renderItem={({ item, separators }) => {
-                            if (item.fromUser !== this.props.user.id) {
+                            if (item.fromUser !== this.props.user) {
                                 return (
                                     <View style={[styles.flex1, { flexDirection: 'row', alignContent: 'flex-end', marginTop: 5, marginBottom: 10 }]}>
                                         <View style={{ justifyContent: 'flex-end', margin: 1 }}>
@@ -164,7 +166,7 @@ class ConversationView extends React.Component {
                                             />
                                         </View>
                                         <Bubble
-                                            isUserSender={item.fromUser === this.props.user.id}
+                                            isUserSender={item.fromUser === this.props.user}
                                             message={item.content}
                                             username={this.getUsernameFromMessage(item.fromUser, this.state.users)}
                                             sendDate={getDateStringForMessage(new Date(item.sentDate))}
@@ -176,7 +178,7 @@ class ConversationView extends React.Component {
                                     <View style={[styles.flex1, { flexDirection: 'row', alignContent: 'flex-end', marginTop: 5, marginBottom: 10 }]}>
                                         <View style={{ flex: 1 }}></View>
                                         <Bubble
-                                            isUserSender={item.fromUser === this.props.user.id}
+                                            isUserSender={item.fromUser === this.props.user}
                                             message={item.content}
                                             username={this.getUsernameFromMessage(item.fromUser, this.state.users)}
                                             sendDate={getDateStringForMessage(new Date(item.sentDate))}
@@ -200,12 +202,7 @@ class ConversationView extends React.Component {
                             </View>
                         </TouchableOpacity>*/}
                         <View style={{ flexDirection: 'row', flex: 1, alignContent: 'center', alignItems: 'center', alignSelf: 'center' }}>
-                            <TextInput
-                                value={this.state.messageContent}
-                                style={{ flex: 1, borderBottomColor: Platform.OS === 'ios' ? 'black' : null, borderBottomWidth: Platform.OS === 'ios' ? 1 : 0 }}
-                                height={40}
-                                onChangeText={(messageContent) => this.setState({ messageContent })}
-                            />
+                            <AutoGrowingTextInput value={this.state.messageContent} onChangeText={(messageContent) => this.setState({ messageContent })} style={{ flex: 1, borderBottomColor: Platform.OS === 'ios' ? 'black' : null, borderBottomWidth: Platform.OS === 'ios' ? 1 : 0 }} placeholder={'Your Message'} />
                             <TouchableOpacity
                                 onPress={this.sendMessage}>
                                 <View style={{ paddingLeft: 10, paddingRight: 5, alignContent: 'center', alignItems: 'center', alignSelf: 'center' }}>
@@ -257,7 +254,7 @@ class ConversationView extends React.Component {
         if (this.props.navigation && this.props.navigation.state && this.props.navigation.state.params.newConvo && this.state.messages.length < 1) {
             // Is a newConvo
             var messageBody = {
-                from: this.props.user.id,
+                from: this.props.user,
                 sentDate: new Date(),
                 content: this.state.messageContent,
                 createThread: true,
@@ -267,7 +264,7 @@ class ConversationView extends React.Component {
         } else {
 
             var messageBody = {
-                from: this.props.user.id,
+                from: this.props.user,
                 sentDate: new Date(),
                 content: this.state.messageContent,
                 createThread: false,
@@ -294,7 +291,7 @@ class ConversationView extends React.Component {
                 }
             })
 
-        messageBody["fromUser"] = this.props.user.id;
+        messageBody["fromUser"] = this.props.user;
         messageBody["id"] = Math.random().toString(36).substr(2, 5);
         var messages = this.state.messages;
         messages.push(messageBody);
@@ -309,6 +306,7 @@ class ConversationView extends React.Component {
 function mapStateToProps(state) {
     return {
         user: state.userReducer.user,
+        details: state.userReducer.details
     };
 }
 

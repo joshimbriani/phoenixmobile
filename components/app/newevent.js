@@ -74,7 +74,7 @@ class NewEvent extends React.Component {
             groups: [],
             group: {},
             invitedUsers: [],
-            eventType: "",
+            eventType: props.navigation.state.params.offer ? "hangout" : "",
             errors: {
                 errors: [],
                 amount: "",
@@ -129,7 +129,7 @@ class NewEvent extends React.Component {
     }
 
     inviteFriends() {
-        this.props.navigation.navigate('InviteUsers', { contacts: this.props.user.friends, addUsersToInviteLists: this.addUsersToInviteLists, invitedUsers: this.state.invitedUsers });
+        this.props.navigation.navigate('InviteUsers', { contacts: this.props.contacts, addUsersToInviteLists: this.addUsersToInviteLists, invitedUsers: this.state.invitedUsers });
     }
 
     // Actually toggles users
@@ -432,7 +432,7 @@ class NewEvent extends React.Component {
             },
             {
                 name: "People",
-                component: <PeopleNewEvent onChange={this.onChange} inviteFriends={this.inviteFriends} submitForm={this.submitForm} restrictToGender={this.state.restrictToGender} eventPrivacy={this.state.eventPrivacy} groups={this.state.groups} errors={this.state.errors} user={this.props.user} />,
+                component: <PeopleNewEvent onChange={this.onChange} inviteFriends={this.inviteFriends} submitForm={this.submitForm} restrictToGender={this.state.restrictToGender} eventPrivacy={this.state.eventPrivacy} groups={this.state.groups} errors={this.state.errors} user={this.props.details} />,
                 condition: (args) => true
             }
         ]
@@ -475,7 +475,9 @@ class NewEvent extends React.Component {
 function mapStateToProps(state) {
     return {
         token: state.tokenReducer.token,
-        user: state.userReducer.user
+        user: state.userReducer.user,
+        contacts: state.userReducer.contacts,
+        details: state.userReducer.details
     };
 }
 

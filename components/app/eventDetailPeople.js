@@ -26,10 +26,10 @@ class EventDetailPeople extends React.Component {
     }
 
     render() {
-        const selectedUserBlocked = this.props.user.blockedUsers.map((user) => user.id).indexOf(this.state.selectedUser) !== -1;
-        const selectedUserContact = this.props.user.friends.map((user) => user.id).indexOf(this.state.selectedUser) !== -1;
-        const selectedUserRequestedCurrentUser = this.props.user.pendingIncomingRequests.map((user) => user.id).indexOf(this.state.selectedUser) !== -1;
-        const selectedUserPendingRequested = this.props.user.pendingOutgoingRequests.map((user) => user.id).indexOf(this.state.selectedUser) !== -1;
+        const selectedUserBlocked = this.props.blockedUsers.map((user) => user.id).indexOf(this.state.selectedUser) !== -1;
+        const selectedUserContact = this.props.contacts.map((user) => user.id).indexOf(this.state.selectedUser) !== -1;
+        const selectedUserRequestedCurrentUser = this.props.pendingIncomingRelationships.map((user) => user.id).indexOf(this.state.selectedUser) !== -1;
+        const selectedUserPendingRequested = this.props.pendingOutgoingRelationships.map((user) => user.id).indexOf(this.state.selectedUser) !== -1;
         var modalHeight = 0;
         if (this.state.selectedUser === -1) {
             modalHeight = 0;
@@ -201,7 +201,7 @@ class EventDetailPeople extends React.Component {
         if (userToBlock < 0) {
             return;
         }
-        fetch(getURLForPlatform() + 'api/v1/user/' + this.props.user.id + '/block/', {
+        fetch(getURLForPlatform() + 'api/v1/user/' + this.props.user + '/block/', {
             headers: {
                 Authorization: "Token " + this.props.token
             },
@@ -213,7 +213,7 @@ class EventDetailPeople extends React.Component {
         }).then(request => request.json())
             .then(requestObject => {
                 if (requestObject["success"]) {
-                    this.props.userActions.loadUser(this.props.token);
+                    this.props.userActions.loadBlocked(this.props.token, this.props.user)
                     this.setState({ userOptionModalVisible: false })
                     this.setState({ selectedUser: -1 });
                 }
@@ -229,7 +229,7 @@ class EventDetailPeople extends React.Component {
             return;
         }
         if (addUserToContacts) {
-            fetch(getURLForPlatform() + 'api/v1/user/' + this.props.user.id + '/requests/', {
+            fetch(getURLForPlatform() + 'api/v1/user/' + this.props.user + '/requests/', {
                 headers: {
                     Authorization: "Token " + this.props.token
                 },
@@ -240,13 +240,13 @@ class EventDetailPeople extends React.Component {
             }).then(request => request.json())
                 .then(requestObject => {
                     if (requestObject["success"]) {
-                        this.props.userActions.loadUser(this.props.token);
+                        this.props.userActions.loadOutgoingRequests(this.props.token, this.props.user);
                         this.setState({ userOptionModalVisible: false });
                         this.setState({ selectedUser: -1 });
                     }
                 })
         } else if (removeUserFromContacts) {
-            fetch(getURLForPlatform() + 'api/v1/user/' + this.props.user.id + '/unfriend/', {
+            fetch(getURLForPlatform() + 'api/v1/user/' + this.props.user + '/unfriend/', {
                 headers: {
                     Authorization: "Token " + this.props.token
                 },
@@ -257,13 +257,13 @@ class EventDetailPeople extends React.Component {
             }).then(request => request.json())
                 .then(requestObject => {
                     if (requestObject["success"]) {
-                        this.props.userActions.loadUser(this.props.token);
+                        this.props.userActions.loadContacts(this.props.token, this.props.user)
                         this.setState({ userOptionModalVisible: false });
                         this.setState({ selectedUser: -1 });
                     }
                 })
         } else if (acceptUserRequest) {
-            fetch(getURLForPlatform() + 'api/v1/user/' + this.props.user.id + '/requests/', {
+            fetch(getURLForPlatform() + 'api/v1/user/' + this.props.user + '/requests/', {
                 headers: {
                     Authorization: "Token " + this.props.token
                 },
@@ -275,13 +275,13 @@ class EventDetailPeople extends React.Component {
             }).then(request => request.json())
                 .then(requestObject => {
                     if (requestObject["success"]) {
-                        this.props.userActions.loadUser(this.props.token).then();
+                        this.props.userActions.loadContacts(this.props.token, this.props.user)
                         this.setState({ userOptionModalVisible: false });
                         this.setState({ selectedUser: -1 });
                     }
                 })
         } else if (denyUserRequest) {
-            fetch(getURLForPlatform() + 'api/v1/user/' + this.props.user.id + '/requests/', {
+            fetch(getURLForPlatform() + 'api/v1/user/' + this.props.user + '/requests/', {
                 headers: {
                     Authorization: "Token " + this.props.token
                 },
@@ -312,7 +312,11 @@ EventDetailPeople.propTypes = {
 function mapStateToProps(state) {
     return {
         user: state.userReducer.user,
-        token: state.tokenReducer.token
+        token: state.tokenReducer.token,
+        blockedUsers: state.userReducer.blockedUsers,
+        contacts: state.userReducer.contacts,
+        pendingIncomingRelationships: state.userReducer.pendingIncomingRelationships,
+        pendingOutgoingRelationships: state.userReducer.pendingOutgoingRelationships
     };
 }
 
