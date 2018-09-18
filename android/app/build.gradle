@@ -102,7 +102,7 @@ android {
         applicationId "com.kootasocial.koota"
         minSdkVersion 16
         targetSdkVersion 26
-        versionCode 7
+        versionCode 8
         versionName "1.0.5"
         ndk {
             abiFilters "armeabi-v7a", "x86"
