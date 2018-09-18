@@ -66,6 +66,7 @@ class LocationsSettings extends React.Component {
             }
         } else if (Platform.OS === 'ios') {
             navigator.geolocation.requestAuthorization();
+            this.setState({ GPSPermission: true })
         }
     }
 

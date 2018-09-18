@@ -372,238 +372,244 @@ class Profile extends React.Component {
         } else {
             date = new Date();
         }
-        return (
-            <KeyboardAwareScrollView
-                keyboardShouldPersistTaps={'handled'}
-                refreshControl={
-                    <RefreshControl
-                        refreshing={this.state.refreshing}
-                        onRefresh={this._onRefresh}
-                    />
-                }
-            >
-                <View style={{ flex: 1 }}>
-                    <HideableView hide={this.state.editingDetails}>
-                        <View style={{ justifyContent: 'center', alignItems: 'center', backgroundColor: '#c0392b', height: 175 }}>
-                            <TouchableOpacity onPress={() => this.setState({ profilePictureModalVisible: true })} onLongPress={() => this.setState({ profilePictureModalVisible: true })}>
-                                {!this.state.loadingPic && <CachedImage
-                                    style={{ width: 75, height: 75, borderRadius: 38 }}
-                                    source={{ uri: this.props.details.profilePicture }}
-                                    ttl={60 * 60 * 24 * 3}
-                                    fallbackSource={require('../../assets/images/KootaK.png')}
-                                />}
-                                {this.state.loadingPic && <ActivityIndicator size="large" color="0000ff" />}
-                            </TouchableOpacity>
-                            <Text style={{ color: '#ecf0f1', fontSize: 35, fontWeight: 'bold' }}>{this.props.details.username}</Text>
-                        </View>
-                    </HideableView>
-                    <HideableView hide={!this.state.editingDetails}>
-                        <View style={{ justifyContent: 'center', alignItems: 'center', backgroundColor: '#c0392b', height: 175 }}>
-                            <TouchableOpacity onPress={() => this.changeProfilePicture()}>
-                                <CachedImage
-                                    style={{ width: 75, height: 75, borderRadius: 38 }}
-                                    source={{ uri: this.props.details.profilePicture }}
-                                    ttl={60 * 60 * 24 * 3}
-                                    fallbackSource={require('../../assets/images/KootaK.png')}
-                                />
-                            </TouchableOpacity>
-                            <Text style={{ color: '#ecf0f1', fontSize: 35, fontWeight: 'bold' }}>{this.props.details.username}</Text>
-                        </View>
-                    </HideableView>
-                    <Modal
-                        isVisible={this.state.profilePictureModalVisible}
-                        backdropOpacity={0.5}
-                        onBackButtonPress={() => this.setState({ profilePictureModalVisible: false })}
-                        onBackdropPress={() => this.setState({ profilePictureModalVisible: false })}>
-                        <View style={{
-                            borderColor: "rgba(0, 0, 0, 0.1)",
-                            backgroundColor: "white",
-                        }}>
-                            <View style={{
-                                width: 324,
-                                height: 50
-                            }}>
+        if (this.props.details) {
+            return (
+                <KeyboardAwareScrollView
+                    keyboardShouldPersistTaps={'handled'}
+                    refreshControl={
+                        <RefreshControl
+                            refreshing={this.state.refreshing}
+                            onRefresh={this._onRefresh}
+                        />
+                    }
+                >
+                    <View style={{ flex: 1 }}>
+                        <HideableView hide={this.state.editingDetails}>
+                            <View style={{ justifyContent: 'center', alignItems: 'center', backgroundColor: '#c0392b', height: 175 }}>
+                                <TouchableOpacity onPress={() => this.setState({ profilePictureModalVisible: true })} onLongPress={() => this.setState({ profilePictureModalVisible: true })}>
+                                    {!this.state.loadingPic && <CachedImage
+                                        style={{ width: 75, height: 75, borderRadius: 38 }}
+                                        source={{ uri: this.props.details.profilePicture  }}
+                                        ttl={60 * 60 * 24 * 3}
+                                        fallbackSource={require('../../assets/images/KootaK.png')}
+                                    />}
+                                    {this.state.loadingPic && <ActivityIndicator size="large" color="0000ff" />}
+                                </TouchableOpacity>
+                                <Text style={{ color: '#ecf0f1', fontSize: 35, fontWeight: 'bold' }}>{this.props.details.username}</Text>
+                            </View>
+                        </HideableView>
+                        <HideableView hide={!this.state.editingDetails}>
+                            <View style={{ justifyContent: 'center', alignItems: 'center', backgroundColor: '#c0392b', height: 175 }}>
                                 <TouchableOpacity onPress={() => this.changeProfilePicture()}>
-                                    <View style={{ height: 50, width: 324, borderBottomWidth: 1, borderBottomColor: '#000', justifyContent: 'center', paddingLeft: 10 }}>
-                                        <Text>Change Profile Picture</Text>
-                                    </View>
+                                    <CachedImage
+                                        style={{ width: 75, height: 75, borderRadius: 38 }}
+                                        source={{ uri: this.props.details.profilePicture }}
+                                        ttl={60 * 60 * 24 * 3}
+                                        fallbackSource={require('../../assets/images/KootaK.png')}
+                                    />
                                 </TouchableOpacity>
+                                <Text style={{ color: '#ecf0f1', fontSize: 35, fontWeight: 'bold' }}>{this.props.details.username}</Text>
                             </View>
-                        </View>
-                    </Modal>
-                    <Modal
-                        isVisible={this.state.userModalVisible}
-                        backdropOpacity={0.5}
-                        onBackButtonPress={() => this.setState({ userModalVisible: false, selectedUser: -1 })}
-                        onBackdropPress={() => this.setState({ userModalVisible: false, selectedUser: -1 })}>
-                        <View style={{
-                            borderColor: "rgba(0, 0, 0, 0.1)",
-                            backgroundColor: "white",
-                        }}>
+                        </HideableView>
+                        <Modal
+                            isVisible={this.state.profilePictureModalVisible}
+                            backdropOpacity={0.5}
+                            onBackButtonPress={() => this.setState({ profilePictureModalVisible: false })}
+                            onBackdropPress={() => this.setState({ profilePictureModalVisible: false })}>
                             <View style={{
-                                width: 324,
-                                height: 100
+                                borderColor: "rgba(0, 0, 0, 0.1)",
+                                backgroundColor: "white",
                             }}>
-                                <TouchableOpacity onPress={() => this.unfriendUser(this.state.selectedUser)}>
-                                    <View style={{ height: 50, width: 324, borderBottomWidth: 1, borderBottomColor: '#000', justifyContent: 'center', paddingLeft: 10 }}>
-                                        <Text>Unfriend User</Text>
+                                <View style={{
+                                    width: 324,
+                                    height: 50
+                                }}>
+                                    <TouchableOpacity onPress={() => this.changeProfilePicture()}>
+                                        <View style={{ height: 50, width: 324, borderBottomWidth: 1, borderBottomColor: '#000', justifyContent: 'center', paddingLeft: 10 }}>
+                                            <Text>Change Profile Picture</Text>
+                                        </View>
+                                    </TouchableOpacity>
+                                </View>
+                            </View>
+                        </Modal>
+                        <Modal
+                            isVisible={this.state.userModalVisible}
+                            backdropOpacity={0.5}
+                            onBackButtonPress={() => this.setState({ userModalVisible: false, selectedUser: -1 })}
+                            onBackdropPress={() => this.setState({ userModalVisible: false, selectedUser: -1 })}>
+                            <View style={{
+                                borderColor: "rgba(0, 0, 0, 0.1)",
+                                backgroundColor: "white",
+                            }}>
+                                <View style={{
+                                    width: 324,
+                                    height: 100
+                                }}>
+                                    <TouchableOpacity onPress={() => this.unfriendUser(this.state.selectedUser)}>
+                                        <View style={{ height: 50, width: 324, borderBottomWidth: 1, borderBottomColor: '#000', justifyContent: 'center', paddingLeft: 10 }}>
+                                            <Text>Unfriend User</Text>
+                                        </View>
+                                    </TouchableOpacity>
+                                    <TouchableOpacity onPress={() => this.blockUser(this.state.selectedUser)}>
+                                        <View style={{ height: 50, width: 324, justifyContent: 'center', paddingLeft: 10 }}>
+                                            <Text>Block User</Text>
+                                        </View>
+                                    </TouchableOpacity>
+                                </View>
+                            </View>
+                        </Modal>
+                        <View>
+                            <View style={{ flexDirection: 'row', backgroundColor: '#8e44ad', alignItems: 'center' }}>
+                                <View style={{ flex: 1, padding: 20 }}>
+                                    <Text style={{ fontWeight: 'bold', color: 'white' }}>Details</Text>
+                                </View>
+                                <View style={{ paddingRight: 20, flexDirection: 'row' }}>
+                                    {!this.state.editingDetails && <TouchableOpacity onPress={() => this.setState({ editingDetails: true })}><PlatformIonicon
+                                        name={"create"}
+                                        size={30} //this doesn't adjust the size...?
+                                        style={{ color: "white" }}
+                                    /></TouchableOpacity>}
+                                    {this.state.editingDetails && <TouchableOpacity onPress={() => this.editUser()}><PlatformIonicon
+                                        name={"save"}
+                                        size={30} //this doesn't adjust the size...?
+                                        style={{ color: "white", paddingRight: 10 }}
+                                    /></TouchableOpacity>}
+                                    {this.state.editingDetails && <TouchableOpacity onPress={() => this.setState({ editingDetails: false })}><PlatformIonicon
+                                        name={"close-circle"}
+                                        size={30} //this doesn't adjust the size...?
+                                        style={{ color: "white" }}
+                                    /></TouchableOpacity>}
+                                </View>
+                            </View>
+                            <View style={{ backgroundColor: '#ecf0f1', padding: 10, flexDirection: 'row' }}>
+                                <View style={{ flex: 1 }}>
+                                    <View style={{ height: 40, justifyContent: 'center', alignItems: 'center' }}>
+                                        <Text style={{ fontWeight: 'bold', paddingRight: 20 }}>Username:</Text>
                                     </View>
-                                </TouchableOpacity>
-                                <TouchableOpacity onPress={() => this.blockUser(this.state.selectedUser)}>
-                                    <View style={{ height: 50, width: 324, justifyContent: 'center', paddingLeft: 10 }}>
-                                        <Text>Block User</Text>
+                                    <View style={{ height: 40, justifyContent: 'center', alignItems: 'center' }}>
+                                        <Text style={{ fontWeight: 'bold', paddingRight: 20 }}>Email:</Text>
                                     </View>
-                                </TouchableOpacity>
+                                    <View style={{ height: 40, justifyContent: 'center', alignItems: 'center' }}>
+                                        <Text style={{ fontWeight: 'bold', paddingRight: 20 }}>Password:</Text>
+                                    </View>
+                                </View>
+                                <View style={{ flex: 2 }}>
+                                    <View style={{ height: 40, justifyContent: 'center' }}>
+                                        <Text>{this.props.details.username}</Text>
+                                    </View>
+                                    <View style={{ height: 40, justifyContent: 'center' }}>
+                                        {!this.state.editingDetails && <Text>{this.props.details.email}</Text>}
+                                        {this.state.editingDetails && <TextInput value={this.state.email} onChangeText={(text) => this.setState({ email: text })} />}
+                                    </View>
+                                    <View style={{ justifyContent: 'center' }}>
+                                        {!this.state.editingDetails && <Text>{this.state.changedPassword ? "Password Changed!" : "Click on the Edit Icon to Change"}</Text>}
+                                        {/*this.state.editingDetails && <Button title="Reset Password" color="#8e44ad" onPress={() => ToastAndroid.show('Password Reset Email Sent', ToastAndroid.SHORT)} />*/}
+                                        {this.state.editingDetails && <View>
+                                            <View>
+                                                {this.state.oldPasswordError !== "" && <View><Text style={{color: 'red'}}>{this.state.oldPasswordError}</Text></View>}
+                                                <TextInput value={this.state.oldPassword} placeholder="Old Password" onChangeText={(text) => this.setState({ oldPassword: text, oldPasswordError: "" })} />
+                                            </View>
+                                            <View>
+                                                {this.state.newPassword1Error !== "" && <View><Text style={{color: 'red'}}>{this.state.newPassword1Error}</Text></View>}
+                                                <TextInput value={this.state.newPassword1} placeholder="New Password" onChangeText={(text) => this.setState({ newPassword1: text, newPassword1Error: "" })} />
+                                            </View>
+                                            <View>
+                                                {this.state.newPassword2Error !== "" && <View><Text style={{color: 'red'}}>{this.state.newPassword2Error}</Text></View>}
+                                                <TextInput value={this.state.newPassword2} placeholder="New Password Confirm" onChangeText={(text) => this.setState({ newPassword2: text, newPassword2Error: "" })} />
+                                            </View>
+                                            <View>
+                                                <Button
+                                                    onPress={() => this.changePassword()}
+                                                    title="Change Password"
+                                                    color="#4CAF50"
+                                                    accessibilityLabel="Change the User's password"
+                                                />
+                                            </View>
+                                        </View>}
+                                    </View>
+                                </View>
                             </View>
                         </View>
-                    </Modal>
-                    <View>
-                        <View style={{ flexDirection: 'row', backgroundColor: '#8e44ad', alignItems: 'center' }}>
-                            <View style={{ flex: 1, padding: 20 }}>
-                                <Text style={{ fontWeight: 'bold', color: 'white' }}>Details</Text>
-                            </View>
-                            <View style={{ paddingRight: 20, flexDirection: 'row' }}>
-                                {!this.state.editingDetails && <TouchableOpacity onPress={() => this.setState({ editingDetails: true })}><PlatformIonicon
-                                    name={"create"}
-                                    size={30} //this doesn't adjust the size...?
-                                    style={{ color: "white" }}
-                                /></TouchableOpacity>}
-                                {this.state.editingDetails && <TouchableOpacity onPress={() => this.editUser()}><PlatformIonicon
-                                    name={"save"}
-                                    size={30} //this doesn't adjust the size...?
-                                    style={{ color: "white", paddingRight: 10 }}
-                                /></TouchableOpacity>}
-                                {this.state.editingDetails && <TouchableOpacity onPress={() => this.setState({ editingDetails: false })}><PlatformIonicon
-                                    name={"close-circle"}
-                                    size={30} //this doesn't adjust the size...?
-                                    style={{ color: "white" }}
-                                /></TouchableOpacity>}
-                            </View>
-                        </View>
-                        <View style={{ backgroundColor: '#ecf0f1', padding: 10, flexDirection: 'row' }}>
-                            <View style={{ flex: 1 }}>
-                                <View style={{ height: 40, justifyContent: 'center', alignItems: 'center' }}>
-                                    <Text style={{ fontWeight: 'bold', paddingRight: 20 }}>Username:</Text>
-                                </View>
-                                <View style={{ height: 40, justifyContent: 'center', alignItems: 'center' }}>
-                                    <Text style={{ fontWeight: 'bold', paddingRight: 20 }}>Email:</Text>
-                                </View>
-                                <View style={{ height: 40, justifyContent: 'center', alignItems: 'center' }}>
-                                    <Text style={{ fontWeight: 'bold', paddingRight: 20 }}>Password:</Text>
+                        {this.props.pendingIncomingRelationships && this.props.pendingIncomingRelationships.length > 0 && <View>
+                            <View style={{ flexDirection: 'row', backgroundColor: '#2196F3', alignItems: 'center' }}>
+                                <View style={{ flex: 1, padding: 20 }}>
+                                    <Text style={{ fontWeight: 'bold', color: 'white' }}>Requests</Text>
                                 </View>
                             </View>
-                            <View style={{ flex: 2 }}>
-                                <View style={{ height: 40, justifyContent: 'center' }}>
-                                    <Text>{this.props.details.username}</Text>
+                            <View style={{ backgroundColor: '#ecf0f1', padding: 10, flexDirection: 'row' }}>
+                                <FlatList
+                                    horizontal={true}
+                                    data={this.props.pendingIncomingRelationships}
+                                    extraData={this.props}
+                                    keyExtractor={this._keyExtractor}
+                                    renderItem={this._renderItem}
+                                />
+                            </View>
+                        </View>}
+                        <View>
+                            <View style={{ flexDirection: 'row', backgroundColor: '#2196F3', alignItems: 'center' }}>
+                                <View style={{ flex: 1, padding: 20 }}>
+                                    <Text style={{ fontWeight: 'bold', color: 'white' }}>Friends</Text>
                                 </View>
-                                <View style={{ height: 40, justifyContent: 'center' }}>
-                                    {!this.state.editingDetails && <Text>{this.props.details.email}</Text>}
-                                    {this.state.editingDetails && <TextInput value={this.state.email} onChangeText={(text) => this.setState({ email: text })} />}
+                                <View style={{ paddingRight: 20, flexDirection: 'row' }}>
+                                    <TouchableOpacity onPress={() => this.setState({ searchFriends: !this.state.searchFriends })}><PlatformIonicon
+                                        name={"search"}
+                                        size={30} //this doesn't adjust the size...?
+                                        style={{ color: "white", marginRight: 30 }}
+                                    /></TouchableOpacity>
+                                    <TouchableOpacity onPress={() => this.props.navigation.navigate('AddFriends')}><PlatformIonicon
+                                        name={"add"}
+                                        size={30} //this doesn't adjust the size...?
+                                        style={{ color: "white" }}
+                                    /></TouchableOpacity>
                                 </View>
-                                <View style={{ justifyContent: 'center' }}>
-                                    {!this.state.editingDetails && <Text>{this.state.changedPassword ? "Password Changed!" : "Click on the Edit Icon to Change"}</Text>}
-                                    {/*this.state.editingDetails && <Button title="Reset Password" color="#8e44ad" onPress={() => ToastAndroid.show('Password Reset Email Sent', ToastAndroid.SHORT)} />*/}
-                                    {this.state.editingDetails && <View>
-                                        <View>
-                                            {this.state.oldPasswordError !== "" && <View><Text style={{color: 'red'}}>{this.state.oldPasswordError}</Text></View>}
-                                            <TextInput value={this.state.oldPassword} placeholder="Old Password" onChangeText={(text) => this.setState({ oldPassword: text, oldPasswordError: "" })} />
-                                        </View>
-                                        <View>
-                                            {this.state.newPassword1Error !== "" && <View><Text style={{color: 'red'}}>{this.state.newPassword1Error}</Text></View>}
-                                            <TextInput value={this.state.newPassword1} placeholder="New Password" onChangeText={(text) => this.setState({ newPassword1: text, newPassword1Error: "" })} />
-                                        </View>
-                                        <View>
-                                            {this.state.newPassword2Error !== "" && <View><Text style={{color: 'red'}}>{this.state.newPassword2Error}</Text></View>}
-                                            <TextInput value={this.state.newPassword2} placeholder="New Password Confirm" onChangeText={(text) => this.setState({ newPassword2: text, newPassword2Error: "" })} />
-                                        </View>
-                                        <View>
-                                            <Button
-                                                onPress={() => this.changePassword()}
-                                                title="Change Password"
-                                                color="#4CAF50"
-                                                accessibilityLabel="Change the User's password"
-                                            />
-                                        </View>
+                            </View>
+                            <View style={{ backgroundColor: '#ecf0f1' }}>
+                                {this.state.searchFriends &&
+                                    <View style={{ padding: 10 }}>
+                                        <Form>
+                                            <Item>
+                                                <Input value={this.state.filterString} placeholder="Filter Friends" onChangeText={(text) => { this.setState({ filterString: text }); this.filterFriends(text, {}) }} />
+                                            </Item>
+                                        </Form>
                                     </View>}
+                                <FlatList
+                                    keyboardShouldPersistTaps={'handled'}
+                                    data={this.state.filteredFriends}
+                                    extraData={this.state}
+                                    keyExtractor={this._keyExtractor}
+                                    renderItem={this.renderFriends}
+                                    ListEmptyComponent={this.emptyFriendList}
+                                />
+                            </View>
+                        </View>
+                        <View>
+                            <View style={{ flexDirection: 'row', backgroundColor: '#16a085', alignItems: 'center' }}>
+                                <View style={{ flex: 1, padding: 20 }}>
+                                    <Text style={{ fontWeight: 'bold', color: 'white' }}>Stats</Text>
+                                </View>
+                            </View>
+                            <View style={{ backgroundColor: '#ecf0f1', padding: 10, flexDirection: 'row' }}>
+                                <View style={{ flex: 1 }}>
+                                    <View style={{ height: 40, justifyContent: 'center', alignItems: 'center' }}>
+                                        <Text style={{ fontWeight: 'bold', paddingRight: 20 }}>Join Date:</Text>
+                                    </View>
+                                </View>
+                                <View style={{ flex: 2 }}>
+                                    <View style={{ height: 40, justifyContent: 'center' }}>
+                                        {this.props.details && this.props.details.created && <Text>{(new Date(this.props.details.created)).getMonth() + 1}/{(new Date(this.props.details.created)).getDate()}/{(new Date(this.props.details.created)).getFullYear()}</Text>}
+                                    </View>
                                 </View>
                             </View>
                         </View>
                     </View>
-                    {this.props.pendingIncomingRelationships && this.props.pendingIncomingRelationships.length > 0 && <View>
-                        <View style={{ flexDirection: 'row', backgroundColor: '#2196F3', alignItems: 'center' }}>
-                            <View style={{ flex: 1, padding: 20 }}>
-                                <Text style={{ fontWeight: 'bold', color: 'white' }}>Requests</Text>
-                            </View>
-                        </View>
-                        <View style={{ backgroundColor: '#ecf0f1', padding: 10, flexDirection: 'row' }}>
-                            <FlatList
-                                horizontal={true}
-                                data={this.props.pendingIncomingRelationships}
-                                extraData={this.props}
-                                keyExtractor={this._keyExtractor}
-                                renderItem={this._renderItem}
-                            />
-                        </View>
-                    </View>}
-                    <View>
-                        <View style={{ flexDirection: 'row', backgroundColor: '#2196F3', alignItems: 'center' }}>
-                            <View style={{ flex: 1, padding: 20 }}>
-                                <Text style={{ fontWeight: 'bold', color: 'white' }}>Friends</Text>
-                            </View>
-                            <View style={{ paddingRight: 20, flexDirection: 'row' }}>
-                                <TouchableOpacity onPress={() => this.setState({ searchFriends: !this.state.searchFriends })}><PlatformIonicon
-                                    name={"search"}
-                                    size={30} //this doesn't adjust the size...?
-                                    style={{ color: "white", marginRight: 30 }}
-                                /></TouchableOpacity>
-                                <TouchableOpacity onPress={() => this.props.navigation.navigate('AddFriends')}><PlatformIonicon
-                                    name={"add"}
-                                    size={30} //this doesn't adjust the size...?
-                                    style={{ color: "white" }}
-                                /></TouchableOpacity>
-                            </View>
-                        </View>
-                        <View style={{ backgroundColor: '#ecf0f1' }}>
-                            {this.state.searchFriends &&
-                                <View style={{ padding: 10 }}>
-                                    <Form>
-                                        <Item>
-                                            <Input value={this.state.filterString} placeholder="Filter Friends" onChangeText={(text) => { this.setState({ filterString: text }); this.filterFriends(text, {}) }} />
-                                        </Item>
-                                    </Form>
-                                </View>}
-                            <FlatList
-                                keyboardShouldPersistTaps={'handled'}
-                                data={this.state.filteredFriends}
-                                extraData={this.state}
-                                keyExtractor={this._keyExtractor}
-                                renderItem={this.renderFriends}
-                                ListEmptyComponent={this.emptyFriendList}
-                            />
-                        </View>
-                    </View>
-                    <View>
-                        <View style={{ flexDirection: 'row', backgroundColor: '#16a085', alignItems: 'center' }}>
-                            <View style={{ flex: 1, padding: 20 }}>
-                                <Text style={{ fontWeight: 'bold', color: 'white' }}>Stats</Text>
-                            </View>
-                        </View>
-                        <View style={{ backgroundColor: '#ecf0f1', padding: 10, flexDirection: 'row' }}>
-                            <View style={{ flex: 1 }}>
-                                <View style={{ height: 40, justifyContent: 'center', alignItems: 'center' }}>
-                                    <Text style={{ fontWeight: 'bold', paddingRight: 20 }}>Join Date:</Text>
-                                </View>
-                            </View>
-                            <View style={{ flex: 2 }}>
-                                <View style={{ height: 40, justifyContent: 'center' }}>
-                                    {this.props.details && this.props.details.created && <Text>{(new Date(this.props.details.created)).getMonth() + 1}/{(new Date(this.props.details.created)).getDate()}/{(new Date(this.props.details.created)).getFullYear()}</Text>}
-                                </View>
-                            </View>
-                        </View>
-                    </View>
-                </View>
-            </KeyboardAwareScrollView>
-        );
+                </KeyboardAwareScrollView>
+            );
+        } else {
+            return (
+                <View><Text>Loading...</Text></View>
+            )
+        }
     }
 }
 

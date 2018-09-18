@@ -252,9 +252,15 @@ class Home extends React.Component {
 
     }
 
-    componentDidUpdate(prevProps) {
+    async componentDidUpdate(prevProps) {
         if (prevProps.locations !== this.props.locations) {
             this.props.navigation.setParams({ locations: this.props.locations });
+        }
+
+        if (prevProps.selected !== this.props.selected) {
+            await this.props.navigation.setParams({ selected: this.props.selected });
+            this.resetEvents();
+            this.loadEvents();
         }
     }
 
@@ -439,7 +445,7 @@ class Home extends React.Component {
                 style={{ marginRight: 10 }}
                 onPress={() => navigation.navigate('FilterHome', { setFilter: navigation.state.params.setFilter, loadEvents: navigation.state.params.loadEvents, default: true })}
             />,
-            headerTitle: <LocationHeader locations={params ? params.locations : []} selectedLocation={params ? params.selected : []} setCurrentLocation={async (location) => { await params.setSelectedLocation(location); params.loadEvents() }} />,
+            headerTitle: <LocationHeader locations={params ? params.locations : []} selectedLocation={params ? params.selected : []} setCurrentLocation={async (location) => { await params.setSelectedLocation(location) }} />,
 
         })
     } : ({ navigation }) => {
@@ -447,7 +453,7 @@ class Home extends React.Component {
         return ({
             title: 'Home',
             headerStyle: { paddingTop: -22, },
-            headerTitle: <LocationHeader locations={params ? params.locations : []} selectedLocation={params ? params.selected : []} setCurrentLocation={async (location) => { await params.setSelectedLocation(location); params.loadEvents() }} />,
+            headerTitle: <LocationHeader locations={params ? params.locations : []} selectedLocation={params ? params.selected : []} setCurrentLocation={async (location) => { await params.setSelectedLocation(location) }} />,
             headerRight: <Icon
                 name="ios-funnel"
                 size={35}

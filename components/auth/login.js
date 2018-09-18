@@ -9,8 +9,11 @@ import { bindActionCreators } from 'redux';
 import { getURLForPlatform } from '../utils/networkUtils';
 import PlatformIonicon from '../utils/platformIonicon';
 import * as tokenActions from '../../redux/actions/token';
+import * as userActions from '../../redux/actions/user';
 import { styles } from '../../assets/styles';
 import fontBasedOnPlatform from '../utils/fontBasedOnPlatform';
+
+import Spinner from 'react-native-loading-spinner-overlay';
 
 class Login extends React.Component {
 
@@ -19,6 +22,7 @@ class Login extends React.Component {
         this.state = {
             username: "",
             password: "",
+            loading: false,
             error: {
                 main: "",
                 username: "",
@@ -101,7 +105,7 @@ class Login extends React.Component {
                 return false;
             }
         })
-            .then(response => {
+            .then(async (response) => {
                 if (response) {
                     this.handleLoginSuccess(response)
                 } else {
@@ -110,8 +114,11 @@ class Login extends React.Component {
             });
     }
 
-    handleLoginSuccess(response) {
+    async handleLoginSuccess(response) {
         this.props.tokenActions.saveUserToken(response["key"]);
+        this.setState({loading: true})
+        await this.props.userActions.loadUser(response["key"]);
+        this.setState({loading: false})
         this.goToScreenAndErasePreviousScreens('Main');
     }
 
@@ -136,6 +143,7 @@ class Login extends React.Component {
                 {this.state.error.main !== "" && <View style={styles.errorBackground}>
                     <Text style={styles.errorText}>{this.state.error.main}</Text>
                 </View>}
+                <Spinner visible={this.state.loading} textContent={"Loading..."} textStyle={{color: '#FFF'}} />
                 <View style={{ flex: 1 }}>
                     <View>
                         <TouchableOpacity onPress={() => this.props.navigation.goBack()}>
@@ -195,12 +203,14 @@ class Login extends React.Component {
 function mapStateToProps(state) {
     return {
         token: state.tokenReducer.token,
+        user: state.userReducer.user
     };
 }
 
 function mapDispatchToProps(dispatch) {
     return {
-        tokenActions: bindActionCreators(tokenActions, dispatch)
+        tokenActions: bindActionCreators(tokenActions, dispatch),
+        userActions: bindActionCreators(userActions, dispatch)
     };
 }
 
