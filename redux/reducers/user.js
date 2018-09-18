@@ -65,7 +65,7 @@ export default function userReducer(state = defaultState, action) {
             })
         case PURGE_USER_OBJECT:
             return Object.assign({}, state, {
-                user: {}
+                user: defaultState.user
             })
         case SAVE_USER_FILTER:
             return Object.assign({}, state, {
@@ -73,7 +73,7 @@ export default function userReducer(state = defaultState, action) {
             })
         case PURGE_USER_FILTER:
             return Object.assign({}, state, {
-                filter: {}
+                filter: defaultState.filter
             })
         case SAVE_USER_DETAILS:
             return Object.assign({}, state, {
@@ -81,7 +81,7 @@ export default function userReducer(state = defaultState, action) {
             })
         case PURGE_USER_DETAILS:
             return Object.assign({}, state, {
-                details: {}
+                details: defaultState.details
             })
         case SAVE_USER_CREATED_EVENTS:
             return Object.assign({}, state, {
@@ -89,7 +89,7 @@ export default function userReducer(state = defaultState, action) {
             })
         case PURGE_USER_CREATED_EVENTS:
             return Object.assign({}, state, {
-                createdEvents: {}
+                createdEvents: defaultState.createdEvents
             })
         case SAVE_USER_FOLLOWING_TOPICS:
             return Object.assign({}, state, {
@@ -97,7 +97,7 @@ export default function userReducer(state = defaultState, action) {
             })
         case PURGE_USER_FOLLOWING_TOPICS:
             return Object.assign({}, state, {
-                followingTopics: {}
+                followingTopics: defaultState.followingTopics
             })
         case SAVE_USER_GOING_TO:
             return Object.assign({}, state, {
@@ -105,7 +105,7 @@ export default function userReducer(state = defaultState, action) {
             })
         case PURGE_USER_GOING_TO:
             return Object.assign({}, state, {
-                goingToEvents: {}
+                goingToEvents: defaultState.goingToEvents
             })
         case SAVE_USER_INVITED_TO:
             return Object.assign({}, state, {
@@ -113,7 +113,7 @@ export default function userReducer(state = defaultState, action) {
             })
         case PURGE_USER_INVITED_TO:
             return Object.assign({}, state, {
-                invitedToEvents: {}
+                invitedToEvents: defaultState.invitedToEvents
             })
         case SAVE_USER_INTERESTED_IN:
             return Object.assign({}, state, {
@@ -121,7 +121,7 @@ export default function userReducer(state = defaultState, action) {
             })
         case PURGE_USER_INTERESTED_IN:
             return Object.assign({}, state, {
-                interestedInEvents: {}
+                interestedInEvents: defaultState.interestedInEvents
             })
         case SAVE_USER_PENDING_INCOMING_RELATIONSHIPS:
             return Object.assign({}, state, {
@@ -129,7 +129,7 @@ export default function userReducer(state = defaultState, action) {
             })
         case PURGE_USER_PENDING_INCOMING_RELATIONSHIPS:
             return Object.assign({}, state, {
-                pendingOutgoingRelationships: {}
+                pendingOutgoingRelationships: defaultState.pendingIncomingRelationships
             })
         case SAVE_USER_PENDING_OUTGOING_RELATIONSHIPS:
             return Object.assign({}, state, {
@@ -137,7 +137,7 @@ export default function userReducer(state = defaultState, action) {
             })
         case PURGE_USER_PENDING_OUTGOING_RELATIONSHIPS:
             return Object.assign({}, state, {
-                pendingIncomingRelationships: {}
+                pendingIncomingRelationships: defaultState.pendingOutgoingRelationships
             })
         case SAVE_USER_CONTACTS:
             return Object.assign({}, state, {
@@ -145,7 +145,7 @@ export default function userReducer(state = defaultState, action) {
             })
         case PURGE_USER_CONTACTS:
             return Object.assign({}, state, {
-                contacts: {}
+                contacts: defaultState.contacts
             })
         case SAVE_USER_BLOCKED_USERS:
             return Object.assign({}, state, {
@@ -153,7 +153,7 @@ export default function userReducer(state = defaultState, action) {
             })
         case PURGE_USER_BLOCKED_USERS:
             return Object.assign({}, state, {
-                blockedUsers: {}
+                blockedUsers: defaultState.blockedUsers
             })
         default:
             return state

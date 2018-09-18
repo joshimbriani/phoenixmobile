@@ -28,18 +28,15 @@ class LocationsSettings extends React.Component {
 
         this.checkUserPermissions = this.checkUserPermissions.bind(this);
         this.selectLocation = this.selectLocation.bind(this);
+        this.getPosition = this.getPosition.bind(this);
     }
 
     async componentDidMount() {
         await this.checkUserPermissions();
 
         if (this.state.GPSPermission) {
-            navigator.geolocation.getCurrentPosition((position) => {
-                this.setState({ coordinates: { lat: position.coords.latitude, long: position.coords.longitude } })
-            },
-                (error) => console.error(error.message),
-                Platform.OS === 'ios' ? { enableHighAccuracy: true, timeout: 20000 } : { timeout: 50000 },
-            );
+            let position = await this.getPosition(Platform.OS === 'ios' ? { enableHighAccuracy: true, timeout: 20000 } : { timeout: 50000 });
+            this.setState({ coordinates: { lat: position.coords.latitude, long: position.coords.longitude } })
         }
     }
 
@@ -69,7 +66,14 @@ class LocationsSettings extends React.Component {
             }
         } else if (Platform.OS === 'ios') {
             navigator.geolocation.requestAuthorization();
+            this.setState({ GPSPermission: true })
         }
+    }
+
+    getPosition(options) {
+        return new Promise(function (resolve, reject) {
+            navigator.geolocation.getCurrentPosition(resolve, reject, options);
+        });
     }
 
     selectLocation(item) {

@@ -66,8 +66,9 @@ class Home extends React.Component {
         this.setFilter = this.setFilter.bind(this);
         this.loadEvents = this.loadEvents.bind(this);
         this.setSelectedLocation = this.setSelectedLocation.bind(this);
+        this.resetEvents = this.resetEvents.bind(this);
 
-        this.props.navigation.setParams({ setFilter: this.setFilter, loadEvents: this.loadEvents, locations: props.locations, selected: props.selected, setSelectedLocation: this.setSelectedLocation });
+        this.props.navigation.setParams({ setFilter: this.setFilter, loadEvents: () => {this.resetEvents(); this.loadEvents()}, locations: props.locations, selected: props.selected, setSelectedLocation: this.setSelectedLocation });
     }
 
     getPosition(options) {
@@ -76,12 +77,13 @@ class Home extends React.Component {
         });
     }
 
-    setSelectedLocation(item) {
+    async setSelectedLocation(item) {
         if (item === -2) {
             this.props.navigation.navigate('NewLocation');
-            this.props.locationActions.setSelectedLocation(this.props.selected);
+            await this.props.locationActions.setSelectedLocation(this.props.selected);
         } else {
-            this.props.locationActions.setSelectedLocation(item);
+            this.resetEvents();
+            await this.props.locationActions.setSelectedLocation(item);
         }
     }
 
@@ -250,9 +252,15 @@ class Home extends React.Component {
 
     }
 
-    componentDidUpdate(prevProps) {
+    async componentDidUpdate(prevProps) {
         if (prevProps.locations !== this.props.locations) {
             this.props.navigation.setParams({ locations: this.props.locations });
+        }
+
+        if (prevProps.selected !== this.props.selected) {
+            await this.props.navigation.setParams({ selected: this.props.selected });
+            this.resetEvents();
+            this.loadEvents();
         }
     }
 
@@ -417,6 +425,7 @@ class Home extends React.Component {
             }
         } else if (Platform.OS === 'ios') {
             navigator.geolocation.requestAuthorization();
+            this.setState({ GPSPermission: true })
         }
     }
 
@@ -436,7 +445,7 @@ class Home extends React.Component {
                 style={{ marginRight: 10 }}
                 onPress={() => navigation.navigate('FilterHome', { setFilter: navigation.state.params.setFilter, loadEvents: navigation.state.params.loadEvents, default: true })}
             />,
-            headerTitle: <LocationHeader locations={params ? params.locations : []} selectedLocation={params ? params.selected : []} setCurrentLocation={async (location) => { await params.setSelectedLocation(location); params.loadEvents() }} />,
+            headerTitle: <LocationHeader locations={params ? params.locations : []} selectedLocation={params ? params.selected : []} setCurrentLocation={async (location) => { await params.setSelectedLocation(location) }} />,
 
         })
     } : ({ navigation }) => {
@@ -444,7 +453,7 @@ class Home extends React.Component {
         return ({
             title: 'Home',
             headerStyle: { paddingTop: -22, },
-            headerTitle: <LocationHeader locations={params ? params.locations : []} selectedLocation={params ? params.selected : []} setCurrentLocation={async (location) => { await params.setSelectedLocation(location); params.loadEvents() }} />,
+            headerTitle: <LocationHeader locations={params ? params.locations : []} selectedLocation={params ? params.selected : []} setCurrentLocation={async (location) => { await params.setSelectedLocation(location) }} />,
             headerRight: <Icon
                 name="ios-funnel"
                 size={35}
@@ -527,6 +536,10 @@ class Home extends React.Component {
                 }
 
             })
+    }
+
+    resetEvents() {
+        this.setState({events: []})
     }
 
     generateFeed(events, offers) {
@@ -613,7 +626,7 @@ class Home extends React.Component {
     _keyExtractor = (item, index) => item.id;
 
     _renderItem = (item) => (
-        <EventDisplay index={item.id} event={item} interested={this.userInterestedInEvent(item.id)} showButtons={true} username={this.props.details.username} token={this.props.token} goToEvent={() => this.props.navigation.navigate('EventDetailWrapper', { event: item.title, id: item.id, color: item.color, loadEvents: this.loadEvents })} />
+        <EventDisplay index={item.id} event={item} interested={this.userInterestedInEvent(item.id)} showButtons={true} username={this.props.details.username} token={this.props.token} goToEvent={() => this.props.navigation.navigate('EventDetailWrapper', { event: item.title, id: item.id, color: item.color, loadEvents: () => {this.resetEvents(); this.loadEvents()} })} />
     );
 
     userInterestedInEvent(eventID) {
@@ -664,6 +677,7 @@ class Home extends React.Component {
                         renderItem={({ item, index, section }) => {
                             return this._renderItem(item)
                         }}
+                        stickySectionHeadersEnabled={false}
                         renderSectionHeader={({ section }) => {
                             return (
                                 <View>

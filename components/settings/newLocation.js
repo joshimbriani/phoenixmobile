@@ -1,6 +1,6 @@
 import React from 'react';
 import { Container, Fab, Header, Item, Input, Icon, Text, Button, Form, Label } from 'native-base';
-import { PermissionsAndroid, Platform, RefreshControl, StyleSheet, TouchableOpacity, View, FlatList, ListItem } from 'react-native';
+import { PermissionsAndroid, Platform, Keyboard, StyleSheet, TouchableOpacity, View, FlatList, ListItem } from 'react-native';
 import PlatformIonicon from '../utils/platformIonicon';
 import { connect } from 'react-redux';
 import { styles } from '../../assets/styles';
@@ -72,6 +72,7 @@ class NewLocation extends React.Component {
             }
         } else if (Platform.OS === 'ios') {
             navigator.geolocation.requestAuthorization();
+            this.setState({ GPSPermission: true })
         }
     }
 
@@ -113,6 +114,7 @@ class NewLocation extends React.Component {
     );
 
     getPlaceDetails(item) {
+        Keyboard.dismiss()
         fetch('https://maps.googleapis.com/maps/api/place/details/json?placeid=' + item["place_id"] + '&fields=geometry&key=AIzaSyDUVAEJq3xQe6nTG4uaj00xcl-EkHp2oXQ&sessiontoken=' + this.props.session)
             .then((results) => results.json())
             .then((resultsJSON) => { this.setState({ location: { id: item["place_id"], name: item["structured_formatting"]["main_text"], lat: resultsJSON["result"]["geometry"]["location"]["lat"], long: resultsJSON["result"]["geometry"]["location"]["lng"] }, coordinates: { lat: resultsJSON["result"]["geometry"]["location"]["lat"], long: resultsJSON["result"]["geometry"]["location"]["lng"] } }) })
