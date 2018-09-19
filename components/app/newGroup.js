@@ -12,8 +12,9 @@ import { styles } from '../../assets/styles';
 import HideableView from '../utils/hideableView';
 import { CachedImage } from 'react-native-cached-image';
 import debounce from 'lodash/debounce';
+import Spinner from 'react-native-loading-spinner-overlay';
 
-class NewGroup extends React.Component{
+class NewGroup extends React.Component {
     static navigationOptions = ({ navigation }) => ({
         title: 'Create a New Group',
     });
@@ -28,7 +29,8 @@ class NewGroup extends React.Component{
             users: [],
             userSearchQuery: "",
             groupUsers: [this.props.details],
-            errors: ""
+            errors: "",
+            loading: false
         }
 
         this.loadUsers = this.loadUsers.bind(this);
@@ -38,30 +40,30 @@ class NewGroup extends React.Component{
 
     _keyExtractor = (item, index) => item.id;
 
-    _renderItem = ({item}) => {
+    _renderItem = ({ item }) => {
         if (item.id !== this.props.user) {
             return (
-                <View style={{flexDirection: 'row', marginBottom: 5, paddingBottom: 5, borderBottomWidth: 1, borderBottomColor: 'black'}}>
-                    <View style={{flexDirection: 'row', flex: 1}}>
-                        <View style={{paddingRight: 10}}>
+                <View style={{ flexDirection: 'row', marginBottom: 5, paddingBottom: 5, borderBottomWidth: 1, borderBottomColor: 'black' }}>
+                    <View style={{ flexDirection: 'row', flex: 1 }}>
+                        <View style={{ paddingRight: 10 }}>
                             <CachedImage
-                                style={{ width: 50, height: 50, borderRadius:25 }}
+                                style={{ width: 50, height: 50, borderRadius: 25 }}
                                 source={{ uri: item.profilePicture }}
-                                ttl={60*60*24*3}
+                                ttl={60 * 60 * 24 * 3}
                                 fallbackSource={require('../../assets/images/KootaK.png')}
                             />
                         </View>
-                        <View style={{justifyContent: 'center'}}>
-                            <Text style={{fontWeight: 'bold'}}>{item.username}</Text>
+                        <View style={{ justifyContent: 'center' }}>
+                            <Text style={{ fontWeight: 'bold' }}>{item.username}</Text>
                         </View>
                     </View>
-                    <View style={{justifyContent: 'flex-end'}}>
+                    <View style={{ justifyContent: 'flex-end' }}>
                         <TouchableOpacity onPress={() => this.toggleUser(item)}>
-                            <View style={{backgroundColor: '#2ecc71', aspectRatio: 1}}>
-                                <View style={{justifyContent: 'center', alignItems: 'center'}}>
+                            <View style={{ backgroundColor: '#2ecc71', aspectRatio: 1 }}>
+                                <View style={{ justifyContent: 'center', alignItems: 'center' }}>
                                     <PlatformIonicon
                                         name={this.userInGroup(item) ? "checkmark" : "add"}
-                                        size={50} 
+                                        size={50}
                                         style={{ color: "white", alignItems: 'center', paddingLeft: 'auto' }}
                                     />
                                 </View>
@@ -77,15 +79,16 @@ class NewGroup extends React.Component{
 
     render() {
         return (
-            <Swiper onMomentumScrollEnd={() => Keyboard.dismiss()} nextButton={<Text>&gt;</Text>} buttonWrapperStyle={{alignItems: 'flex-end'}} prevButton={<Text>&lt;</Text>} style={styles.wrapper} showsButtons={true} loop={false} removeClippedSubviews={false} >
+            <Swiper onMomentumScrollEnd={() => Keyboard.dismiss()} nextButton={<Text>&gt;</Text>} buttonWrapperStyle={{ alignItems: 'flex-end' }} prevButton={<Text>&lt;</Text>} style={styles.wrapper} showsButtons={true} loop={false} removeClippedSubviews={false} >
                 <View style={styles.flex1}>
+                <Spinner visible={this.state.loading} textContent={"Creating..."} textStyle={{ color: '#FFF' }} />
                     <Content style={styles.flex1} keyboardShouldPersistTaps={'handled'}>
                         <Form>
                             <Item stackedLabel>
                                 <Label>Group Name</Label>
-                                <Input 
-                                    name="name" 
-                                    onChangeText={(text) => this.setState({"name": text, "errors": ""})} 
+                                <Input
+                                    name="name"
+                                    onChangeText={(text) => this.setState({ "name": text, "errors": "" })}
                                 />
                             </Item>
                             <Item stackedLabel>
@@ -99,33 +102,33 @@ class NewGroup extends React.Component{
                             <Item stackedLabel last>
                                 <Label>Group Description</Label>
                                 <Input
-                                    name="description" 
-                                    multiline={true} 
+                                    name="description"
+                                    multiline={true}
                                     numberOfLines={5}
-                                    onChangeText={(text) => this.setState({"description": text})} 
+                                    onChangeText={(text) => this.setState({ "description": text })}
                                 />
                             </Item>
                         </Form>
                     </Content>
                 </View>
                 <View style={styles.flex1}>
-                    <Text style={{padding: 10}}>Group Members</Text>
-                    <View style={{backgroundColor: 'white', padding: 5}}>
-                        <TextInput value={this.userListToString(this.state.groupUsers)} placeholder="" editable={false} style={{height: 50}} />
+                    <Text style={{ padding: 10 }}>Group Members</Text>
+                    <View style={{ backgroundColor: 'white', padding: 5 }}>
+                        <TextInput value={this.userListToString(this.state.groupUsers)} placeholder="" editable={false} style={{ height: 50 }} />
                     </View>
-                    <View style={{padding: 5}}>
-                        <TextInput value={this.state.userSearchQuery} onChangeText={(text) => this.saveTextAndSearch(text)} placeholder="Type a username here" editable={true} style={{height: 50, borderBottomWidth: 1}} />
+                    <View style={{ padding: 5 }}>
+                        <TextInput value={this.state.userSearchQuery} onChangeText={(text) => this.saveTextAndSearch(text)} placeholder="Type a username here" editable={true} style={{ height: 50, borderBottomWidth: 1 }} />
                     </View>
                     <FlatList
                         data={this.state.users}
                         extraData={this.state}
                         keyExtractor={this._keyExtractor}
                         renderItem={this._renderItem}
-                        style={{flex: 1}}
+                        style={{ flex: 1 }}
                         keyboardShouldPersistTaps={'handled'}
                     />
-                    <View style={{marginBottom: 50}}>
-                        <HideableView hide={!this.state.errors} style={{backgroundColor: 'red', padding: 5}}>
+                    <View style={{ marginBottom: 50 }}>
+                        <HideableView hide={!this.state.errors} style={{ backgroundColor: 'red', padding: 5 }}>
                             <Text>{this.state.errors}</Text>
                         </HideableView>
                         <Button onPress={() => this.submitForm()} title="Create Group" />
@@ -151,7 +154,7 @@ class NewGroup extends React.Component{
                 var groupUsers = this.state.groupUsers.slice();
                 groupUsers.splice(userIndex, 1);
                 this.setState({ groupUsers: groupUsers });
-            } 
+            }
         }
     }
 
@@ -185,10 +188,10 @@ class NewGroup extends React.Component{
                 Authorization: "Token " + this.props.token
             },
         })
-        .then(response => response.json())
-        .then(responseObj => {
-            this.setState({users: responseObj["users"]});
-        });
+            .then(response => response.json())
+            .then(responseObj => {
+                this.setState({ users: responseObj["users"] });
+            });
     })
 
     userListToString(users) {
@@ -203,14 +206,16 @@ class NewGroup extends React.Component{
 
     submitForm() {
         if (this.state.name === "") {
-            this.setState({errors: "You need to give your group a name!"})
+            this.setState({ errors: "You need to give your group a name!" })
             return;
         }
 
         if (this.state.groupUsers.length < 2) {
-            this.setState({errors: "You need to add at least one user to your group beside yourself!"});
+            this.setState({ errors: "You need to add at least one user to your group beside yourself!" });
             return;
         }
+
+        this.setState({ loading: true })
 
         var groupObject = {
             'name': this.state.name,
@@ -226,14 +231,15 @@ class NewGroup extends React.Component{
             method: 'POST',
             body: JSON.stringify(groupObject)
         })
-        .then(response => response.json())
-        .then(responseObj => {
-            if (responseObj["success"]) {
-                this.props.navigation.navigate('GroupWrapper', {backKey: this.props.navigation.state.key, groupID: responseObj["groupID"], loadGroups: this.props.navigation.state.params.loadGroups});
-            } else {
-                this.setState({errors: "Something went wrong. Please try again in a few minutes."})
-            }
-        });
+            .then(response => response.json())
+            .then(responseObj => {
+                if (responseObj["success"]) {
+                    this.setState({ loading: false })
+                    this.props.navigation.navigate('GroupWrapper', { backKey: this.props.navigation.state.key, groupID: responseObj["groupID"], loadGroups: this.props.navigation.state.params.loadGroups });
+                } else {
+                    this.setState({ errors: "Something went wrong. Please try again in a few minutes.", loading: false })
+                }
+            });
     }
 }
 
@@ -247,7 +253,7 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
     return {
-        
+
     };
 }
 
