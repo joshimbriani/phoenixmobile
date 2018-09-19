@@ -115,7 +115,7 @@ class EventDetailPeople extends React.Component {
                     <View style={[styles.eventDetailPeopleSection, { flex: 3 }]}>
                         <Text style={styles.eventDetailSectionHeader}>Interested</Text>
                         {this.props.event.owned && <View style={{ flexDirection: 'row' }}>
-                            {this.props.event.interested.map((user, index) => {
+                            {this.props.event.interested.filter((user) => !this.props.userInList(user.id, this.props.event.going)).map((user, index) => {
                                 return (
                                     <TouchableOpacity onLongPress={() => this.setState({ userOptionModalVisible: true, selectedUser: user.id })}>
                                         <View style={{ margin: 5 }}>
