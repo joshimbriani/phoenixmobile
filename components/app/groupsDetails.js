@@ -2,7 +2,7 @@ import { connect } from 'react-redux';
 import React from 'react';
 import PropTypes from 'prop-types';
 import { styles } from '../../assets/styles';
-import { Text, View, TextInput, TouchableOpacity, FlatList, Button, ScrollView, ToastAndroid, Alert } from 'react-native';
+import { Text, View, TextInput, TouchableOpacity, FlatList, Button, ScrollView, ToastAndroid, Alert, Linking } from 'react-native';
 import ColorPicker from '../utils/ColorPicker';
 import { CachedImage } from 'react-native-cached-image';
 import { bindActionCreators } from 'redux';
@@ -14,6 +14,7 @@ import HideableView from '../utils/hideableView';
 import * as userActions from '../../redux/actions/user';
 import { StackActions, NavigationActions } from 'react-navigation';
 import Modal from "react-native-modal";
+import ParsedText from 'react-native-parsed-text';
 
 class GroupsDetails extends React.Component {
 
@@ -183,7 +184,19 @@ class GroupsDetails extends React.Component {
                             </HideableView>
                             <HideableView hide={this.props.editing}>
                                 <HideableView hide={!this.props.group.description.length > 0}>
-                                    <Text>{this.props.group.description}</Text>
+                                    <ParsedText
+                                        style={{ fontSize: 17, overflow: 'hidden' }}
+                                        parse={
+                                            [
+                                                { type: 'url', style: { color: 'blue', textDecorationLine: 'underline' }, onPress: (url) => Linking.openURL(url) },
+                                                { type: 'phone', style: { color: 'blue', textDecorationLine: 'underline' }, onPress: (phone) => Linking.openURL('tel:' + phone) },
+                                                { type: 'email', style: { color: 'blue', textDecorationLine: 'underline' }, onPress: (email) => Linking.openURL('mailto:' + email) },
+                                                { pattern: /[-a-zA-Z0-9:%._\+~#=]{2,256}\.[a-zA-Z]{2,6}\b/, style: { color: 'blue', textDecorationLine: 'underline' }, onPress: (url) => Linking.openURL('https://' + url) },
+                                            ]
+                                        }
+                                    >
+                                        {this.props.group.description}
+                                    </ParsedText>
                                 </HideableView>
                                 <HideableView hide={!this.props.group.description.length <= 0}>
                                     <Text>This group has no description. Feel free to add one!</Text>
