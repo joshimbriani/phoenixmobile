@@ -12,6 +12,7 @@ import EventDetailMessages from './eventDetailMessages';
 import Icon from 'react-native-vector-icons/Ionicons';
 import * as userActions from '../../redux/actions/user';
 import { bindActionCreators } from 'redux';
+import Color from 'color';
 
 import { getMaterialColor } from '../utils/styleutils';
 
@@ -34,6 +35,9 @@ class EventDetailWrapper extends React.Component {
     static navigationOptions = (Platform.OS === 'android') ? ({ navigation }) => ({
         title: navigation.state.params.event,
         headerStyle: { backgroundColor: navigation.state.params.color },
+        headerTitleStyle: {
+            color: Color(navigation.state.params.color).isDark() ? 'white' : 'black'
+        },
         headerRight: <Menu style={{ paddingRight: 20, flexDirection: 'row' }}>
             <MenuTrigger>
                 <View style={{ paddingLeft: 20, paddingRight: 20, paddingTop: 10, paddingBottom: 10 }}>
@@ -75,6 +79,9 @@ class EventDetailWrapper extends React.Component {
     }) : ({ navigation }) => ({
         title: navigation.state.params.event,
         headerStyle: { backgroundColor: navigation.state.params.color },
+        headerTitleStyle: {
+            color: Color(navigation.state.params.color).isDark() ? 'white' : 'black'
+        },
         headerRight: <Menu style={{ paddingRight: 20, flexDirection: 'row' }}>
             <MenuTrigger>
                 <View style={{ paddingLeft: 20, paddingRight: 20, paddingTop: 10, paddingBottom: 10 }}>
@@ -144,10 +151,9 @@ class EventDetailWrapper extends React.Component {
 
     _handleIndexChange = index => this.setState({ index });
 
-    _renderHeader = props => <TabBar {...props} labelStyle={{ fontSize: 10 }} style={[styles.eventTabBar, { backgroundColor: this.props.navigation.state.params.color }]} />;
+    _renderHeader = props => <TabBar {...props} labelStyle={{ fontSize: 10, color: Color(this.props.navigation.state.params.color).isDark() ? 'white' : 'black' }} style={[styles.eventTabBar, { backgroundColor: this.props.navigation.state.params.color }]} />;
 
     _renderScene = ({ route }) => {
-        console.log("Interested In Event ", this.state.eventData.interested)
         switch (route.key) {
             case 'details':
                 return <EventDetailDetails markUserAsInterested={this.markUserAsInterested} markUserAsGoing={this.markUserAsGoing} shareEvent={this.shareEvent} event={this.state.eventData} color={this.props.navigation.state.params.color} navigation={this.props.navigation} redeemOffer={this.redeemOffer} userGoing={userInList(this.props.user, (this.state.eventData.going || []))} userInterested={userInList(this.props.user, (this.state.eventData.interested || []))} inviteUsers={this.inviteUser} />;
@@ -219,7 +225,6 @@ class EventDetailWrapper extends React.Component {
     }
 
     render() {
-        console.log(this.state.eventData)
         return (
             <TabViewAnimated
                 style={styles.eventTabView}
@@ -233,7 +238,6 @@ class EventDetailWrapper extends React.Component {
     }
 
     inviteUser(eventID) {
-        console.log(this.state.eventData)
         this.props.navigation.navigate('InviteUsers', {contacts: this.props.contacts, existing: true, inviteUsers: (users) => this.marksUsersAsInvited(users), invitedUsers: this.state.eventData.invited.map((user) => user.id) })
     }
 

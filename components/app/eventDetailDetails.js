@@ -10,6 +10,8 @@ import { OfferContainer } from './offerContainer';
 import moment from 'moment';
 import PlatformIonicon from '../utils/platformIonicon';
 
+import Color from 'color';
+
 class EventDetailDetails extends React.Component {
     // TODO: Offer View
     // TODO: Need to handle recursive topic case
@@ -21,8 +23,8 @@ class EventDetailDetails extends React.Component {
                 <View style={styles.flex1} >
                     <ScrollView style={{ flex: 1 }}>
                         <View style={[styles.eventDetailHeader, { backgroundColor: getComplementaryColor(this.props.color) }]} >
-                            <Text style={styles.eventDetailHeading}>{this.props.event.title}</Text>
-                            <Text style={styles.eventDetailSubHeading}>{getDayOfWeekFromDayNumber(date.getDay())} {getMonthNameFromMonthNumber(date.getMonth())} {date.getDate()}, {date.getFullYear()} @ {(date.getHours() % 12) + ':' + (date.getMinutes() < 10 ? ('0' + date.getMinutes()) : date.getMinutes()) + (date.getHours() < 12 ? 'AM' : 'PM')}</Text>
+                            <Text style={[styles.eventDetailHeading, {color: Color(getComplementaryColor(this.props.color)).isDark() ? 'white' : 'black'}]}>{this.props.event.title}</Text>
+                            <Text style={[styles.eventDetailSubHeading, {color: Color(getComplementaryColor(this.props.color)).isDark() ? 'white' : 'black'}]}>{getDayOfWeekFromDayNumber(date.getDay())} {getMonthNameFromMonthNumber(date.getMonth())} {date.getDate()}, {date.getFullYear()} @ {(date.getHours() % 12) + ':' + (date.getMinutes() < 10 ? ('0' + date.getMinutes()) : date.getMinutes()) + (date.getHours() < 12 ? 'AM' : 'PM')}</Text>
                             <ScrollView horizontal={true}>
                                 {this.props.event.topics && this.props.event.topics.map((topic, index) => {
                                     return (

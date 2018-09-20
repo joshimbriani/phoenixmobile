@@ -7,6 +7,7 @@ import * as colorActions from '../../redux/actions/backgroundColor';
 import moment from 'moment';
 import { styles } from '../../assets/styles';
 import { getComplementaryColor } from '../utils/styleutils';
+import Color from 'color';
 
 class OfferDetails extends React.Component {
 
@@ -37,8 +38,8 @@ class OfferDetails extends React.Component {
                 <View style={styles.flex1} >
                     <ScrollView style={{ flex: 1 }}>
                         <View style={[styles.eventDetailHeader, { backgroundColor: getComplementaryColor(offer.color) }]} >
-                            <Text style={styles.eventDetailHeading}>{offer.name}</Text>
-                            <Text style={styles.eventDetailSubHeading}>Runs from {startTime.format('dddd, MMMM Do, YYYY @ h:mm a')} to {endTime.format('dddd, MMMM Do, YYYY @ h:mm a')}</Text>
+                            <Text style={[styles.eventDetailHeading, {color: Color(getComplementaryColor(offer.color)).isDark() ? 'white' : 'black'}]}>{offer.name}</Text>
+                            <Text style={[styles.eventDetailSubHeading, {color: Color(getComplementaryColor(offer.color)).isDark() ? 'white' : 'black'}]}>Runs from {startTime.format('dddd, MMMM Do, YYYY @ h:mm a')} to {endTime.format('dddd, MMMM Do, YYYY @ h:mm a')}</Text>
                         </View>
                         <View style={{ flexDirection: 'row', backgroundColor: 'white', borderTopWidth: 1, borderTopColor: '#A8A8A8' }}>
                             <TouchableOpacity onPress={() => { this.props.navigation.navigate('NewEvent', {offer: offer}) }} style={{ flexDirection: 'row', flex: 1, margin: 5 }}>

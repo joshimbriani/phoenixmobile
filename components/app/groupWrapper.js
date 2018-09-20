@@ -10,6 +10,8 @@ import { GroupHeader } from './groupHeader';
 import { getURLForPlatform } from '../utils/networkUtils';
 import { HeaderBackButton } from 'react-navigation';
 
+import Color from 'color';
+
 import {styles} from '../../assets/styles';
 
 const initialLayout = {
@@ -90,7 +92,7 @@ class GroupWrapper extends React.Component{
         this.setState({ index })
     };
 
-    _renderHeader = props => <TabBar {...props} labelStyle={{fontSize: 11}} style={[styles.eventTabBar, { backgroundColor: this.state.group.color ? this.state.group.color : '#ffffff' }]} />;
+    _renderHeader = props => <TabBar {...props} labelStyle={{ fontSize: 11, color: Color(this.state.group.color || '#ffffff').isDark() ? 'white' : 'black' }} style={[styles.eventTabBar, { backgroundColor: this.state.group.color ? this.state.group.color : '#ffffff' }]} />;
 
     _renderScene = ({ route }) => {
         switch (route.key) {
