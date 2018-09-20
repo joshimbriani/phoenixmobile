@@ -234,7 +234,7 @@ class RegisterDetails extends React.Component {
                             isChecked={this.state.checked}
                         />
                         <View style={{ alignItems: 'center', flexDirection: 'row', maxWidth: '80%' }}>
-                            <Text style={{ fontSize: 8 }}>I am over the age of 13 and I accept </Text>
+                            <Text style={{ fontSize: 8 }}>I am over the age of 18 and I accept </Text>
                             <TouchableOpacity onPress={() => this.setState({ showEULA: true })}>
                                 <Text style={{ color: 'blue', fontSize: 8 }}>Koota's license agreement.</Text>
                             </TouchableOpacity>
@@ -271,6 +271,10 @@ function isValidDate(dateString) {
     // Check the ranges of month and year
     if (year < 1000 || year > 3000 || month == 0 || month > 12)
         return false;
+
+    if (year < 1903 || year > 2005) {
+        return false;
+    }
 
     var monthLength = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
 
