@@ -7,6 +7,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
 import { getURLForPlatform } from '../utils/networkUtils';
+import { restrictedUsernames } from '../../assets/restrictedUsernames';
 import PlatformIonicon from '../utils/platformIonicon';
 import * as tokenActions from '../../redux/actions/token';
 import fontBasedOnPlatform from '../utils/fontBasedOnPlatform';
@@ -63,6 +64,12 @@ class Register extends React.Component {
             errorState["username"] = "Enter your username!";
             goBack = true;
         }
+
+        if (restrictedUsernames.indexOf(this.state.username.toLowerCase()) > -1) {
+            errorState["username"] = "That username is restricted. Try a different username!";
+            goBack = true;
+        }
+
         if (this.state.password === "") {
             errorState["password"] = "Enter your password!";
             goBack = true;
@@ -105,12 +112,16 @@ class Register extends React.Component {
             valid = false;
         }
 
+        if (restrictedUsernames.indexOf(this.state.username.toLowerCase()) > -1) {
+            valid = false;
+        }
+
         if (this.state.password.length < 6) {
             valid = false;
         }
 
-        const emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-        valid = emailRegex.test(this.state.email.toLowerCase());
+        //const emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+        //valid = emailRegex.test(this.state.email.toLowerCase());
 
         return valid;
     }
@@ -118,6 +129,10 @@ class Register extends React.Component {
     needToGoBack() {
         var goBack = false;
         if (this.state.username === "" || this.state.password === "" || this.state.email === "") {
+            goBack = true;
+        }
+
+        if (restrictedUsernames.indexOf(this.state.username.toLowerCase()) > -1) {
             goBack = true;
         }
 
