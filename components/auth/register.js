@@ -63,6 +63,12 @@ class Register extends React.Component {
             errorState["username"] = "Enter your username!";
             goBack = true;
         }
+
+        if (this.state.username.length > 30) {
+            errorState["username"] = "Your username can't be greater than 30 characters!"
+            goBack = true;
+        }
+
         if (this.state.password === "") {
             errorState["password"] = "Enter your password!";
             goBack = true;
@@ -105,6 +111,11 @@ class Register extends React.Component {
             valid = false;
         }
 
+        console.log(this.state.username)
+        if (this.state.username.length > 30) {
+            valid = false;
+        }
+
         if (this.state.password.length < 6) {
             valid = false;
         }
@@ -118,6 +129,10 @@ class Register extends React.Component {
     needToGoBack() {
         var goBack = false;
         if (this.state.username === "" || this.state.password === "" || this.state.email === "") {
+            goBack = true;
+        }
+
+        if (this.state.username.length > 30) {
             goBack = true;
         }
 
