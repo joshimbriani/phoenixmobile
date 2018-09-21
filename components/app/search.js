@@ -41,6 +41,7 @@ class Search extends React.Component {
     }
 
     renderEmptySections(section) {
+        console.log(section)
         if (section.data.length > 0) {
             return <ListItem itemDivider><Text>{section.title}</Text></ListItem>
         } else {
@@ -61,7 +62,7 @@ class Search extends React.Component {
                 </View>
             )
         } else {
-            if (this.state.data[0]["data"].length > 0 || this.state.data[1]["data"].length > 0 || this.state.data[2]["data"].length > 0) {
+            if (this.state.data[0]["data"].length > 0 || this.state.data[1]["data"].length > 0 || this.state.data[2]["data"].length > 0 || this.state.data[3]["data"].length > 0) {
                 return (
                     <Container>
                         <SectionList
@@ -112,6 +113,18 @@ class Search extends React.Component {
                                                 </View>
                                                 <View style={{ padding: 10 }}>
                                                     <Text style={{ color: 'white' }} numberOfLines={2}>{item.description}</Text>
+                                                </View>
+                                            </View>
+                                        </TouchableOpacity>
+                                    )
+                                }
+                                if (section.title === "Places") {
+                                    const color = getMaterialColor();
+                                    return (
+                                        <TouchableOpacity onPress={() => {  this.props.navigation.navigate('PlaceDetailsWrapper', {place: item}) }}>
+                                            <View key={item.id} style={[styles.listitem, { backgroundColor: color, justifyContent: 'center', alignItems: 'center' }]}>
+                                                <View style={{ padding: 5 }}>
+                                                    <Text style={[styles.itemText, { fontSize: 25, fontWeight: 'bold' }]}>{item.name}</Text>
                                                 </View>
                                             </View>
                                         </TouchableOpacity>
