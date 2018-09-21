@@ -557,7 +557,9 @@ class Home extends React.Component {
         const endDate = moment(latestDay)
         for (var m = moment(startDate).seconds(0).minutes(0).hours(0); m.isBefore(endDate); m.add(1, 'days')) {
             var offersForDate = offers.filter((offer) => {
-                var isOngoingOffer = moment(offer.startTime).isSameOrBefore(m) && moment(offer.endTime).isSameOrAfter(m);
+                var EOD = m.clone();
+                EOD = EOD.seconds(59).minutes(59).hours(23);
+                var isOngoingOffer = (moment(offer.startTime).isSameOrBefore(m) && moment(offer.endTime).isSameOrAfter(m)) || (moment(offer.startTime).isBetween(m, EOD) || moment(offer.endTime).isBetween(m, EOD) || moment(offer.startTime).isSame(m) || moment(offer.startTime).isSame(EOD) || moment(offer.endTime).isSame(m) || moment(offer.endTime).isSame(EOD));
                 if (offer.recurrences.length > 0) {
                     const matchingRecurrences = offer.recurrences.filter((recurrence) => m.format('dddd').toLowerCase() === recurrence.dayOfWeek);
                     return matchingRecurrences.length > 0;
@@ -639,6 +641,24 @@ class Home extends React.Component {
         return false;
     }
 
+    generateDurationString(offer, section) {
+        if (offer.recurrences.length === 0) {
+            if (moment(offer.startTime).isSameOrBefore(moment(section.datestring, 'MM-DD-YYYY')) && moment(offer.endTime).isSameOrAfter(moment(section.datestring, 'MM-DD-YYYY').seconds(59).minutes(59).hours(23))) {
+                return "All Day"
+            } else if (moment(offer.startTime).isSameOrAfter(moment(section.datestring, 'MM-DD-YYYY')) && moment(offer.endTime).isSameOrBefore(moment(section.datestring, 'MM-DD-YYYY').seconds(59).minutes(59).hours(23))) {
+                return "From " + moment(offer.startTime).format('h:mm a') + " to " + moment(offer.endTime).format('h:mm a')
+            } else if (moment(offer.startTime).isSameOrBefore(moment(section.datestring, 'MM-DD-YYYY'))) {
+                return "Until " + moment(offer.endTime).format('h:mm a')
+            } else if (moment(offer.endTime).isSameOrAfter(moment(section.datestring, 'MM-DD-YYYY').seconds(59).minutes(59).hours(23))) {
+                return "From " + moment(offer.startTime).format('h:mm a') + " onward"
+            }
+        } else if (offer.recurrences.length > 0) {
+            return moment(offer.recurrences.find((recurrence) => moment(section.datestring, 'MM-DD-YYYY').format('dddd').toLowerCase() === recurrence.dayOfWeek).startTime, 'HH:mm:ss').format('h:mm a') + ' - ' + moment(offer.recurrences.find((recurrence) => moment(section.datestring, 'MM-DD-YYYY').format('dddd').toLowerCase() === recurrence.dayOfWeek).endTime, 'HH:mm:ss').format('h:mm a')
+        } else {
+            return ""
+        }
+    }
+
     render() {
         return (
             <Container style={{ backgroundColor: '#D3D3D3' }}>
@@ -709,7 +729,9 @@ class Home extends React.Component {
                                                         <Text style={{ fontSize: 15, fontWeight: 'bold' }}>{item.name}</Text>
                                                     </View>
                                                     <View>
-                                                        <Text style={{ fontSize: 10 }}>{item.recurrences.length === 0 && "All Day"}{item.recurrences.length > 0 && (moment(item.recurrences.find((recurrence) => moment(section.datestring, 'MM-DD-YYYY').format('dddd').toLowerCase() === recurrence.dayOfWeek).startTime, 'HH:mm:ss').format('h:mm a') + ' - ' + moment(item.recurrences.find((recurrence) => moment(section.datestring, 'MM-DD-YYYY').format('dddd').toLowerCase() === recurrence.dayOfWeek).endTime, 'HH:mm:ss').format('h:mm a'))}</Text>
+                                                        <Text style={{ fontSize: 10 }}>
+                                                            {this.generateDurationString(item, section)}
+                                                        </Text>
                                                     </View>
                                                     <View style={{ flexDirection: 'row' }}>
                                                         <PlatformIonicon name="pin" size={12} style={{ marginHorizontal: 5 }} />
