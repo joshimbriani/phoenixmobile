@@ -5,7 +5,6 @@
 	};
 	objectVersion = 46;
 	objects = {
-
 /* Begin PBXBuildFile section */
 		00C302E51ABCBA2D00DB3ED1 /* libRCTActionSheet.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 00C302AC1ABCB8CE00DB3ED1 /* libRCTActionSheet.a */; };
 		00C302E71ABCBA2D00DB3ED1 /* libRCTGeolocation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 00C302BA1ABCB90400DB3ED1 /* libRCTGeolocation.a */; };
@@ -75,6 +74,7 @@
 		EFB655F113754561AD476A00 /* Foundation.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 833C0FAF6FD54C4BA880FEFD /* Foundation.ttf */; };
 		F22244DDB5CF447FA9E88966 /* MaterialCommunityIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = E5CFBD8E37B9432D9720949E /* MaterialCommunityIcons.ttf */; };
 		F3D443AC036A59720CCCE379 /* libPods-phoenixmobile-tvOSTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 57AC5F4EB73A5FC4B083CB2F /* libPods-phoenixmobile-tvOSTests.a */; };
+		F47251CAE8714BB8BC7F1513 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B13C9D954ED64058B9B03A01 /* libz.tbd */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -468,6 +468,7 @@
 		E7711B4FAB136ED8156A3E87 /* Pods-phoenixmobile-tvOSTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-phoenixmobile-tvOSTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-phoenixmobile-tvOSTests/Pods-phoenixmobile-tvOSTests.debug.xcconfig"; sourceTree = "<group>"; };
 		ED0B6B3C7F21DA2D5517A5AB /* Pods-phoenixmobile-tvOSTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-phoenixmobile-tvOSTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-phoenixmobile-tvOSTests/Pods-phoenixmobile-tvOSTests.release.xcconfig"; sourceTree = "<group>"; };
 		EF4A1E5E95674BA68073C939 /* FontAwesome5_Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome5_Regular.ttf; path = "../node_modules/react-native-vector-icons/Fonts/FontAwesome5_Regular.ttf"; sourceTree = "<group>"; };
+		B13C9D954ED64058B9B03A01 /* libz.tbd */ = {isa = PBXFileReference; name = "libz.tbd"; path = "usr/lib/libz.tbd"; sourceTree = SDKROOT; fileEncoding = undefined; lastKnownFileType = sourcecode.text-based-dylib-definition; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -499,6 +500,7 @@
 				00C302EA1ABCBA2D00DB3ED1 /* libRCTVibration.a in Frameworks */,
 				139FDEF61B0652A700C62182 /* libRCTWebSocket.a in Frameworks */,
 				39FE627A0BBF7075C088C84A /* libPods-phoenixmobile.a in Frameworks */,
+				F47251CAE8714BB8BC7F1513 /* libz.tbd in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -595,6 +597,7 @@
 				2C267A038BFBD60043B27D5C /* libPods-phoenixmobile-tvOS.a */,
 				57AC5F4EB73A5FC4B083CB2F /* libPods-phoenixmobile-tvOSTests.a */,
 				A6DE042E575B1C09E0EDDBDA /* libPods-phoenixmobileTests.a */,
+				B13C9D954ED64058B9B03A01 /* libz.tbd */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -859,6 +862,14 @@
 			name = Resources;
 			sourceTree = "<group>";
 		};
+		12F8EB8CCF0C485480895B39 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			path = Application;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -891,6 +902,7 @@
 				13B07F8E1A680F5B00A75B9A /* Resources */,
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
 				F74728991C2050C0BAA28DC5 /* [CP] Copy Pods Resources */,
+				B74B6BD96DE04A0F80AE80D2 /* Upload Debug Symbols to Sentry */,
 			);
 			buildRules = (
 			);
@@ -1444,7 +1456,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "export NODE_BINARY=node\n../node_modules/react-native/scripts/react-native-xcode.sh";
+			shellScript = "export SENTRY_PROPERTIES=sentry.properties\nexport NODE_BINARY=node\n../node_modules/@sentry/cli/bin/sentry-cli react-native xcode ../node_modules/react-native/scripts/react-native-xcode.sh";
 		};
 		20FB35B3F8F95BAE25D83875 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -1494,7 +1506,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "export NODE_BINARY=node\n../node_modules/react-native/scripts/react-native-xcode.sh";
+			shellScript = "export SENTRY_PROPERTIES=sentry.properties\nexport NODE_BINARY=node\n../node_modules/@sentry/cli/bin/sentry-cli react-native xcode ../node_modules/react-native/scripts/react-native-xcode.sh";
 		};
 		4B9617ECEA573A8A71377FA2 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -1581,6 +1593,20 @@
 			shellPath = /bin/sh;
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
+		};
+		B74B6BD96DE04A0F80AE80D2 /* Upload Debug Symbols to Sentry */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			name = "Upload Debug Symbols to Sentry";
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			shellPath = /bin/sh;
+			shellScript = "export SENTRY_PROPERTIES=sentry.properties\n../node_modules/@sentry/cli/bin/sentry-cli upload-dsym";
 		};
 /* End PBXShellScriptBuildPhase section */
 
