@@ -156,7 +156,7 @@ class EventDetailWrapper extends React.Component {
             case 'place':
                 return <EventDetailPlace event={this.state.eventData} color={this.props.navigation.state.params.color} navigation={this.props.navigation} />;
             case 'people':
-                return <EventDetailPeople forkEvent={this.forkEvent} event={this.state.eventData} color={this.props.navigation.state.params.color} navigation={this.props.navigation} />
+                return <EventDetailPeople userInList={userInList} forkEvent={this.forkEvent} event={this.state.eventData} color={this.props.navigation.state.params.color} navigation={this.props.navigation} />
             case 'messages':
                 return <EventDetailMessages
                     event={this.state.eventData}
@@ -288,7 +288,7 @@ class EventDetailWrapper extends React.Component {
                     console.log("Bad going.")
                 } else {
                     this.loadEvent();
-                    this.props.userActions.loadGoing(this.props.token, this.props.user)
+                    this.props.userActions.loadGoingTo(this.props.token, this.props.user)
                 }
             });
     }

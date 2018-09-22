@@ -71,7 +71,7 @@ class FindSubEvents extends React.Component {
     async componentDidMount() {
         this.setState({ loading: true })
         this.loadEvents();
-        this.props.userActions.loadGoing(this.props.token, this.props.user);
+        this.props.userActions.loadGoingTo(this.props.token, this.props.user);
         this.props.userActions.loadInterested(this.props.token, this.props.user);
     }
 
@@ -107,7 +107,7 @@ class FindSubEvents extends React.Component {
     }
 
     _onRefresh() {
-        this.props.userActions.loadGoing(this.props.token, this.props.user);
+        this.props.userActions.loadGoingTo(this.props.token, this.props.user);
         this.props.userActions.loadInterested(this.props.token, this.props.user);
         this.loadEvents();
     }
