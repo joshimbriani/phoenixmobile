@@ -13,12 +13,13 @@ import { PeopleNewEvent } from './newEvent/peopleNewEvent';
 import { OffersNewEvent } from './newEvent/offersNewEvent';
 import { EventTypeNewEvent } from './newEvent/eventTypeNewEvent';
 import EventNewEvent from './newEvent/eventNewEvent';
-import { badWords } from '../../assets/badWords';
+var Filter = require('bad-words');
 import Icon from 'react-native-vector-icons/Ionicons';
 
 import Spinner from 'react-native-loading-spinner-overlay';
 
 const ITEMS_TO_VALIDATE = ["title", "description", "place", "datetime", "duration", "amount", "eventPrivacy", "group"];
+const filter = new Filter();
 
 class NewEvent extends React.Component {
 
@@ -224,24 +225,20 @@ class NewEvent extends React.Component {
                     }
                     valid = false;
                 } else if (ITEMS_TO_VALIDATE[i] === "title") {
-                    for (var j = 0; j < badWords.length; j++) {
-                        if (this.state["title"].toLowerCase().indexOf(badWords[j]) > -1) {
-                            errors["title"] = "Your title contains objectionable content. Please remove the word '" + badWords[j] + "'"
-                            if (errors.errors.indexOf("Title") === -1) {
-                                errors.errors.push("Title")
-                            }
-                            valid = false;
+                    if (filter.isProfane(this.state["title"])) {
+                        errors["title"] = "Your title contains objectionable content. Please remove the bad word."
+                        if (errors.errors.indexOf("Title") === -1) {
+                            errors.errors.push("Title")
                         }
+                        valid = false;
                     }
                 } else if (ITEMS_TO_VALIDATE[i] === "description") {
-                    for (var j = 0; j < badWords.length; j++) {
-                        if (this.state["description"].toLowerCase().indexOf(badWords[j]) > -1) {
-                            errors["description"] = "Your description contains objectionable content. Please remove the word '" + badWords[j] + "'"
-                            if (errors.errors.indexOf("Description") === -1) {
-                                errors.errors.push("Description")
-                            }
-                            valid = false;
+                    if (filter.isProfane(this.state["description"])) {
+                        errors["description"] = "Your description contains objectionable content. Please remove the bad word."
+                        if (errors.errors.indexOf("Description") === -1) {
+                            errors.errors.push("Description")
                         }
+                        valid = false;
                     }
                 }
             } else if (this.state[ITEMS_TO_VALIDATE[i]] === "" || typeof this.state[ITEMS_TO_VALIDATE[i]] === 'undefined' || ((typeof this.state[ITEMS_TO_VALIDATE[i]] === "object" && !(this.state[ITEMS_TO_VALIDATE[i]] instanceof Date)) && Object.keys(this.state[ITEMS_TO_VALIDATE[i]]).length < 1)) {
