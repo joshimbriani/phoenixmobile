@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { Content, Form, Item, Input, Label, Button } from 'native-base';
-import { ScrollView, View, Picker, ToastAndroid, KeyboardAvoidingView, Platform, PermissionsAndroid, FlatList, TouchableOpacity, Text } from 'react-native';
+import { Keyboard, View, Picker, ToastAndroid, KeyboardAvoidingView, Platform, PermissionsAndroid, FlatList, TouchableOpacity, Text } from 'react-native';
 import { REACT_SWIPER_BOTTOM_MARGIN } from '../../utils/constants';
 import debounce from 'lodash/debounce';
 import PlatformIonicon from '../../utils/platformIonicon';
@@ -64,6 +64,8 @@ export class PlaceNewEvent extends React.Component {
             .then((results) => results.json())
             .then((resultsJSON) => { item["address"] = resultsJSON["result"]["formatted_address"]; this.setState({ geometryDetails: resultsJSON["result"]["geometry"] }) })
             .catch((error) => console.log(error.message));
+
+        Keyboard.dismiss();
 
         this.setState({ placePredictions: [], placeSearchText: "" });
         this.props.onChange("place", item);

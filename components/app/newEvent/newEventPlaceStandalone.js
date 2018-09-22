@@ -1,6 +1,6 @@
 import React from 'react';
 import { Content, Form, Item, Input, Label } from 'native-base';
-import { ToastAndroid, Platform, PermissionsAndroid, Keyboard, Button, View, Text, TouchableOpacity, FlatList } from 'react-native';
+import { Platform, PermissionsAndroid, Keyboard, Button, View, Text, TouchableOpacity, FlatList } from 'react-native';
 import PlatformIonicon from '../../utils/platformIonicon';
 import { connect } from 'react-redux';
 import MapView, { PROVIDER_GOOGLE, Marker } from 'react-native-maps';
@@ -83,6 +83,8 @@ class NewEventPlaceStandalone extends React.Component {
             .then((results) => results.json())
             .then((resultsJSON) => { item["address"] = resultsJSON["result"]["formatted_address"]; this.setState({ geometryDetails: resultsJSON["result"]["geometry"] }) })
             .catch((error) => console.log(error.message));
+
+        Keyboard.dismiss()
 
         this.setState({ placePredictions: [], placeSearchText: "", place: item });
         this.props.navigation.state.params.onChange("place", item);

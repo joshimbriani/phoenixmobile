@@ -126,6 +126,9 @@ class Search extends React.Component {
                                                 <View style={{ padding: 5 }}>
                                                     <Text style={[styles.itemText, { fontSize: 25, fontWeight: 'bold' }]}>{item.name}</Text>
                                                 </View>
+                                                <View style={{ padding: 10 }}>
+                                                    <Text style={{ color: 'white' }} numberOfLines={2}>{item.description}</Text>
+                                                </View>
                                             </View>
                                         </TouchableOpacity>
                                     )

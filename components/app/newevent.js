@@ -359,6 +359,8 @@ class NewEvent extends React.Component {
                     this.props.navigation.goBack();
                 }
             });
+        } else {
+            this.setState({loading: false});
         }
     }
 
