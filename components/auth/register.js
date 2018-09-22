@@ -68,6 +68,11 @@ class Register extends React.Component {
         if (restrictedUsernames.indexOf(this.state.username.toLowerCase()) > -1) {
             errorState["username"] = "That username is restricted. Try a different username!";
             goBack = true;
+        }    
+        
+        if (this.state.username.length > 30) {
+            errorState["username"] = "Your username can't be greater than 30 characters!"
+            goBack = true;
         }
 
         if (this.state.password === "") {
@@ -120,6 +125,10 @@ class Register extends React.Component {
             valid = false;
         }
 
+        if (this.state.username.length > 30) {
+            valid = false;
+        }
+
         if (this.state.password.length < 6) {
             valid = false;
         }
@@ -137,6 +146,10 @@ class Register extends React.Component {
         }
 
         if (restrictedUsernames.indexOf(this.state.username.toLowerCase()) > -1) {
+            goBack = true;
+        }
+
+        if (this.state.username.length > 30) {
             goBack = true;
         }
 

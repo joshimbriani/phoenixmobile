@@ -218,6 +218,12 @@ class NewEvent extends React.Component {
                         errors.errors.push("Title")
                     }
                     valid = false;
+                } else if (ITEMS_TO_VALIDATE[i] === "title" && this.state["title"].length > 512) {
+                    errors["title"] = "Your title can't be longer than 512 characters!"
+                    if (errors.errors.indexOf("Title") === -1) {
+                        errors.errors.push("Title")
+                    }
+                    valid = false;
                 } else if (ITEMS_TO_VALIDATE[i] === "description" && this.state["description"] === "" && this.state.eventType !== 'event') {
                     errors["description"] = "You need to add a description!"
                     if (errors.errors.indexOf("Description") === -1) {
