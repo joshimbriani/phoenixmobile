@@ -12,6 +12,11 @@ import firebase from 'react-native-firebase'
 
 const { persistor, store } = configureStore();
 
+import { Sentry } from 'react-native-sentry';
+
+Sentry.config('https://9795f953678b4ee7a1f848631d88b772@sentry.io/1283598').install();
+
+
 export default class App extends React.Component {
   render() {
     return (
