@@ -6,6 +6,7 @@ import PlatformIonicon from '../utils/platformIonicon';
 import { TabViewAnimated, TabBar } from 'react-native-tab-view';
 import OfferDetails from './offerDetailDetails';
 import OfferPlace from './offerDetailPlace';
+import Color from 'color';
 
 import { styles } from '../../assets/styles';
 
@@ -18,6 +19,9 @@ class OfferWrapper extends React.Component{
     static navigationOptions = ({ navigation }) => ({
         title: navigation.state.params.offer.name,
         headerStyle: { backgroundColor: navigation.state.params.offer.color },
+        headerTitleStyle: {
+            color: Color(navigation.state.params.offer.color).isDark() ? 'white' : 'black'
+        }
     });
 
     constructor(props) {
@@ -52,7 +56,7 @@ class OfferWrapper extends React.Component{
         this.setState({ index })
     };
 
-    _renderHeader = props => <TabBar {...props} labelStyle={{fontSize: 11}} style={[styles.eventTabBar, { backgroundColor: this.props.navigation.state.params.offer.color ? this.props.navigation.state.params.offer.color : '#ffffff' }]} />;
+    _renderHeader = props => <TabBar {...props} labelStyle={{ fontSize: 11, color: Color(this.props.navigation.state.params.offer.color).isDark() ? 'white' : 'black' }} style={[styles.eventTabBar, { backgroundColor: this.props.navigation.state.params.offer.color ? this.props.navigation.state.params.offer.color : '#ffffff' }]} />;
 
     _renderScene = ({ route }) => {
         switch (route.key) {
