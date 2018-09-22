@@ -8,13 +8,14 @@ import { REACT_SWIPER_BOTTOM_MARGIN } from '../../utils/constants';
 import PlatformIonicon from '../../utils/platformIonicon';
 import { Dropdown } from 'react-native-material-dropdown';
 import Dialog from "react-native-dialog";
+import CheckBox from 'react-native-check-box';
 
 export class PeopleNewEvent extends React.Component {
     constructor(props) {
         super(props);
 
         this.state = {
-            showHelp: false
+            showHelp: false,
         }
     }
     render() {
@@ -52,8 +53,8 @@ export class PeopleNewEvent extends React.Component {
                             <Text style={{ color: 'white' }}>{this.props.errors["eventPrivacy"]}</Text>
                         </View>}
                         {this.props.errors["group"].length > 0 && <View style={{ marginTop: 5, backgroundColor: 'red', paddingHorizontal: 10, paddingVertical: 5, flex: 1 }}>
-                                <Text style={{ color: 'white' }}>{this.props.errors["group"]}</Text>
-                            </View>}
+                            <Text style={{ color: 'white' }}>{this.props.errors["group"]}</Text>
+                        </View>}
                         <View style={{ flexDirection: 'row' }}>
                             <View style={{ alignSelf: 'center', flex: 3, paddingTop: 15 }}>
                                 <Text style={{ fontSize: 20, color: 'black' }}>This event is set to: </Text>
@@ -96,7 +97,22 @@ export class PeopleNewEvent extends React.Component {
                         {this.props.errors["amount"].length > 0 && <View style={{ marginTop: 5, backgroundColor: 'red', paddingHorizontal: 10, paddingVertical: 5 }}>
                             <Text style={{ color: 'white' }}>{this.props.errors["amount"]}</Text>
                         </View>}
-                        <View style={{ flexDirection: 'row' }}>
+                        <View style={{ alignItems: 'center', flexDirection: 'row', maxWidth: '80%' }}>
+                            <CheckBox
+                                style={{ padding: 10 }}
+                                onClick={() => {
+                                    if (!this.props.limitUsers) {
+                                        // It wasn't checked but now it is
+                                        this.props.onChange("amount", "")
+                                    }
+                                    const oldChecked = this.props.limitUsers;
+                                    this.props.onChange("limitUsers", !oldChecked)
+                                }}
+                                isChecked={this.props.limitUsers}
+                            />
+                            <Text style={{ fontSize: 15, color: 'black' }}>Limit the amount of users that can join</Text>
+                        </View>
+                        {this.props.limitUsers && <View style={{ flexDirection: 'row' }}>
                             <View style={{ alignSelf: 'center' }}>
                                 <Text style={{ fontSize: 20, color: 'black' }}>There's room for </Text>
                             </View>
@@ -106,7 +122,7 @@ export class PeopleNewEvent extends React.Component {
                             <View style={{ alignSelf: 'center' }}>
                                 <Text style={{ fontSize: 20, color: 'black' }}> people!</Text>
                             </View>
-                        </View>
+                        </View>}
                     </View>
 
                     {this.props.user.gender !== 'Non-Binary' && <View style={{ flexDirection: 'row', margin: 10, padding: 10, backgroundColor: 'white', borderRadius: 5, shadowRadius: 2, shadowOpacity: 1, shadowColor: 'black', elevation: 2 }}>
