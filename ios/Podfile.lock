@@ -120,10 +120,18 @@ PODS:
     - React/Core
     - React/fishhook
     - React/RCTBlob
+  - ReactNativePermissions (1.1.1):
+    - React
   - rn-fetch-blob (0.10.6):
     - React/Core
   - RNVectorIcons (5.0.0):
     - React
+  - Sentry (4.0.1):
+    - Sentry/Core (= 4.0.1)
+  - Sentry/Core (4.0.1)
+  - SentryReactNative (0.39.0):
+    - React
+    - Sentry (~> 4.0.1)
   - yoga (0.53.3.React)
 
 DEPENDENCIES:
@@ -152,8 +160,10 @@ DEPENDENCIES:
   - React/RCTText (from `../node_modules/react-native`)
   - React/RCTVibration (from `../node_modules/react-native`)
   - React/RCTWebSocket (from `../node_modules/react-native`)
+  - ReactNativePermissions (from `../node_modules/react-native-permissions`)
   - rn-fetch-blob (from `../node_modules/rn-fetch-blob`)
   - RNVectorIcons (from `../node_modules/react-native-vector-icons`)
+  - SentryReactNative (from `../node_modules/react-native-sentry`)
   - yoga (from `../node_modules/react-native/ReactCommon/yoga/yoga.podspec`)
 
 SPEC REPOS:
@@ -171,6 +181,7 @@ SPEC REPOS:
     - GoogleToolboxForMac
     - nanopb
     - Protobuf
+    - Sentry
 
 EXTERNAL SOURCES:
   DoubleConversion:
@@ -187,10 +198,14 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-image-picker"
   react-native-maps:
     :path: "../node_modules/react-native-maps"
+  ReactNativePermissions:
+    :path: "../node_modules/react-native-permissions"
   rn-fetch-blob:
     :path: "../node_modules/rn-fetch-blob"
   RNVectorIcons:
     :path: "../node_modules/react-native-vector-icons"
+  SentryReactNative:
+    :path: "../node_modules/react-native-sentry"
   yoga:
     :path: "../node_modules/react-native/ReactCommon/yoga/yoga.podspec"
 
@@ -215,10 +230,13 @@ SPEC CHECKSUMS:
   react-native-google-maps: 2cfe3b01f8422c7dae51d8764139fd70f888cfce
   react-native-image-picker: b303e31c3c4ada1d7cb1342423d328d2efb07fb3
   react-native-maps: 066c2afcc89e18726377bcc685315f989ca22449
+  ReactNativePermissions: 9f2d9c45c98800795e6c2ed330e25d11a66a8169
   rn-fetch-blob: 76a8f798dae965bbcd146a2438f2e1d381c91ae3
   RNVectorIcons: c0dbfbf6068fefa240c37b0f71bd03b45dddac44
+  Sentry: a38f7879924c02239e121b19d993d23bdd1684db
+  SentryReactNative: d476259b21060a59dc637a29a40d60f0aac09cf7
   yoga: 55da126afc384965b96bff46652464373b330add
 
-PODFILE CHECKSUM: 97bebd74498dec9a099e708d65b82dd02f2f0efc
+PODFILE CHECKSUM: 580fe12e7f04e80921a948702ab7bd8ae9167d32
 
 COCOAPODS: 1.5.3
