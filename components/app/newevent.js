@@ -76,6 +76,7 @@ class NewEvent extends React.Component {
             invitedUsers: [],
             eventType: props.navigation.state.params.offer ? "hangout" : "",
             loading: false,
+            limitUsers: false,
             errors: {
                 errors: [],
                 amount: "",
@@ -249,7 +250,7 @@ class NewEvent extends React.Component {
                 }
             } else if (this.state[ITEMS_TO_VALIDATE[i]] === "" || typeof this.state[ITEMS_TO_VALIDATE[i]] === 'undefined' || ((typeof this.state[ITEMS_TO_VALIDATE[i]] === "object" && !(this.state[ITEMS_TO_VALIDATE[i]] instanceof Date)) && Object.keys(this.state[ITEMS_TO_VALIDATE[i]]).length < 1)) {
 
-                if (ITEMS_TO_VALIDATE[i] === 'amount' && this.state.eventType !== 'event') {
+                if (ITEMS_TO_VALIDATE[i] === 'amount' && this.state.eventType !== 'event' && this.state.limitUsers) {
                     errors["amount"] = "You need to have an event capacity!"
                     if (errors.errors.indexOf("Amount") === -1) {
                         errors.errors.push("Amount")
@@ -437,7 +438,7 @@ class NewEvent extends React.Component {
             },
             {
                 name: "People",
-                component: <PeopleNewEvent onChange={this.onChange} inviteFriends={this.inviteFriends} submitForm={this.submitForm} restrictToGender={this.state.restrictToGender} eventPrivacy={this.state.eventPrivacy} groups={this.state.groups} errors={this.state.errors} user={this.props.details} />,
+                component: <PeopleNewEvent limitUsers={this.state.limitUsers} onChange={this.onChange} inviteFriends={this.inviteFriends} submitForm={this.submitForm} restrictToGender={this.state.restrictToGender} eventPrivacy={this.state.eventPrivacy} groups={this.state.groups} errors={this.state.errors} user={this.props.details} />,
                 condition: (args) => true
             }
         ]
