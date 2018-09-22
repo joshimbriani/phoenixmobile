@@ -12,6 +12,7 @@ import EventDetailMessages from './eventDetailMessages';
 import Icon from 'react-native-vector-icons/Ionicons';
 import * as userActions from '../../redux/actions/user';
 import { bindActionCreators } from 'redux';
+import Spinner from 'react-native-loading-spinner-overlay';
 
 import { getMaterialColor } from '../utils/styleutils';
 
@@ -127,7 +128,8 @@ class EventDetailWrapper extends React.Component {
             eventData: {},
             index: this.props.navigation.state.params.goToMessages ? 3 : 0,
             routes: routes,
-            color: getMaterialColor()
+            color: getMaterialColor(),
+            loading: false
         }
 
         this.loadEvent = this.loadEvent.bind(this);
@@ -219,22 +221,23 @@ class EventDetailWrapper extends React.Component {
     }
 
     render() {
-        console.log(this.state.eventData)
         return (
-            <TabViewAnimated
-                style={styles.eventTabView}
-                navigationState={this.state}
-                renderScene={this._renderScene}
-                renderHeader={this._renderHeader}
-                onIndexChange={this._handleIndexChange}
-                initialLayout={initialLayout}
-            />
+            <View style={{flex: 1}}>
+                <Spinner visible={this.state.loading} textContent={"Loading..."} textStyle={{ color: '#FFF' }} />
+                <TabViewAnimated
+                    style={styles.eventTabView}
+                    navigationState={this.state}
+                    renderScene={this._renderScene}
+                    renderHeader={this._renderHeader}
+                    onIndexChange={this._handleIndexChange}
+                    initialLayout={initialLayout}
+                />
+            </View>
         )
     }
 
     inviteUser(eventID) {
-        console.log(this.state.eventData)
-        this.props.navigation.navigate('InviteUsers', {contacts: this.props.contacts, existing: true, inviteUsers: (users) => this.marksUsersAsInvited(users), invitedUsers: this.state.eventData.invited.map((user) => user.id) })
+        this.props.navigation.navigate('InviteUsers', { contacts: this.props.contacts, existing: true, inviteUsers: (users) => this.marksUsersAsInvited(users), invitedUsers: this.state.eventData.invited.map((user) => user.id) })
     }
 
     reportEvent() {
@@ -296,7 +299,7 @@ class EventDetailWrapper extends React.Component {
                 Authorization: "Token " + this.props.token
             },
             method: 'PUT',
-            body: JSON.stringify({'users': users})
+            body: JSON.stringify({ 'users': users })
         })
             .then(response => response.json())
             .then(responseObj => {
@@ -309,6 +312,7 @@ class EventDetailWrapper extends React.Component {
     }
 
     loadEvent() {
+        this.setState({loading: true})
         fetch(getURLForPlatform() + "api/v1/events/" + this.props.navigation.state.params.id + "/?format=json", {
             headers: {
                 Authorization: "Token " + this.props.token
@@ -316,7 +320,7 @@ class EventDetailWrapper extends React.Component {
         })
             .then(response => response.json())
             .then(responseObj => {
-                this.setState({ eventData: responseObj });
+                this.setState({ eventData: responseObj, loading: false });
                 this.props.navigation.setParams({ usersInterested: responseObj["interested"], usersGoing: responseObj["going"], eventCreator: responseObj["userBy"]["id"] })
             });
     }

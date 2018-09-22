@@ -1,12 +1,9 @@
 import React from 'react';
-import { Content, Form, Item, Input, Label, Button, Text } from 'native-base';
-import { ToastAndroid, Platform, PermissionsAndroid, Keyboard } from 'react-native';
-import PlatformIonicon from '../utils/platformIonicon';
+import { ToastAndroid, Platform, PermissionsAndroid, Keyboard, Text, View } from 'react-native';
 import { connect } from 'react-redux';
 import Swiper from 'react-native-swiper';
 import { getURLForPlatform } from '../utils/networkUtils';
 import { styles } from '../../assets/styles';
-import { REACT_SWIPER_BOTTOM_MARGIN } from '../utils/constants';
 import { getCurrentLocation } from '../utils/otherUtils';
 import { TopicsNewEvent } from './newEvent/topicsNewEvent';
 import { TitleDescColorNewEvent } from './newEvent/titleDescColorNewEvent';
@@ -18,6 +15,8 @@ import { EventTypeNewEvent } from './newEvent/eventTypeNewEvent';
 import EventNewEvent from './newEvent/eventNewEvent';
 import { badWords } from '../../assets/badWords';
 import Icon from 'react-native-vector-icons/Ionicons';
+
+import Spinner from 'react-native-loading-spinner-overlay';
 
 const ITEMS_TO_VALIDATE = ["title", "description", "place", "datetime", "duration", "amount", "eventPrivacy", "group"];
 
@@ -75,6 +74,7 @@ class NewEvent extends React.Component {
             group: {},
             invitedUsers: [],
             eventType: props.navigation.state.params.offer ? "hangout" : "",
+            loading: false,
             errors: {
                 errors: [],
                 amount: "",
@@ -317,6 +317,7 @@ class NewEvent extends React.Component {
 
     submitForm() {
         // TODO: Need to give error messages
+        this.setState({loading: true});
         if (this.formIsValid()) {
             var duration = this.state.duration;
             if (this.state.durationMeasure === 'hours') {
@@ -349,7 +350,8 @@ class NewEvent extends React.Component {
                 })
             }).then(response => {
                 if (response.ok) {
-                    ToastAndroid.show('Event Created', ToastAndroid.SHORT)
+                    ToastAndroid.show('Event Created', ToastAndroid.SHORT);
+                    this.setState({loading: false});
                     this.props.navigation.goBack();
                 }
             });
@@ -444,25 +446,31 @@ class NewEvent extends React.Component {
         }
         if (this.state.eventType === "hangout") {
             return (
-                <Swiper keyboardShouldPersistTaps={'handled'} onMomentumScrollEnd={() => Keyboard.dismiss()} nextButton={<Text style={{ fontSize: 25 }}>&gt;</Text>} buttonWrapperStyle={{ alignItems: 'flex-end' }} prevButton={<Text style={{ fontSize: 25 }}>&lt;</Text>} style={styles.wrapper} showsButtons={true} loop={false} removeClippedSubviews={false} >
-                    {NewEventArr.filter((item) => {
-                        var args = {};
-                        if (item["name"] === "Offers") {
-                            args["offers"] = this.state.offers
-                        }
-                        args["type"] = this.state.eventType
-                        if (item["condition"](args)) {
-                            return true;
-                        }
-                        return false;
-                    }).map((item) => {
-                        return item["component"]
-                    })}
-                </Swiper>
+                <View style={{flex: 1}}>
+                    <Spinner visible={this.state.loading} textContent={"Creating..."} textStyle={{ color: '#FFF' }} />
+                    <Swiper keyboardShouldPersistTaps={'handled'} onMomentumScrollEnd={() => Keyboard.dismiss()} nextButton={<Text style={{ fontSize: 25 }}>&gt;</Text>} buttonWrapperStyle={{ alignItems: 'flex-end' }} prevButton={<Text style={{ fontSize: 25 }}>&lt;</Text>} style={styles.wrapper} showsButtons={true} loop={false} removeClippedSubviews={false} >
+                        {NewEventArr.filter((item) => {
+                            var args = {};
+                            if (item["name"] === "Offers") {
+                                args["offers"] = this.state.offers
+                            }
+                            args["type"] = this.state.eventType
+                            if (item["condition"](args)) {
+                                return true;
+                            }
+                            return false;
+                        }).map((item) => {
+                            return item["component"]
+                        })}
+                    </Swiper>
+                </View>
             );
         } else if (this.state.eventType === "event") {
             return (
-                <EventNewEvent createEvent={this.submitForm} navigation={this.props.navigation} onChange={this.onChange} fetchTopicsFromDescription={this.fetchTopicsFromDescription} color={this.state.color} errors={this.state.errors} lat={this.state.lat} long={this.state.long} place={this.state.place} session={this.state.session} datetime={this.state.datetime} duration={this.state.duration} durationMeasure={this.state.durationMeasure} />
+                <View style={{flex: 1}}>
+                    <Spinner visible={this.state.loading} textContent={"Creating..."} textStyle={{ color: '#FFF' }} />
+                    <EventNewEvent createEvent={this.submitForm} navigation={this.props.navigation} onChange={this.onChange} fetchTopicsFromDescription={this.fetchTopicsFromDescription} color={this.state.color} errors={this.state.errors} lat={this.state.lat} long={this.state.long} place={this.state.place} session={this.state.session} datetime={this.state.datetime} duration={this.state.duration} durationMeasure={this.state.durationMeasure} />
+                </View>
             )
         } else {
             return (

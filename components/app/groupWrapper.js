@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { Platform, Text, Dimensions, BackHandler } from 'react-native';
+import { Platform, View, Dimensions, BackHandler } from 'react-native';
 import PlatformIonicon from '../utils/platformIonicon';
 
 import { TabViewAnimated, TabBar } from 'react-native-tab-view';
@@ -9,15 +9,16 @@ import GroupsDetails from './groupsDetails';
 import { GroupHeader } from './groupHeader';
 import { getURLForPlatform } from '../utils/networkUtils';
 import { HeaderBackButton } from 'react-navigation';
+import Spinner from 'react-native-loading-spinner-overlay';
 
-import {styles} from '../../assets/styles';
+import { styles } from '../../assets/styles';
 
 const initialLayout = {
     height: 0,
     width: Dimensions.get('window').width,
 };
 
-class GroupWrapper extends React.Component{
+class GroupWrapper extends React.Component {
     static navigationOptions = ({ navigation }) => ({
         title: navigation.state.params.groupName || "Loading...",
         headerLeft: <HeaderBackButton onPress={() => { if (navigation.state.params.backKey) { navigation.goBack(navigation.state.params.backKey) } else { navigation.goBack() } }} />,
@@ -28,7 +29,7 @@ class GroupWrapper extends React.Component{
         super(props);
         var routes = [
             { key: 'messages', title: 'Messages' },
-            { key: 'details', title: 'Group Details'}
+            { key: 'details', title: 'Group Details' }
         ];
 
         this.state = {
@@ -38,7 +39,8 @@ class GroupWrapper extends React.Component{
             editing: false,
             name: "",
             description: "",
-            color: ""
+            color: "",
+            loading: false
         }
 
         this.handleBackPress = this.handleBackPress.bind(this);
@@ -62,9 +64,8 @@ class GroupWrapper extends React.Component{
     }
 
     handleBackPress() {
-        if (this.props.navigation.state.params.backKey) 
-        { 
-            this.props.navigation.goBack(this.props.navigation.state.params.backKey) 
+        if (this.props.navigation.state.params.backKey) {
+            this.props.navigation.goBack(this.props.navigation.state.params.backKey)
         } else {
             this.props.navigation.goBack()
         }
@@ -73,6 +74,7 @@ class GroupWrapper extends React.Component{
     }
 
     loadGroup() {
+        this.setState({ loading: true })
         fetch(getURLForPlatform() + "api/v1/groups/" + this.props.navigation.state.params.groupID + "/", {
             headers: {
                 Authorization: "Token " + this.props.token
@@ -80,8 +82,8 @@ class GroupWrapper extends React.Component{
         })
             .then(response => response.json())
             .then(responseObj => {
-                this.setState({group: responseObj})
-                this.props.navigation.setParams({groupName: responseObj["name"]})
+                this.setState({ group: responseObj, loading: false })
+                this.props.navigation.setParams({ groupName: responseObj["name"] })
             });
     }
 
@@ -90,7 +92,7 @@ class GroupWrapper extends React.Component{
         this.setState({ index })
     };
 
-    _renderHeader = props => <TabBar {...props} labelStyle={{fontSize: 11}} style={[styles.eventTabBar, { backgroundColor: this.state.group.color ? this.state.group.color : '#ffffff' }]} />;
+    _renderHeader = props => <TabBar {...props} labelStyle={{ fontSize: 11 }} style={[styles.eventTabBar, { backgroundColor: this.state.group.color ? this.state.group.color : '#ffffff' }]} />;
 
     _renderScene = ({ route }) => {
         switch (route.key) {
@@ -105,14 +107,17 @@ class GroupWrapper extends React.Component{
 
     render() {
         return (
-            <TabViewAnimated
-                style={{flex: 1}}
-                navigationState={this.state}
-                renderScene={this._renderScene}
-                renderHeader={this._renderHeader}
-                onIndexChange={this._handleIndexChange}
-                initialLayout={initialLayout}
-            />
+            <View style={{ flex: 1 }}>
+                <Spinner visible={this.state.loading} textContent={"Loading..."} textStyle={{ color: '#FFF' }} />
+                <TabViewAnimated
+                    style={{ flex: 1 }}
+                    navigationState={this.state}
+                    renderScene={this._renderScene}
+                    renderHeader={this._renderHeader}
+                    onIndexChange={this._handleIndexChange}
+                    initialLayout={initialLayout}
+                />
+            </View>
         )
     }
 
@@ -132,24 +137,24 @@ class GroupWrapper extends React.Component{
         }).then(response => {
             if (response.ok) {
                 this.loadGroup();
-                this.setState({editing: false})
-                this.props.navigation.setParams({editing: false})
+                this.setState({ editing: false })
+                this.props.navigation.setParams({ editing: false })
             }
         });
     }
 
     cancelEditing() {
-        this.setState({editing: false})
+        this.setState({ editing: false })
         this.props.navigation.setParams({ editing: false })
     }
 
     edit() {
-        this.setState({editing: true})
+        this.setState({ editing: true })
         this.props.navigation.setParams({ editing: true })
     }
 
     setGroupParams(name, color, description) {
-        this.setState({name, color, description})
+        this.setState({ name, color, description })
     }
 }
 
@@ -161,7 +166,7 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
     return {
-        
+
     };
 }
 
