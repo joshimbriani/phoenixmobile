@@ -78,7 +78,7 @@ export class PeopleNewEvent extends React.Component {
                         {this.props.eventPrivacy === 'group' && this.props.groups.length > 0 && <View style={{ alignSelf: 'center', width: 300 }}>
                             <Dropdown
                                 label='Which Group?'
-                                onChangeText={(text) => this.props.onChange("group", text)}
+                                onChangeText={(text, index) => this.props.onChange("group", this.props.groups[index])}
                                 data={this.props.groups.map((group) => {
                                     return {
                                         value: group.name,

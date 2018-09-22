@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { Content, Form, Item, Input, Label, Button } from 'native-base';
-import { ScrollView, View, Picker, ToastAndroid, KeyboardAvoidingView, Platform, PermissionsAndroid, FlatList, TouchableOpacity, Text } from 'react-native';
+import { ScrollView, View, Picker, Keyboard, KeyboardAvoidingView, Platform, PermissionsAndroid, FlatList, TouchableOpacity, Text } from 'react-native';
 import moment from 'moment';
 import DateTimePicker from 'react-native-modal-datetime-picker';
 import { REACT_SWIPER_BOTTOM_MARGIN } from '../../utils/constants';
@@ -101,7 +101,7 @@ export class DatetimeDurationNewEvent extends React.Component {
                             <View style={{ flex: 2, marginTop: -6, marginLeft: 5 }}>
                                 <Dropdown
                                     value={this.props.durationMeasure}
-                                    onChangeText={(text) => this.props.onChange("durationMeasure", text)}
+                                    onChangeText={(text) => { Keyboard.dismiss(); this.props.onChange("durationMeasure", text)}}
                                     data={[{
                                         value: 'minutes',
                                     }, {
