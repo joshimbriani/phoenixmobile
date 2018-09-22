@@ -1,5 +1,5 @@
 import React from 'react';
-import { Alert, Platform, StyleSheet, TouchableOpacity, View, Text, ScrollView } from 'react-native';
+import { Alert, Platform, Linking, TouchableOpacity, View, Text, ScrollView } from 'react-native';
 import PlatformIonicon from '../utils/platformIonicon';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -8,6 +8,7 @@ import moment from 'moment';
 import { styles } from '../../assets/styles';
 import { getComplementaryColor } from '../utils/styleutils';
 import Color from 'color';
+import ParsedText from 'react-native-parsed-text';
 
 class OfferDetails extends React.Component {
 
@@ -42,7 +43,7 @@ class OfferDetails extends React.Component {
                             <Text style={[styles.eventDetailSubHeading, {color: Color(getComplementaryColor(offer.color)).isDark() ? 'white' : 'black'}]}>Runs from {startTime.format('dddd, MMMM Do, YYYY @ h:mm a')} to {endTime.format('dddd, MMMM Do, YYYY @ h:mm a')}</Text>
                         </View>
                         <View style={{ flexDirection: 'row', backgroundColor: 'white', borderTopWidth: 1, borderTopColor: '#A8A8A8' }}>
-                            <TouchableOpacity onPress={() => { this.props.navigation.navigate('NewEvent', {offer: offer}) }} style={{ flexDirection: 'row', flex: 1, margin: 5 }}>
+                            <TouchableOpacity onPress={() => { this.props.navigation.navigate('NewEvent', { offer: offer }) }} style={{ flexDirection: 'row', flex: 1, margin: 5 }}>
                                 <View style={{ flexDirection: 'row', flex: 1, padding: 5, borderRightWidth: 1, borderRightColor: '#A8A8A8' }}>
                                     <PlatformIonicon
                                         name={this.props.userGoing ? "checkbox" : "checkbox-outline"}
@@ -70,7 +71,19 @@ class OfferDetails extends React.Component {
                         <View style={styles.eventDetailBody}>
                             <View>
                                 <Text style={styles.eventDetailSectionHeader}>Description</Text>
-                                <Text>{offer.description}</Text>
+                                <ParsedText
+                                    style={{ fontSize: 17, overflow: 'hidden' }}
+                                    parse={
+                                        [
+                                            { type: 'url', style: { color: 'blue', textDecorationLine: 'underline' }, onPress: (url) => Linking.openURL(url) },
+                                            { type: 'phone', style: { color: 'blue', textDecorationLine: 'underline' }, onPress: (phone) => Linking.openURL('tel:' + phone) },
+                                            { type: 'email', style: { color: 'blue', textDecorationLine: 'underline'}, onPress: (email) => Linking.openURL('mailto:' + email) },
+                                            { pattern: /[-a-zA-Z0-9:%._\+~#=]{2,256}\.[a-zA-Z]{2,6}\b/, style: { color: 'blue', textDecorationLine: 'underline' }, onPress: (url) => Linking.openURL('https://' + url) },
+                                        ]
+                                    }
+                                >
+                                    {offer.description}
+                                </ParsedText>
                             </View>
                             {offer.recurrences.length > 0 && <View style={{ flex: 1 }}>
                                 <Text style={styles.eventDetailSectionHeader}>Valid On</Text>
@@ -98,13 +111,13 @@ class OfferDetails extends React.Component {
 
 function mapStateToProps(state) {
     return {
-        
+
     };
 }
 
 function mapDispatchToProps(dispatch) {
     return {
-        
+
     };
 }
 
