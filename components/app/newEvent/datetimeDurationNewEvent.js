@@ -1,13 +1,14 @@
 import React from 'react';
 
 import { Content, Form, Item, Input, Label, Button } from 'native-base';
-import { ScrollView, View, Picker, ToastAndroid, KeyboardAvoidingView, Platform, PermissionsAndroid, FlatList, TouchableOpacity, Text } from 'react-native';
+import { ScrollView, View, TouchableWithoutFeedback, Keyboard, KeyboardAvoidingView, Platform, PermissionsAndroid, FlatList, TouchableOpacity, Text } from 'react-native';
 import moment from 'moment';
 import DateTimePicker from 'react-native-modal-datetime-picker';
 import { REACT_SWIPER_BOTTOM_MARGIN } from '../../utils/constants';
 import PlatformIonicon from '../../utils/platformIonicon';
 import { Dropdown } from 'react-native-material-dropdown';
 import Dialog from "react-native-dialog";
+import debounce from 'lodash/debounce';
 
 import { styles } from '../../../assets/styles';
 
@@ -23,6 +24,12 @@ export class DatetimeDurationNewEvent extends React.Component {
         this._handleDatePicked = this._handleDatePicked.bind(this);
         this._hideDateTimePicker = this._hideDateTimePicker.bind(this);
         this._showDateTimePicker = this._showDateTimePicker.bind(this);
+        this.updateDuration = debounce(this.updateDuration, 500);
+    }
+
+    updateDuration(text) {
+        this.props.onChange("duration", parseInt(text));
+        Keyboard.dismiss();
     }
 
     _showDateTimePicker = () => this.setState({ isDateTimePickerVisible: true });
@@ -42,7 +49,7 @@ export class DatetimeDurationNewEvent extends React.Component {
 
     render() {
         return (
-            <KeyboardAvoidingView enabled behavior={Platform.OS === 'ios' ? "padding" : null} keyboardVerticalOffset={Platform.OS === 'ios' ? 110 : 0} style={{flex: 1}}>
+            <KeyboardAvoidingView enabled behavior={Platform.OS === 'ios' ? "padding" : null} keyboardVerticalOffset={Platform.OS === 'ios' ? 110 : 0} style={{ flex: 1 }}>
                 <ScrollView style={styles.flex1} keyboardShouldPersistTaps={'handled'}>
                     <Dialog.Container visible={this.state.showHelp}>
                         <Dialog.Title>Topics Screen</Dialog.Title>
@@ -94,14 +101,14 @@ export class DatetimeDurationNewEvent extends React.Component {
                             <View style={{ flex: 2, paddingTop: 5 }}>
                                 <Form>
                                     <Item>
-                                        <Input name="duration" keyboardType="numeric" onChangeText={(text) => this.props.onChange("duration", parseInt(text))} />
+                                        <Input name="duration" keyboardType="numeric" onBlur={() => Keyboard.dismiss()} onChangeText={(text) => this.updateDuration(text)} />
                                     </Item>
                                 </Form>
                             </View>
                             <View style={{ flex: 2, marginTop: -6, marginLeft: 5 }}>
                                 <Dropdown
                                     value={this.props.durationMeasure}
-                                    onChangeText={(text) => this.props.onChange("durationMeasure", text)}
+                                    onChangeText={(text) => { Keyboard.dismiss(); this.props.onChange("durationMeasure", text) }}
                                     data={[{
                                         value: 'minutes',
                                     }, {
