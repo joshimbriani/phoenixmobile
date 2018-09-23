@@ -60,11 +60,11 @@ class EventDetailPeople extends React.Component {
                     </View>}
                     {!this.props.event.owned && <View style={styles.eventDetailPeopleSection}>
                         <Text style={styles.eventDetailSectionHeader}>Groups</Text>
-                        {this.props.event.forks && this.props.event.forks.length > 0 && <View style={{marginVertical: 5}}>
+                        {this.props.event.forks && this.props.event.forks.length > 0 && <View style={{ marginVertical: 5 }}>
                             <Text>There are {this.props.event.forks.length} groups looking for users!</Text>
                         </View>}
-                        <View style={{marginTop: 10, flexDirection: 'row'}}>
-                            {this.props.event.forks && this.props.event.forks.length > 0 && <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
+                        <View style={{ marginTop: 10, flexDirection: 'row' }}>
+                            {this.props.event.forks && this.props.event.forks.length > 0 && <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
                                 <Button
                                     onPress={() => this.findSubEvents()}
                                     title="Join a Group"
@@ -72,10 +72,10 @@ class EventDetailPeople extends React.Component {
                                     accessibilityLabel="Join a Group"
                                 />
                             </View>}
-                            {this.props.event.forks && this.props.event.forks.length > 0 && <View style={{padding: 5, alignItems: 'center', justifyContent: 'center'}}>
+                            {this.props.event.forks && this.props.event.forks.length > 0 && <View style={{ padding: 5, alignItems: 'center', justifyContent: 'center' }}>
                                 <Text>Or</Text>
                             </View>}
-                            <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
+                            <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
                                 <Button
                                     onPress={() => this.props.forkEvent()}
                                     title="Create a Group"
@@ -83,6 +83,17 @@ class EventDetailPeople extends React.Component {
                                     accessibilityLabel="Create a Group"
                                 />
                             </View>
+                        </View>
+                    </View>}
+                    {this.props.event.privacy === 'group' && this.props.event.privacyGroup && <View style={[styles.eventDetailPeopleSection, { flex: 3, justifyContent: 'flex-end' }]}>
+                        <Text style={styles.eventDetailSectionHeader}>Group</Text>
+                        <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                            {this.props.event.privacyGroup.color && <View style={{marginRight: 10}}>
+                                <View style={{ backgroundColor: this.props.event.privacyGroup.color, height: 50, width: 50, borderRadius: 25 }}></View>
+                            </View>}
+                            {this.props.event.privacyGroup.name && <View>
+                                <Text style={{color: 'black'}}>{this.props.event.privacyGroup.name}</Text>
+                            </View>}
                         </View>
                     </View>}
                     <View style={[styles.eventDetailPeopleSection, { flex: 3, justifyContent: 'flex-end' }]}>
@@ -115,7 +126,7 @@ class EventDetailPeople extends React.Component {
                     <View style={[styles.eventDetailPeopleSection, { flex: 3 }]}>
                         <Text style={styles.eventDetailSectionHeader}>Interested</Text>
                         {this.props.event.owned && <View style={{ flexDirection: 'row' }}>
-                            {this.props.event.interested.map((user, index) => {
+                            {this.props.event.interested.filter((user) => !this.props.userInList(user.id, this.props.event.going)).map((user, index) => {
                                 return (
                                     <TouchableOpacity onLongPress={() => this.setState({ userOptionModalVisible: true, selectedUser: user.id })}>
                                         <View style={{ margin: 5 }}>
@@ -221,7 +232,7 @@ class EventDetailPeople extends React.Component {
     }
 
     findSubEvents() {
-        this.props.navigation.navigate('FindSubEvents', {event: this.props.event})
+        this.props.navigation.navigate('FindSubEvents', { event: this.props.event })
     }
 
     addUserToContacts(userToAdd, addUserToContacts, removeUserFromContacts, acceptUserRequest, denyUserRequest) {

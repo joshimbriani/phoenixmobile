@@ -1,10 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Text, TouchableOpacity, View } from 'react-native';
+import { Linking, Text, TouchableOpacity, View } from 'react-native';
+import ParsedText from 'react-native-parsed-text';
 
 import HideableView from '../../utils/hideableView';
-
-// TODO: Need to wrap my Ionicon in a TouchableOpacity
 
 export class Bubble extends React.Component {
     constructor(props) {
@@ -17,12 +16,25 @@ export class Bubble extends React.Component {
         this.toggleHiddenInfo = this.toggleHiddenInfo.bind(this);
     }
     render() {
+        console.log(this.props.message)
         return (
             <View style={{ marginRight: this.props.isUserSender ? 0 : 20, marginLeft: this.props.isUserSender ? 10 : 0 }}>
                 <TouchableOpacity
                     onPress={this.toggleHiddenInfo}>
                     <View style={{ backgroundColor: this.props.isUserSender ? '#ecf0f1' : '#3498db', padding: 10, borderRadius: 20, borderWidth: 1, borderColor: this.props.isUserSender ? '#ecf0f1' : '#3498db' }}>
-                        <Text style={{ fontSize: 17, overflow: 'hidden' }}>{this.props.message}</Text>
+                        <ParsedText
+                            style={{ fontSize: 17, overflow: 'hidden' }}
+                            parse={
+                                [
+                                    {type: 'url', style: {color: 'blue', textDecorationLine: 'underline'}, onPress: (url) => Linking.openURL(url)},
+                                    {type: 'phone', style: {color: 'blue', textDecorationLine: 'underline'}, onPress: (phone) => Linking.openURL('tel:' + phone)},
+                                    {type: 'email', style: {color: 'blue', textDecorationLine: 'underline'}, onPress: (email) => Linking.openURL('mailto:' + email)},
+                                    {pattern: /[-a-zA-Z0-9:%._\+~#=]{2,256}\.[a-zA-Z]{2,6}\b/, style: {color: 'blue', textDecorationLine: 'underline'}, onPress: (url) => Linking.openURL('https://' + url)},
+                                ]
+                            }
+                        >
+                            {this.props.message}
+                        </ParsedText>
                     </View>
                 </TouchableOpacity>
                 <HideableView hide={this.state.hidden} style={{ flexDirection: 'row', paddingLeft: 10 }}>

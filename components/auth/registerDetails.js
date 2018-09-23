@@ -11,6 +11,8 @@ import { Dropdown } from 'react-native-material-dropdown';
 import CheckBox from 'react-native-check-box'
 import Dialog from "react-native-dialog";
 
+import Spinner from 'react-native-loading-spinner-overlay';
+
 class RegisterDetails extends React.Component {
 
     constructor(props) {
@@ -26,7 +28,8 @@ class RegisterDetails extends React.Component {
                 gender: "",
                 accept: ""
             },
-            imageSize: 100
+            imageSize: 100,
+            loading: false
         }
 
         this.setErrorUIState = this.setErrorUIState.bind(this);
@@ -160,6 +163,7 @@ class RegisterDetails extends React.Component {
                     </ScrollView>
                     <Dialog.Button label="Got it!" onPress={() => this.setState({ showEULA: false })} />
                 </Dialog.Container>
+                <Spinner visible={this.state.loading} textContent={"Loading..."} textStyle={{color: '#FFF'}} />
                 <View style={{ flex: 1 }}>
                     <View>
                         <TouchableOpacity onPress={() => this.props.navigation.goBack()}>
@@ -234,7 +238,7 @@ class RegisterDetails extends React.Component {
                             isChecked={this.state.checked}
                         />
                         <View style={{ alignItems: 'center', flexDirection: 'row', maxWidth: '80%' }}>
-                            <Text style={{ fontSize: 8 }}>I am over the age of 13 and I accept </Text>
+                            <Text style={{ fontSize: 8 }}>I am over the age of 18 and I accept </Text>
                             <TouchableOpacity onPress={() => this.setState({ showEULA: true })}>
                                 <Text style={{ color: 'blue', fontSize: 8 }}>Koota's license agreement.</Text>
                             </TouchableOpacity>
@@ -246,7 +250,15 @@ class RegisterDetails extends React.Component {
                 </View>
 
                 <View style={{ marginVertical: 20, alignSelf: 'center' }}>
-                    <TouchableOpacity onPress={() => { this.props.navigation.state.params.submitForm(); this.setErrorUIState(); if (this.props.navigation.state.params.needToGoBack()) this.props.navigation.goBack() }}>
+                    <TouchableOpacity onPress={() => { 
+                        this.setState({loading: true}); 
+                        this.props.navigation.state.params.submitForm(); 
+                        this.setErrorUIState();
+                        this.setState({loading: false}); 
+                        if (this.props.navigation.state.params.needToGoBack()) {
+                            this.props.navigation.goBack()
+                        }
+                    }}>
                         <View style={{ width: 300, height: 50, backgroundColor: '#006083', alignItems: 'center', justifyContent: 'center' }}>
                             <Text style={{ color: 'white', fontSize: 20 }}>Register</Text>
                         </View>
@@ -271,6 +283,10 @@ function isValidDate(dateString) {
     // Check the ranges of month and year
     if (year < 1000 || year > 3000 || month == 0 || month > 12)
         return false;
+
+    if (year < 1903 || year > 2005) {
+        return false;
+    }
 
     var monthLength = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
 

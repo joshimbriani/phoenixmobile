@@ -7,6 +7,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
 import { getURLForPlatform } from '../utils/networkUtils';
+import { restrictedUsernames } from '../../assets/restrictedUsernames';
 import PlatformIonicon from '../utils/platformIonicon';
 import * as tokenActions from '../../redux/actions/token';
 import fontBasedOnPlatform from '../utils/fontBasedOnPlatform';
@@ -63,6 +64,17 @@ class Register extends React.Component {
             errorState["username"] = "Enter your username!";
             goBack = true;
         }
+
+        if (restrictedUsernames.indexOf(this.state.username.toLowerCase()) > -1) {
+            errorState["username"] = "That username is restricted. Try a different username!";
+            goBack = true;
+        }    
+        
+        if (this.state.username.length > 30) {
+            errorState["username"] = "Your username can't be greater than 30 characters!"
+            goBack = true;
+        }
+
         if (this.state.password === "") {
             errorState["password"] = "Enter your password!";
             goBack = true;
@@ -105,12 +117,24 @@ class Register extends React.Component {
             valid = false;
         }
 
+        if (!isValidDate(this.state.birthdate)) {
+            valid = false;
+        }
+
+        if (restrictedUsernames.indexOf(this.state.username.toLowerCase()) > -1) {
+            valid = false;
+        }
+
+        if (this.state.username.length > 30) {
+            valid = false;
+        }
+
         if (this.state.password.length < 6) {
             valid = false;
         }
 
         const emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-        valid = emailRegex.test(this.state.email.toLowerCase());
+        valid = valid && emailRegex.test(this.state.email.toLowerCase());
 
         return valid;
     }
@@ -118,6 +142,14 @@ class Register extends React.Component {
     needToGoBack() {
         var goBack = false;
         if (this.state.username === "" || this.state.password === "" || this.state.email === "") {
+            goBack = true;
+        }
+
+        if (restrictedUsernames.indexOf(this.state.username.toLowerCase()) > -1) {
+            goBack = true;
+        }
+
+        if (this.state.username.length > 30) {
             goBack = true;
         }
 
@@ -411,3 +443,34 @@ const styles = StyleSheet.create({
     }
 
 });
+
+function isValidDate(dateString) {
+    // First check for the pattern
+    if (!/^\d{1,2}\/\d{1,2}\/\d{4}$/.test(dateString))
+        return false;
+
+    // Parse the date parts to integers
+    var parts = dateString.split("/");
+    var day = parseInt(parts[1], 10);
+    var month = parseInt(parts[0], 10);
+    var year = parseInt(parts[2], 10);
+
+    // Check the ranges of month and year
+    if (year < 1000 || year > 3000 || month == 0 || month > 12)
+        return false;
+
+    console.log(year)
+
+    if (year < 1903 || year > 2005) {
+        return false;
+    }
+
+    var monthLength = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+
+    // Adjust for leap years
+    if (year % 400 == 0 || (year % 100 != 0 && year % 4 == 0))
+        monthLength[1] = 29;
+
+    // Check the range of the day
+    return day > 0 && day <= monthLength[month - 1];
+};

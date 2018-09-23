@@ -13,19 +13,29 @@ class EventDetailPlace extends React.Component {
     render() {
         if (Object.keys(this.props.event).length > 0) {
             var address = {};
-            if (this.props.event.place.placeDetails.address) {
-                address = parseGooglePlace({"address_components": JSON.parse(this.props.event.place.placeDetails.address)});
+            if (this.props.event.place.placeDetails.address && (!this.props.event.place.addressState || !this.props.event.place.addressStreet)) {
+                var address = this.props.event.place.placeDetails.address;
+                if (typeof address === "string") {
+                    address = JSON.parse(address)
+                }
+                address = parseGooglePlace({"address_components": address});
             }
             return (
                 <View style={styles.flex1} >
                     <View style={styles.eventDetailPlaceBody}>
                         <View>
                             <Text style={styles.eventDetailSectionHeader}>Place</Text>
-                            {this.props.event.place && <View>
+                            {this.props.event.place && Object.keys(address).length > 0 && <View>
                                 <Text>{this.props.event.place.name}</Text>
                                 <Text>{address.streetNumber}{address.streetNumber && ' '}{address.streetName}</Text>
                                 {this.props.event.place.addressUnit && <Text>{this.props.event.place.addressUnit}</Text>}
                                 <Text>{address.city}, {address.stateShort} {address.zipCode}</Text>
+                            </View>}
+                            {this.props.event.place && this.props.event.place.addressState && this.props.event.place.addressStreet && <View>
+                                <Text>{this.props.event.place.name}</Text>
+                                <Text>{this.props.event.place.addressStreet}</Text>
+                                {this.props.event.place.addressUnit && <Text>{this.props.event.place.addressUnit}</Text>}
+                                <Text>{this.props.event.place.addressState}</Text>
                             </View>}
                             {!this.props.event.place && <View>
                                 <Text>Islands of Adventure</Text>

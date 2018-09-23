@@ -4,7 +4,7 @@ import { styles } from '../../../assets/styles';
 import { BackHandler, DeviceEventEmitter, FlatList, Text, ScrollView, KeyboardAvoidingView, TextInput, TouchableOpacity, View, Platform, Keyboard } from 'react-native';
 import { ConversationHeader } from './conversationHeader';
 import { getURLForPlatform } from '../../utils/networkUtils';
-import { HeaderBackButton } from 'react-navigation';
+import { HeaderBackButton, Header } from 'react-navigation';
 
 import { getDateStringForMessage } from '../../utils/textUtils';
 import PlatformIonicon from '../../utils/platformIonicon';
@@ -189,7 +189,7 @@ class ConversationView extends React.Component {
                         }}
                     />
                 </ScrollView>
-                <KeyboardAvoidingView enabled behavior={Platform.OS === 'ios' ? "padding" : null} keyboardVerticalOffset={Platform.OS === 'ios' ? 110 : 0}>
+                <KeyboardAvoidingView enabled behavior={Platform.OS === 'ios' ? "padding" : null} keyboardVerticalOffset={Platform.OS === 'ios' ? Header.HEIGHT + 65 : 0}>
                     <View style={{ flexDirection: 'row', padding: 5, backgroundColor: '#f9f9f9' }}>
                         {/*<TouchableOpacity
                             onPress={() => console.log("Pressed media button")}>

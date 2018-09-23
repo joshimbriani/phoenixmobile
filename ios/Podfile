@@ -49,6 +49,8 @@ target 'phoenixmobile' do
 
   pod 'ReactNativePermissions', :path => '../node_modules/react-native-permissions'
 
+  pod 'SentryReactNative', :path => '../node_modules/react-native-sentry'
+
   target 'phoenixmobileTests' do
     inherit! :search_paths
     # Pods for testing

@@ -1,7 +1,7 @@
 import { connect } from 'react-redux';
 import React from 'react';
 import PropTypes from 'prop-types';
-import { ScrollView, Text, TouchableOpacity, View, Button } from 'react-native';
+import { ScrollView, Text, TouchableOpacity, View, Button, Linking } from 'react-native';
 
 import { getDayOfWeekFromDayNumber, getMonthNameFromMonthNumber } from '../utils/datetimeUtils';
 import { getComplementaryColor } from '../utils/styleutils';
@@ -9,6 +9,9 @@ import { styles } from '../../assets/styles';
 import { OfferContainer } from './offerContainer';
 import moment from 'moment';
 import PlatformIonicon from '../utils/platformIonicon';
+import ParsedText from 'react-native-parsed-text';
+
+import Color from 'color';
 
 class EventDetailDetails extends React.Component {
     // TODO: Offer View
@@ -21,8 +24,8 @@ class EventDetailDetails extends React.Component {
                 <View style={styles.flex1} >
                     <ScrollView style={{ flex: 1 }}>
                         <View style={[styles.eventDetailHeader, { backgroundColor: getComplementaryColor(this.props.color) }]} >
-                            <Text style={styles.eventDetailHeading}>{this.props.event.title}</Text>
-                            <Text style={styles.eventDetailSubHeading}>{getDayOfWeekFromDayNumber(date.getDay())} {getMonthNameFromMonthNumber(date.getMonth())} {date.getDate()}, {date.getFullYear()} @ {(date.getHours() % 12) + ':' + (date.getMinutes() < 10 ? ('0' + date.getMinutes()) : date.getMinutes()) + (date.getHours() < 12 ? 'AM' : 'PM')}</Text>
+                            <Text style={[styles.eventDetailHeading, {color: Color(getComplementaryColor(this.props.color)).isDark() ? 'white' : 'black'}]}>{this.props.event.title}</Text>
+                            <Text style={[styles.eventDetailSubHeading, {color: Color(getComplementaryColor(this.props.color)).isDark() ? 'white' : 'black'}]}>{getDayOfWeekFromDayNumber(date.getDay())} {getMonthNameFromMonthNumber(date.getMonth())} {date.getDate()}, {date.getFullYear()} @ {(date.getHours() % 12) + ':' + (date.getMinutes() < 10 ? ('0' + date.getMinutes()) : date.getMinutes()) + (date.getHours() < 12 ? 'AM' : 'PM')}</Text>
                             <ScrollView horizontal={true}>
                                 {this.props.event.topics && this.props.event.topics.map((topic, index) => {
                                     return (
@@ -39,7 +42,7 @@ class EventDetailDetails extends React.Component {
                             </ScrollView>
                         </View>
                         <View style={{ flexDirection: 'row', backgroundColor: 'white', borderTopWidth: 1, borderTopColor: '#A8A8A8' }}>
-                            { !this.props.userGoing && <TouchableOpacity onPress={() => this.props.markUserAsInterested(this.props.event.id)} style={{ flexDirection: 'row', flex: 1, margin: 5 }}>
+                            {!this.props.userGoing && <TouchableOpacity onPress={() => this.props.markUserAsInterested(this.props.event.id)} style={{ flexDirection: 'row', flex: 1, margin: 5 }}>
                                 <View style={{ flexDirection: 'row', flex: 1, padding: 5, borderRightWidth: 1, borderRightColor: '#A8A8A8' }}>
                                     <PlatformIonicon
                                         name={this.props.userInterested ? "heart" : "heart-empty"}
@@ -91,7 +94,19 @@ class EventDetailDetails extends React.Component {
                         <View style={styles.eventDetailBody}>
                             <View>
                                 <Text style={styles.eventDetailSectionHeader}>Description</Text>
-                                <Text>{this.props.event.description}</Text>
+                                <ParsedText
+                                    style={{ fontSize: 17, overflow: 'hidden' }}
+                                    parse={
+                                        [
+                                            { type: 'url', style: { color: 'blue', textDecorationLine: 'underline' }, onPress: (url) => Linking.openURL(url) },
+                                            { type: 'phone', style: { color: 'blue', textDecorationLine: 'underline' }, onPress: (phone) => Linking.openURL('tel:' + phone) },
+                                            { type: 'email', style: { color: 'blue', textDecorationLine: 'underline' }, onPress: (email) => Linking.openURL('mailto:' + email) },
+                                            { pattern: /[-a-zA-Z0-9:%._\+~#=]{2,256}\.[a-zA-Z]{2,6}\b/, style: { color: 'blue', textDecorationLine: 'underline' }, onPress: (url) => Linking.openURL('https://' + url) },
+                                        ]
+                                    }
+                                >
+                                    {this.props.event.description}
+                                </ParsedText>
                             </View>
                             {this.props.event.offers.length > 0 && <View style={{ flex: 1 }}>
                                 <Text style={styles.eventDetailSectionHeader}>Applied Offers</Text>

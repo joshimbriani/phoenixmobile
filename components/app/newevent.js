@@ -1,12 +1,9 @@
 import React from 'react';
-import { Content, Form, Item, Input, Label, Button, Text } from 'native-base';
-import { ToastAndroid, Platform, PermissionsAndroid, Keyboard } from 'react-native';
-import PlatformIonicon from '../utils/platformIonicon';
+import { ToastAndroid, Platform, PermissionsAndroid, Keyboard, Text, View } from 'react-native';
 import { connect } from 'react-redux';
 import Swiper from 'react-native-swiper';
 import { getURLForPlatform } from '../utils/networkUtils';
 import { styles } from '../../assets/styles';
-import { REACT_SWIPER_BOTTOM_MARGIN } from '../utils/constants';
 import { getCurrentLocation } from '../utils/otherUtils';
 import { TopicsNewEvent } from './newEvent/topicsNewEvent';
 import { TitleDescColorNewEvent } from './newEvent/titleDescColorNewEvent';
@@ -16,10 +13,13 @@ import { PeopleNewEvent } from './newEvent/peopleNewEvent';
 import { OffersNewEvent } from './newEvent/offersNewEvent';
 import { EventTypeNewEvent } from './newEvent/eventTypeNewEvent';
 import EventNewEvent from './newEvent/eventNewEvent';
-import { badWords } from '../../assets/badWords';
+var Filter = require('bad-words');
 import Icon from 'react-native-vector-icons/Ionicons';
 
+import Spinner from 'react-native-loading-spinner-overlay';
+
 const ITEMS_TO_VALIDATE = ["title", "description", "place", "datetime", "duration", "amount", "eventPrivacy", "group"];
+const filter = new Filter();
 
 class NewEvent extends React.Component {
 
@@ -75,6 +75,8 @@ class NewEvent extends React.Component {
             group: {},
             invitedUsers: [],
             eventType: props.navigation.state.params.offer ? "hangout" : "",
+            loading: false,
+            limitUsers: false,
             errors: {
                 errors: [],
                 amount: "",
@@ -217,6 +219,12 @@ class NewEvent extends React.Component {
                         errors.errors.push("Title")
                     }
                     valid = false;
+                } else if (ITEMS_TO_VALIDATE[i] === "title" && this.state["title"].length > 512) {
+                    errors["title"] = "Your title can't be longer than 512 characters!"
+                    if (errors.errors.indexOf("Title") === -1) {
+                        errors.errors.push("Title")
+                    }
+                    valid = false;
                 } else if (ITEMS_TO_VALIDATE[i] === "description" && this.state["description"] === "" && this.state.eventType !== 'event') {
                     errors["description"] = "You need to add a description!"
                     if (errors.errors.indexOf("Description") === -1) {
@@ -224,29 +232,25 @@ class NewEvent extends React.Component {
                     }
                     valid = false;
                 } else if (ITEMS_TO_VALIDATE[i] === "title") {
-                    for (var j = 0; j < badWords.length; j++) {
-                        if (this.state["title"].toLowerCase().indexOf(badWords[j]) > -1) {
-                            errors["title"] = "Your title contains objectionable content. Please remove the word '" + badWords[j] + "'"
-                            if (errors.errors.indexOf("Title") === -1) {
-                                errors.errors.push("Title")
-                            }
-                            valid = false;
+                    if (filter.isProfane(this.state["title"])) {
+                        errors["title"] = "Your title contains objectionable content. Please remove the bad word."
+                        if (errors.errors.indexOf("Title") === -1) {
+                            errors.errors.push("Title")
                         }
+                        valid = false;
                     }
                 } else if (ITEMS_TO_VALIDATE[i] === "description") {
-                    for (var j = 0; j < badWords.length; j++) {
-                        if (this.state["description"].toLowerCase().indexOf(badWords[j]) > -1) {
-                            errors["description"] = "Your description contains objectionable content. Please remove the word '" + badWords[j] + "'"
-                            if (errors.errors.indexOf("Description") === -1) {
-                                errors.errors.push("Description")
-                            }
-                            valid = false;
+                    if (filter.isProfane(this.state["description"])) {
+                        errors["description"] = "Your description contains objectionable content. Please remove the bad word."
+                        if (errors.errors.indexOf("Description") === -1) {
+                            errors.errors.push("Description")
                         }
+                        valid = false;
                     }
                 }
             } else if (this.state[ITEMS_TO_VALIDATE[i]] === "" || typeof this.state[ITEMS_TO_VALIDATE[i]] === 'undefined' || ((typeof this.state[ITEMS_TO_VALIDATE[i]] === "object" && !(this.state[ITEMS_TO_VALIDATE[i]] instanceof Date)) && Object.keys(this.state[ITEMS_TO_VALIDATE[i]]).length < 1)) {
 
-                if (ITEMS_TO_VALIDATE[i] === 'amount' && this.state.eventType !== 'event') {
+                if (ITEMS_TO_VALIDATE[i] === 'amount' && this.state.eventType !== 'event' && this.state.limitUsers) {
                     errors["amount"] = "You need to have an event capacity!"
                     if (errors.errors.indexOf("Amount") === -1) {
                         errors.errors.push("Amount")
@@ -317,6 +321,7 @@ class NewEvent extends React.Component {
 
     submitForm() {
         // TODO: Need to give error messages
+        this.setState({loading: true});
         if (this.formIsValid()) {
             var duration = this.state.duration;
             if (this.state.durationMeasure === 'hours') {
@@ -349,10 +354,13 @@ class NewEvent extends React.Component {
                 })
             }).then(response => {
                 if (response.ok) {
-                    ToastAndroid.show('Event Created', ToastAndroid.SHORT)
+                    ToastAndroid.show('Event Created', ToastAndroid.SHORT);
+                    this.setState({loading: false});
                     this.props.navigation.goBack();
                 }
             });
+        } else {
+            this.setState({loading: false});
         }
     }
 
@@ -432,7 +440,7 @@ class NewEvent extends React.Component {
             },
             {
                 name: "People",
-                component: <PeopleNewEvent onChange={this.onChange} inviteFriends={this.inviteFriends} submitForm={this.submitForm} restrictToGender={this.state.restrictToGender} eventPrivacy={this.state.eventPrivacy} groups={this.state.groups} errors={this.state.errors} user={this.props.details} />,
+                component: <PeopleNewEvent limitUsers={this.state.limitUsers} onChange={this.onChange} inviteFriends={this.inviteFriends} submitForm={this.submitForm} restrictToGender={this.state.restrictToGender} eventPrivacy={this.state.eventPrivacy} groups={this.state.groups} errors={this.state.errors} user={this.props.details} />,
                 condition: (args) => true
             }
         ]
@@ -444,25 +452,31 @@ class NewEvent extends React.Component {
         }
         if (this.state.eventType === "hangout") {
             return (
-                <Swiper keyboardShouldPersistTaps={'handled'} onMomentumScrollEnd={() => Keyboard.dismiss()} nextButton={<Text style={{ fontSize: 25 }}>&gt;</Text>} buttonWrapperStyle={{ alignItems: 'flex-end' }} prevButton={<Text style={{ fontSize: 25 }}>&lt;</Text>} style={styles.wrapper} showsButtons={true} loop={false} removeClippedSubviews={false} >
-                    {NewEventArr.filter((item) => {
-                        var args = {};
-                        if (item["name"] === "Offers") {
-                            args["offers"] = this.state.offers
-                        }
-                        args["type"] = this.state.eventType
-                        if (item["condition"](args)) {
-                            return true;
-                        }
-                        return false;
-                    }).map((item) => {
-                        return item["component"]
-                    })}
-                </Swiper>
+                <View style={{flex: 1}}>
+                    <Spinner visible={this.state.loading} textContent={"Creating..."} textStyle={{ color: '#FFF' }} />
+                    <Swiper keyboardShouldPersistTaps={'handled'} onMomentumScrollEnd={() => Keyboard.dismiss()} nextButton={<Text style={{ fontSize: 25 }}>&gt;</Text>} buttonWrapperStyle={{ alignItems: 'flex-end' }} prevButton={<Text style={{ fontSize: 25 }}>&lt;</Text>} style={styles.wrapper} showsButtons={true} loop={false} removeClippedSubviews={false} >
+                        {NewEventArr.filter((item) => {
+                            var args = {};
+                            if (item["name"] === "Offers") {
+                                args["offers"] = this.state.offers
+                            }
+                            args["type"] = this.state.eventType
+                            if (item["condition"](args)) {
+                                return true;
+                            }
+                            return false;
+                        }).map((item) => {
+                            return item["component"]
+                        })}
+                    </Swiper>
+                </View>
             );
         } else if (this.state.eventType === "event") {
             return (
-                <EventNewEvent createEvent={this.submitForm} navigation={this.props.navigation} onChange={this.onChange} fetchTopicsFromDescription={this.fetchTopicsFromDescription} color={this.state.color} errors={this.state.errors} lat={this.state.lat} long={this.state.long} place={this.state.place} session={this.state.session} datetime={this.state.datetime} duration={this.state.duration} durationMeasure={this.state.durationMeasure} />
+                <View style={{flex: 1}}>
+                    <Spinner visible={this.state.loading} textContent={"Creating..."} textStyle={{ color: '#FFF' }} />
+                    <EventNewEvent createEvent={this.submitForm} navigation={this.props.navigation} onChange={this.onChange} fetchTopicsFromDescription={this.fetchTopicsFromDescription} color={this.state.color} errors={this.state.errors} lat={this.state.lat} long={this.state.long} place={this.state.place} session={this.state.session} datetime={this.state.datetime} duration={this.state.duration} durationMeasure={this.state.durationMeasure} />
+                </View>
             )
         } else {
             return (

@@ -12,6 +12,8 @@ import EventDetailMessages from './eventDetailMessages';
 import Icon from 'react-native-vector-icons/Ionicons';
 import * as userActions from '../../redux/actions/user';
 import { bindActionCreators } from 'redux';
+import Spinner from 'react-native-loading-spinner-overlay';
+import Color from 'color';
 
 import { getMaterialColor } from '../utils/styleutils';
 
@@ -34,6 +36,9 @@ class EventDetailWrapper extends React.Component {
     static navigationOptions = (Platform.OS === 'android') ? ({ navigation }) => ({
         title: navigation.state.params.event,
         headerStyle: { backgroundColor: navigation.state.params.color },
+        headerTitleStyle: {
+            color: Color(navigation.state.params.color).isDark() ? 'white' : 'black'
+        },
         headerRight: <Menu style={{ paddingRight: 20, flexDirection: 'row' }}>
             <MenuTrigger>
                 <View style={{ paddingLeft: 20, paddingRight: 20, paddingTop: 10, paddingBottom: 10 }}>
@@ -75,6 +80,9 @@ class EventDetailWrapper extends React.Component {
     }) : ({ navigation }) => ({
         title: navigation.state.params.event,
         headerStyle: { backgroundColor: navigation.state.params.color },
+        headerTitleStyle: {
+            color: Color(navigation.state.params.color).isDark() ? 'white' : 'black'
+        },
         headerRight: <Menu style={{ paddingRight: 20, flexDirection: 'row' }}>
             <MenuTrigger>
                 <View style={{ paddingLeft: 20, paddingRight: 20, paddingTop: 10, paddingBottom: 10 }}>
@@ -127,7 +135,8 @@ class EventDetailWrapper extends React.Component {
             eventData: {},
             index: this.props.navigation.state.params.goToMessages ? 3 : 0,
             routes: routes,
-            color: getMaterialColor()
+            color: getMaterialColor(),
+            loading: false
         }
 
         this.loadEvent = this.loadEvent.bind(this);
@@ -144,17 +153,16 @@ class EventDetailWrapper extends React.Component {
 
     _handleIndexChange = index => this.setState({ index });
 
-    _renderHeader = props => <TabBar {...props} labelStyle={{ fontSize: 10 }} style={[styles.eventTabBar, { backgroundColor: this.props.navigation.state.params.color }]} />;
+    _renderHeader = props => <TabBar {...props} labelStyle={{ fontSize: 10, color: Color(this.props.navigation.state.params.color).isDark() ? 'white' : 'black' }} style={[styles.eventTabBar, { backgroundColor: this.props.navigation.state.params.color }]} />;
 
     _renderScene = ({ route }) => {
-        console.log("Interested In Event ", this.state.eventData.interested)
         switch (route.key) {
             case 'details':
                 return <EventDetailDetails markUserAsInterested={this.markUserAsInterested} markUserAsGoing={this.markUserAsGoing} shareEvent={this.shareEvent} event={this.state.eventData} color={this.props.navigation.state.params.color} navigation={this.props.navigation} redeemOffer={this.redeemOffer} userGoing={userInList(this.props.user, (this.state.eventData.going || []))} userInterested={userInList(this.props.user, (this.state.eventData.interested || []))} inviteUsers={this.inviteUser} />;
             case 'place':
                 return <EventDetailPlace event={this.state.eventData} color={this.props.navigation.state.params.color} navigation={this.props.navigation} />;
             case 'people':
-                return <EventDetailPeople forkEvent={this.forkEvent} event={this.state.eventData} color={this.props.navigation.state.params.color} navigation={this.props.navigation} />
+                return <EventDetailPeople userInList={userInList} forkEvent={this.forkEvent} event={this.state.eventData} color={this.props.navigation.state.params.color} navigation={this.props.navigation} />
             case 'messages':
                 return <EventDetailMessages
                     event={this.state.eventData}
@@ -219,22 +227,23 @@ class EventDetailWrapper extends React.Component {
     }
 
     render() {
-        console.log(this.state.eventData)
         return (
-            <TabViewAnimated
-                style={styles.eventTabView}
-                navigationState={this.state}
-                renderScene={this._renderScene}
-                renderHeader={this._renderHeader}
-                onIndexChange={this._handleIndexChange}
-                initialLayout={initialLayout}
-            />
+            <View style={{flex: 1}}>
+                <Spinner visible={this.state.loading} textContent={"Loading..."} textStyle={{ color: '#FFF' }} />
+                <TabViewAnimated
+                    style={styles.eventTabView}
+                    navigationState={this.state}
+                    renderScene={this._renderScene}
+                    renderHeader={this._renderHeader}
+                    onIndexChange={this._handleIndexChange}
+                    initialLayout={initialLayout}
+                />
+            </View>
         )
     }
 
     inviteUser(eventID) {
-        console.log(this.state.eventData)
-        this.props.navigation.navigate('InviteUsers', {contacts: this.props.contacts, existing: true, inviteUsers: (users) => this.marksUsersAsInvited(users), invitedUsers: this.state.eventData.invited.map((user) => user.id) })
+        this.props.navigation.navigate('InviteUsers', { contacts: this.props.contacts, existing: true, inviteUsers: (users) => this.marksUsersAsInvited(users), invitedUsers: this.state.eventData.invited.map((user) => user.id) })
     }
 
     reportEvent() {
@@ -285,7 +294,7 @@ class EventDetailWrapper extends React.Component {
                     console.log("Bad going.")
                 } else {
                     this.loadEvent();
-                    this.props.userActions.loadGoing(this.props.token, this.props.user)
+                    this.props.userActions.loadGoingTo(this.props.token, this.props.user)
                 }
             });
     }
@@ -296,7 +305,7 @@ class EventDetailWrapper extends React.Component {
                 Authorization: "Token " + this.props.token
             },
             method: 'PUT',
-            body: JSON.stringify({'users': users})
+            body: JSON.stringify({ 'users': users })
         })
             .then(response => response.json())
             .then(responseObj => {
@@ -309,6 +318,7 @@ class EventDetailWrapper extends React.Component {
     }
 
     loadEvent() {
+        this.setState({loading: true})
         fetch(getURLForPlatform() + "api/v1/events/" + this.props.navigation.state.params.id + "/?format=json", {
             headers: {
                 Authorization: "Token " + this.props.token
@@ -316,7 +326,7 @@ class EventDetailWrapper extends React.Component {
         })
             .then(response => response.json())
             .then(responseObj => {
-                this.setState({ eventData: responseObj });
+                this.setState({ eventData: responseObj, loading: false });
                 this.props.navigation.setParams({ usersInterested: responseObj["interested"], usersGoing: responseObj["going"], eventCreator: responseObj["userBy"]["id"] })
             });
     }
