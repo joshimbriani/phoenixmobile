@@ -4,7 +4,7 @@ import { createStackNavigator } from 'react-navigation';
 
 import PlatformIonicon from '../utils/platformIonicon';
 import Suggested from '../app/suggested';
-import ProfileTabContainer from '../profile/profileTabContainer';
+import Profile from '../profile/profile';
 import Home from '../app/home';
 import Topic from '../app/topic';
 import Settings from '../settings/settings';
@@ -193,8 +193,8 @@ export const SettingsStack = createStackNavigator({
 });
 
 export const ProfileStack = createStackNavigator({
-    ProfileTabContainer: {
-        screen: ProfileTabContainer,
+    Profile: {
+        screen: Profile,
         path: '/profile',
         navigationOptions: ({ navigation }) => ({
             title: 'Profile'
